@@ -1,0 +1,55 @@
+\section{Le mosse da ninja}
+
+Le regole che separano un Blueprint che ``funziona'' da uno che si può ancora leggere fra un mese.
+
+\begin{enumerate}
+  \item \textbf{Pure e impure.} Un nodo verde (puro) viene ricalcolato \emph{ogni volta} che un pin lo legge. Se \nodo{Random Float} è puro e lo collegate a due nodi, avete due numeri diversi. Se un valore deve essere lo stesso, salvatelo in una variabile locale.
+  \item \textbf{Is Valid prima di usare un riferimento.} Actor distrutti (casse scadute, proiettili) lasciano riferimenti vuoti. Il nodo \nodo{Is Valid} con i due pin di esecuzione è più leggibile del \nodo{Branch}.
+  \item \textbf{Interfacce invece di cast a catena.} Se vi ritrovate con \nodo{Cast To A}, se fallisce \nodo{Cast To B}, se fallisce \nodo{Cast To C}\dots\ volete un'interfaccia (capitolo 9).
+  \item \textbf{Timer invece del Tick.} Il Tick gira 60--120 volte al secondo. Il posto sicuro, il cambio modello, la torretta che decide se sparare: 5 volte al secondo bastano. Il Tick tenetelo per ciò che si \emph{vede} muoversi.
+  \item \textbf{Delay non si ferma.} Usate \nodo{Set Timer} con l'handle quando l'effetto può essere interrotto.
+  \item \textbf{Un componente per abilità.} \var{AC\_Movimento}, \var{AC\_Torcia}, \var{AC\_PostoSicuro}, \var{AC\_Casse}: si attaccano e staccano, si provano da soli, e il Character resta corto. È la stessa scelta fatta nel C++.
+  \item \textbf{Funzioni e Collapse.} Selezionate un gruppo di nodi $\rightarrow$ tasto destro $\rightarrow$ \emph{Collapse to Function}. Un grafo che non sta in uno schermo va spezzato.
+  \item \textbf{Commenti (tasto C).} Ogni gruppo di nodi con un titolo, come i riquadri beige di questa guida.
+  \item \textbf{Reroute node.} Doppio clic su un filo crea un punto di passaggio: niente fili che attraversano i nodi.
+  \item \textbf{Instance Editable e Expose on Spawn.} Le variabili che il level designer deve toccare (danno, tempi, bersagli) vanno esposte con l'occhio aperto. I numeri magici dentro i nodi sono invisibili a chi costruisce il livello.
+\end{enumerate}
+
+\subsection{Debug}
+
+\begin{itemize}
+  \item \nodo{Print String} con \emph{Key} fissa (per esempio ``carburante''): il messaggio si aggiorna al suo posto invece di riempire lo schermo.
+  \item Durante il Play, nel Blueprint scegliete l'istanza da osservare in alto (\emph{Debug Object}): i fili attivi si illuminano e passando sopra un pin si legge il valore.
+  \item \emph{F9} su un nodo mette un breakpoint. \emph{F10} va avanti di un nodo.
+  \item Le tracce hanno \emph{Draw Debug Type}: \emph{For Duration} mostra i raggi del wall run e del posto sicuro. È il modo più veloce di capire perché un muro ``non prende''.
+  \item Console (tasto \`{}): \texttt{slomo 0.2} rallenta il gioco, \texttt{stat fps} mostra i frame, \texttt{show collision} mostra tutte le collisioni.
+\end{itemize}
+
+\subsection{Corrispondenze C++ $\leftrightarrow$ Blueprint}
+
+\begin{center}
+\small
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{6.2cm}}
+\toprule
+Nel codice & In Blueprint \\
+\midrule
+\texttt{UPlatformerRunSubsystem} & \var{GI\_Platform} (Game Instance) \\
+\texttt{UPlatformerAbilitiesComponent} & \var{AC\_Movimento} (cap.~3) \\
+\texttt{UPlatformerJetpackComponent} & Tick del jetpack in \var{AC\_Movimento} (cap.~3.6) \\
+\texttt{UPlatformerTorchComponent} & \var{AC\_Torcia} (cap.~4) \\
+\texttt{UPlatformerSafeSpotComponent}, \texttt{AFallZone} & \var{AC\_PostoSicuro}, \var{BP\_ZonaCaduta} (cap.~5) \\
+\texttt{UPlatformerCrateSpawnerComponent}, \texttt{ASpawnedCrate} & \var{AC\_Casse}, \var{BP\_Cassa} (cap.~6) \\
+\texttt{AScaleByDistanceActor}, \texttt{AModelCyclerActor}, \texttt{ARandomPresenceActor} & cap.~7 \\
+\texttt{ATurret}, \texttt{APlatformerProjectile}, \texttt{ADamageZone}, \texttt{AKillZone} & cap.~8 \\
+\texttt{AMovingPlatform}, \texttt{ACrumblingPlatform}, \texttt{AJumpPad}, \texttt{ASpinningObstacle} & cap.~8 \\
+\texttt{ASwitchBase}, \texttt{AActivable} e figli & \var{BP\_Interruttore}, \var{BPI\_Attivabile} (cap.~9) \\
+\texttt{AModifierZone}, \texttt{ATeleportZone}, \texttt{AShopZone}, \texttt{ALevelGoal}, \texttt{ALevelTimer} & cap.~10 \\
+\texttt{APlatformerPickup} e figli & \var{BP\_Pickup} e figli (cap.~11) \\
+\texttt{APlatformerHUD} & \var{WBP\_HUD} (cap.~12) \\
+\texttt{AWindmill}, \texttt{AFlickeringLight}, \texttt{ASplineFence}, \texttt{AScatterArea} & cap.~13 \\
+\texttt{APlatformerGameMode} & \var{GM\_Platform}: Default Pawn = \var{BP\_Eroe} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\ninja{L'ultima mossa: rifate una meccanica \emph{senza} guardare la guida. Se vi bloccate, è il punto esatto che non avevate capito; tornate solo a quella pagina.}

@@ -1,0 +1,1939 @@
+% =====================================================================
+%  Capitolo 2 — Che cos'è un gioco
+%  Fonte: trascrizione della lezione GD2 (Game Design, primo anno)
+%  Pacchetti richiesti nel preambolo del libro:
+%    \usepackage[italian]{babel}, \usepackage[T1]{fontenc},
+%    \usepackage[utf8]{inputenc} (solo pdfLaTeX), \usepackage{booktabs}
+% =====================================================================
+
+\chapter[Che cos'è un gioco]{Che cos'è un gioco: definizioni, componenti e lenti}
+\label{cap:che-cos-e-un-gioco}
+
+Il primo capitolo ha descritto il contesto del corso e il mestiere del game
+designer. Questo secondo capitolo affronta la domanda da cui, in un modo o
+nell'altro, discende tutto il resto: \textbf{che cos'è un gioco?} È una
+domanda che sembra ovvia. Tutti sappiamo, a livello puramente euristico o
+olistico, che cos'è un gioco: ognuno ha una lista di Steam o di console piena
+di titoli, gioca a carte, a giochi di ruolo, a giochi da tavolo. Ma parte del
+percorso formativo consiste proprio nel \textbf{passare dalla visione del
+giocatore alla visione del creatore}. Un gioco visto dal giocatore e un gioco
+visto dal designer sono cose molto differenti, anzi, a voler essere precisi,
+completamente differenti; e questo cambio di \emph{forma mentis}, questo modo
+diverso di guardare il mondo, si impara soltanto partendo dalle fondamenta.
+
+Il percorso del capitolo ricalca quello della lezione, tenuta a tre voci dal
+direttore del corso, Diego Ricchiuti, e dai due docenti di game design delle
+sedi di Milano e Roma, Mattia Podini e Giacomo ``Jack'' Danna:
+\begin{enumerate}
+  \item ogni studente scrive la propria definizione di gioco, e le definizioni
+        vengono analizzate una per una (sezioni~\ref{sec:esercizio-definizione}
+        e~\ref{sec:definizioni-classe});
+  \item si confrontano con alcune definizioni ``autorevoli'' e si arriva a una
+        conclusione spiazzante: il gioco \emph{non è definibile}
+        (sezioni~\ref{sec:definizioni-autorevoli} e~\ref{sec:non-definibile});
+  \item se non si può definire il gioco, se ne possono però elencare le
+        \textbf{componenti}: gli ``ingredienti della zuppa''
+        (sezione~\ref{sec:zuppa});
+  \item si studiano tre \emph{framework} che elencano questi ingredienti in
+        modi diversi, quelli di Jesse Schell, di Brenda Romero e Ian
+        Schreiber, e di Stéphane Bura (sezioni~\ref{sec:schell},
+        \ref{sec:romero-schreiber} e~\ref{sec:bura});
+  \item si introduce il concetto di \textbf{lente} e il fatto che non esiste un
+        metodo unico di design (sezione~\ref{sec:lenti});
+  \item si stabilisce il \textbf{vocabolario} del designer, a partire dalla
+        prima parola che viene bandita dal corso (sezione~\ref{sec:vocabolario});
+  \item si chiude con alcuni principi della \emph{forma mentis} del designer
+        secondo Chris Bateman e con il task della settimana
+        (sezioni~\ref{sec:bateman} e~\ref{sec:task-gd2}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{Una premessa: il direttore del corso}
+\label{sec:premessa-direttore}
+
+\subsection{Chi è}
+
+La lezione è aperta dal direttore del corso, che si presenta formalmente agli
+studenti del primo anno (alcuni lo hanno già incontrato al colloquio di
+ammissione). Dirige il corso di game design da più di dieci anni ed è uno
+sviluppatore, precisamente un \textbf{game designer} e un \textbf{direttore
+creativo}; fa videogiochi da diciassette anni. Tra i titoli a cui ha lavorato,
+in vari ruoli e in varie parti dello sviluppo, cita:
+\begin{itemize}
+  \item un titolo multiplayer legato alla serie \emph{Poppy Playtime}, di cui
+        ha curato la direzione, in uscita nel periodo di Halloween;
+  \item \emph{A Quiet Place: The Road Ahead}, di cui è stato direttore
+        creativo;
+  \item \emph{Star Overdrive}, uscito di recente, e un altro titolo annunciato
+        alla Gamescom;
+  \item \emph{Dying Light 2} e \emph{Warhammer 40,000: Space Marine 2}.
+\end{itemize}
+È inoltre autore di due libri: \emph{Game Design Tools}, dedicato alle
+tecniche di game design, e \emph{Nobody Wants Your Game: The Business Guide to
+the Game Industry}, dedicato invece al lato commerciale del mestiere (vendere,
+creare e gestire la propria azienda, capire i costi): una parte ``meno
+romantica'' del lavoro, ma sempre molto utile.
+
+Gli studenti lo incontreranno soprattutto al secondo e al terzo anno, ma da
+quest'anno interviene anche al primo con alcune lezioni ``compassate'', come
+questa. Il motivo dichiarato è la passione per l'insegnamento, la volontà di
+aiutare gli altri a crescere. Nel presentarsi, sottolinea la massima fiducia e
+il massimo rispetto per i due docenti di game design del primo anno, rispetto
+che, avverte, ``scoprirete non essere così facile da ottenere''.
+
+Il suo invito è a dare il 100\%: tra un anno, facendo un'introspezione, ci si
+renderà conto della differenza nelle conoscenze, nelle capacità e anche nella
+crescita personale. E a fare amicizia: se si è lì, si amano i videogiochi, e
+attorno c'è molta gente con la stessa passione.
+
+\subsection{Due consigli dal mestiere}
+
+\paragraph{Giocate ai giochi di ruolo.} Il primo consiglio, che i docenti
+danno di solito al secondo anno, è di \textbf{giocare a D\&D} o, più in
+generale, ai giochi di ruolo da tavolo: formare gruppi (dal vivo o su Discord,
+anche in digitale) e giocare. Non deve essere per forza \emph{Dungeons \&
+Dragons}: vanno benissimo \emph{Pathfinder}, i giochi di \emph{Warhammer}, i
+giochi narrativi moderni, \emph{Vampire: The Masquerade}, \emph{Tenebra},
+\emph{Dragonbane} (un ottimo manuale uscito di recente) e la famiglia dei
+cosiddetti \emph{Borg-like}, giochi costruiti sullo stesso sistema di
+\emph{Mörk Borg}: \emph{CY\_BORG}, \emph{Black Powder \& Brimstone},
+\emph{Pirate Borg} e altri, tra cui uno ambientato nelle rivoluzioni
+proletarie. Il gioco di ruolo è \textbf{un modo spontaneo e naturale di
+sperimentare il game design}: c'è tantissimo da imparare, e nel corso
+dell'anno ci saranno anche lezioni dedicate, orientate non tanto al giocare
+quanto alla creazione e alla comprensione di questi giochi.
+
+È anche una cosa dell'industria: al DICE Summit, uno degli eventi più
+importanti del settore rivolto agli sviluppatori (non al pubblico), chi viene
+selezionato come \emph{master} di D\&D riceve un biglietto gratuito; secondo
+quanto riferito in lezione, il biglietto costa diverse migliaia di dollari.
+
+\paragraph{Prendetevi cura del vostro corpo.} Il secondo consiglio è di fare
+\textbf{esercizio fisico}. Il direttore racconta di soffrire di una
+protrusione alla colonna vertebrale, dovuta a uno sforzo eccessivo, che lo
+costringe a fare lezione in piedi, ad andare in palestra almeno tre volte alla
+settimana e a fare ginnastica posturale, perché altrimenti i dolori non lo
+fanno dormire. Chi fa videogiochi passa moltissime ore seduto davanti a uno
+schermo: per hobby, per passione, per lavoro e per l'accademia. Una giornata
+tipo può consistere nel fare lezione seduti, giocare seduti, andare la sera a
+giocare a carte seduti. Anche una sola volta alla settimana di attività fisica
+è, nelle sue parole, ``il miglior investimento che potete fare sulla vostra
+carriera'', perché la sedentarietà è un \emph{silent killer}.
+
+\paragraph{Una parentesi su Commander.} Alla domanda su che mazzo giocherà
+quella sera a \emph{Commander} (un formato di \emph{Magic: The Gathering} su
+cui si tornerà nella sezione~\ref{sec:schell}), il direttore descrive un mazzo
+costruito attorno a Mr.\ Negative, una carta che scambia i punti vita: chi
+attacca rischia di ricevere i punti vita dello scambio, e questo crea una sorta
+di \emph{dilemma del prigioniero} in cui nessuno vuole essere l'ultimo a
+colpire. Il mazzo vince poco, ma genera una pressione psicologica molto
+interessante. È già un primo esempio di come un designer guarda i giochi:
+non solo ``vinco o perdo'', ma \emph{che cosa provano le persone al tavolo}.
+
+% ---------------------------------------------------------------------
+\section{L'esercizio: scrivere la propria definizione di gioco}
+\label{sec:esercizio-definizione}
+
+La lezione entra nel vivo con un esercizio molto semplice nella forma:
+\textbf{scrivere la propria definizione di gioco}. Le regole:
+\begin{itemize}
+  \item si scrive su un blocco note digitale o su carta, indifferentemente;
+  \item il tempo è di \textbf{cinque minuti} (Jack di solito ne dà due);
+  \item \textbf{non} si consultano dizionari, enciclopedie o il \emph{Cambridge
+        Dictionary}: il punto è dare la \emph{propria} definizione;
+  \item una volta scaduto il tempo, la definizione \textbf{non va
+        modificata} mentre si ascoltano quelle degli altri. Non c'è nessun
+        premio: è una questione di condivisione e di comprensione.
+\end{itemize}
+Anche i tre docenti scrivono (o hanno già pronta) la loro definizione, che
+verrà letta per ultima.
+
+Le definizioni vengono poi lette una per una e analizzate. Il metodo di
+analisi è sempre lo stesso, ed è importante capirlo prima di leggere la
+sezione seguente: per ogni definizione si cercano \textbf{gli elementi che
+include e quelli che esclude}. Ogni parola scelta lascia fuori qualcosa che
+pure chiameremmo ``gioco''. I docenti lo ripetono più volte: non si tratta di
+essere ``infami'' o di dimostrare che una definizione è sbagliata, ma di
+mostrare come ognuna contenga \emph{un'idea} di gioco senza riuscire ad
+abbracciare l'intera definizione di gioco, per quanto ampia possa essere.
+
+Un'avvertenza che emerge subito: \textbf{le parole hanno un significato molto
+preciso}. Se si scrive ``spazio'' intendendo anche uno spazio immaginario, ma
+non lo si specifica, si è scritto ``spazio'', non ``spazio immaginario''. Allo
+stesso modo, odiando tutti un po' la matematica, ``numeri'' e ``numeri
+immaginari'' sono cose estremamente differenti: definire i numeri non
+definisce i numeri immaginari.
+
+% ---------------------------------------------------------------------
+\section{Le definizioni della classe}
+\label{sec:definizioni-classe}
+
+Si riportano di seguito le definizioni lette in aula (in presenza e online),
+nell'ordine in cui sono state discusse, ciascuna con il commento dei docenti.
+Gli studenti sono indicati con il solo nome di battesimo.
+
+\subsection{Un prodotto con giocatori, regole, spazio, tempo e scopo}
+
+\begin{quote}
+\emph{``Un prodotto a scopo ludico o di intrattenimento che presenta diverse
+caratteristiche comuni: dei giocatori, delle regole, uno spazio e un tempo
+definiti e uno scopo e/o degli obiettivi.''} (Filippo)
+\end{quote}
+
+\begin{description}
+  \item[Prodotto] è un termine \textbf{commerciale}: un prodotto definisce una
+        vendita. Scegliendolo si escludono giochi che chiamiamo
+        tranquillamente tali: \emph{mosca cieca}, ad esempio, non è un
+        prodotto e non può essere venduto. È sbagliato? No: è una definizione.
+  \item[Scopo ludico] implica che un gioco abbia una funzione di
+        intrattenimento. Ma esistono giochi il cui scopo non è affatto ludico.
+        Il caso esemplare è \emph{That Dragon, Cancer}: un gioco creato da uno
+        sviluppatore che racconta la propria vera storia, quella di un padre
+        che deve accettare che il figlio di quattro anni morirà di cancro. È
+        straziante, ``una delle cose più brutte che spero non mi accada mai'',
+        e giocarlo non ha nulla di ludico; eppure dura circa due ore, è
+        altamente consigliato, è su Steam ed è anche un prodotto. È un gioco.
+  \item[Spazio] (osservazione di Jack) esistono giochi che si svolgono in uno
+        spazio puramente immaginario: dov'è lo spazio di gioco degli
+        indovinelli tra Bilbo e Gollum nello \emph{Hobbit}? Lo studente
+        intendeva lo spazio anche in senso non fisico, ma non lo ha scritto:
+        ``spazio'' e ``spazio immaginario'' sono cose molto differenti.
+\end{description}
+
+\subsection{Un'attività tra persone con regole concordate}
+
+\begin{quote}
+\emph{``Attività tra persone che, tramite regole concordate, passano il tempo
+insieme con il fine di essere intrattenute.''} (Damiano)
+\end{quote}
+
+\begin{description}
+  \item[Attività] indica una qualche forma di azione. Esistono però giochi
+        quasi privi di attività: gli \emph{autoplay} e gli \emph{idle} (o
+        AFK), in cui si prende qualche decisione all'inizio e poi il gioco va
+        avanti da sé, o addirittura giochi che ``si autogiocano''. Su Twitch
+        esistono streamer che fanno giocare animali: un pesce rosso ha finito
+        \emph{Pokémon Rosso} (impiegando l'equivalente di centinaia di giorni)
+        e un pesce rosso ha sconfitto Malenia in \emph{Elden Ring}. Il
+        direttore, che ci ha messo ventiquattro tentativi, si chiede quanti ne
+        abbia impiegati il pesce.
+  \item[Regole concordate] i bambini piccoli giocano molto spesso senza
+        condividere le regole: ``siamo pirati, però adesso arriva un mostro,
+        però adesso divento un Super Saiyan, però dovevamo partire da
+        dietro''. Il gioco è un cambiamento costante, ``melassoso'', senza un
+        inizio e senza una fine, e le regole non sono mai state concordate.
+\end{description}
+
+\subsection{Un'attività o un oggetto che stimola emozioni e pensiero}
+
+\begin{quote}
+\emph{``Un'attività o un oggetto capace di intrattenere il giocatore
+stimolando emozioni e pensiero.''} (Federico)
+\end{quote}
+
+\begin{description}
+  \item[Oggetto] è la prima volta che compaiono gli oggetti. Non è sbagliato,
+        ma quando si parla di oggetti spesso si parla di \textbf{giocattoli},
+        e come si vedrà più avanti nel corso c'è una grossa differenza tra un
+        giocattolo e un gioco; ciò non toglie che esistano giochi che sono
+        oggetti.
+  \item[Stimolare emozioni e pensiero] esistono giochi molto passivi, che
+        funzionano in modo estremamente automatico, ``che si fanno con metà
+        del cervello spenta, se non tutto''. \emph{Watch Paint Dry}, che ha
+        venduto migliaia di copie su Steam, è una schermata monocolore che
+        diventa leggermente più chiara col passare del tempo, perché simula il
+        guardare una parete che si asciuga. \emph{Placid Plastic Duck
+        Simulator}, un successo italiano realizzato da un docente
+        dell'accademia, ha venduto centinaia di migliaia di copie e fatto
+        milioni di euro: è un gioco in cui si guardano delle paperelle di gomma
+        muoversi in un ambiente.
+\end{description}
+
+\subsection{Un prodotto che regala stimoli ed emozioni}
+
+\begin{quote}
+\emph{``Un prodotto che regala stimoli ed emozioni a chi gioca e in parte anche
+a chi sviluppa.''} (Matteo)
+\end{quote}
+
+Torna il termine \emph{prodotto}, con il suo fine commerciale, che esclude i
+giochi di parole, i giochi infantili e uno spettro molto ampio di altre
+attività. Torna soprattutto il discorso delle \textbf{emozioni}, che inizia a
+essere una costante: il cosiddetto \textbf{responso emotivo} è un punto molto
+importante (è presente anche nella definizione di Mattia) e nel corso degli
+anni si vedranno diversi modi per definirlo. Restano però fuori elementi come
+lo spazio, il tempo, la condivisione e il fatto che il gioco sia o non sia
+giocato da un essere umano. Se a giocare a scacchi è una macchina (come i
+sistemi di DeepMind, \emph{AlphaGo} per il go e \emph{AlphaZero} per gli
+scacchi), e magari contro un'altra macchina, nessuno prova emozioni: eppure il
+gioco esiste. Esiste ``nel vuoto''; ma una volta messo sul mercato il discorso
+cambia, e si pone una domanda che tornerà: \textbf{se un gioco esiste ma
+nessuno lo gioca, che valore ha?} È la versione ludica della classica domanda
+filosofica: se un albero cade nella foresta e nessuno lo sente, fa rumore?
+
+\subsection{Un'esperienza di immedesimazione e di fuga dalla realtà}
+
+\begin{quote}
+\emph{``Un gioco è un'esperienza in grado di far immedesimare al meglio il
+giocatore, suscitare emozioni e sentimenti, far sviluppare senso critico e
+immaginazione: un modo per fuggire dalla realtà.''} (Sara)
+\end{quote}
+
+È all'opposto della precedente: invece che molto ampia, è estremamente
+stretta.
+\begin{itemize}
+  \item \textbf{Immedesimazione}: i giochi che non prevedono di immedesimarsi
+        non sarebbero giochi.
+  \item \textbf{Senso critico}: il \emph{gioco dell'oca} non fa sviluppare
+        alcun senso critico (nella migliore delle ipotesi è un passatempo);
+        \emph{Cookie Clicker} nemmeno. Secondo questa definizione non sarebbero
+        giochi, come migliaia di altri titoli.
+  \item \textbf{Fuggire dalla realtà}: è il punto più interessante. Una delle
+        caratteristiche dei videogiochi (non di tutti, e non dei giochi in
+        generale) è l'immaginazione, il poter creare cose che non esistono nel
+        mondo reale: c'è \emph{Modern Warfare 2} con le armi, ma c'è anche
+        \emph{Skyrim} con i draghi, la fantascienza, \emph{Gothic} con gli
+        orchi (``per fortuna gli orchi non esistono''). Non a caso si parla di
+        \emph{escape from reality}: non solo inventare o immaginare, ma
+        \emph{fuggire} dal mondo reale, che è complesso, difficile e spesso
+        brutto (basta guardare le guerre in corso o millenni di storia umana).
+        Il videogioco può presentare qualcosa di molto diverso, unico, magico e
+        potenzialmente bellissimo.
+\end{itemize}
+
+\subsection{Emozioni positive e negative}
+
+Una definizione successiva (Gaetano) torna sull'\textbf{attività}, sulle
+\textbf{emozioni}, sull'\textbf{interattività}, ma aggiunge un elemento nuovo:
+le emozioni possono essere \textbf{positive e negative}. In questo modo
+\emph{That Dragon, Cancer} rientra nella definizione; restano invece fuori i
+prodotti privi di interattività. E qui nasce una domanda legittima: se un
+gioco può non essere interattivo, allora anche un film può essere un gioco? La
+risposta è: \emph{potenzialmente sì}, e ci si arriverà (sezione~\ref{sec:zuppa}).
+Restano esclusi anche i giochi che non danno emozioni, come \emph{Watch Paint
+Dry}.
+
+Il concetto di emozione negativa è molto interessante: certi giochi si
+giocano \emph{per soffrire}, per spaventarsi o per arrabbiarsi. Contro Malenia
+il direttore ha perso ventiquattro volte: era frustrato e arrabbiato, il
+controller ``ha sofferto'', eppure ha continuato a giocare. Quando l'ha
+sconfitta, il grido gutturale di gioia avrà fatto pensare ai vicini di
+chiamare il 112; i tentativi precedenti avranno prodotto grida di odio, rabbia
+e sofferenza.
+
+\subsection{Un'esperienza individuale o di gruppo, con un obiettivo}
+
+\begin{quote}
+\emph{``Un'attività o un'esperienza individuale o di gruppo con regole e
+meccaniche prestabilite e un obiettivo da raggiungere, a volte fine
+all'esperienza stessa, con il fine di intrattenere e far scaturire differenti
+emozioni al giocatore.''} (Francesca)
+\end{quote}
+
+\begin{description}
+  \item[Individuale o di gruppo] elemento non ancora emerso: esistono il
+        \emph{single player} e il \emph{multiplayer}, giochi digitali e non
+        digitali, di gruppo e non di gruppo. Il videogioco può essere
+        un'esperienza solitaria o un'esperienza condivisa.
+  \item[Obiettivo] esistono giochi senza obiettivo. In \emph{Proteus} si
+        cammina in un campo fiorito, e basta: nessun obiettivo, nessun inizio,
+        nessuna fine; a un certo punto, si suppone, ci si annoia e lo si
+        chiude. Un gioco ``molto carino'', ma senza obiettivo.
+  \item[A volte fine all'esperienza stessa] è la parte più interessante:
+        l'obiettivo può essere \emph{interno} al gioco (sconfiggi il cattivo,
+        salva o conquista il mondo, distruggi l'impero) oppure \emph{non
+        legato al gioco stesso}. In \emph{Magic: The Gathering} lo scopo delle
+        carte sarebbe giocare a Magic, ma esiste un intero gruppo di persone il
+        cui obiettivo è \textbf{collezionare} le carte, cosa che non ha nulla
+        a che vedere con le partite, eppure fa parte dell'esperienza di Magic.
+        In altri giochi questa componente è addirittura quella principale: il
+        gioco di carte \emph{Pokémon} soffre in questo periodo di un'eccessiva
+        collezionabilità.
+\end{description}
+Anche qui, nonostante la definizione sia relativamente ampia, l'aver inserito
+gli obiettivi esclude i giochi privi di obiettivi.
+
+\subsection{Un'attività intrattenente basata sull'interattività}
+
+\begin{quote}
+\emph{``Un'attività intrattenente che si basa sull'interattività di colui che
+ne usufruisce.''} (Flavio)
+\end{quote}
+
+\begin{description}
+  \item[Intrattenente] esce dal campo delle emozioni: intrattenere significa
+        anche, semplicemente, \textbf{non annoiare}. L'assenza di noia è già
+        una forma di intrattenimento. È il motivo del successo, qualche anno
+        fa, dei \emph{fidget spinner}: non sono piacevoli in sé, ma rispetto
+        alla noia sono meglio. Molte cose sono meglio della noia, che è una
+        delle sensazioni peggiori che il cervello possa vivere.
+  \item[L'interattività di chi ne usufruisce] esclude chi non sta giocando.
+        Ma esistono giochi interattivi \emph{anche per chi non gioca}: i giochi
+        pensati per gli streamer. \emph{A Quiet Place} ha una modalità
+        streaming in cui gli spettatori possono ``incasinare'' lo streamer:
+        stanno interagendo, ma non sono i fruitori diretti. Sono un
+        \textbf{secondo livello di fruitori}.
+\end{description}
+
+\subsection{Vivere una storia in prima persona}
+
+\begin{quote}
+\emph{``Un gioco è un'esperienza interattiva in cui il giocatore vive in prima
+persona una storia, interpreta un ruolo, compete o collabora con altri
+giocatori per raggiungere un obiettivo, immergendosi nel contesto creato.''}
+(Francesco)
+\end{quote}
+
+\begin{description}
+  \item[In prima persona] non va inteso nel senso della camera, ma nel senso
+        di impersonare un \emph{avatar} (o $n$ avatar). Esistono anche giochi
+        che rendono il rapporto molto più contorto, mettendo il giocatore nei
+        panni di una camera che osserva l'avatar.
+  \item[Immergersi nel contesto creato] esistono giochi
+        \textbf{metanarrativi} che separano deliberatamente il giocatore
+        dall'avatar, cercando una \emph{dissonanza ludonarrativa} tra chi gioca
+        e ciò che viene giocato: \emph{Inscryption}, \emph{The Stanley
+        Parable}, \emph{The Beginner's Guide} (dello stesso autore di
+        \emph{Stanley Parable}).
+  \item[Storia] la parola, per quanto ovvia, non era ancora stata usata. Ci
+        sono giochi che sono praticamente storie, come \emph{Gone Home} o in
+        generale i cosiddetti \emph{walking simulator}, e giochi che sono puro
+        gameplay, come il flipper o \emph{Tetris}. Una definizione centrata
+        sulla storia esclude tutti i giochi puramente meccanici.
+  \item[Contesto] esistono giochi in cui il contesto non esiste e viene creato
+        dai giocatori stessi. \emph{Ten Candles} è un gioco di ruolo che si
+        gioca con dieci candele (da cui il nome), e parte del gioco è proprio
+        creare il gioco stesso: il contesto nasce da zero. Capita in moltissimi
+        \textbf{giochi di ruolo di stampo narrativo} (in Italia ne pubblica
+        molti, ad esempio, Narrattiva). Tra i preferiti del direttore c'è
+        \emph{Passione delle Passioni}, che simula una soap opera alla
+        \emph{Beautiful}: i personaggi non muoiono mai davvero, e quando il
+        proprio personaggio muore torna due turni dopo con un colpo di scena
+        (``era mio cugino'', ``in realtà sono naufragato su un'isola deserta e
+        sono sopravvissuto per due anni''). Jack aggiunge che la genialità del
+        gioco sta nel chiedere di interpretare \emph{sia l'attore sia il
+        personaggio} che l'attore interpreta.
+\end{description}
+
+\subsection{Un'avventura da vivere come un alter ego}
+
+\begin{quote}
+\emph{``Un'avventura in cui il giocatore vuole immergersi e viverla il più
+possibile, come se fosse una sorta di alter ego in cui vivi quel mondo nelle
+vesti del protagonista.''} (Lorenzo)
+\end{quote}
+
+Una definizione molto propositiva. La parola \textbf{avventura} propone già
+l'idea di qualcosa di più interessante del mondo reale, che è decisamente meno
+avventuroso. C'è poi un elemento di immersione e soprattutto di
+\textbf{volontà di partecipazione}, implicito ma percepibile, che nessuno aveva
+ancora citato: la \textbf{volontarietà}. Un gioco è un'esperienza volontaria?
+Dipende: ci sono giochi volontari e giochi non volontari. Con la sola parola
+``avventura'', ovviamente, si potrebbe escludere di tutto.
+
+\subsection{L'interazione con un medium, con l'ambiente o con la propria immaginazione}
+
+\begin{quote}
+\emph{``L'interazione attiva con un medium, con l'ambiente circostante o con la
+propria immaginazione, il cui scopo è principalmente quello di divertirsi e
+farsi coinvolgere.''} (Federica)
+\end{quote}
+
+La studentessa spiega di aver voluto essere molto generica, per includere
+molte cose: distinguere il gioco dal guardare un film, ma includere anche i
+giochi della sua infanzia, come ``giocare a pensare'', immaginare la vita di
+una persona, o saltare la campana. ``Giocare a pensare'' è senza dubbio un
+gioco, e qui si apre un intero mondo non ancora trattato: il
+\textbf{gioco pensato}. Non solo lo spazio immaginario, ma l'interazione
+immaginaria e le sue conseguenze: l'intera esperienza esiste in un ambito
+completamente fluido. È ciò che accade ai bambini che giocano insieme pur con
+regole completamente diverse, mai concordate.
+
+Esiste un'intera branca della matematica dedicata a questi giochi: i
+\textbf{puzzle di logica}, interamente mentali, in cui si devono individuare
+o capire le regole. Oppure gli indovinelli del tipo ``sei su un tetto, come
+fuggi?'', in cui si possono fare solo domande a cui si risponde sì o no, o in
+cui si deve ricostruire come si è arrivati in una certa situazione: giochi
+deduttivi, ambientati in uno spazio puramente mentale, che si possono fare
+anche da soli. In ambito scientifico si parla di \textbf{esperimenti
+mentali}. Uno dei più famosi è il \emph{paradosso dei gemelli} legato alla
+relatività di Einstein: se uno di due gemelli identici viaggia nello spazio a
+velocità prossime a quella della luce e l'altro resta sulla Terra, al ritorno
+saranno ancora identici? La risposta è no. Einstein non ha mai spedito due
+gemelli nello spazio: era un esperimento mentale.\footnote{L'effetto di
+dilatazione temporale previsto dalla relatività è stato poi verificato
+sperimentalmente, ad esempio con orologi atomici trasportati in volo, ma
+l'esperimento dei gemelli in quanto tale resta un esperimento mentale.}
+
+Jack fa notare che è stata anche la prima persona a usare, al posto di
+``intrattenimento'', il termine \emph{divertimento}: una parola su cui si
+tornerà prima della fine della lezione (sezione~\ref{sec:vocabolario}).
+
+\subsection{Un insieme di regole e sistemi}
+
+\begin{quote}
+\emph{``Il gioco è un insieme di regole e sistemi con uno scopo ben
+preciso.''} (Patrick)
+\end{quote}
+
+Compare per la prima volta la parola \textbf{sistemi}. Finora si era parlato
+di regole e obiettivi; i sistemi aggiungono un livello ulteriore, perché le
+regole si incastrano in strutture più complesse delle regole stesse.
+
+\paragraph{Esempio: il contropiede.} Nel regolamento del calcio non esiste la
+``regola del contropiede''. Il contropiede è una tattica che \textbf{deriva da
+come le regole si incastrano}: qualcuno ha capito che, se si lancia la palla
+dall'altra parte del campo quando gli avversari sono tutti nella propria metà
+e si corre ``come pazzi'', si ottiene un vantaggio strategico. Nessuna regola
+lo dice: è un sistema che nasce naturalmente dal gioco. Allo stesso modo,
+chiunque abbia scoperto una \emph{build} ``rotta'' in un gioco ha trovato
+qualcosa che nessuna regola descriveva (``se fai A più B rompi il gioco''):
+lo ha scoperto analizzando i sistemi.
+
+Si apre così un intero mondo di cui parlare: che cos'è un sistema? Quando
+nasce? Che cosa rende un gioco sistemico o non sistemico (si veda anche il
+capitolo~\ref{cap:introduzione-game-design})? Dopo una quindicina di
+definizioni, con altre nove ancora da leggere, nessuno aveva ancora toccato
+questo punto.
+
+\subsection{Un insieme di regole da rispettare}
+
+\begin{quote}
+\emph{``Un gioco è un'attività definita da un insieme di regole da rispettare al
+fine di raggiungere un obiettivo.''} (Davide)
+\end{quote}
+
+Tornano obiettivo e regole, ma l'espressione ``da rispettare'' porta un
+elemento nuovo. Quanti hanno \textbf{barato} almeno una volta? A Monopoly,
+prendendo una banconota da cento quando nessuno guarda; a \emph{UNO}, mettendo
+un $+2$ su un altro $+2$, che tecnicamente non è nelle regole ufficiali. Ci
+sono giochi che addirittura incorporano l'imbroglio: \emph{Munchkin} ha una
+carta che si chiama proprio ``Barare!'' e dà il potere di farlo. E anche negli
+sport si bara: in Formula 1, quasi ogni anno, c'è uno scandalo per qualcuno
+che ha manomesso il motore o ``sistemato'' qualche componente. Si è barato, e
+si è comunque giocato.
+
+Se con Lorenzo era emersa la volontarietà, con Davide emerge
+l'\textbf{onestà}, il tentativo di rispettare le regole: è vero che si bara,
+ma se ognuno facesse costantemente ciò che vuole il gioco sarebbe puro caos.
+
+\subsection{Un'attività interessante e non obbligatoria}
+
+\begin{quote}
+\emph{``Un gioco è un'attività interessante, non obbligatoria, per passare il
+tempo.''} (Federico)
+\end{quote}
+
+\begin{itemize}
+  \item \textbf{Interessante} esclude la distinzione tra positivo e negativo:
+        torna l'idea che ``piuttosto che niente, è meglio piuttosto''.
+  \item \textbf{Non obbligatoria} ripropone la volontarietà.
+  \item \textbf{Per passare il tempo} esclude tutti i giochi che hanno una
+        qualche valenza di crescita: ad esempio i primi \emph{Assassin's
+        Creed}, diventati famosi perché in grado di insegnare la storia, a
+        detta di alcuni, meglio dei libri di storia. Ma introduce anche un
+        elemento che nessuno aveva considerato: i \textbf{giochi passatempo}.
+        Sono più semplici, più banali se si vuole, ma esistono, e la loro
+        funzione è proprio essere semplici. Lo stesso direttore ha sul
+        telefono giochi che non richiedono grande impegno né grande
+        \textbf{carico cognitivo}, adatti ai due o tre minuti di attesa
+        dell'autobus o del treno.
+\end{itemize}
+
+\subsection{Un regolamento creato da un designer}
+
+\begin{quote}
+\emph{``Il gioco è un modo di svagarsi sottostando a un regolamento''},
+a cui lo studente aggiunge: \emph{``\dots di un designer''}. (Francesco)
+\end{quote}
+
+\emph{Svagarsi} richiama il passare del tempo, non necessariamente in modo
+positivo. La novità è l'aggiunta del \textbf{designer}: le regole sono state
+progettate da qualcuno. Questo, però, esclude il calcio, che è un
+\textbf{risultato evolutivo}: non esiste un inventore del calcio, che ha
+antenati antichissimi (si citano i giochi con la palla delle civiltà
+mesoamericane) e si è evoluto nei secoli fino alla forma moderna.
+
+Anche ammettendo un designer, chi è? Il direttore è stato direttore creativo
+di \emph{A Quiet Place}, ``la punta di diamante del design'', ma non l'unico
+designer: il design nasce da una visione di idee e di sistemi che coinvolge
+più persone. Si potrebbe allora dire ``un gruppo di creatori''; ma che cos'è un
+gruppo, quanto è grande, come lo si definisce? All'estremo opposto ci sono i
+giochi di Hideo Kojima, che mette il proprio nome ovunque nei titoli di
+\emph{Death Stranding} (``A Hideo Kojima Game'', ``Directed by Hideo
+Kojima''\dots): nei primi trenta minuti la parola ``Kojima'' compare un numero
+impressionante di volte.
+
+\subsection{Interazioni che influenzano il gioco, sfida e progressione narrativa}
+
+\begin{quote}
+\emph{``Un qualunque medium di intrattenimento con interazioni che hanno
+un'influenza su di esso, con un livello di sfida e/o una progressione
+narrativa.''} (Eric)
+\end{quote}
+
+\begin{description}
+  \item[Progressione narrativa] una storia che si evolve. Una storia può
+        essere un semplice punto di partenza; qui invece la storia
+        \emph{progredisce}. Attenzione: ``progredisce'' non implica un
+        finale.
+  \item[Interazioni che hanno effetto sul gioco] esclude le interazioni che
+        non hanno effetto sul sistema, ad esempio quelle \textbf{sociali}: in
+        un gioco multiplayer ridere e scherzare con chi sta giocando è
+        un'interazione, ma non modifica il sistema di gioco.
+\end{description}
+
+\subsection{Un'esperienza attraverso uno schermo, fatta di personaggi}
+
+\begin{quote}
+\emph{``Un gioco è un'esperienza, qualcosa che riesce a darti una determinata
+soddisfazione attraverso uno schermo; è solitamente fatto di storia,
+personaggi, luoghi, ambientazioni e tanto altro che ti fanno provare certe
+sensazioni.''} (Francesco)
+\end{quote}
+
+\emph{Attraverso uno schermo} esclude tutto ciò che non è videogioco o gioco
+mobile. Ma compaiono per la prima volta i \textbf{personaggi}: avatar del
+giocatore, personaggi, NPC sono elementi estremamente comuni nei giochi e
+fino a quel momento nessuno li aveva citati direttamente. Esistono giochi
+senza personaggi? Moltissimi. Esistono giochi basati \emph{interamente} sui
+personaggi, fatti solo di interazioni con loro? Sì: uno verrà analizzato in
+una lezione specifica, e non viene nominato per non rovinare la sorpresa.
+
+\subsection{Un'opera d'arte}
+
+\begin{quote}
+\emph{``Un gioco è un'opera d'arte, un modo evoluto di raccontare un mondo
+facendolo vivere in prima persona.''} (Mattia)
+\end{quote}
+
+Lo studente precisa che ``raccontare un mondo'' può avvenire anche attraverso
+\emph{Pong}, attraverso la simulazione di una persona che gioca a ping pong, o
+può riguardare la storia stessa dello sviluppo del gioco. L'elemento chiave,
+però, è l'\textbf{opera d'arte}, concetto spesso in contrapposizione con
+quello di \emph{prodotto} emerso nelle prime definizioni.
+
+Esistono tante opere e poche opere d'arte: di violinisti, compositori e
+pianisti è pieno il mondo passato e presente, ma tra secoli ricorderemo ancora
+Mozart. Che cos'è allora un'opera d'arte, e chi la definisce? Una risposta
+classica è ``ai posteri l'ardua sentenza''. Un esempio caro al direttore è
+\emph{Moby Dick}: alla sua uscita il romanzo fu accolto in modo pessimo, fu
+dimenticato per decenni e venne riscoperto solo molto tempo dopo, quando i
+critici lo rilanciarono come una delle più grandi opere mai scritte; oggi è
+considerato da tutti un capolavoro.\footnote{In lezione l'episodio è
+raccontato in forma aneddotica (copie bruciate, duecento anni di oblio).
+Storicamente il romanzo di Herman Melville (1851) ebbe un'accoglienza tiepida
+e vendite scarse, parte delle copie andò distrutta nell'incendio di un
+magazzino dell'editore nel 1853, e la sua riscoperta avvenne con la cosiddetta
+\emph{Melville Revival} degli anni Venti del Novecento.} Non sappiamo quindi
+come si definisca un'opera d'arte; ma questa definizione aggiunge un
+\textbf{elemento romantico}: il mirare a creare qualcosa di grande, che ci si
+riesca o meno, una volontà di elevazione.
+
+\subsection{Divertire, insegnare, far riflettere, meravigliare}
+
+\begin{quote}
+\emph{``Un gioco è un'attività di intrattenimento che ha lo scopo di divertire
+ma può anche insegnare, far riflettere o meravigliare, e fa tutto ciò in uno
+spazio di regole e intenzioni definiti.''} (Claudio)
+\end{quote}
+
+Tornano varie emozioni, tornano le regole e torna lo \textbf{spazio},
+stavolta \emph{definito}, cioè in qualche modo percepibile. Con i bambini non
+funzionerebbe, ma ci sono giochi in cui la definizione dello spazio è il
+punto di forza: \emph{Pokémon GO} sovrappone uno spazio digitale allo spazio
+del mondo reale, e così faceva il suo ``papà'', \emph{Ingress}.
+
+\subsection{Un'attività per la persona giocante}
+
+\begin{quote}
+\emph{``Un'attività interattiva svolta per divertire o intrattenere la persona
+giocante.''} (Antonino)
+\end{quote}
+
+L'elemento nuovo è la \textbf{persona giocante}. Molte delle definizioni
+ascoltate \emph{escludono il giocatore}: non lo nominano come parte della
+definizione. Si torna così alla domanda posta da Mattia: esiste un gioco senza
+giocatori? È di nuovo la domanda dell'albero che cade nella foresta, una
+questione filosofica antica.
+
+\subsection{Un'attività per una o più persone}
+
+\begin{quote}
+\emph{``Un gioco è un'attività volta al divertimento, che può essere di diverse
+tipologie e comprendere più persone.''} (Valerio)
+\end{quote}
+
+Molto generica. \emph{Volta al divertimento} esclude i giochi tristi; ritorna
+invece, rispetto alla precedente, il tema del \textbf{gruppo}: uno o più
+giocatori.
+
+\subsection{Una promessa e un punto di vista diverso dal proprio}
+
+\begin{quote}
+\emph{``Un gioco promette [\dots]: permette al giocatore di prendere i panni del
+protagonista della storia per fargli vivere un'esperienza unica nel suo
+genere, facendogli vedere la realtà sotto il punto di vista dei personaggi e
+consentendogli di far valere le sue scelte morali.''} (Andrea)
+\end{quote}
+
+Lo studente premette di aver già capito, ascoltando le altre, che nella sua
+c'è qualcosa che non va. ``Ma in tutte!'', è la risposta: non ne è stata
+trovata nemmeno una senza buchi.
+
+\paragraph{La promessa.} \emph{Promettere} è un termine interessantissimo.
+Quante volte ci si è arrabbiati con un gioco o con un film perché il trailer
+era diverso dall'esperienza? Un gioco, in un certo senso, deve definire se
+stesso. Non sempre lo fa: le regole del Monopoly non dicono come si
+\emph{vive} il Monopoly, e il regolamento del calcio non descrive le emozioni
+del calcio. Altri giochi invece sì: un \emph{God of War} cerca di spiegare
+come si giocherà e quale sarà l'esperienza; i libretti di istruzioni dei
+giochi di qualche generazione fa avevano proprio questa funzione. La promessa
+vale anche in altri ambiti: un ristorante che si chiama ``Sushi King'' e poi è
+una braceria senza sushi è strano, indipendentemente da quanto sia buona la
+brace.
+
+\paragraph{Il punto di vista dei personaggi e le scelte morali.} Il gioco
+permette di vivere condizioni che non corrispondono necessariamente alla
+propria attitudine, ad esempio \textbf{interpretare il cattivo}. In
+\emph{Fallout 3} c'è una scelta morale in cui un personaggio (Mr.\ Burke)
+offre al giocatore una suite di lusso nella Tenpenny Tower in cambio della
+detonazione della bomba atomica al centro della città di Megaton. Il
+direttore e uno studente l'hanno fatta esplodere; un altro studente,
+``sofferente'', ha rinunciato. Nella vita reale nessuno farebbe esplodere una
+città per una casa; nel gioco sì, perché si sta vivendo l'esperienza di un
+personaggio cattivo.
+
+In \emph{Baldur's Gate 3} una delle \emph{run} possibili è quella malvagia,
+con scelte moralmente discutibili. Jack racconta di trovarla straziante: già
+una delle prime scelte, saccheggiare il Boschetto di Smeraldo invece di
+proteggerlo e aprire il cancello ai goblin, porta a una scena in cui Zevlor
+guarda il giocatore non con rabbia, ma con l'incredulità di chi chiede ``perché
+ci stai condannando tutti?''. Mantenere una run malvagia è difficile, perché
+moralmente non si farebbe mai.
+
+Il punto nuovo, quindi, non è la storia o la scelta (già emerse), ma
+l'\textbf{interpretazione di punti di vista potenzialmente non propri}, nel
+bene e nel male.
+
+\subsection{Creare una specifica esperienza}
+
+\begin{quote}
+\emph{``Un gioco è un insieme di regole e sistemi con l'obiettivo di creare una
+specifica esperienza e far provare delle emozioni ai giocatori.''} (Tancredi)
+\end{quote}
+
+L'inizio è simile a quello di Patrick; il termine più importante è
+\textbf{specifica esperienza}. C'è una volontarietà simile a quella del
+designer citata da Francesco: voler creare qualcosa di specifico, di meno
+casuale. Eppure esistono moltissimi giochi casuali: la \textbf{roulette} è un
+gioco puramente casuale (se non si bara).
+
+\subsection{Scenari, meccaniche e personaggi ideati dal designer}
+
+\begin{quote}
+\emph{``Un gioco è un'esperienza attraverso la quale il giocatore, ovvero chi
+lo gioca, riesce a immedesimarsi e/o a provare emozioni che il designer ha
+ideato con l'introduzione o la costruzione di scenari, meccaniche e
+personaggi.''} (Angelo)
+\end{quote}
+
+Compaiono un termine tecnico, \textbf{meccaniche}, che verrà studiato a
+fondo, e il concetto di \textbf{scenario}. Uno scenario indica che il
+contesto, sia fisico sia di spazio (digitale o meno), è stato creato: quando si
+immagina uno scenario si immaginano tutti i suoi elementi. Nessuno aveva
+ancora parlato di scenari, che pure sono onnipresenti nei giochi: anche un
+puzzle è uno scenario, un problema e la sua soluzione.
+
+\subsection{Un'esperienza sempre diversa}
+
+\begin{quote}
+\emph{``È un medium attraverso il quale si intrattiene il giocatore, con
+scelte e obiettivi, e quindi ogni volta l'esperienza del giocatore è
+differente.''} (Eric)
+\end{quote}
+
+\begin{itemize}
+  \item \textbf{Ogni volta differente} esclude moltissimo: esistono giochi
+        puramente lineari in cui l'esperienza è sempre identica.
+  \item \textbf{Si intrattiene il giocatore} esclude chi non gioca: ci sono
+        giochi che si giocano e giochi che si \emph{guardano giocare}. Il
+        direttore guarda giochi in \emph{blind run} senza commento, proprio
+        per godersi il gioco e non lo streamer. Un gioco può intrattenere
+        anche chi non lo sta giocando.
+\end{itemize}
+
+\subsection{Un viaggio o una sfida}
+
+\begin{quote}
+\emph{``Un gioco può essere un viaggio piacevole o una sfida, che può essere
+in compagnia o in solitaria.''} (Alberto Maria)
+\end{quote}
+
+La parola nuova è \textbf{sfida}. Nessuno aveva ancora detto esplicitamente che
+un gioco può essere una \emph{challenge} da superare, qualcosa di complesso:
+Malenia era stata citata più volte, ma il concetto di sfida era rimasto
+implicito.
+
+% ---------------------------------------------------------------------
+\section{Le definizioni ``autorevoli''}
+\label{sec:definizioni-autorevoli}
+
+Dopo circa un'ora di definizioni ``tutte sbagliate'', ci si potrebbe aspettare
+la definizione giusta. Ne vengono proposte alcune, con un avvertimento:
+\emph{saranno comunque sbagliate}.
+
+\begin{description}
+  \item[Oxford Dictionary] un gioco è un'attività in cui ci si impegna
+        (\emph{engage}) per divertimento (\emph{amusement} o \emph{fun}), come
+        forma di competizione o di sport, giocata seguendo delle regole.
+  \item[Friedrich Schiller] il \emph{play} è ``l'espressione priva di scopo
+        di un'energia esuberante'' (\emph{the aimless expenditure of
+        exuberant energy}). Qui serve una precisazione linguistica: in
+        italiano ``gioco'' indica sia lo strumento sia l'attività, mentre
+        l'inglese distingue \textbf{game} (il gioco come oggetto, struttura) e
+        \textbf{play} (l'atto di giocare). È uno dei rari casi in cui l'inglese
+        è più preciso dell'italiano. La definizione di Schiller è l'opposto di
+        molte di quelle della classe: è un'attività \emph{priva di obiettivo},
+        e non serve a passare il tempo, ma a spendere un'energia in eccesso,
+        quando in un certo momento se ne ha più di quanta ne serva, senza
+        alcuna ragione.
+  \item[Tracy Fullerton, Chris Swain e Steven Hoffman] (autori di \emph{Game
+        Design Workshop}) un gioco è un \textbf{sistema formale} (cioè
+        definito, chiuso) in cui i giocatori interagiscono in una
+        \textbf{struttura di conflitto} che si risolve in un \textbf{esito
+        ineguale}. \emph{Conflitto} non significa guerra, ma semplicemente
+        un'interazione che porta a un risultato in cui qualcuno vince e
+        qualcuno perde, qualcuno tiene i soldi e qualcuno no. Ovviamente
+        esclude i giochi in cui vincono tutti, come i \textbf{cooperativi}.
+  \item[Una citazione sul play] riportata in lezione: ``la verità riguardo al
+        \emph{play} è che non può essere definito, così come non può essere
+        definita la vita stessa''.
+\end{description}
+
+% ---------------------------------------------------------------------
+\section{Il gioco non è definibile}
+\label{sec:non-definibile}
+
+\subsection{Il gioco come stato mentale}
+
+L'ultima citazione è l'intero punto dell'esercizio:
+\begin{quote}
+\centering
+\textbf{Nessuna delle vostre definizioni è giusta. Nessuna di queste
+definizioni è giusta. Nessuna delle vostre definizioni è sbagliata.}
+\end{quote}
+Il gioco \textbf{non è definibile}, perché alla base il gioco è
+\textbf{uno stato mentale}: qualcosa che si interpreta. Si potrebbe decidere
+di ``giocare'' il proprio lavoro, di interpretare la propria vita come un
+gioco. Lo dice bene una citazione da \emph{Mary Poppins}:
+\begin{quote}
+\emph{In every job that must be done there is an element of fun. You find the
+fun and --- snap! --- the job's a game.}
+\end{quote}
+(In ogni lavoro che va fatto c'è un elemento di divertimento: trovalo e,
+schiocco di dita, il lavoro diventa un gioco.) C'è anche un detto italiano
+simile: ``scegli un lavoro che ami e non lavorerai un solo giorno della tua
+vita''. Spoiler: non è così, perché il lavoro resta lavoro; ma è meglio
+lavorare su qualcosa che si ama che su qualcosa che si odia.
+
+Tuttavia, se il gioco non è definibile, è definibile \emph{ciò che
+caratterizza} un gioco (sezione~\ref{sec:zuppa}).
+
+\subsection{Le definizioni dei docenti}
+
+Prima di procedere, i tre docenti leggono le proprie definizioni, con lo
+stesso avvertimento: non vanno prese come ``quella giusta''. Ognuna esclude una
+marea di giochi.
+
+\begin{description}
+  \item[Diego Ricchiuti] un gioco è un'attività emozionale in cui gli utenti
+        interagiscono con una struttura \textbf{ARBITRARIA}, in cui
+        \textbf{PERCEPISCONO} un obiettivo e un conflitto. \emph{Arbitrario}
+        indica qualcosa di non equo, deciso da qualcuno che ha potere assoluto,
+        che può essere il gioco stesso o il designer. \emph{Percepiscono}
+        significa che il conflitto può anche non essere presente, ma i
+        giocatori sentono che c'è: sentono di farlo per una qualche ragione.
+  \item[Mattia Podini] un gioco è un sistema basato su regole che evoca
+        \textbf{estetiche} di gioco tramite l'interazione (dove, per ora,
+        ``estetiche'' va inteso come sinonimo di emozioni; il termine verrà
+        formalizzato più avanti).
+  \item[Jack Danna] un gioco è un'attività gestita da regole che coinvolge
+        l'utente tramite il raggiungimento di un obiettivo.
+\end{description}
+
+Vengono mostrate anche le definizioni di due ex docenti dell'accademia (che
+erano stati docenti di game design e level design dello stesso direttore,
+quando era studente):
+\begin{description}
+  \item[Paolo, level designer] un'attività coinvolgente in cui gli utenti
+        interagiscono in modo arbitrario con una struttura e percepiscono un
+        obiettivo che si risolve in modo ineguale. Come si vede, molto vicina
+        a quella del direttore (``è stato convertito'').
+  \item[Valerio] uno strumento di \textbf{esplorazione e apprendimento}
+        (\emph{a tool of exploration and learning}), dove ``esplorazione'' non
+        è fisica ma significa sperimentare, che usa regole, obiettivi e
+        simulazioni del mondo reale \textbf{abbassando il rischio}.
+\end{description}
+Quest'ultima è molto interessante perché coglie un elemento del \emph{play}:
+\textbf{abbassare la posta in gioco facilita il gioco}. Chi può ``giocare''
+in borsa? Chi è ricco: se perde i soldi, poco importa.
+
+\subsection{La definizione come bussola}
+
+Che cosa farsene, allora, delle definizioni scritte in aula, e perché
+dedicarvi un'ora? Per due ragioni. La prima è stata vista: capire che il gioco
+non è definibile. La seconda è più personale:
+\begin{quote}
+\textbf{La vostra definizione di gioco definisce voi come designer.}
+\end{quote}
+Va riletta, studiata, analizzata:
+\begin{itemize}
+  \item chi ha scritto \emph{storia} ha un animo narrativo;
+  \item chi ha scritto \emph{sistemi} è un futuro \emph{system designer};
+  \item chi ha scritto \emph{multiplayer} è interessato a quell'ambito;
+  \item chi ha scritto \emph{avventura} è chiaramente interessato ai giochi
+        d'avventura;
+  \item chi ha scritto \emph{emozioni} vede il lato più romantico ed
+        emozionale del gioco;
+  \item chi ha scritto \emph{regole} vede la componente più classica del
+        mestiere, quella del game designer che sceglie le regole del gioco;
+  \item chi ha scritto \emph{personaggi} è interessato alla simulazione delle
+        interazioni umane tramite personaggi: non la storia del grande eroe
+        che salva il mondo, ma l'umano, il piccolo, le persone che si
+        confrontano, le loro vicissitudini;
+  \item chi ha parlato di \emph{risolvere problemi} tende, probabilmente, più
+        al game design che ad altre discipline.
+\end{itemize}
+Sono tutte giuste. Sono utili perché diventano una \textbf{bussola}: un punto
+di riferimento per i progetti in accademia, per la carriera futura e per il
+tipo di designer che si vorrà essere. È inutile che chi ha scritto
+``narrativa'' o ``storia'' si metta a fare giochi sistemici: non è ciò che gli
+interessa.
+
+La raccomandazione pratica è di \textbf{riscrivere la propria definizione
+ogni tanto} (non ogni giorno: ogni anno, ogni biennio o più), \emph{senza
+rileggere quella vecchia}. Le cose evolvono, i gusti cambiano, si giocano
+giochi diversi, si fanno esperienze diverse, si cresce come designer (che non
+significa necessariamente migliorare, ma cambiare).
+
+La definizione del direttore mette in risalto, addirittura in maiuscolo, due
+parole estremamente teoriche: \emph{arbitrario} e \emph{percepito}. Non è un
+caso: è un designer che adora la \textbf{teoria del game design}, che studia
+libri di game design, psicologia, sociologia e antropologia, che fa ricerca
+per spingere la teoria un passo più in là. La sua definizione è legata alla
+percezione, al voler andare oltre ciò che si è già visto. Questo non la rende
+migliore: la rende una bussola per lui. Se tra qualche anno cambierà (e
+succederà sicuramente), rappresenterà il suo nuovo modo di affrontare il
+problema.
+
+% ---------------------------------------------------------------------
+\section{Gli ingredienti della zuppa}
+\label{sec:zuppa}
+
+\subsection{La metafora della zuppa}
+
+Non tutto è perduto. Se non si può definire il gioco, se ne possono definire
+le \textbf{caratteristiche}. Il gioco è come una zuppa: che cos'è una zuppa?
+Acqua con delle cose dentro? Una ricetta? Anche senza sapere definire con
+esattezza se qualcosa sia una zuppa, se ne possono \textbf{elencare gli
+ingredienti}, e da quelli capire se quella zuppa piace o no, o se è davvero una
+zuppa. Lo stesso vale per il gioco: anche se non lo si può definire, se ne
+possono definire le \textbf{componenti}, e attraverso la loro analisi capire
+se un gioco rientra nei propri gusti, oltre a molte altre caratteristiche che
+si scopriranno più avanti.
+
+\subsection{Raph Koster: artefatti ludici e sistemi ludici}
+
+Il primo esempio viene da Raph Koster, autore di \emph{A Theory of Fun for
+Game Design} e designer noto soprattutto per \emph{Ultima Online}, uno dei
+primi MMO della storia. Koster, invece di definire il gioco, ne distingue le
+componenti partendo da due categorie:
+
+\begin{description}
+  \item[Artefatti ludici] (\emph{ludic artifacts}): sistemi \textbf{progettati
+        per essere giocati} (\emph{designed for play}). Esempi: il \emph{go}, lo
+        splendido gioco asiatico; \emph{Magic: The Gathering}; il football e il
+        calcio; \emph{Werewolf} (in Italia noto come \emph{Lupus in
+        Tabula}); \emph{Space Invaders}; \emph{League of Legends}.
+  \item[Sistemi ludici] (sistemi \emph{suscettibili di gioco}, cioè con cui
+        si può interagire giocando): sistemi che \emph{non} sono giochi, eppure
+        possono essere giocati.
+\end{description}
+
+Gli esempi della seconda categoria sono illuminanti:
+\begin{itemize}
+  \item \textbf{il mercato azionario} (\emph{stock market}): può essere uno
+        strumento per fare soldi, o un modo per passare il tempo, se fare soldi
+        non è l'obiettivo;
+  \item \textbf{uno strumento musicale}: si può suonare Beethoven al violino,
+        oppure strimpellare una chitarra, ridere della propria incompetenza e
+        far ridere gli altri, con sé e di sé;
+  \item \textbf{la guerra}: per chi la vive è tutt'altro che un gioco, ma
+        esistono i giochi di guerra, e spesso chi fa la guerra per lavoro (i
+        generali) la deve ``deumanizzare'', valutarla come se fosse un gioco,
+        perché pensando alle vite umane non si riuscirebbero a fare le scelte
+        logicamente corrette;
+  \item \textbf{la politica}: il direttore cita un episodio recente di una
+        persona eletta consigliere comunale negli Stati Uniti dopo una campagna
+        nata come scherzo (``votatemi, non sono competente, ma ne ho voglia'').
+        È un caso estremo, ma si dice spesso che i politici ``giocano'' con la
+        vita delle persone;
+  \item \textbf{l'orecchio interno}: chi gira su se stesso (o lo ha fatto da
+        bambino) sta usando la propria conoscenza, empirica o meno, di come
+        funziona l'orecchio interno per crearsi un'emozione, la sensazione di
+        essere storditi (\emph{dizzy}). Sta ``giocando'' il proprio orecchio
+        interno. Il direttore lo fa ancora con i nipotini: vince chi gira di più
+        su se stesso e poi resta in piedi (e vincono loro);
+  \item \textbf{la fisica}: la palla, l'oggetto più basilare del mondo, ha una
+        reazione fisica ed è una forma di gioco con la fisica dell'universo.
+        Basta cambiare quanto rimbalza la palla per cambiare completamente il
+        gioco: si provi a giocare a calcio con il pallone da basket, a basket
+        con il pallone da football americano, a tennis con il pallone da
+        calcio. Non si è cambiata nessuna regola, solo l'interazione fisica
+        dell'oggetto, eppure è cambiato tutto. Lo stesso vale per le
+        palline di gomma dura grandi come una biglia che rimbalzano
+        all'infinito (e si perdono ovunque), o per il salto della corda, dove
+        la reazione fisica è affidata alle competenze del proprio corpo.
+\end{itemize}
+
+\paragraph{Anche i sistemi hanno regole.} Mattia aggiunge che anche questi
+sono sistemi, e quindi hanno regole interne. Nella fisica c'è la gravità, ma
+c'è anche lo spazio: lo si assume infinito, e ci sono simulazioni che
+funzionano assumendolo tale, ma a livello computazionale c'è sempre un limite.
+Un esempio che gli studenti sperimenteranno presto: nelle prime lezioni di
+level design, quando si impara a modificare il \emph{character}, quasi tutti
+aumentano a dismisura velocità di movimento, altezza del salto e \emph{air
+control}, ottenendo personaggi che saltano letteralmente \emph{fuori dal
+mondo}. Lo spazio dell'engine è finito (una sorta di cupola), e con un salto
+abbastanza potente lo si vede rimpicciolirsi mentre si vola ``verso l'infinito e
+oltre''. ``Lo farete, lo fanno tutti, è normale.''
+
+\subsection{Game e play sono la stessa cosa}
+
+Perché questa distinzione? Anche Koster non ha una definizione giusta (nessuno
+ce l'ha e nessuno mai ce l'avrà), ma la sua divisione mostra che esistono
+\textbf{sistemi progettati per il play} (il gioco ``classico'', come lo hanno
+definito gli studenti) e una \textbf{mentalità di play} (il gioco inteso in
+senso largo, lo stato mentale: tutto può essere un gioco, a patto di essere
+nello stato mentale di giocarlo).
+
+Qual è quello giusto? Sono \textbf{la stessa cosa}. Non due facce della stessa
+moneta: la stessa cosa. Comprenderlo è \textbf{il primo segreto per sviluppare
+giochi}: il gioco è un gioco, ma lo stato mentale è parte del gioco, anzi è il
+gioco stesso. C'è sempre uno stato mentale legato al gioco, e \textbf{la
+capacità di lavorare con lo stato mentale del giocatore} sarà parte del lavoro
+del designer. Più si andrà avanti, nel corso dell'anno e negli anni
+successivi, più si parlerà di psicologia, proprio perché lo stato mentale del
+giocatore è parte integrante dell'esperienza. Detto in inglese: uno è il
+\emph{game}, l'altro è il \emph{play}.
+
+% ---------------------------------------------------------------------
+\section{Il framework di Jesse Schell: la tetrade elementare}
+\label{sec:schell}
+
+\subsection{Che cosa sono i framework}
+
+Si entra ora ``dentro la zuppa'', con strumenti che da qui in poi si chiameranno
+\textbf{framework}: elenchi strutturati delle componenti di un gioco. I primi
+due sono quelli di Jesse Schell, autore di \emph{The Art of Game Design: A Book
+of Lenses} (il testo di riferimento del corso, si veda la
+sezione~\ref{sec:risorse}), e di Brenda Romero e Ian Schreiber, autori di
+\emph{Challenges for Game Designers}. Sono tre nomi tra i più importanti della
+storia del design: Schell, presentato in lezione come designer di grande
+esperienza anche nel gioco da tavolo;\footnote{Jesse Schell è noto soprattutto
+per il lavoro ai Disney Imagineering VR Studio, per la fondazione di Schell
+Games e per l'insegnamento alla Carnegie Mellon University.} Brenda Romero,
+una delle più importanti designer di videogiochi; Ian Schreiber, uno dei più
+importanti teorici del design. Le loro versioni del ``contenuto della zuppa''
+sono completamente differenti.
+
+Schell divide il gioco in quattro elementi, la cosiddetta \textbf{tetrade
+elementare}: meccaniche, narrativa, estetiche e tecnologia.
+
+\subsection{Meccaniche}
+
+Le \textbf{meccaniche} sono le procedure e le regole del gioco. Descrivono
+l'\textbf{obiettivo}, come i giocatori possono e non possono raggiungerlo e che
+cosa succede quando ci provano. Comprendono:
+\begin{description}
+  \item[Le regole] ciò che si può e non si può fare.
+  \item[I verbi] un altro modo di chiamare le meccaniche: un verbo è
+        letteralmente un verbo (saltare, sparare, mirare). Le azioni del gioco
+        si esprimono in verbi in \emph{-are}, \emph{-ere}, \emph{-ire}.
+  \item[I pezzi] nessuna definizione della classe li aveva citati. I pezzi non
+        sono solo il pedone degli scacchi: è un pezzo del gioco anche il
+        controller, o il mouse. Gli FPS ne suggeriscono uno, i giochi di guida e
+        d'azione un altro, al punto che certi controller vengono venduti a
+        centinaia di euro perché danno un vantaggio (il direttore ne mostra uno
+        con i tasti posteriori). Il termine corretto, come si vedrà, è
+        \emph{tecnologia}.
+\end{description}
+Schell dice quindi: la prima cosa da definire è l'obiettivo, poi come i
+giocatori lo raggiungono, che cosa possono e non possono fare, che cosa succede
+quando ci provano, le regole, i verbi e i pezzi.
+
+\subsection{Narrativa}
+
+La \textbf{narrativa} è la sequenza di eventi che si sviluppa nel gioco, che
+può essere:
+\begin{itemize}
+  \item \textbf{lineare e prescritta} (\emph{scripted});
+  \item \textbf{ramificata}: non ha un unico finale e, in base a determinate
+        scelte del giocatore, può prendere una strada o un'altra
+        (\emph{Baldur's Gate 3} è, da questo punto di vista, ``completamente
+        fuori di testa'', con un numero enorme di combinazioni di finali);
+  \item \textbf{emergente}: a grandi linee, dipende ed è attivamente
+        influenzata dalle azioni del giocatore nel corso del gioco. Il concetto
+        è molto più ampio e verrà trattato in una lezione specifica.
+\end{itemize}
+
+Due osservazioni importanti.
+\begin{enumerate}
+  \item Schell parla della \emph{sequenza di eventi che si sviluppa nel
+        gioco}: non si riferisce solo ai giochi narrativi. Un gioco di auto
+        non ha la narrativa percepibile di un \emph{Life is Strange}, ma ha
+        comunque una forma di narrativa interna.
+  \item Schell usa il termine \textbf{narrativa}, mai \emph{storia}. La
+        narrativa implica moltissime cose: la storia, ma anche i personaggi, il
+        mondo, tutto ciò che riguarda una descrizione. Alcuni giochi hanno una
+        storia, altri un mondo, altri una storia emergente.
+\end{enumerate}
+
+\subsection{Un principio fondamentale sui framework}
+
+Da qui discende una regola fondamentale:
+\begin{quote}
+\textbf{Per essere valido, un framework deve potersi applicare a qualsiasi
+gioco.}
+\end{quote}
+Non può esistere un framework che funzioni solo per un tipo di gioco. Tutto
+quello che Schell dice vale tanto per i giochi da tavolo quanto per i
+videogiochi. Questo perché Schell si allontana dalla \emph{definizione},
+facendo mentalmente lo stesso percorso fatto in aula:
+\begin{itemize}
+  \item lo scopo di una \textbf{definizione} è \emph{chiudere}: delimitare la
+        parola, darle dei limiti;
+  \item lo scopo di un \textbf{elenco di elementi} è l'opposto:
+        \emph{ingrandire}. Se domani Schell pubblicasse un secondo volume,
+        potrebbe aggiungere un quinto elemento, se lo ritenesse necessario.
+        \textbf{Non esiste un limite agli ingredienti della zuppa}: la zuppa
+        cresce in base alla necessità.
+\end{itemize}
+
+Mattia aggiunge una precisazione: è vero che i framework sono fatti per
+raccogliere sotto il loro cappello quanti più giochi e metri di analisi
+possibili, ma resta vero che spetta alla \textbf{sensibilità del designer}
+scegliere, in base a ciò che vuole fare, a ciò in cui è bravo, a dove lavora,
+alle risorse e ai limiti (si veda la sezione~\ref{sec:limiti}). È anche il
+motivo per cui esistono due framework che dicono più o meno la stessa cosa, con
+liste diverse e in parte complementari. Quello di Schell, ad esempio, con la
+sua attenzione alla narrativa, si presta meglio a spiegare un gioco
+\emph{story driven}; per confrontare due giochi con la stessa tecnologia (ad
+esempio giocati sulle stesse periferiche) è più adatto quello di Romero e
+Schreiber. Bisogna iniziare a pensare in termini di \textbf{malleabilità} dei
+framework: quando conviene usarne uno e quando un altro.
+
+\subsection{Estetiche}
+
+Attenzione: si incontreranno \textbf{due accezioni diverse} del termine
+\emph{estetica}. Quella di Schell è la più ampia: le estetiche sono
+\textbf{come il gioco si vede, si sente, profuma, si assapora}. Profumo e sapore
+non sono un'iperbole: esistono gli scacchi alcolici, in cui ogni pezzo mangiato
+è un bicchierino da bere; il \emph{chess boxing}, che alterna partite a scacchi
+e round di pugilato; i libri di Geronimo Stilton con le pagine profumate. In
+generale: \textbf{come il gioco viene percepito}.
+
+Le estetiche sono un aspetto incredibilmente importante perché sono
+\textbf{la relazione più diretta del giocatore con l'esperienza}: il modo più
+diretto con cui il giocatore interagisce con il gioco, e la parte ``finale'' di
+ciò che percepisce. Da giocatori si vede come il gioco si presenta, quanto è
+piacevole giocarlo, quanto è difficile compiere un'azione, che cosa significa
+lanciare una palla di fuoco in \emph{Super Mario}: vedere la palla di fuoco.
+Quella però è la \textbf{vestizione} applicata sopra le meccaniche. La
+meccanica è ``se A, allora succede B''; come B si presenta, di che colori è,
+che suono fa, se c'è o no la vibrazione (\emph{rumble}, cioè feedback aptico
+sul controller), tutto questo ricade nel regno delle estetiche. Più avanti si
+vedrà una terminologia più formalizzata che separa ancora meglio i livelli di
+estetica e di meccanica.
+
+\paragraph{Esempio: il coltello.} Si immagini il proprio gioco preferito, ma
+ogni volta che si subisce un danno qualcuno compare dal nulla e accoltella il
+giocatore. Probabilmente non sarebbe più il gioco preferito. È un caso
+ridicolo, ma mostra che se la relazione estetica del gioco fosse il dolore,
+quasi tutti abbandonerebbero (non tutti, però, perché c'è chi apprezza il
+dolore). Gli elementi visivi, interattivi, perfino fisici sono parte
+dell'esperienza.
+
+\paragraph{Esempio: le miniature.} Chi gioca con le miniature si è punto
+innumerevoli volte con le lance (ad esempio di \emph{Warhammer Fantasy}),
+soprattutto in fase di montaggio: un misto di amore e odio che fa parte del
+percorso. Una miniatura di metallo, di plastica, di plastica con un leggero
+strato metallico magnetizzabile, di ghisa: ognuna dà sensazioni diverse.
+Lo stesso vale per le carte \emph{foil}, con la loro sensazione al tatto e la
+loro piegatura. Sono tutte \textbf{sensazioni tattili}, elementi fondamentali.
+
+\paragraph{Esempio: Raggio Aurora.} In \emph{Pokémon} molte mosse sono, dal
+punto di vista meccanico, semplicemente una statistica di danno e un tipo:
+Braciere (fuoco) e Pistolacqua (acqua) sono meccanicamente quasi identiche,
+cambia solo il tipo. Eppure tutti hanno mosse preferite, non perché più
+efficaci, ma perché l'animazione è spettacolare. Il direttore, che ha giocato
+\emph{Pokémon Rosso e Blu}, ricorda ancora \textbf{Raggio Aurora}, la cui
+animazione (``il raggio epilessia'') è diventata sempre più vistosa di
+generazione in generazione. Raggio Aurora è una mossa mediocre: in competitivo
+nessuno la usa, perché esiste Geloraggio, che ne è la versione migliore.
+Eppure è la mossa che ricorda, per la sua \textbf{componente estetica}, che per
+i suoi gusti (non in assoluto) la rende più interessante di altre.
+
+\subsection{Tecnologia}
+
+La \textbf{tecnologia} è tutto il materiale, tecnologico o fisico, che riguarda
+il gioco: il computer su cui gira, l'engine che lo fa girare, il controller, il
+materiale delle miniature. È importante perché cambia l'esperienza:
+\begin{itemize}
+  \item il \emph{feeling} di una carta o di una miniatura cambia da materiale a
+        materiale; giocare con un controller o con mouse e tastiera è diverso;
+  \item se si fa girare \emph{GTA V} su un vecchio portatile a 6 fps,
+        l'esperienza è pessima: del gioco non è cambiato nulla, tranne il fatto
+        che gira a 6 fps. È la ragione dei \textbf{requisiti minimi} e dei
+        \textbf{requisiti consigliati} per un'esperienza decente;
+  \item in \emph{Pokémon GO}, che usa la posizione reale del giocatore, alcuni
+        streamer sono stati derubati del telefono dopo essersi avventurati, per
+        catturare un Pokémon raro, in zone poco sicure delle città: casi
+        estremi, ma che mostrano quanto la tecnologia influenzi il gioco;
+  \item in \emph{Invizimals} (su PSP) si acquistavano in edicola delle carte o
+        miniature dei mostri, che venivano poi ``catturati'' inquadrandoli con
+        la fotocamera della console: anche questa è tecnologia.
+\end{itemize}
+
+\paragraph{Esempio: Commander e le cento carte.} \emph{Magic} nasce con mazzi
+da 60 carte. \emph{Commander} è un formato creato dalla comunità, poi diventato
+famoso e consolidato, che si gioca con mazzi da \textbf{100 carte}. Qui emerge
+un limite della tecnologia di Magic: \textbf{mescolare cento carte è
+estremamente difficile e noioso}. In un gioco in cui mescolare è un'azione
+abbastanza frequente, questo diventa parte di un'esperienza negativa, tanto che
+esistono tavoli in cui i giocatori si accordano per non inserire carte che
+fanno mescolare il mazzo, così da farlo solo all'inizio. Il problema nasce dal
+fatto che Magic è stato pensato con carte di un certo peso, dimensione e costo,
+che funzionano in mazzi da 60, non da 100. Si potrebbe sostenere che non sia un
+errore di Wizards of the Coast, dato che il formato non è nato da loro; ma il
+punto è che la tecnologia cambia l'esperienza.
+
+% ---------------------------------------------------------------------
+\section{Il framework di Brenda Romero e Ian Schreiber}
+\label{sec:romero-schreiber}
+
+\subsection{Perché più punti di vista}
+
+Si guarda ora il contenuto della zuppa dal punto di vista di Romero e
+Schreiber. Non perché siano più bravi di Schell, o viceversa, né perché la
+visione del direttore sia migliore delle loro: \textbf{non esiste un framework
+migliore}, così come la divisione di Koster non è migliore o peggiore delle
+altre. Mostrare la stessa cosa da più punti di vista serve a capirne la
+complessità; inoltre ognuno tenderà per natura a sentirsi più affine a uno o
+all'altro, perché ognuno ha una propria visione creativa, e lavorare con uno
+strumento allineato al proprio modo di pensare è più facile. Conoscere modi di
+pensare diversi serve proprio a questo.
+
+\subsection{Gli elementi}
+
+\begin{description}
+  \item[Game qualities] (qualità di gioco) al posto delle meccaniche, Romero
+        definisce i \textbf{sistemi di gioco}. Invece di concentrarsi su
+        saltare, mirare, sparare, ricaricare, schivare (\emph{dodge}), parare,
+        attaccare (tutte meccaniche, tutti verbi), si ragiona per gruppi:
+        ad esempio la qualità \emph{shooting} include tutte le caratteristiche
+        legate alle meccaniche di tiro, che non necessariamente sono tutte
+        presenti in un dato gioco (in \emph{Doom} non si ricarica, ma è
+        comunque uno shooter). Altri esempi sono \emph{PvP} e \emph{PvE}: se un
+        gioco è PvP ha il multiplayer, e non serve definirne la meccanica, è
+        sottinteso; se ha il PvP avrà probabilmente un sistema di barre della
+        vita o qualcosa di simile, e così via.
+  \item[Giocatore] chi gioca? Perché gioca? Che attività sta svolgendo? Che
+        cosa desidera, che caratteristiche ha? È un elemento fondamentale, su
+        cui si tornerà in altre lezioni: \textbf{il giocatore è parte
+        integrante del gioco}. Se si mette il direttore a giocare a
+        \emph{Canasta}, non gli piace: non è il suo gioco. Questo non significa
+        che Canasta sia un brutto gioco, ma che non è il gioco per lui, pur
+        avendo la stessa tecnologia (le carte) di giochi che ama e molte
+        caratteristiche simili (interazione con altri giocatori, combinazioni
+        di carte, strategia). Allo stesso modo, nessuno gioca a \emph{Tekken}
+        ``sul serio'' contro un nipotino di tre o quattro anni: si sceglie
+        piuttosto un gioco di macchinine, o \emph{Mario Kart} rendendogli le
+        cose più facili. La \textbf{difficoltà} dipende dal giocatore.
+  \item[Tema] tutti gli elementi legati alla storia e/o al
+        \textbf{significato} del gioco. È simile alla narrativa di Schell, ma
+        aggiunge il significato, che include ad esempio la comprensione di un
+        sottotema filosofico o narrativo del prodotto.
+  \item[Obiettivo] lo scopo del gioco: che cosa si cerca di ottenere e di
+        raggiungere. Molti studenti lo avevano inserito nella propria
+        definizione.
+  \item[Regole] qui sono una struttura separata, che definisce soprattutto
+        \textbf{ciò che il giocatore non può fare}. Nelle meccaniche di Schell
+        le regole definivano anche ciò che si può fare, ciò che si vuole
+        ottenere e che cosa succede; qui ciò che si può fare è già definito
+        nelle \emph{game qualities}.
+  \item[Risorse] (illustrate da Mattia) sono i \emph{game pieces} che possono
+        essere manipolati, usati, consumati, collezionati o modificati:
+        elementi che possono cambiare, progredire o essere spesi all'interno
+        dell'esperienza. In \emph{The Witcher} sono risorse i soldi, ma anche
+        armature e armi, e anche le carte di \emph{Gwent}, con cui si
+        costruisce, migliora e potenzia un mazzo.
+  \item[Interazione] la \textbf{sequenza di causa ed effetto}.
+\end{description}
+
+\subsection{Confronto con Schell}
+
+Molto di ciò che Schell raccoglie in un unico punto, le meccaniche (con
+regole, verbi e pezzi), qui è sparso in più elementi: le \emph{game qualities}
+lavorano a un livello più alto, le regole a un livello più basso (con
+particolare attenzione a ciò che non si può fare); regole e risorse insieme
+iniziano a dare un quadro molto simile alle meccaniche di Schell.
+
+C'è però un rischio: nei giochi moderni, l'elenco delle risorse può essere
+\textbf{potenzialmente infinito}. In un \emph{Final Fantasy} ogni pozione è
+una risorsa, ogni attacco, ogni personaggio, ogni punto vita, ogni punto
+esperienza: è facile perdersi in una lista senza fine. Così, mentre sulle
+\emph{game qualities} Romero sembra fare un lavoro di ``asciugatura'', sulle
+risorse il framework esplode e vuole definire ogni singolo elemento.
+
+Anche l'\textbf{interazione} è interessante: in Schell causa ed effetto
+restano impliciti (se si definisce che cosa si può e non si può fare, come lo
+si fa e che cosa si vuole ottenere, si sta facendo come nel calcio, lasciando
+implicito il contropiede); qui invece si vogliono definire: ``il giocatore
+potrebbe fare il contropiede''.
+
+\paragraph{Esempio: il camping.} Nei giochi multiplayer il \emph{camping} è
+l'atto di appostarsi in un punto particolarmente vantaggioso e strategico,
+allo scopo di eliminare gli altri giocatori che passeranno da lì, riducendo al
+minimo il proprio rischio. È una strategia validissima, solitamente
+considerata negativa perché ritenuta meno \emph{skillful} (non è vero, ma è
+così che viene percepita). Nel framework di Romero e Schreiber il camping va
+inserito tra le interazioni; in Schell resta non definito. Il che non
+significa che non esista: semplicemente non è esplicitato.
+
+Ancora una volta: nessuno dei due è migliore o peggiore. Sono due punti di
+vista.
+
+% ---------------------------------------------------------------------
+\section{Il framework di Stéphane Bura}
+\label{sec:bura}
+
+\subsection{Una tabella a incroci}
+
+Il terzo framework, introdotto da Jack, è quello di Stéphane Bura. A
+differenza dei precedenti, \textbf{si legge come una tabella a incroci}: non
+basta considerare i singoli termini, bisogna leggerli in combinazione. Sulle
+righe ci sono quattro \textbf{livelli}, sulle colonne tre \textbf{dimensioni}.
+
+\begin{description}
+  \item[Action] (azione) ciò che il giocatore fa, ciò che ha la possibilità di
+        compiere. È il livello più basso, quello del \emph{second to second},
+        del gameplay più rapido: la chiave che apre una porta, l'attacco base.
+  \item[System] (sistema) ciò che fa il gioco. È un livello superiore: finisco
+        questo bioma e passo a un altro, vado di qua o di là.
+  \item[Self] (sé) l'interazione del giocatore come singolo individuo con il
+        gioco: interazioni che non si limitano a sfruttare il sistema (quello è
+        \emph{action}), ma ne fanno un \textbf{uso creativo o strategico}.
+  \item[Social] (sociale) tutto ciò che è legato alla comunità: il giocatore
+        immerso in una community, la sua capacità di relazionarsi con gli
+        altri.
+\end{description}
+Ciascuno di questi livelli si articola in tre dimensioni: \textbf{Freedom}
+(libertà), \textbf{Mastery} (maestria, padronanza) e \textbf{Data} (dati,
+informazioni).
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}p{0.11\textwidth}p{0.27\textwidth}p{0.27\textwidth}p{0.27\textwidth}@{}}
+    \toprule
+    & \textbf{Freedom} & \textbf{Mastery} & \textbf{Data} \\
+    \midrule
+    \textbf{Action} & opportunità, abilità
+                    & competenza nelle azioni a basso livello, spesso fisica
+                    & risorse del mondo di gioco, collezionabili, regole
+                      operative \\
+    \addlinespace
+    \textbf{System} & esplorazione, sperimentazione, scopo
+                    & competenza sui sistemi complessi
+                    & regole e loro comprensione, sistemi che trasformano le
+                      risorse \\
+    \addlinespace
+    \textbf{Self}   & strategia, creatività
+                    & etica, sensibilità personale nell'uso del sistema
+                    & \emph{mementos}, achievement, memoria \\
+    \addlinespace
+    \textbf{Social} & community, supporto, esperienza condivisa
+                    & abilità sociali (mentire, leggere, collaborare)
+                    & meta, metagaming \\
+    \bottomrule
+  \end{tabular}
+  \caption{Il framework di Stéphane Bura come illustrato in lezione.}
+  \label{tab:bura}
+\end{table}
+
+\subsection{La colonna Freedom}
+
+\begin{description}
+  \item[Action $\times$ Freedom: opportunità e abilità] una delle
+        caratteristiche tipiche di un gioco è dare al giocatore delle abilità e
+        lasciarlo libero di sceglierle. Il ``mega pugno della morte'' si attiva
+        con L2 più quadrato quando si vuole: si è liberi, ed è un'azione.
+  \item[System $\times$ Freedom: esplorazione, sperimentazione, scopo] si è
+        liberi di andare dove si vuole, ma \emph{entro i limiti del gioco}. Se
+        c'è un muro invalicabile, il muro è invalicabile; se il personaggio non
+        sa nuotare, in acqua non si va. Il sistema limita la libertà.
+  \item[Self $\times$ Freedom: strategia e creatività] in \emph{Minecraft} il
+        \emph{mine} (dare un pugno e rompere qualcosa) è un'azione. Capire che
+        scavando un fossato abbastanza largo e profondo i creeper ci cadono
+        dentro di notte, e quindi non si muore, non è un'abilità (non esiste
+        un tasto che fa comparire un fossato): è un'\textbf{applicazione
+        strategica o creativa del sistema}. Lo stesso vale per l'uso creativo
+        di Minecraft: c'è chi ha ricostruito in scala 1:1 il continente di
+        Westeros del \emph{Trono di Spade}, cosa che nulla nel gioco chiede di
+        fare. Jack cita anche \emph{The Uncensored Library}, un progetto di
+        Reporters sans frontières: una biblioteca costruita in Minecraft che
+        raccoglie articoli e testi censurati in vari paesi, consultabili
+        proprio perché si trovano dentro un gioco.
+  \item[Social $\times$ Freedom: community, supporto, esperienza condivisa]
+        la libertà di entrare in una comunità, interna al gioco (una gilda) o
+        esterna (un canale Discord), e di interagire attraverso di essa.
+\end{description}
+
+\subsection{La colonna Mastery}
+
+\begin{description}
+  \item[Action $\times$ Mastery] tutto ciò che riguarda lo sviluppo di
+        competenza nelle azioni a basso livello, che a volte sono abilità molto
+        fisiche: saper eseguire un attacco, combinare dei tasti. I
+        \emph{rhythm game}, come \emph{osu!} o \emph{Dance Dance Revolution},
+        richiedono proprio questo tipo di maestria fisica.
+  \item[System $\times$ Mastery] la competenza sui sistemi complessi. In
+        \emph{Pokémon} è la capacità di fare \emph{team building}: costruire
+        una squadra bilanciata con un attaccante fisico, un attaccante speciale,
+        un ``muro''. In un gioco di carte come \emph{Yu-Gi-Oh!} è sapere la
+        ripartizione classica del mazzo (ad esempio 20 mostri, 10 magie, 10
+        trappole). Quanto bene si sono compresi i sistemi e come li si può
+        sfruttare.
+  \item[Self $\times$ Mastery] un discorso legato a una certa
+        \textbf{etica}, cioè alla sensibilità personale nell'uso del sistema
+        (si veda l'esempio di Shudderwock qui sotto). Vi rientrano anche le
+        creazioni complesse, come quelle di Minecraft.
+  \item[Social $\times$ Mastery] quanto si è bravi nelle relazioni sociali e
+        nello sfruttare abilità sociali. In \emph{Among Us} e in qualsiasi
+        gioco di deduzione sociale: quanto si è bravi a mentire, a far credere
+        di non avere un certo ruolo o di essere amichevoli; ma anche a leggere
+        gli altri e a collaborare con loro.
+\end{description}
+
+\paragraph{Esempio: Shudderwock in Hearthstone.} In \emph{Hearthstone} le
+carte si giocano in un ambiente digitale, con animazioni, e ogni turno ha un
+limite di tempo. Quando fu introdotta la carta \textbf{Shudderwock}, il suo
+effetto era: quando viene giocata, riattiva tutti i \emph{grido di battaglia}
+(\emph{battlecry}, gli effetti che si attivano quando una carta viene messa in
+campo) giocati fino a quel momento nella partita. Nacque così un mazzo
+specifico, non previsto, riempito di carte con grido di battaglia; spesso lo
+Shudderwock veniva anche riattivato una seconda volta, facendo scattare tutti
+quegli effetti due volte. Le animazioni erano così lunghe da sforare nel turno
+dell'avversario, ``mangiandoselo'': chi giocava il mazzo poteva finire il
+proprio turno, mentre le animazioni continuavano e l'avversario di fatto non
+giocava. Una volta conosciuta questa cosa, \textbf{quanto è etico giocare quel
+mazzo}, sapendo che è estremamente facile vincere sfruttando una lacuna, un
+bug o qualcosa che gli sviluppatori non avevano previsto e che probabilmente
+verrà corretto? Questa è la dimensione \emph{Mastery Self}. (Il problema fu
+poi risolto: Shudderwock fu indebolito e il sistema del tempo modificato.)
+
+Jack aggiunge che una recente espansione di Hearthstone ha introdotto una
+meccanica, chiamata in italiano \emph{Innesto}, che divide l'effetto dei
+servitori in due parti, la \emph{condizione di attivazione} e la
+\emph{conseguenza}, e permette di fonderne più di una. Ne nascono combinazioni
+estreme: il classico Doomsayer (``all'inizio del tuo prossimo turno distruggi
+tutti i servitori'') fuso con un grido di battaglia diventa ``grido di
+battaglia: distruggi tutti i servitori''; oppure ``ogni volta che peschi una
+carta, pesca una carta'', con effetti facili da immaginare (un ``Vaso
+dell'Avidità'' potenziato all'infinito, per citare \emph{Yu-Gi-Oh!}).
+
+\paragraph{La difficoltà nei framework.} Uno o due studenti avevano citato la
+difficoltà, la sfida, nelle proprie definizioni. Non compare esplicitamente né
+in Schell né in Romero e Schreiber, mentre in Bura c'è, sotto forma di
+\emph{mastery}, cioè la possibilità di diventare più bravi. Significa che per
+Schell e Romero la difficoltà non conta? No: la fanno rientrare in altri punti
+(nelle meccaniche, nel giocatore). \textbf{Gli ingredienti della zuppa sono
+sempre gli stessi}; i designer si concentrano su elementi diversi in base ai
+propri interessi, al proprio modo di pensare e di creare.
+
+\subsection{La colonna Data}
+
+\begin{description}
+  \item[Action $\times$ Data: risorse, collezionabili, regole operative] le
+        monete di \emph{Super Mario}: si raccoglie una risorsa con una
+        micro-azione che produce un cambiamento in quelle che Romero chiama
+        \emph{risorse}.
+  \item[System $\times$ Data] qualcosa di più complesso: le regole e la loro
+        comprensione (tutorial, spiegazioni), ma anche i sistemi complessi che
+        incidono in modo importante sulle risorse. Giochi come
+        \emph{Civilization} si basano interamente sull'acquisizione,
+        sull'accumulo e sull'``esplosione'' (aumento esponenziale) delle
+        risorse; così molti strategici in tempo reale, come \emph{Age of
+        Empires}, basati sulla raccolta di risorse.
+  \item[Self $\times$ Data: mementos, achievement, memoria] ciò che il
+        giocatore si porta via e che riguarda lui. Spesso sono
+        \emph{mementos}, ricordi: la \emph{photo mode}, la propria
+        \emph{build}, il personaggio creato in un certo modo nell'editor
+        iniziale. Il direttore racconta di aver creato, in un soulslike prima
+        di una patch, un personaggio con un naso così lungo da deformare tutti
+        gli elmi (che si adattano alle ossa del volto): nessuna funzione,
+        nessun effetto sul gioco, ma ``mi sentivo figo''. Ancora più
+        chiaramente rientrano qui gli \textbf{achievement}: per chi
+        ``platina'' i giochi, ottenerli è parte integrante dell'esperienza.
+  \item[Social $\times$ Data: il meta] i dati sociali sono legati al
+        \textbf{metagaming}: non gioco quella cosa perché non vince in
+        classifica (\emph{ladder}); gioco quel personaggio perché vince; uso
+        quel mouse con la rotellina magnetica perché dà certi vantaggi.
+\end{description}
+
+\paragraph{Mastery o meta?} Una domanda dall'aula: lo sfruttamento del meta
+(\emph{Social Data}) non si confonde con la padronanza dei sistemi
+(\emph{Mastery System})? La risposta: la \textbf{mastery richiede una
+competenza}, il \textbf{meta richiede una conoscenza}. Se si mette qualcuno al
+volante di una Formula 1 Ferrari, la sua capacità di guidarla è la sua
+mastery: può crescere nel tempo, e dopo due anni sarà un pilota migliore. Il
+fatto che la scuderia gli dica ``questa curva va presa a 197,5 km/h in
+quinta'' è meta.
+
+Un altro esempio: quanti costruiscono da soli la propria build o il proprio
+mazzo, invece di cercare online il più efficace? È normale divertirsi a
+costruire qualcosa di assurdo, ma quando si vuole qualcosa di efficace si
+cercano dati online, perché qualcuno ha già fatto i calcoli. Imparare poi a
+\emph{usare} quel mazzo è un discorso separato.
+
+Nei picchiaduro (\emph{Mortal Kombat}, \emph{Dragon Ball FighterZ},
+\emph{Dragon Ball: Sparking! Zero}, il seguito dei \emph{Budokai Tenkaichi})
+il meta può dire, per esempio, che Vegeta Super Saiyan 2 è il miglior
+\emph{rusher}, cioè il personaggio migliore per andare addosso all'avversario,
+sulla base di dati calcolati (velocità delle animazioni e così via). Ma il
+direttore, che in questi giochi usa gli \emph{zoner} (personaggi che combattono
+a distanza), perderebbe comunque tutte le partite con quel Vegeta. Conoscere
+l'informazione è un vantaggio, perché rende statisticamente più probabile
+vincere con qualcosa di matematicamente migliore; ma \textbf{sapere
+un'informazione non significa saperla pilotare}.
+
+% ---------------------------------------------------------------------
+\section{Il framework del direttore}
+\label{sec:framework-direttore}
+
+Per mostrare ancora una volta che non esiste un framework giusto, il direttore
+mostra il proprio, che verrà spiegato più avanti nel corso. I suoi elementi
+sono: \textbf{player}, \textbf{meccaniche}, \textbf{dinamiche},
+\textbf{tema} e \textbf{tecnologia}.
+
+Ogni studente, col tempo, svilupperà il proprio modo di interpretare gli
+ingredienti della zuppa: un mix di questi framework e di altre cose, senza
+limitarsi a pensare ``non lo aveva scritto Schell, non lo aveva scritto Romero,
+quindi non posso inserirlo''. Prima, però, bisogna imparare perfettamente ad
+analizzare un gioco con i framework esistenti, perché a questo punto della
+carriera, statisticamente, nessuno è ancora Jesse Schell, Brenda Romero o Raph
+Koster. All'inizio ci si siede \textbf{sulle spalle dei giganti}
+(\emph{standing on the shoulders of giants}): loro hanno già fatto questo
+lavoro, e non serve ripartire da zero. Col tempo ognuno avrà il proprio, che
+potrebbe rivoluzionare l'industria o essere semplicemente uno strumento
+personale di lavoro, come quello del direttore.
+
+% ---------------------------------------------------------------------
+\section{Le lenti: non esiste un metodo unico}
+\label{sec:lenti}
+
+\subsection{Il principio più importante}
+
+Qual è, dunque, il framework migliore? Nessuno: sono \textbf{lenti}
+(\emph{lenses}), ed è il motivo per cui il libro di Schell ha come sottotitolo
+\emph{A Book of Lenses}. È il primo e più importante principio da ricordare,
+da ora fino alla fine della propria carriera di designer, e non solo di
+videogiochi:
+\begin{quote}
+\centering
+\textbf{Non esiste una soluzione. Non esiste un santo Graal. Non esiste un
+unico metodo che risolva tutti i problemi.}
+\end{quote}
+Questo è al tempo stesso \emph{orribile} e \emph{meraviglioso}:
+\begin{itemize}
+  \item orribile, perché a volte ci si scontra con problemi che sembrano
+        insormontabili, e trovarsi davanti a qualcosa di apparentemente
+        impossibile non è piacevole;
+  \item meraviglioso, perché \textbf{tutto è superabile}: bisogna solo
+        cambiare la lente con cui lo si guarda.
+\end{itemize}
+
+\subsection{La migliore difesa contro l'intelligenza artificiale}
+
+C'è anche un secondo aspetto: questa è \textbf{la più grande protezione che il
+designer ha contro le intelligenze artificiali}. Perché un'AI è brava a
+programmare? Perché molti problemi di programmazione si risolvono in un modo
+noto. L'ordinamento (\emph{sorting}), cioè prendere qualcosa di disordinato e
+ordinarlo, ha algoritmi già risolti: esistono e sono quelli. Non esiste invece
+un ``sorting delle meccaniche'': non si riesce nemmeno a definire che cos'è un
+gioco, figuriamoci a ordinarlo. Se non esiste un'unica soluzione, non esiste un
+algoritmo; e allora la creatività e la capacità di trovare metodi diversi
+restano il sistema migliore per fare design.
+
+Il rovescio della medaglia è che bisogna imparare \textbf{più metodi
+possibili}. Si può avere un metodo preferito, ad esempio Romero, che risolve
+il 90\% dei problemi; poi arriverà il problema che non risolve. Allora si prova
+Schell; se non funziona, un terzo, un quarto, un quinto, un sesto. I docenti ne
+forniranno moltissimi (non si chiede agli studenti di inventarli), e prima o
+poi uno funziona. Il prezzo è che, per sfortuna, si può doverli provare tutti e
+scoprire che era l'ultimo: ci si sarà messo più tempo del previsto. Per questo
+bisogna \textbf{sempre guardare tutto da più punti di vista}.
+
+\subsection{The right tool for the right job}
+
+Come dice Mattia, \emph{the right tool for the right job}: alcuni framework
+funzionano meglio con certi giochi, altri con altri. E c'è un ulteriore
+discriminante: \textbf{quelli che funzionano meglio con voi}, con cui ci si
+trova più a proprio agio. Jack racconta di conoscere molti framework ma di
+usarne prevalentemente tre: se nessuno dei tre funziona passa ai successivi,
+ma non avrebbe senso non partire da quelli, perché sono diventati il suo
+\emph{bread and butter} (``pane e burro'', o ``pane e marmellata''
+all'italiana): qualcosa di talmente rapido e naturale da non costare fatica.
+
+\subsection{Il Deck of Lenses}
+
+Il libro di Schell ha anche una versione in forma di mazzo di carte, il
+\textbf{Deck of Lenses} (ne esiste anche una versione online). Il
+funzionamento è semplice: davanti a un problema, si estrae una carta a caso e
+si prova ad analizzare il problema secondo quella lente.
+
+\paragraph{Esempio: la lente della cooperazione.} Si immagini di essere gli
+sviluppatori di \emph{Hearthstone} alle prese con il problema di
+Shudderwock. Si mescola il mazzo e si estrae la \emph{lente della
+cooperazione}. Ci si chiede, ad esempio, se nel problema ci sia abbastanza
+\emph{comunicazione}. Ne nasce un'idea: un sistema per cui, se si gioca un
+mazzo con Shudderwock, gli altri lo sanno e possono decidere di non
+partecipare alla partita conoscendone il rischio. È una buona soluzione? Non
+si sa; ma è emersa ponendosi una domanda attraverso una lente.
+
+\paragraph{Esempio: la lente della sfida.} Si estrae un'altra carta, la
+\emph{lente della sfida} (\emph{challenge}): ``la sfida è al centro di quasi
+tutto il gameplay; si potrebbe perfino dire che un gioco è definito dai suoi
+obiettivi e dalle sue sfide''. La domanda da porsi è: \emph{quali sono le
+sfide del mio gioco?} La sfida di Hearthstone è costruire un mazzo e
+pilotarlo. Il problema di Shudderwock, allora, è che è un mazzo \emph{meta}:
+tutti possono copiarlo e applicarlo, togliendo parte della sfida. Una
+soluzione (inventata sul momento) potrebbe essere oscurare i siti che
+diffondono il meta. Probabilmente è un'idiozia, perché non si possono bloccare
+tutti i siti; ma, di nuovo, è emersa analizzando il problema da un punto di
+vista specifico.
+
+Questo è lo scopo dei framework forniti nel corso: \textbf{analizzare i
+problemi da punti di vista diversi}, scoperti da designer non necessariamente
+più bravi degli studenti, ma con più esperienza. Magari un giorno qualcuno
+sarà più bravo di Jesse Schell (e ce lo si augura sempre: la qualità del
+design mondiale può solo beneficiarne); ma per natura ora si ha meno
+esperienza, e sedersi sulle spalle dei giganti fornisce un'intera serie di
+lenti.
+
+% ---------------------------------------------------------------------
+\section{Il vocabolario del designer}
+\label{sec:vocabolario}
+
+\subsection{La metafora del medico}
+
+Mattia introduce l'ultima parte con una metafora. Quando si va dal medico e si
+dice ``sto male, mi fa male la pancia, ho un fastidio generico'', il medico non
+può aiutare. Il medico \emph{indaga}: tocca, palpa, fa altre domande,
+raccoglie dati, cerca di isolare il problema. Nel game design funziona allo
+stesso modo. L'obiettivo finale riguarda il \textbf{responso emotivo} del
+giocatore: bisogna capire se è quello desiderato, se il giocatore sta provando
+le emozioni che si vuole provi in quel momento (e anche che tipo di giocatore
+sia). Se la gran parte dei giocatori prova le emozioni desiderate, è un grande
+successo; se no, bisogna indagare.
+
+Ma già a monte bisogna stabilire, con il team, \textbf{che cosa il gioco deve
+far scaturire nel giocatore}. Dire ``il nostro gioco deve essere divertente''
+non basta: non significa nulla, non dà alcuna informazione. Bisogna delimitare
+il problema, trovare \textbf{l'emozione specifica} o l'insieme di emozioni
+specifiche, di diversa natura e diversa intensità, che il gioco deve far
+provare.
+
+\subsection{La parola proibita}
+
+Da qui una regola del corso, tra le più importanti in assoluto: \textbf{non si
+usano più le parole ``divertente'', ``intrattenente'' e simili}, né le loro
+varianti o sinonimi (\emph{fun}, \emph{immersivo}\dots). Sono parole che non
+vogliono dire nulla. La regola vale in qualunque task e in qualunque
+conversazione, dentro e fuori dalla lezione. Chi la infrange viene ``punito''
+(non fisicamente, ovviamente) con \textbf{task aggiuntivi}, con modalità
+diverse a seconda del docente:
+\begin{itemize}
+  \item Jack applica una punizione \emph{collettiva}: se una persona usa la
+        parola proibita, \textbf{tutta la classe} riceve un task aggiuntivo. Il
+        motivo è pratico: con gli studenti dell'anno precedente, che facevano
+        molta fatica a smettere, ha funzionato proprio perché il peso non
+        ricadeva solo sul singolo, ma su tutti;
+  \item Mattia punisce il singolo, ma in modo \emph{progressivo}: più volte si
+        usa la parola, peggiore è il gioco da analizzare nel task aggiuntivo,
+        partendo da un gioco ``mediamente terribile'' fino ad arrivare a titoli
+        come \emph{Hatoful Boyfriend} (un \emph{dating sim} con i piccioni) o
+        a simulatori di appuntamenti con gli insetti.
+\end{itemize}
+In aula uno studente racconta che uno studente del terzo anno gli aveva già
+consigliato, il primo giorno, di ``dimenticare la parola divertente''; e
+nel raccontarlo la pronuncia, guadagnandosi il primo task aggiuntivo del
+corso.
+
+Perché tanta severità? Perché la parola proibita è un concetto
+\textbf{completamente inutile}: non esprime \emph{perché} un gioco funziona.
+Un gioco funziona perché suscita emozioni, e quelle emozioni vanno definite
+attraverso un sistema di design. Anzi, come precisa Mattia, è inutile
+\emph{nella migliore delle ipotesi}: quando la parola arriva da altre
+discipline o, peggio, da altri designer, diventa ancora più difficile capire
+qual è il fulcro del problema o qual è l'equivalente emotivo corretto. Mettere
+nella \emph{visione} del progetto (concetto che verrà approfondito), tra i
+pilastri del gioco, ``deve essere divertente'' non significa nulla e crea
+problemi a tutto il team. In più, toglie \textbf{credibilità} a chi parla.
+
+Non si tratta di una stranezza dei docenti: \textbf{parlare come un designer
+significa essere riconosciuti come designer}. Il vocabolario è parte integrante
+del mestiere, perché il designer è un \textbf{comunicatore}: comunica con il
+team, con il giocatore e con altri designer. Si vedranno tecniche di
+comunicazione e si imparerà a fare documentazione, che non è altro che una
+forma di comunicazione scritta (esistono la comunicazione orale, verbale, non
+verbale e scritta).
+
+\subsection{Non solo ``divertente'': anche ``bello'', ``valido'', ``noioso''}
+
+Una studentessa chiede se la parola \emph{bello} sia equivalente. Sì: dire ``la
+narrativa è bella'' è altrettanto inutile. \emph{Schindler's List} è un libro
+meraviglioso, ma non è ``bello'' nello stesso modo in cui è bello \emph{Harry
+Potter}: il primo racconta di Oskar Schindler e del salvataggio di centinaia di
+ebrei dallo sterminio nazista; il secondo è apprezzato per la fantasia, per le
+sensazioni che suscita. Leopardi scrive in un modo in cui scrive solo Leopardi:
+può piacere o non piacere, ma non lo si può definire ``bello'' come il
+\emph{Decameron}, perché sono cose completamente diverse. ``Bello'' è
+semplicemente un \textbf{giudizio positivo}, e il problema è che non dice
+\emph{perché} qualcosa è piaciuto:
+\begin{itemize}
+  \item di Leopardi è piaciuta la scrittura, o i temi malinconici?
+  \item del \emph{Decameron} è piaciuto lo stile comico, o il fatto che
+        rompesse le convenzioni sulla sessualità del suo tempo?
+  \item di \emph{Schindler's List} è piaciuto il coraggio storico di Schindler
+        nell'affrontare i nazisti, o il modo in cui è scritto?
+\end{itemize}
+
+Neanche \emph{valido} va bene, né \emph{noioso} (vale esattamente lo stesso al
+contrario), né \emph{schifoso}: nessuna di queste parole descrive una
+caratteristica. Bisogna esprimere \textbf{che cosa il gioco cerca di ottenere,
+se lo ottiene o no, e con quali caratteristiche}. Che una cosa sia buona o
+cattiva è irrilevante.
+
+\paragraph{Una tecnica pratica.} Quando viene da scrivere ``questo gioco è
+[parola proibita]'', si completi la frase: ``questo gioco è [parola
+proibita] \emph{perché} è comico''. Poi si tagli la parte centrale: ``questo
+gioco è comico''. Bisogna imparare a parlare \textbf{dei dettagli}, del
+\emph{perché} qualcosa funziona, non del \emph{se} è buono o cattivo.
+
+\paragraph{Esempio: Dan Brown.} Al direttore piacciono le storie di Dan Brown,
+ma ne detesta profondamente lo stile di scrittura: per questo non ne legge i
+libri, ma ne guarda i film. Non può quindi dire che \emph{Inferno} sia
+``bello'' o ``brutto'': il libro ha una buona storia ma uno stile di scrittura
+che non apprezza; il film andrebbe giudicato su altre caratteristiche, come la
+recitazione. Le opere hanno una serie di caratteristiche e di obiettivi che
+dipendono dal medium: per i videogiochi la tecnologia, gli fps, la narrativa,
+le meccaniche e quindi il gameplay, le qualità di gioco, i giocatori. C'è chi
+potrebbe dire di \emph{League of Legends} ``adoro tutto tranne i giocatori''
+(cosa comune, visto che la community è spesso considerata tossica); lo stesso
+si sente dire di Commander, ``formato splendido, giocatori orribili''.
+
+Mattia chiude il punto ricordando che il gioco non si colloca quasi mai ``nel
+vuoto'': va legato ai giocatori e alle loro necessità. Al direttore piacciono
+le storie di Dan Brown ma non il suo stile, per come è lui e per le sue
+necessità di lettore; è un discorso che si allargherà ad altri argomenti.
+
+\subsection{Il nuovo vocabolario: una prima lista di emozioni}
+
+Al posto della parola proibita si comincia a usare un vocabolario di emozioni
+specifiche. La lista seguente \textbf{non è esaustiva} (ne esistono molte di
+più, e verrà ampliata), ma è un punto di partenza.
+
+\begin{description}
+  \item[Excitement (eccitazione)] affrontare pericoli, andare veloci, effetti
+        luminosi (il ``raggio epilessia'' di Raggio Aurora), suoni forti: tutto
+        ciò che fa pompare il sangue nelle vene e crea uno stato di
+        eccitazione.
+  \item[Challenge (sfida)] Malenia: è difficile, voglio batterla, devo
+        riuscirci. Una sfida può essere anche mentale, non solo fisica.
+  \item[Competition (competizione)] io contro Mattia: chi fa di più, chi
+        vince. Molti giochi, soprattutto non digitali (che di solito prevedono
+        almeno due giocatori), si basano sulla competizione. \textbf{Attenzione
+        alla differenza}, che negli anni ha confuso molti studenti: la
+        \emph{challenge} è contro una sfida, la \emph{competition} è contro
+        altre persone, altri giocatori.
+  \item[Accomplishment (realizzazione, progressione)] salire di livello,
+        sbloccare la nuova armatura più potente, raggiungere il ramo
+        dell'albero delle abilità che si desiderava: la sensazione di crescere
+        dà senso a ciò che si fa.
+  \item[Socialization (socializzazione)] parlare con la gente: l'essere umano
+        è un animale sociale, e interagire con le persone può essere una fonte
+        di gioia (e non solo).
+  \item[Narrative (narrativa)] le storie: una storia appassionante, una
+        storia triste, una storia comica, una battuta.
+  \item[Informative (apprendimento)] imparare. L'anime \emph{Dr.\ Stone},
+        tra i preferiti del direttore, gli piace proprio perché è informativo:
+        insegna qualcosa di vero.
+  \item[Aesthetic (estetica)] le cose \emph{visivamente piacevoli}. Esistono
+        regole, come quelle sui codici colore, che indicano combinazioni di
+        colori e forme generalmente considerate piacevoli, cioè non fastidiose
+        alla vista. Il ``raggio epilessia'' è l'opposto.
+  \item[Auditory/visual stimulation (stimolazione uditiva e visiva)] lo stesso
+        discorso per i suoni. La sirena (creata dall'uomo) e il pianto di un
+        bambino (creato dalla natura) sono fatti per essere fastidiosi, per
+        spingere ad agire: la sirena per far spostare, il pianto perché il
+        bambino, che non sa fare nulla, venga accudito. All'opposto, esistono
+        suoni con caratteristiche piacevoli all'orecchio.
+  \item[Humor (umorismo)] è separato dalla narrativa, di cui potrebbe far
+        parte, perché far ridere è difficilissimo: l'umorismo è una delle cose
+        più personali in assoluto, e quello di una persona può essere
+        completamente diverso da quello di un'altra. Riuscire a fare un
+        prodotto umoristico è difficilissimo.
+  \item[Physical manipulation (manipolazione fisica)] il direttore ha giocato
+        tutta la lezione con un fazzolettino, perché è piacevole: la texture,
+        il poterlo piegare. I fidget spinner si basano su questo: usare le
+        mani è piacevole.
+  \item[Physicality (fisicità)] lo stesso discorso ma con il corpo: correre con
+        le scarpe giuste, fare l'attività fisica che piace.
+  \item[Creation (creazione)] la creatività. Gli studenti sono lì perché sono
+        creativi, chi più chi meno, chi in un modo chi in un altro: hanno il
+        desiderio di aggiungere al mondo qualcosa che prima non c'era (si
+        pensi a chi ha ricostruito Westeros in Minecraft).
+  \item[Vicarious experience (esperienza vicaria)] fare cose che non sono
+        comuni o che non esistono: il direttore non è un pilota di Formula 1,
+        non vuole fare il soldato, non è uno stregone che combatte i draghi, ma
+        può trovare piacevole vivere queste esperienze in forma simulata. Ci
+        sono vari livelli: da ciò che non possiamo fare ma un essere umano
+        potrebbe fare, a ciò che è del tutto al di fuori delle nostre
+        possibilità, come essere un alieno in una galassia lontana lontana.
+  \item[Logic/Puzzle (logica, problem solving)] usare la propria mente per
+        risolvere un problema.
+\end{description}
+Da subito bisogna usare questi termini; pian piano il vocabolario si
+espanderà.
+
+% ---------------------------------------------------------------------
+\section{La forma mentis del designer secondo Chris Bateman}
+\label{sec:bateman}
+
+L'ultima parte della lezione riprende alcuni consigli di Chris Bateman
+(autore, tra l'altro, di \emph{21st Century Game Design}, si veda la
+sezione~\ref{sec:risorse}) per acquisire la \emph{forma mentis} del designer.
+
+\begin{description}
+  \item[Il game design è una metodologia iterativa ed evolutiva] davanti a un
+        problema bisogna procedere in modo \textbf{scientifico}. Non si può
+        realizzare semplicemente la prima idea che viene in mente: bisogna
+        generare un gran numero di idee, sia con la creatività sia con le
+        metodologie (come i framework di analisi), e analizzare il problema da
+        tutti i punti di vista, per trovare non \emph{una} soluzione, ma
+        \textbf{la soluzione migliore}. Una soluzione la trovano tutti: per
+        risolvere il problema delle tasse in Italia si potrebbero, per
+        paradosso, eliminare tutti i contribuenti; è una soluzione, ma non è
+        certo la migliore. La soluzione migliore va analizzata e trovata.
+  \item[Non esiste un unico metodo di design] è quanto detto a proposito
+        delle lenti. Più metodi si studiano e più tecnologie si imparano, più la
+        mente si espande e si trovano modi di interagire con problemi, persone e
+        design, e si diventa designer migliori. \emph{The right tool for the
+        right job}; ma uno strumento non basta, ne servono centomila.
+  \item[Il design è \emph{egoless}] durante la lezione i docenti hanno
+        smontato le definizioni degli studenti senza avercela minimamente con
+        loro, e gli studenti avrebbero potuto smontare la loro: si stava
+        discutendo di teoria del design. \textbf{Le idee non rappresentano chi
+        le ha}: sono un elemento separato, da analizzare, distruggere,
+        ricostruire, migliorare. Che un designer generi cento idee pessime non
+        significa che sia incompetente: le idee vanno generate e analizzate.
+        \textbf{Le idee possono venire da chiunque}: in uno dei giochi del
+        direttore, una delle meccaniche migliori è stata suggerita da un
+        programmatore. Il design consiste nell'analizzare l'idea, comprenderla,
+        migliorarla e capire se funziona. Altre volte è stato Mattia, o Jack,
+        lavorando con lui, a dirgli ``sei sicuro che sia così?'', e avevano
+        ragione; questo non ha minimamente intaccato il suo valore di designer.
+        Si crea, si analizza e si distrugge, sempre con lo scopo di trovare la
+        soluzione migliore, qualunque essa sia.
+  \item[Il design è guidato dagli utenti] lo scopo finale, come molte
+        definizioni avevano colto, è creare un gioco \textbf{che venga
+        giocato}, che l'utente finale apprezzi. Non un gioco che il designer
+        considera il migliore del mondo e che tutti gli altri odiano. Fare arte
+        per se stessi è un approccio del tutto accettabile, e non c'è nulla di
+        male nell'arte fine a se stessa: anche il direttore fa giochi ``per
+        Diego'', esperimenti e tentativi, e ci saranno momenti per farli (ad
+        esempio nelle \emph{game jam}, che verranno spiegate più avanti). Ma il
+        corso insegna a lavorare come designer, e il game design come
+        professione è orientato all'utente finale: creare un prodotto che una,
+        si spera decine o centinaia di milioni di persone possano giocare e
+        apprezzare (il che, detto brutalmente, se succede rende anche molto
+        ricchi). Il direttore, che fa consulenza a vari studi, ha visto spesso
+        team fare un gioco, vederlo fallire e perdere tutti il lavoro: un
+        peccato, perché con lo stesso studio si sarebbero potuti creare altri
+        capolavori, o semplicemente dare lavoro alle persone.
+\end{description}
+
+% ---------------------------------------------------------------------
+\section{Il task della settimana}
+\label{sec:task-gd2}
+
+\begin{enumerate}
+  \item Scegliere un \textbf{gioco arcade}.
+  \item Scegliere \textbf{uno} dei framework visti a lezione: Schell, Romero e
+        Schreiber, oppure Bura (quest'ultimo è più complesso, ma accettato).
+  \item Analizzare il gioco usando il framework scelto.
+  \item Far emergere le \textbf{emozioni} verso cui il gioco è spiccatamente
+        orientato, usando il vocabolario visto in lezione: individuarne
+        principalmente \textbf{tre}.
+  \item Poiché in aula è stato chiesto che cosa si intenda per ``gioco
+        arcade'', aggiungere al task anche \textbf{una propria definizione di
+        gioco arcade}.
+\end{enumerate}
+Vincoli e indicazioni:
+\begin{itemize}
+  \item valgono tutti i \textbf{termini banditi} (sezione~\ref{sec:vocabolario});
+  \item le modalità di consegna (ad esempio documento su Drive) e le date
+        verranno comunicate da ciascun docente per la propria sede; come regola
+        generale, un task si considera da consegnare entro una settimana
+        dall'assegnazione;
+  \item lo studente che ha pronunciato la parola proibita deve svolgere
+        l'analisi con \textbf{entrambi} i framework principali, in
+        \textbf{due documenti distinti};
+  \item la lezione successiva si aprirà con una sessione di domande e risposte
+        su questa lezione.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Il primo passo del percorso è passare dalla visione del
+        \textbf{giocatore} a quella del \textbf{creatore}.
+  \item Ogni definizione di gioco include qualcosa ed esclude qualcos'altro: le
+        parole hanno un significato preciso e vanno scelte con cura.
+  \item Il gioco \textbf{non è definibile}, perché è anche uno \textbf{stato
+        mentale}; \emph{game} e \emph{play} sono la stessa cosa, e lavorare con
+        lo stato mentale del giocatore è parte del mestiere.
+  \item La propria definizione di gioco è una \textbf{bussola}: dice che tipo
+        di designer si è. Va riscritta periodicamente, senza rileggere la
+        precedente.
+  \item Non si può definire la zuppa, ma se ne possono elencare gli
+        \textbf{ingredienti}: definire chiude, elencare apre.
+  \item Un framework valido deve potersi applicare a \textbf{qualsiasi gioco}.
+  \item \textbf{Schell}: meccaniche, narrativa, estetiche, tecnologia.
+        \textbf{Romero e Schreiber}: game qualities, giocatore, tema,
+        obiettivo, regole, risorse, interazione. \textbf{Bura}: action, system,
+        self, social incrociati con freedom, mastery, data.
+  \item Non esiste un metodo unico: i framework sono \textbf{lenti}, e servono
+        a guardare un problema da più punti di vista. È anche la miglior difesa
+        del designer contro l'automazione.
+  \item La parola ``divertente'' (e con lei ``bello'', ``noioso'', ecc.) è
+        \textbf{bandita}: bisogna nominare le \textbf{emozioni specifiche} che
+        il gioco vuole suscitare.
+  \item Il design è iterativo, plurale, \textbf{egoless} e orientato
+        all'\textbf{utente}.
+\end{itemize}

@@ -1,0 +1,2014 @@
+% =====================================================================
+%  Capitolo 14 — Illuminare con uno scopo: il Physically Based
+%  Rendering, la mobilità delle luci, il sole, il cielo e la
+%  verosimiglianza in Unreal Engine (Game Design, primo anno)
+%  Fonte: trascrizione della lezione GD14, terza lezione del corso di
+%  Level Design del primo anno (docente: Stefano Zocchi, lo stesso dei
+%  capitoli 8 e 11), di cui è la diretta prosecuzione: i task rivisti
+%  in apertura sono le stanze inventate assegnate nel capitolo 11.
+%  Contenuti, nell'ordine della lezione: la chiacchierata d'apertura su
+%  GTA 6 e su Fortnite (il token, il gioco d'azzardo, la piattaforma);
+%  i due pacchetti della lezione (Medieval Village e Scan Labs
+%  Interiors); la revisione delle stanze inventate (lo studente dei
+%  booleani, Valerio, Alberto, Francesco, Federica, Antonino,
+%  Francesca) con le digressioni sulla coerenza strutturale, sulle
+%  reference dal vero e sul manichino per le proporzioni; il ripasso
+%  delle viste ortografiche, delle modalità di visualizzazione, del
+%  LOD del terreno, delle gerarchie e della differenza tra figli e
+%  componenti; il Physically Based Rendering (texture e materiale,
+%  specular highlight, albedo, roughness, specular, la mappa della
+%  roughness); i quattro tipi di luce e la mobilità (Static,
+%  Stationary, Movable), il baking e le lightmap, Lumen, Build
+%  Lighting Only; la directional light e il SunSky di Medieval
+%  Village; la notte come giorno tinto di blu; le Cascade Shadow Maps;
+%  la Sky Light e il colore delle ombre; la point light e i tre esempi
+%  di Lies of P (il barile, la lampada senza ombra, la luce motivata
+%  del corridoio); la pausa (ancora GTA, la monetizzazione, il finto
+%  MMO; la domanda sul posizionamento degli oggetti via codice, le
+%  spline e i geometry node); le luci che Unreal spegne da solo e il
+%  Cast Shadows; la spot light; Medieval Village giocabile; la mappa
+%  di Scan Labs letta insieme (fuori campo non si costruisce, il
+%  chiaroscuro, le reflection capture, il pizzico di caos, le tre
+%  regole dell'osservazione, la luce rimbalzata, gli artefatti di
+%  Lumen, Lumen e il ray tracing); i materiali proiettati dalle luci;
+%  il task (una stanza con luci motivate); le domande sul task; la
+%  lezione spostata e la chiusura.
+%  Integrazioni dal libro "An Architectural Approach to Level Design"
+%  (Christopher W. Totten), segnalate come approfondimenti.
+%
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{amsmath},
+%  \usepackage{enumitem}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Tutte le etichette di questo capitolo hanno il prefisso "gd14:"
+%  (gd14:sec:..., gd14:fig:..., gd14:tab:...) e tutti gli stili TikZ
+%  il prefisso "gd14", per non collidere con gli altri capitoli.
+%
+%  Nota sulla fonte: la trascrizione automatica è buona nelle parti
+%  spiegate alla classe (la revisione, il PBR, le luci, la lettura
+%  della mappa, il task), ma molto rovinata nelle due pause, nei
+%  momenti di lavoro individuale e quando il docente parla a bassa
+%  voce con un singolo studente. Quei tratti sono stati trascritti come
+%  frasi senza senso o ripetute in loop ("ti piacciono", "sì, sì",
+%  "mi fa", "non rispondi?", "ho fatto un po' di lavoro", "non lo so",
+%  "se non prendo niente", "mi vuoi dire?", "una tecnica che ha messo a
+%  punto"), con lunghi brani captati da una fonte esterna (frasi sulla
+%  "signora Gibbardi", sulla "signora Mazzoni", sulla "città-stato",
+%  sulla "dottrina sul mercato del lavoro", su "Isabella Santander",
+%  sui "funzionari della società", "la migliore dal 2005", "il numero
+%  di persone è molto più basso dopo il raggio di persone", "il raggio
+%  di vetro", "Vittorio Prodi"): sono artefatti, omessi. Si omettono
+%  anche gli scambi privati non legati alla lezione (un torneo di un
+%  picchiaduro e un amico del docente, il caricamento del progetto per
+%  una studentessa, la riparazione dei materiali sul computer di uno
+%  studente, il recupero di una consegna di uno studente lavoratore).
+%  Molti nomi sono storpiati ("Arial", "Arreal", "a Real", "un Real",
+%  "Harry Potter" per Unreal; "l'humen", "l'UMEN", "lume" per Lumen;
+%  "PDR" per PBR; "Raphness" per roughness; "albido" per albedo;
+%  "Skylite" per Sky Light; "directionalite", "detection light",
+%  "directional line" per directional light; "pointera" per point
+%  light; "Scarlabs", "Scala", "Scanlabs" per Scan Labs; "Medival
+%  Village", "Medieval Town", "Medieval City" per Medieval Village;
+%  "IsoFP", "Lise of P", "Eyes of Pie", "Light of P", "Light of
+%  Python", "L'ISO Speech" per Lies of P; "il Diver 2" per Helldivers
+%  2; "Aina in barbecue" per ENA: Dream BBQ; "GTH 6" per GTA 6;
+%  "refreshing" per ray tracing; "Silent Till Have" per Silent Hill):
+%  dove il riferimento è ricostruibile con certezza lo si riporta nella
+%  forma corretta; dove non lo è, lo si segnala in nota invece di
+%  indovinare. Le figure e le tabelle sono ricostruzioni schematiche di
+%  ciò che il docente mostra e descrive, non le slide originali né
+%  screenshot.
+% =====================================================================
+
+\chapter[Luci, PBR e verosimiglianza]{Illuminare con uno scopo: il PBR,
+la mobilità delle luci e la verosimiglianza}
+\label{gd14:cap:luci}
+
+Il capitolo~\ref{gd11:cap:blockout-luci} aveva dato agli studenti il
+\textbf{vocabolario} del level designer: blockout, coordinate, gerarchie, pivot,
+mesh, e una prima carrellata delle luci di Unreal, chiusa con il task di
+inventare \textbf{una stanza}. Questa lezione, tenuta dallo stesso docente
+(Stefano Zocchi), è la terza del corso di \textbf{Level Design} del primo anno,
+ed è dedicata quasi interamente alle \textbf{luci}: ``oggi parliamo di luci,
+oggi approfondiamo un attimo il discorso delle luci''. Non è l'unica: il docente
+annuncia che, dato che ``c'è un sacco di roba di cui parlare'', le lezioni sulle
+luci saranno \textbf{quattro}.
+
+La lezione ha tre anime. C'è una parte \textbf{tecnica}, per capire ``cosa sta
+succedendo dietro le quinte dell'engine'': il \emph{Physically Based Rendering},
+che spiega perché un materiale reagisce alla luce in un certo modo, e la
+\textbf{mobilità} delle luci (statiche, stazionarie, mobili), che spiega perché
+una modifica a volte ``non fa niente''. C'è una parte \textbf{artistica}, che è
+il vero cuore della lezione: la differenza tra \textbf{realismo} e
+\textbf{verosimiglianza}, mostrata con tre esempi tratti da \emph{Lies of P}, e
+l'idea che le luci di un videogioco, come quelle di un set cinematografico, si
+piazzano \textbf{per uno scopo}, non ``dentro la lampada''. E c'è una parte di
+\textbf{osservazione}: due progetti professionali (\emph{Medieval Village} e una
+mappa di \emph{Scan Labs}) da aprire, esplorare e smontare, e le \textbf{tre
+regole dell'osservazione} che il docente consegna alla classe.
+
+Come quasi sempre, la lezione comincia prima della lezione, con una lunga
+chiacchierata sull'uscita di \emph{GTA 6} e sulle ultime trovate di
+\emph{Fortnite}: il capitolo la riporta, perché dice molto su come un
+professionista guarda l'industria.
+
+La struttura della lezione, e quindi del capitolo, è questa:
+\begin{enumerate}
+  \item la chiacchierata d'apertura su \emph{GTA 6} e su \emph{Fortnite}
+        (sezione~\ref{gd14:sec:gta});
+  \item i due pacchetti della lezione, \emph{Medieval Village} e \emph{Scan Labs
+        Interiors}, e la differenza tra un progetto e un pacchetto di asset
+        (sezione~\ref{gd14:sec:pacchetti});
+  \item la \textbf{revisione delle stanze inventate}, con le digressioni sulla
+        coerenza strutturale, sulle reference dal vero e sul manichino per le
+        proporzioni (sezione~\ref{gd14:sec:revisione});
+  \item il \textbf{ripasso}: viste ortografiche, modalità di visualizzazione,
+        il LOD del terreno, l'ottimizzazione, le gerarchie e la differenza tra
+        figli e componenti (sezione~\ref{gd14:sec:ripasso});
+  \item il \textbf{Physically Based Rendering}: texture e materiale, albedo,
+        roughness, specular (sezione~\ref{gd14:sec:pbr});
+  \item le luci e la loro \textbf{mobilità}: Static, Stationary, Movable, il
+        baking, le lightmap e Lumen (sezione~\ref{gd14:sec:mobilita});
+  \item la \textbf{directional light}, il SunSky e la notte
+        (sezione~\ref{gd14:sec:directional}); la \textbf{Sky Light} e il colore
+        delle ombre (sezione~\ref{gd14:sec:skylight});
+  \item la \textbf{point light} e la \textbf{verosimiglianza}: i tre esempi di
+        \emph{Lies of P} (sezione~\ref{gd14:sec:liesofp});
+  \item la pausa: ancora \emph{GTA}, e la domanda sul posizionamento degli
+        oggetti via codice (sezione~\ref{gd14:sec:pausa});
+  \item le luci che Unreal \textbf{spegne da solo} e il \textbf{Cast Shadows}
+        (sezione~\ref{gd14:sec:troppe-luci}); la \textbf{spot light}
+        (sezione~\ref{gd14:sec:spot});
+  \item \emph{Medieval Village} giocabile e la \textbf{lettura} della mappa di
+        Scan Labs: fuori campo non si costruisce, il chiaroscuro, il pizzico di
+        caos, le tre regole dell'osservazione, la luce rimbalzata e gli
+        artefatti di Lumen (sezioni~\ref{gd14:sec:play}--\ref{gd14:sec:lumen});
+  \item i materiali proiettati dalle luci (sezione~\ref{gd14:sec:lightfn});
+  \item il \textbf{task}, le domande e la chiusura
+        (sezioni~\ref{gd14:sec:task}--\ref{gd14:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{Prima della lezione: GTA 6 e Fortnite}
+\label{gd14:sec:gta}
+
+La registrazione parte a discussione già avviata: è la settimana dell'uscita di
+\emph{GTA 6}, e uno studente ha chiesto al docente che cosa ne pensi. Non è una
+digressione da poco: è un piccolo esempio di come un professionista legge un
+evento dell'industria, ed è per questo che il capitolo la riporta.
+
+\subsection{Un successo, ma abbastanza?}
+
+\paragraph{La domanda.} Rockstar ha speso ``una quantità allucinante di soldi''
+su \emph{GTA 6}, soprattutto per lo sviluppo, ma anche per il
+\textbf{marketing}: il solo marketing di \emph{GTA 6}, dice il docente, ``costa
+dieci volte lo sviluppo di un videogioco medio''. ``Hanno praticamente colonizzato
+Miami'', hanno organizzato una serie di eventi speciali: l'uscita è stata
+trattata ``non come il lancio di un videogioco'', ma come il lancio del prodotto
+di intrattenimento più costoso della storia. Che sarà il videogioco più venduto
+della storia, ``su quello non ci piove''; che sarà un successo enorme di critica
+e di pubblico è ``inevitabile''. La vera domanda è un'altra: \textbf{basterà}? Basterà
+a ripagare quello che ha speso Rockstar e, soprattutto, a creare quello che
+Rockstar si aspetta, per il gioco ``considerato quello che salverà l'industria
+dei videogiochi''?
+
+\paragraph{Una risposta che arriverà tra anni.} ``Hai posto una domanda la cui
+risposta non avremo fra un mese, non avremo fra un anno.'' Il motivo è che lo
+scopo di Rockstar è fare di \emph{GTA 6} \textbf{la piattaforma di lancio del
+nuovo GTA Online}. Se sarà stata una buona mossa, o una ``mossa alla
+\emph{Destiny}'', dove alla fine si è dovuto concludere ``abbiamo perso un sacco
+di soldi'', lo si saprà tirando le somme tra tre o quattro anni. ``Adesso sono
+tutti in cerca del facile: è un successo gigantesco, è un fallimento clamoroso.''
+Ognuno tirerà acqua al suo mulino; Rockstar dirà di sicuro che è un successo
+clamoroso, ``perché sarà un successo clamoroso'', ma non si saprà se è il
+successo \emph{che si aspettavano} finché non si sommeranno i ricavi di
+\emph{GTA 6} e di \emph{GTA Online}. Anche se \emph{GTA 6} andasse in perdita, se
+\emph{GTA Online} diventasse ``una roba che gli fa fare cinquanta milioni di
+dollari al mese'', il discorso sarebbe quanto in là riesce a tirare, per rientrare
+dei costi e continuare lo sviluppo.
+
+\paragraph{Il punto di vista del professionista.} Il docente non ha una
+PlayStation~5, ``quindi non ci posso giocare a prescindere''. Lo incuriosisce
+però ``lato professionale'' vedere \textbf{che cosa si può ottenere in un
+videogioco in cui hai una quantità di soldi infinita} per fare quello che vuoi. E
+a uno studente che teme che dieci anni di sviluppo non siano un buon segnale
+risponde di no: ``hanno così tanti soldi, così tanto personale e
+\textbf{l'esperienza per lavorare} con così tanti soldi e così tanto personale,
+che sarà un gran bel gioco. Terra-terra, sarà un gran bel videogioco. Vedremo se
+è il videogioco di cui avevano bisogno.''
+
+\paragraph{Solo Rockstar può fare quello che fa Rockstar.} Lato industria, ci sarà
+``un bel po' di gente che prova a imitare \emph{GTA 6}'', come c'è stata gente che
+provava a imitare \emph{GTA 5} e \emph{GTA 4}, e fallirà clamorosamente. Il motivo
+è pratico: altri studi potrebbero avvicinarsi a un budget comparabile, ma
+\textbf{nessun altro studio può garantire il ritorno} che ha \emph{GTA}, ``anche
+solo per il nome''. \emph{GTA} è una delle rarissime serie a cui gioca anche
+\textbf{chi non gioca ai videogiochi}.
+
+\paragraph{La calma piatta.} Un consiglio pratico: ``godetevi la calma piatta'',
+perché quando esce \emph{GTA} nessun altro osa far uscire un gioco per un mese;
+``e state lontani dai social'', perché per tre settimane parleranno solo di
+quello.
+
+\subsection{Fortnite: il token e il gioco d'azzardo}
+
+La conversazione passa a \emph{Fortnite}. Qual è la grande strategia di Epic per
+rilanciare un gioco che ``sta iniziando a calare''? Uno studente racconta del
+\textbf{token} che i giocatori danno la caccia a trovare, e di conoscenti che
+``perdono ore di sonno'' per trovarlo. La risposta del docente è secca:
+``\textbf{il gioco d'azzardo}. Letteralmente, il gioco d'azzardo.'' A un certo
+punto, ``chiediti se ti stai divertendo o se sei vittima di ludopatia''.
+
+\paragraph{Un simulatore di gioco d'azzardo.} Per il docente \emph{Fortnite} è già
+di base ``un simulatore del gioco d'azzardo'', a livello di design ma anche con
+lo \textbf{store}, con ``tutte le robe in rotazione'' e i suoi ``trucchi
+squalidi'' (ricorda che Epic è stata anche multata dall'Unione Europea per i
+suoi ``trucchetti psicologici''\footnote{Così nella lezione: è un'affermazione
+del docente, riportata come tale.}). L'analogia per far capire il token: ``è come
+se Valve dicesse, in \emph{Deadlock}: in ogni partita hai una possibilità su
+diecimila che, se vinci, ti diamo cinquanta euro di buono per Steam''. ``Ok, va
+bene: è letteralmente gioco d'azzardo. Io non le sopporto, queste robe.''
+
+\paragraph{Perché è così popolare.} Il docente cerca di giocare ai free-to-play
+quando iniziano a diventare popolari, ``per capire un attimo cosa sta
+succedendo''. La sua conclusione su \emph{Fortnite}: ``un gioco decente, ma niente
+di speciale''. Ciò che lo rende così popolare è che \textbf{ogni mese, o
+addirittura ogni due settimane, aggiungono qualcosa}: una rotazione continua di
+nuove meccaniche, nuovi personaggi, nuove skin, eventi speciali, collaborazioni,
+mappe a tema. Questa rotazione ``sovrasta qualunque mancanza del gioco in sé come
+gioco'', al prezzo di ``spremere come delle spugne gli sviluppatori'', che devono
+produrre una quantità di contenuti ``fuori da ogni comprensione''.
+
+\subsection{Non un gioco: una piattaforma}
+
+\paragraph{I Funko Pop.} ``Il loro interesse non è mai stato fare un vero gioco,
+il loro interesse è stato attirare la gente.'' La formula del docente:
+\begin{quote}
+\emph{Fortnite} sta ai videogiochi come i Funko Pop stanno alla scultura.
+\end{quote}
+Lo scopo è sempre stato creare uno \textbf{spazio sociale}: la gente non gioca a
+\emph{Fortnite} per vincere, ma per passare il tempo con gli amici (o, nell'ultima
+incarnazione, per cercare il token). È un \textbf{terzo spazio}, ``strapieno di
+roba che ti vendono'' e di collaborazioni con altre aziende (\emph{The Amazing
+Digital Circus}, \emph{Guerre Stellari}, ``chi più ne ha più ne metta''): un
+generico ``spazio di divertimento corporate con tutti i tuoi personaggi
+preferiti'', dove puoi vedere Goku che balla sul cadavere di un altro personaggio,
+``quel tipo di cosa che una volta si faceva con i disegni in Paint messi su
+internet''. Il gioco ha comunque ``un suo perché'' nella casualità, nel calderone
+di meccaniche e veicoli ``messi un po' sparsi a caso, che tanto la settimana
+prossima cambiano''.
+
+\paragraph{Il modello Roblox.} ``\emph{Fortnite} non è un gioco, è una
+piattaforma. O meglio: vogliono che sia una piattaforma.'' Nominalmente è un
+gioco, ma in pratica vuole essere \textbf{Roblox}. E che cos'è Roblox? ``L'Amazon
+dei videogiochi'', con il suo engine proprio. ``Nessuno vuole vendere al mercato:
+tutti vogliono \textbf{essere il mercato}, dove prendi una percentuale su tutto
+quello che viene venduto al tuo interno.'' Per questo Epic ha spinto molto sulle
+\textbf{isole}, cioè sui contenuti prodotti dal pubblico invece che dagli
+sviluppatori. ``Non sta andando'', chiude il docente, e si passa alla lezione.
+
+% ---------------------------------------------------------------------
+\section{I pacchetti di oggi: Medieval Village e Scan Labs}
+\label{gd14:sec:pacchetti}
+
+\paragraph{Scaricare subito.} Per la lezione servono dei file, e il docente chiede
+di scaricarli subito ``così non perdiamo tempo''. Il wi-fi dell'aula non regge
+(``saluti al wi-fi in classe; io sono connesso via cavo, quindi non è troppo un mio
+problema''), così il docente fa girare una \textbf{chiavetta USB} con i file:
+``ci sono due file, prendeteveli entrambi, per favore; ignorate gli altri''. Se
+il primo si è già scaricato dal link, dalla chiavetta basta prendere il secondo.
+Il secondo pacchetto è sulla chiavetta solo perché il docente lo ha preparato la
+sera prima, ed era più veloce passarlo a mano in classe; l'altro era già online.
+A una studentessa collegata da casa (Federica) il docente lo carica durante la
+pausa, così può scaricarlo.
+
+\paragraph{Due cose diverse.} I due pacchetti \textbf{non vanno trattati allo stesso
+modo}, ed è l'errore che uno studente ha già fatto:
+\begin{itemize}
+  \item \textbf{Scan Labs Interiors}\footnote{Nella trascrizione ``Scarlabs'',
+        ``Scan Labs'', ``Scala'', ``Scanlabs''; la mappa al suo interno si chiama
+        \emph{Interiors Volume 1}.} è un \textbf{pacchetto di asset} già
+        importati, come quelli visti la volta precedente: va messo
+        \textbf{dentro la cartella \texttt{Content}} del proprio progetto, come
+        si è fatto per lo Starter Content
+        (sezione~\ref{gd11:sec:starter}). Chi usa il launcher di Unreal può
+        cliccare sul progetto e scegliere \emph{Mostra nella cartella}: si apre
+        la cartella del progetto, ci si butta dentro il pacchetto ``e siete a
+        posto''. Ricordarsi di \textbf{decomprimerlo}. Non serve un progetto
+        nuovo: va bene anche uno già usato, creando un livello nuovo.
+  \item \textbf{Medieval Village} è un \textbf{progetto} intero: ``non va messo
+        dentro un altro progetto''. È proprio un file di Unreal: ci si fa doppio
+        clic e lo si apre. Unreal chiederà con che versione aprirlo, perché è
+        stato fatto con una versione precedente (``in 5.6, mi sembra'', o in
+        5.7): si sceglie la \textbf{5.8}, ``funziona comunque benissimo''. Allo
+        studente che lo aveva copiato dentro il proprio progetto: ``cancella
+        quello che hai messo dentro''.
+\end{itemize}
+
+\paragraph{Perché Medieval Village.} \emph{Medieval Village} è il lavoro di un
+\textbf{level designer italiano}\footnote{Più avanti il docente ne pronuncia il
+nome mentre scorre la schermata iniziale; nella trascrizione è reso come ``Marco
+Maria Rossi'', che non è verificabile.}: un villaggio medievale esplorabile,
+``a un livello di qualità da gioco AAA''. Il docente è chiaro: ``è ben oltre
+quello che siete in grado di fare, è veramente fatto da una persona
+espertissima''. Ma proprio per questo è utile: è un \textbf{punto di riferimento}
+di come si fa questo lavoro a livello professionale, e un progetto in cui si può
+\textbf{mettere le mani} e guardare dietro le quinte. La raccomandazione, comunque,
+è di aspettarsi di non capirci niente: si tornerà sul punto
+(sezione~\ref{gd14:sec:directional}).
+
+% ---------------------------------------------------------------------
+\section{La revisione delle stanze inventate}
+\label{gd14:sec:revisione}
+
+Mentre la chiavetta gira e Unreal si apre (``questo è un computer nuovo, forse ci
+mette poco''), si guardano i task: le \textbf{stanze inventate} assegnate nella
+lezione precedente (sezione~\ref{gd11:sec:task}). Uno studente aveva scritto al
+docente di avere avuto problemi a importare i materiali, e non li ha risolti: lo
+si vedrà dopo, a parte. La cartella non si lascia ordinare per nome (``fantastico''),
+quindi il docente va ``in ordine al primo che vede''.
+
+\subsection{Lo studente dei booleani: spazi, non forme a caso}
+
+Il primo lavoro è fatto di forme ottenute con operazioni \textbf{booleane}, cioè
+lavorando con la \textbf{modellazione} dentro Unreal. Lo studente ha già seguito
+corsi extra di Unreal, e si vede: ``forme a caso realizzate con una bella
+coscienza tecnica, per carità'', ma la \emph{Modeling Mode} si vedrà più avanti,
+``quindi non ce n'era bisogno''.
+
+\paragraph{Creare un piano e seguirlo.} Il richiamo vale per tutti. Le prime
+lezioni servono a mettere le mani sull'engine, ma il docente vuole anche
+sviluppare ``la capacità di creare un piano e seguirlo per creare qualcosa di
+\textbf{strutturale}''. ``Io vi ho chiesto di creare una stanza, e queste sono
+forme a caso.'' L'obiettivo personale che il docente dà allo studente:
+\textbf{sviluppare coerenza strutturale}, creare \textbf{spazi}, ``non cose messe a
+caso per sapere che lo sai fare''. Uno degli obiettivi del corso è sviluppare un
+\textbf{senso estetico}, un senso di struttura: il primo anno è tutto dedicato
+all'aspetto estetico (luci, materiali, ambienti).
+
+\paragraph{Niente avanguardia, per ora.} Le prime lezioni servono a prendere la
+mano, e il docente non è ``esageratamente rigido''. Ma da ora si comincia a
+indirizzare l'impegno verso risultati ``che ipoteticamente potremmo vedere in un
+videogioco''. E senza la scusa che qualcuno tira fuori ogni tanto: ``ah, ma hai
+giocato a \emph{ENA: Dream BBQ}?\footnote{Nella trascrizione ``Aina in
+barbecue''.}'', o ad altri giochi super indie con visuali strane come
+\emph{Cruelty Squad}. ``Non prendiamoci in giro: cerchiamo di fare ambienti logici
+e \textbf{lasciamo l'avanguardia a quando abbiamo finito le basi}.'' E ancora: ``non
+voglio più vedere cose astratte dadaistiche da ora in poi''; lo scopo è
+concentrarsi su ``qualcosa di definito e definibile'', ``qualcosa che potrebbe
+essere una scena di un videogioco''.
+
+\paragraph{Usare una reference.} Il consiglio pratico: ``usa reference, se ne hai
+bisogno. Guarda una fotografia di una stanza e cerca di ricostruire quella
+stanza.'' È anche uno dei motivi per cui il docente fa girare \emph{Medieval
+Village}: avere sotto gli occhi un lavoro professionale.
+
+\subsection{Valerio: la casa sulla sedia}
+
+Valerio aveva scritto al docente di avere avuto grossi problemi con l'engine: i
+materiali non si importavano, e ha dovuto usare dei \textbf{colori} al posto delle
+texture. ``Tuttavia direi che hai ottenuto un ottimo risultato, a prescindere.''
+L'idea è una \textbf{casa costruita su una sedia}: era un esercizio di fantasia,
+``quindi ci sta''; molto moderna, con gli spazi interni ben organizzati. C'è
+anche la pianta del pacchetto, i cui materiali si sono rotti con l'importazione
+sbagliata: Valerio ``l'ha vista così e l'ha trasformata in un esempio di arte
+moderna. Mi piace come pensi.''
+
+\subsection{Alberto: verso il realistico}
+
+Alberto si sposta ``un pochino più sul realistico, o sul tendente realistico'',
+``e ci sta anche qua''. Ha costruito a mano anche alcuni elementi, con
+impegno. ``Casa, perfetto, niente da dire. Hai fatto un gran bel lavoro.''
+
+\subsection{Francesco: l'aula, e il pavimento che tutti riconoscono}
+
+Francesco (Muratore) ha \textbf{rifatto l'aula} in cui si tiene la lezione. ``Molto
+carina come idea.'' Il docente apprezza l'attenzione ai dettagli delle
+\textbf{prese di corrente sui banchi} e il lavoro sul materiale del pavimento, un
+legno dello Starter Content: ``a furia di insegnare e di vedere gente che usa i
+pacchetti di Unreal di base, ormai lo conosco a memoria quel pavimento. Appena lo
+vedo in un gioco, mi dico: \emph{Starter Content}.''
+
+\paragraph{Mai uno a uno.} Quando si rifanno ambienti reali in un videogioco, ``non
+si fanno quasi mai uno a uno'': c'è sempre un certo livello di
+\textbf{reinterpretazione degli spazi}. Perfino giochi come \emph{Assassin's
+Creed}, che si vantano di aver replicato città nel modo più realistico possibile,
+``un minimo di libertà se la prendono'': a volte per necessità tecniche, a volte
+perché di una certa parete non ci sono foto e bisogna improvvisare.
+
+\subsection{Federica: la vecchia stanza, e il manichino}
+
+Federica Ferrara segue da casa (``mi senti?'' ``Forte e chiaro.''). Ha fatto un
+interno di casa con una \textbf{statuina con due materiali diversi}, una
+libreria con i libri, la scrivania, la stampante, perfino la PlayStation~5. ``Hai
+un buon occhio per i dettagli, hai un buon occhio per la ricostruzione degli
+ambienti.'' È la sua \textbf{vecchia stanza}. ``Super attenzione ai dettagli,
+onestamente ben oltre quello che mi aspetto dalle vostre task, ma mi fa molto
+piacere vederlo.''
+
+\paragraph{Il manichino per la scala.} In mezzo alla stanza c'è il
+\textbf{manichino di Unreal}: Federica lo ha messo per dare la proporzione di
+tutto. Il docente approva: è ``un classico trucco della modellazione 3D per
+mantenere le dimensioni corrette''. Si prende un modello 3D del proprio
+personaggio, lo si mette nella scena e \textbf{ci si costruisce tutto attorno},
+usandolo come punto di riferimento.
+
+\subsection{La lezione delle reference}
+
+Il docente fa notare una cosa: sia Francesco sia Federica hanno usato come
+riferimento \textbf{stanze che conoscono} (l'aula, la propria vecchia camera). E
+``nel momento in cui si usa una reference dalla realtà, riusciamo a inserire molti
+più dettagli''.
+\begin{quote}
+Quando si lavora a livello artistico, è un buon modo \textbf{partire dalla realtà e
+modificarla}, piuttosto che partire direttamente dalla fantasia.
+\end{quote}
+Chi si mette a imparare a disegnare se lo sente dire per primo: \textbf{usate le
+reference}, partite da fotografie. ``Non ricalcate le fotografie, ma tenetele
+sott'occhio per dare un'occhiata a tutti i dettagli.'' La cosa tornerà anche nel
+mondo dei videogiochi.
+
+\paragraph{Niente asset da Fab.} Una piccola nota: una studentessa aveva chiesto su
+Discord il permesso di aggiungere prop scaricati da \textbf{Fab} (e in uno degli
+screenshot c'era un gatto). Il docente ha detto di no, ``perché voglio che partiate
+tutti dallo \textbf{stesso punto di riferimento}''. La regola resta valida anche per
+il task successivo (sezione~\ref{gd14:sec:domande}).
+
+\paragraph{Il tasto G.} E un promemoria: premendo \textbf{G} nell'editor si tolgono
+tutte le icone dalla visualizzazione, così gli screenshot sono puliti.
+
+\subsection{Antonino: Helldivers 2, e il tappeto di muschio}
+
+Antonino ``si sposta molto più sul fantascientifico'': voleva ispirarsi a
+\emph{Helldivers 2}.\footnote{Nella trascrizione ``il Diver 2''.} Un problema
+tecnico: un materiale \textbf{trasparente} non riceve l'illuminazione come gli
+altri. Due cose che funzionano:
+\begin{itemize}
+  \item il \textbf{tappeto} che riempie lo spazio, fatto con un materiale d'erba (è
+        muschio): ``se non stai a farci il pelo nell'uovo, è leggibile come
+        tappeto''. Ed è il criterio generale: ``se qualcosa è
+        \textbf{leggibile} come quello che deve essere inteso, allora stiamo
+        andando nella giusta direzione'';
+  \item ``un piccolo esempio di \textbf{caos}'': le sedie spostate ad angoli
+        casuali, i tablet spostati ad angoli casuali. Queste cose rendono gli
+        ambienti ``un po' più vissuti, leggermente più caotici, e quel pizzico
+        di caos li rende meno artificiali, meno artificiosi'' (lo stesso
+        principio emerso nel capitolo~\ref{gd11:cap:blockout-luci}).
+\end{itemize}
+
+\subsection{Francesca: lo chalet fatto di tubi}
+
+Francesca, ``ultima ma non ultima'', ha fatto uno \textbf{chalet di montagna}
+fatto\ldots\ con dei tubi. ``L'intenzione c'è ed è leggibile, quindi ottimo.'' Il
+perché è semplice: non c'erano i tronchi.
+
+\paragraph{Arrangiarsi con quello che si ha.} ``Questa è una situazione in cui vi
+troverete di sicuro: volete fare qualcosa ma non avete i mezzi per farlo.'' In
+questo caso va benissimo, perché il tipo di ambiente si legge. Ma ci si può
+chiedere: i tronchi non li posso fare, perché non ho il materiale necessario;
+allora facciamo delle \textbf{assi di legno}, usando il materiale del pavimento.
+Altra osservazione: pavimento e pareti hanno lo \textbf{stesso aspetto}, ``e questo
+crea una roba molto piatta''.
+
+\subsection{Lo scopo degli esercizi}
+
+``Come dicevo in precedenza, lo scopo di questi esercizi è farvi prendere la mano
+con Unreal e farvi sviluppare l'istinto del \emph{mi viene in mente, lo faccio}'',
+senza fermarsi a cercare dove sono i controlli. Uno studente non ha fatto
+l'esercizio (la settimana precedente è stato male): ``cerca di recuperarlo, perché
+comunque voglio vederli tutti, questi esercizi''.
+
+% ---------------------------------------------------------------------
+\section{Ripasso: viste, modalità di visualizzazione e gerarchie}
+\label{gd14:sec:ripasso}
+
+Si torna alla lezione riprendendo i concetti spiegati la volta precedente, che il
+docente aveva messo anche all'inizio delle slide di oggi. Prima un trucco già
+detto: tenendo premuto il \textbf{tasto destro} e girando la \textbf{rotella} del
+mouse si aumenta o diminuisce la \textbf{velocità della telecamera}. Tutte le
+scorciatoie sono nella \textbf{prima slide} con le scorciatoie di Unreal.
+
+\subsection{Perspective, Top, Bottom, Left, Right}
+
+C'è una cosa che il docente non aveva spiegato. In alto a sinistra nella viewport,
+dove c'è scritto \textbf{Perspective}, si può cambiare la \textbf{proiezione} della
+vista (tabella~\ref{gd14:tab:viste}).
+\begin{itemize}
+  \item \textbf{Perspective} è la vista di base: la normale telecamera ``del mondo
+        che ci circonda, che simula il modo in cui vedono i nostri occhi''.
+  \item \textbf{Top} mostra il mondo di gioco \textbf{dall'alto}, come una mappa.
+        Passando a questa vista, Unreal \textbf{spegne le luci}: la modalità
+        diventa automaticamente \emph{Unlit}, ``quindi è molto facilmente
+        leggibile come una mappa''. Lo stesso vale per \textbf{Bottom} (dal basso
+        verso l'alto), \textbf{Left}, \textbf{Right} e le altre.
+\end{itemize}
+Sono viste \textbf{completamente bidimensionali} (ortografiche), utili per valutare
+i vari lati di quello che si sta facendo. Se si sta piazzando qualcosa dall'alto,
+per esempio la disposizione di una mappa, in \emph{Top} si spostano gli oggetti
+comodamente. Tornando a \emph{Perspective}, la telecamera torna dov'era, con tutti
+i cambiamenti fatti.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.0cm}p{4.6cm}p{5.0cm}@{}}
+\toprule
+\textbf{Vista} & \textbf{Che cosa mostra} & \textbf{Quando serve} \\
+\midrule
+Perspective & la telecamera ``come i nostri occhi'', in prospettiva &
+  il lavoro di tutti i giorni, gli screenshot \\
+\addlinespace
+Top / Bottom & il livello dall'alto o dal basso, senza prospettiva, in
+  \emph{Unlit} & leggere il livello come una mappa, disporre gli oggetti in
+  pianta \\
+\addlinespace
+Left / Right (e le altre) & i lati, senza prospettiva, in \emph{Unlit} &
+  controllare allineamenti, altezze, lati di una costruzione \\
+\bottomrule
+\end{tabular}
+\caption{Le proiezioni della viewport viste a lezione.}
+\label{gd14:tab:viste}
+\end{table}
+
+\subsection{Lit, Unlit, Wireframe: la profondità sono le ombre}
+
+Le modalità di visualizzazione erano già state viste
+(sezione~\ref{gd11:sec:viewmode}). Il docente ne riprende il significato con
+un'osservazione che prepara la lezione:
+\begin{itemize}
+  \item \textbf{Lit} è tutto processato come versione finale, con tutti i calcoli
+        della luce e gli effetti di post-processing;
+  \item \textbf{Unlit} spegne l'illuminazione, e quindi non si vedono le ombre.
+\end{itemize}
+``L'illuminazione è un po' il contrario, in realtà, di quello che sta succedendo
+dietro le quinte.'' \emph{Unlit} mostra gli oggetti ``al 100\% della loro
+visualizzazione''; l'illuminazione aggiunge il calcolo delle \textbf{ombre}, e
+\textbf{sono le ombre a creare la profondità}. Il docente si mette in una posizione
+in cui un oggetto ne copre un altro: in \emph{Lit} si distinguono, in
+\emph{Unlit} no, ``anche se è lì'', perché è la \textbf{differenza di colore tra
+zone in ombra e zone in luce} che permette di percepire la tridimensionalità.
+
+\paragraph{Wireframe e il terreno.} In \textbf{Wireframe} si vedono le mesh: la
+\emph{sky sphere} (lo sfondo) e, dato che la mappa aperta è quella di default, il
+\textbf{terreno}, che essendo la simulazione di un terreno realistico è molto più
+denso di poligoni rispetto ai cubi. E si nota un'altra cosa: il terreno è
+\textbf{gestito per livelli di dettaglio}. Più ci si avvicina a un blocco di
+terreno, più è definito; più è lontano, meno triangoli ci sono. ``Vedete come si
+trasforma?'' Oltre una certa distanza tutti quei dettagli non servono, e da una
+visione normale la differenza non si nota neanche. Sono \textbf{trucchi di
+ottimizzazione}.
+
+\paragraph{Dell'ottimizzazione fregatevene.} Ed ecco una frase che il docente
+ripeterà ``ripetutamente nel corso di quest'anno'':
+\begin{quote}
+Al primo anno \textbf{fregatevene totalmente dell'ottimizzazione}. Non fa parte dei
+nostri problemi.
+\end{quote}
+Con ``qualche piccolissimo asterisco'', alcuni dei quali si vedranno proprio in
+questa lezione (sezione~\ref{gd14:sec:troppe-luci}).
+
+\subsection{Genitori, figli e componenti}
+
+\paragraph{Il ripasso.} Ripasso veloce della gerarchia
+(sezione~\ref{gd11:sec:gerarchie}): se si trascina un cubo più piccolo sopra un
+cubo più grosso nell'Outliner, i due sono \textbf{imparentati}, e ogni
+trasformazione del genitore, \textbf{scala inclusa}, viene ereditata dal figlio;
+le modifiche al figlio, invece, non risalgono al genitore.
+
+\paragraph{Figli e componenti non sono la stessa cosa.} C'è però una distinzione da
+fare. Selezionando un oggetto nel mondo di gioco, nel pannello \emph{Details} si
+vede l'\textbf{istanza}, e dentro l'istanza i suoi \textbf{componenti}. Un cubo ha un
+solo componente, la mesh del cubo; un Blueprint più complesso, come un personaggio
+o un oggetto che emette particelle, avrà sia la mesh sia l'emettitore di
+particelle. ``Un actor è formato da più componenti.'' Quando si parla di
+\textbf{genitore e figlio}, invece, non si parla di componenti, ma di
+\textbf{actor}.
+
+\paragraph{La domanda sulla PlayStation.} Federica chiede: nel fare la PlayStation
+ha costruito il modello pezzo per pezzo, imparentando i pezzi; sarebbe stato
+meglio farne un componente unico, pensando alla programmazione? La risposta: tutti
+questi esercizi servono a mettere le mani, e ``nessuno dei metodi che avete usato
+finora è un modo che si usa per fare un videogioco''. Quella PlayStation
+``l'avrebbe fatta un modellatore 3D in Maya o in Blender''. Quello che contava era
+far passare l'idea dell'\textbf{ereditarietà}: il figlio eredita tutti i cambiamenti
+del genitore. ``Non preoccupiamoci troppo dei dettagli per ora; impariamo a
+conoscere le cose con cui stiamo lavorando.''
+
+\paragraph{Selezionare la discendenza.} Un'ultima comodità: facendo tasto destro su
+un genitore, \textbf{Select All Descendants} seleziona tutti i discendenti,
+mentre \textbf{Immediate Children} seleziona solo i figli diretti e non ``i figli
+dei figli''. Serve per selezionare velocemente più oggetti insieme (sulla slide
+sono indicate anche le relative scorciatoie da tastiera\footnote{Nella trascrizione
+``Ctrl+Shift+D e Ctrl+Alt+D'', senza che sia chiaro a quale comando corrisponda
+ciascuna: si rimanda alla slide.}).
+
+% ---------------------------------------------------------------------
+\section{Il Physically Based Rendering}
+\label{gd14:sec:pbr}
+
+``Parliamo ora di una cosa, e questa sarà una sezione un po' teorica, ma è
+importante capire cosa sta succedendo nell'engine'': il \textbf{PBR},
+\emph{Physically Based Rendering}.\footnote{Nella trascrizione anche ``PDR''.}
+
+\subsection{Molti modi per disegnare un oggetto}
+
+Quando si parla di grafica 3D, ci sono molti modi per rappresentare un oggetto
+tridimensionale su schermo, e nella storia dei videogiochi si sono usate tecnologie
+molto diverse per raggiungere lo stesso obiettivo, anche per il 2D. Chi ha giocato
+a un gioco 2D della prima PlayStation, come \emph{Castlevania: Symphony of the
+Night}, ha in realtà giocato a un \textbf{gioco 3D} in cui, invece di modelli
+tridimensionali, ci sono \textbf{quadrati con sopra gli sprite}. È il motivo per cui
+dentro quei giochi compaiono piccoli elementi 3D che ruotano, come la stanza di
+salvataggio con ``quella specie di dado che gira''.
+
+\paragraph{La definizione.} Il metodo standard moderno è il \textbf{Physically Based
+Rendering}. Con \emph{rendering} si intende la realizzazione di un'immagine a
+schermo; il PBR è un metodo di rendering che si usa per \textbf{approssimare
+l'interazione realistica della luce con gli oggetti}.
+
+\paragraph{Un problema di ordine.} Il PBR è un modo di applicare la luce che
+dipende dai \textbf{materiali}, e la lezione sui materiali non c'è ancora stata.
+``Questa è una cosa che purtroppo tornerà spesso'': i videogiochi sono ``una roba
+molto olistica'', da considerare in ogni componente, ``e io non posso farvi una
+sola lezione di sedici ore che copre tutto quanto''. Capiterà quindi che, per
+introdurre un concetto, si debba toccare un concetto di cui non si è ancora
+parlato: il docente cercherà di farne accenni ``il più comprensibili possibile''.
+
+\subsection{Texture e materiale, di nuovo}
+
+``Antonino, che cos'è una texture?'' La risposta dello studente (la superficie
+dell'oggetto) è ``esattamente quello che volevo tirar fuori, perché non è quello,
+una texture. Ma una volta era così.''
+
+\paragraph{Una volta.} Una volta la texture era, ``detto terra-terra'',
+\textbf{quello che riempie lo spazio fra i triangoli}. Una mesh è fatta di
+triangoli (sezione~\ref{gd11:sec:mesh}); in modalità \emph{Wireframe}, togliendo le
+icone con il tasto G, si vedono i triangoli che compongono le mesh. L'idea era che
+la texture fosse la superficie proiettata su questi triangoli.
+
+\paragraph{Oggi.} Oggi la texture è \textbf{solo una delle componenti} di quella
+superficie. Una texture è un'\textbf{immagine}: un file quadrato, di lato pari a
+una potenza di 2 (``ma non entriamo nei dettagli tecnici''), in PNG o in altri
+formati, che viene preso dal \textbf{materiale}, ``passato attraverso tutta una
+serie di cose'' e applicato all'oggetto. Spesso \emph{texture} e \emph{materiale}
+sono usati come sinonimi, ``e questa confusione è normalissima, tutti ce l'hanno''.
+Ma la distinzione è importante:
+\begin{quote}
+\textbf{Un materiale usa texture.} E nel PBR il materiale divide ciò che viene
+applicato ai triangoli in \textbf{più parti}, che calcolate nel loro insieme danno
+il risultato.
+\end{quote}
+
+\subsection{Che cosa racconta la luce}
+
+\paragraph{La sedia.} Il progetto aperto ha lo Starter Content, quindi la
+dimostrazione si fa sulla ``nostra ben amata sedia, che vedremo molto spesso''
+(tasto \textbf{F} per inquadrare l'oggetto selezionato). ``Guardate in alto a destra
+sulla sedia: cosa sta succedendo con la luce?'' Muovendo la telecamera, i
+riflessi chiari \textbf{si spostano}. Come mai? Sono creati dal riflesso del sole,
+che forma un angolo con la posizione di chi osserva. Tecnicamente si chiamano
+\textbf{specular highlights} (``ma ci interessa relativamente'').
+
+\paragraph{Informazioni fisiche.} Sono \textbf{informazioni fisiche}, ed è per questo
+che si parla di rendering \emph{basato sulla fisica}: la luce ci sta passando
+informazioni sulla fisica dell'oggetto, e quella fisica dice ``questa è una
+superficie riflettente''. Facendo la stessa cosa con una \textbf{roccia} (``grandioso,
+sono un genio, l'ho messa in ombra''), c'è comunque un certo livello di interazione
+con la luce, ma \textbf{non ci sono specular highlights}, nessun punto di riflesso
+del sole. Perché sono due materiali fisicamente diversi: la roccia è riflettente
+solo fino a un certo punto, la plastica e il metallo sono molto riflettenti, cioè
+\textbf{lucidi}.
+
+\paragraph{Il vetro e il metallo.} Il PBR permette di passare a un oggetto le
+informazioni che il calcolo della luce userà per \textbf{simulare il materiale di cui
+è fatto}. Per il \textbf{vetro} dice anche altro: che è trasparente e che, grazie a
+uno \emph{shader} (``lì andiamo in un campo un po' più complesso''), distorce la
+visuale di quello che c'è dietro. La base della sedia, invece, è di
+\textbf{metallo}, con la forte capacità di riflettere la luce tipica del metallo.
+\begin{quote}
+Il Physically Based Rendering è \textbf{un sistema unitario di ricreazione delle
+caratteristiche fisiche naturali delle superfici}.
+\end{quote}
+Nella slide c'è un link alla documentazione di Unreal per chi vuole approfondire.
+La parte importante da ricordare è che \textbf{un materiale è composto da più
+elementi calcolati insieme} (figura~\ref{gd14:fig:pbr}).
+
+\subsection{L'albedo: solo il colore}
+
+La base è l'\textbf{albedo}, detto anche \emph{color}, \emph{base color} o
+\emph{diffuse}. ``Che cos'è l'albedo? È il colore, \textbf{unicamente il
+colore}.'' I nomi sono tanti perché i termini sono sempre la stessa cosa ma, a
+seconda del programma, si chiamano diversamente; più spesso \emph{albedo} o
+\emph{color}. (In ambito scientifico \emph{albedo} indica altro, per esempio la
+capacità riflettente dei pianeti; nel nostro settore è la texture che rappresenta
+unicamente i colori di un oggetto.)
+
+\paragraph{Unlit è l'albedo.} Sulla slide, a destra, il materiale di un oggetto
+metallico è renderizzato mostrando solo l'albedo. ``Questo è quello che succede
+quando fate \emph{Unlit}'': si vede unicamente il colore, senza nessun calcolo di
+come la luce impatta le superfici in base al materiale di cui sono fatte.
+
+\paragraph{Dentro il materiale.} Il docente apre velocemente il materiale della
+roccia (doppio clic sul materiale, non sull'oggetto). Il materiale è composto da
+più nodi; uno di questi è il \emph{Texture Sample} collegato a \emph{Base Color}:
+è la texture dell'albedo, chiamata \texttt{T\_Rock\_Basalt\_D}. Cliccando sulla
+piccola icona accanto, il Content Browser si apre direttamente sulla texture. La
+\texttt{D} finale sta per \emph{diffuse}: di nuovo, ``la texture dei colori di un
+oggetto''.
+\begin{itemize}
+  \item ``Lo so, è un po' antipatico lavorare in un settore in cui una cosa può
+        avere tre nomi diversi'', ma ci si abitua, e soprattutto, quando la si
+        vede, si capisce subito qual è la texture del colore.
+  \item Nell'editor della texture ci sono i canali \textbf{R}, \textbf{G},
+        \textbf{B} (rosso, verde, blu) e l'\textbf{alfa}, la trasparenza, che il
+        docente disattiva perché per ora non interessa. Lasciando acceso un solo
+        canale, Unreal mostra l'immagine \textbf{in bianco e nero}, perché è più
+        facile da leggere.
+\end{itemize}
+``Non preoccupiamoci: le vedremo nella lezione dedicata a materiali e texture.
+Queste prime lezioni sono uno scarico enorme di roba da sapere, lo so, me ne rendo
+conto: se ci sono dubbi, interrompetemi.''
+
+\subsection{La roughness: quanto è ruvida una superficie}
+
+Un'altra parte del PBR è la \textbf{roughness}\footnote{Nella trascrizione anche
+``Raphness''.}: quanto è \textbf{ruvida} una superficie. Sulla slide, in basso, lo
+stesso oggetto ha un colore di base più la roughness, con valori crescenti: più
+aumenta la roughness, \textbf{meno l'oggetto riesce a riflettere}.
+
+\paragraph{Valori, non categorie.} Il PBR non funziona con ``questo materiale
+plastica, questo metallo, questo roccia, questo carta''. Ha \textbf{una serie di
+valori}, e in base alla quantità di ciascuno si approssima un tipo di superficie.
+Il docente lo fa sperimentare: ``Francesco, che materiale è questo primo oggetto?''
+Acciaio, un qualche metallo. E questo? Pietra, o plastica. E questo? ``Io direi
+plastica, metallo opaco, qualcosa del genere.'' Cambiando \textbf{un solo valore}
+si stabilisce che tipo di materiale si sta creando.
+
+\paragraph{Un numero o una texture.} Il valore può essere \textbf{un solo numero}
+applicato a tutto l'oggetto, oppure può essere preso da una \textbf{texture} che
+dice ``queste parti sono di metallo, queste di plastica'': una texture in
+\textbf{scala di grigi} che dice quanta roughness applicare in ciascun punto. Per
+questo la distinzione tra texture e materiale è importante:
+\begin{quote}
+Un materiale può essere composto da più texture, da una sola texture e dei numeri,
+o solo da numeri. Un materiale è \textbf{una scatola} in cui mettiamo quello che
+vogliamo vedere su schermo.
+\end{quote}
+
+\paragraph{Perché la ruvidezza spegne i riflessi.} Che cosa fa la roughness per
+ottenere questo effetto? L'illustrazione della slide lo mostra: invece di far
+rimbalzare la luce in modo uniforme, \textbf{più una superficie è ruvida, più fa
+rimbalzare la luce in direzioni casuali}. È una superficie piena di imperfezioni,
+tanto che toccandola si sente che è ruvida, perché si sentono le imperfezioni. Una
+plastica ruvida non fa riflessi, una plastica lucida sì; lo stesso vale per i
+pavimenti e per un sacco di altre cose.
+
+\subsection{Lo specular}
+
+C'è poi lo \textbf{specular}, dal latino \emph{speculum}, ``che vuol dire
+specchio'': indica \textbf{quanto è riflettente} un materiale. I riflessi sono un
+discorso particolare, e roughness e specular \textbf{si influenzano a vicenda}: se
+c'è troppa roughness, lo specular non funziona più. ``Non vi serve saperlo per
+adesso'': è solo un'introduzione per capire come funziona la luce in Unreal,
+perché tutti questi valori \textbf{toccano la luce} che si dà nell'illuminazione.
+
+\paragraph{La domanda: che differenza c'è?} Uno studente chiede: visivamente, la
+differenza tra la ruvidezza e lo specular qual è? Sembrano due modi per ottenere
+la stessa cosa, e allora perché usare uno e non l'altro? ``La risposta breve è che
+\textbf{sono quasi uguali}, sì. La risposta lunga sono questioni di
+\emph{technical art}'' che sarebbero una parentesi troppo lunga. Ci saranno due
+lezioni dedicate ai materiali: ``questa domanda te la segno con un asterisco e la
+rivediamo quando andiamo a vedere i materiali''.
+
+\subsection{La mappa della roughness e i bordi rovinati}
+
+Nell'immagine a destra della slide, con le texture delle varie caratteristiche
+applicate, la \textbf{mappa della roughness} dice che l'oggetto è ruvido
+\textbf{solo sugli spigoli}, per dare l'effetto di bordi un po' rovinati. ``Se date
+un'occhiata alla chiavetta USB che vi ho appena fatto girare, forse avrete notato
+che ha i bordi rovinati'': serve a dare la sensazione di \textbf{cosa vissuta}.
+Guardando da vicino, la superficie è riflettente dove c'è il metallo o la vernice,
+ma sui bordi è più ruvida, e la mappa della roughness segna proprio quei bordi.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  gd14lab/.style={font=\scriptsize, align=center},
+  gd14box/.style={draw, rounded corners=2pt, minimum width=2.4cm,
+                  minimum height=0.8cm, font=\scriptsize\bfseries, align=center},
+]
+  % riga delle sfere: roughness crescente
+  \foreach \i/\r in {0/0, 1/0.25, 2/0.5, 3/0.75, 4/1} {
+    \pgfmathsetmacro\hl{100-90*\r}
+    \pgfmathsetmacro\hs{0.32-0.18*\r}
+    \shade[ball color=gray!60] (\i*1.9,0) circle (0.6);
+    \fill[white, opacity=\hl/100] (\i*1.9-0.22,0.22) circle (\hs);
+    \node[gd14lab] at (\i*1.9,-0.95) {roughness\\$\r$};
+  }
+  \draw[-{Stealth}] (-0.6,-1.55) -- (8.2,-1.55)
+    node[midway, below, font=\scriptsize] {più ruvida $\Rightarrow$ meno
+    riflessi, specular highlight sempre più larghi e deboli};
+  % materiale come scatola
+  \node[gd14box, fill=orange!20] (alb) at (0,-3.2) {Albedo\\(colore)};
+  \node[gd14box, fill=gray!25] (rou) at (2.9,-3.2) {Roughness\\(ruvidezza)};
+  \node[gd14box, fill=cyan!15] (spe) at (5.8,-3.2) {Specular\\(riflettenza)};
+  \node[gd14box, fill=gray!10, minimum width=2.0cm] (alt) at (8.4,-3.2)
+     {altri canali\\(normali, \ldots)};
+  \node[draw, very thick, rounded corners=4pt, fit=(alb)(rou)(spe)(alt),
+        inner sep=6pt, label={[font=\scriptsize\bfseries]above:Materiale: una
+        scatola di texture e numeri}] (mat) {};
+  \node[gd14box, fill=yellow!25, minimum width=3.2cm] (luce) at (4.2,-5.1)
+     {calcolo della luce\\(il risultato a schermo)};
+  \draw[-{Stealth}, thick] (mat.south) -- (luce.north);
+\end{tikzpicture}
+\caption{Il PBR in sintesi. In alto: lo stesso colore con roughness crescente;
+cambiando un solo valore si passa da un metallo lucido a una superficie opaca. In
+basso: il materiale come ``scatola'' di più elementi (ciascuno un numero o una
+texture) che il calcolo della luce usa insieme. Ricostruzione schematica.}
+\label{gd14:fig:pbr}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Le luci e la loro mobilità}
+\label{gd14:sec:mobilita}
+
+``Passiamo oltre. Luci.'' Delle luci si è già parlato la volta precedente, ``per
+darvi un'infarinatura generale'' (sezione~\ref{gd11:sec:luci}). I tipi sono quattro,
+più la \textbf{rect light} (luce rettangolare), che per ora si mette da parte:
+\textbf{directional light}, \textbf{sky light}, \textbf{point light} e
+\textbf{spot light}. Il docente decide di vederle non nel vuoto ma dentro
+\emph{Medieval Village}, ``così possiamo vedere queste cose applicate in un contesto
+già realizzato a un altissimo livello''. Mentre il progetto finisce di compilare
+tutti i materiali (``dato che non l'ho mai aperto prima''), si fa una nota
+importante.
+
+\subsection{Static, Stationary, Movable}
+
+Aprendo una luce, nei \emph{Details} c'è una sezione che dice se la luce è
+\textbf{mobile} o no: la \textbf{Mobility}, con tre valori
+(tabella~\ref{gd14:tab:mobilita}).
+
+\paragraph{Static: il baking.} Le luci \textbf{statiche} sono calcolate \textbf{una
+volta sola}: non si possono spostare durante il gameplay e non si possono spostare
+nemmeno gli oggetti che illuminano, e creano delle \textbf{lightmap}. È una
+distinzione che vale per moltissimi engine e che va sotto il nome di
+\textbf{baking delle luci} (cottura). Dato che \textbf{calcolare la luce in tempo
+reale è una delle cose più costose che fa un engine}, una delle cose che si
+facevano agli inizi del 3D\footnote{Nella trascrizione ``all'inizio dell'epoca di
+Jock 3D'', non ricostruibile con certezza.}, e che in molti settori si fa ancora,
+era \textbf{precalcolare le luci}: le calcoli una volta e le converti in dati. Se
+non serve spostare luci, aggiornare cose o spostare parti dello scenario, si può
+dire: queste luci sono statiche, non cambieranno mai; calcolale una volta e non
+cambiarle più. Unreal usa le \textbf{lightmap}: texture con tutta la luce del
+livello, caricate e applicate ai vari oggetti.
+\begin{itemize}
+  \item \textbf{Vantaggio}: leggerissime, ``girano molto facilmente''.
+  \item \textbf{Svantaggio}: non si può spostare niente. Se si sposta un oggetto da
+        un punto buio a un punto illuminato, in un ambiente con luci statiche la
+        sua illuminazione \textbf{non cambia}: le luci lo hanno illuminato nel
+        momento in cui sono state calcolate. Spostandolo al sole, l'oggetto resta
+        in ombra, ``perché c'è ancora solo il calcolo delle luci precedente''.
+\end{itemize}
+
+\paragraph{Lumen: tutto è dinamico.} Questa cosa, in Unreal, è di fatto
+\textbf{disattivata}. Unreal usa un sistema di illuminazione dinamica che si chiama
+\textbf{Lumen}\footnote{Nella trascrizione ``l'humen'', ``l'UMEN'', ``lume''.}, che
+\textbf{considera automaticamente tutte le luci come dinamiche}. Il discorso sulla
+mobilità, quindi, si applica davvero solo se Lumen è disattivato; il docente lo
+racconta ``come informazione di servizio'' su cosa succede dietro le quinte,
+perché potrebbe tornare utile, ma gli studenti di solito lavorano con Lumen
+acceso.
+
+\paragraph{Lo sfarfallio.} Se in una stanza si notano \textbf{sfarfallii di luce},
+\textbf{rumore visivo} legato alle luci, o se in giochi moderni fatti con Unreal si
+è notato uno strano sfarfallio ai confini tra luce e ombra, ``è Lumen, che calcola
+l'illuminazione dinamica in tempo reale \textbf{approssimata}''. Detto in modo molto
+semplice: invece di calcolarla perfetta a ogni frame, la approssima \textbf{tra un
+frame e l'altro}, in modo da avere un'approssimazione del ray tracing senza dover
+fare ray tracing (sezione~\ref{gd14:sec:lumen}).
+
+\paragraph{Movable: la luce pura.} Una luce \textbf{Movable} è ``la luce pura'': si
+può spostare la sorgente durante il gioco e l'illuminazione di ciò che la circonda
+cambia; si possono spostare gli oggetti intorno e continueranno a proiettare ombre.
+È la luce di base, senza limiti, che si comporta come una luce realistica, e come
+si può immaginare è \textbf{la più costosa} in termini di risorse.
+
+\paragraph{Stationary: a metà.} Una via di mezzo è la luce \textbf{Stationary}: una
+volta piazzata nell'engine non può più essere mossa durante il gioco, ma continua
+comunque a \textbf{proiettare le ombre} degli oggetti che le si spostano davanti.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.2cm}p{3.6cm}p{3.4cm}p{3.4cm}@{}}
+\toprule
+\textbf{Mobility} & \textbf{Che cosa fa} & \textbf{Pro} & \textbf{Contro} \\
+\midrule
+Static & calcolata una volta, salvata in lightmap (\emph{baking}) &
+  leggerissima & niente si può muovere: un oggetto spostato al sole resta in
+  ombra; va ``buildata'' a mano \\
+\addlinespace
+Stationary & la luce non si muove nel gioco, ma le ombre degli oggetti mobili sì &
+  compromesso tra costo e libertà & la sorgente resta fissa \\
+\addlinespace
+Movable & luce pienamente dinamica: si muovono luce e oggetti &
+  si comporta come una luce reale & la più costosa \\
+\bottomrule
+\end{tabular}
+\caption{La mobilità delle luci in Unreal. Con \textbf{Lumen} attivo (il default,
+e la scelta consigliata per il corso) tutte le luci sono trattate come dinamiche e
+la distinzione conta solo in casi particolari.}
+\label{gd14:tab:mobilita}
+\end{table}
+
+\paragraph{Sapere che esistono.} ``Finché usate Lumen, non preoccupatevi troppo di
+queste cose.'' Quando si vorrà ottimizzare, o spingersi in situazioni più avanzate
+di controllo delle luci, si potrà cominciare a guardarle. Ed ecco l'approccio del
+docente a tutto il corso:
+\begin{quote}
+Io toccherò un sacco di cose in queste lezioni che, se dovessi spiegarle nei
+dettagli, richiederebbero intere lezioni. Mi interessa di più farvi sapere che
+queste cose \textbf{esistono}, in modo che, se avete bisogno di modificarle,
+sappiate dove andare a cercare, cosa cercare su Google, dove sono le varie opzioni.
+\end{quote}
+``Sì, c'è una buona parte di \textbf{studio individuale} all'interno di queste
+lezioni. È inevitabile.''
+
+\paragraph{La scritta Preview e Build Lighting Only.} Se si lavora con Lumen spento
+e sugli oggetti in scena, in mezzo alle ombre, compare la scritta
+\textbf{Preview}, è perché Unreal sta mostrando un'anteprima delle luci statiche e
+chiede, prima di giocarci, di \textbf{buildarle}, cioè di fare i calcoli di tutte
+le luci adesso. La soluzione: menu \textbf{Build} $\to$ \textbf{Build Lighting
+Only}. Con Lumen acceso questa scritta non comparirà ``praticamente mai''; ma chi
+vuole provare la \emph{static lighting} per i fatti propri deve sapere che le luci
+\textbf{vanno buildate a mano}.
+
+\paragraph{Approfondimento: il baking secondo Totten.} In \emph{An Architectural
+Approach to Level Design} Totten osserva che, pur dovendo tenere d'occhio il costo
+grafico dell'illuminazione in tempo reale, un'illuminazione drammatica si può
+ottenere con il \textbf{light baking}: il programma renderizza una mappa di colore
+dell'ambiente che contiene le informazioni di illuminazione. Molti engine hanno
+funzioni di \emph{light mapping} che producono una texture con le informazioni
+sulla luce, riducendo la necessità di illuminazione in tempo reale nelle aree in
+cui la luce non cambierà in modo significativo. È esattamente il compromesso della
+tabella~\ref{gd14:tab:mobilita}: Lumen sposta l'ago della bilancia verso il
+dinamico, ma il principio resta.
+
+% ---------------------------------------------------------------------
+\section{La directional light e il SunSky}
+\label{gd14:sec:directional}
+
+\subsection{Il sole: un muro di luce infinito}
+
+``Francesca, che cos'è la directional light?''\footnote{Nella trascrizione
+``directional line''; più avanti anche ``directionalite'' e ``detection light''.}
+``La luce del Sole.'' Per essere tecnicamente più precisi, la directional light è
+la luce legata al \textbf{ciclo diurno}: una fonte di luce in cui \textbf{i raggi
+procedono tutti in parallelo}. ``Immaginatelo come un muro di luce dalle dimensioni
+infinite'': è quello che è il Sole rispetto alla Terra. A livello pratico i raggi
+solari sono paralleli, perché la differenza tra un raggio e l'altro è così minima
+da essere trascurabile (figura~\ref{gd14:fig:tipi}).
+
+\paragraph{Una sola.} ``Lo ripeto ancora una volta: \textbf{una sola directional
+light} nel vostro gioco.'' Unreal non impedisce di metterne più di una, ma se lo si
+fa ``finite per avere grossi problemi''. Assicurarsi che ce ne sia solo una.
+
+\paragraph{Conta solo la rotazione.} L'unica cosa che si può fare è
+\textbf{ruotarla}: essendo i raggi infiniti e paralleli, \textbf{spostarla non cambia
+assolutamente nulla}. Ma proprio per questo la si può spostare a proprio comodo.
+Se si sta lavorando a una casa, per esempio la casa del protagonista, che è il
+punto di partenza per l'estetica di tutto il livello, e si vuole che la luce cada
+bene su quella casa per poi costruire il resto in base a quella luce, ci si può
+portare la directional light lì accanto, così da vedere nello stesso momento sia
+la casa sia la luce mentre la si ruota.
+
+\subsection{Il SunSky di Medieval Village}
+
+Nel progetto di \emph{Medieval Village} la directional light è particolare. Tutte
+le luci ambientali che normalmente stanno in una cartella (la cartella
+\emph{Lighting}, sezione~\ref{gd11:sec:da-zero}) sono raccolte dentro un unico
+oggetto chiamato \textbf{SunSky}: ``come un Blueprint che ha all'interno dei
+figli'', tra cui la directional light. Ruotando la luce, \textbf{girano anche le
+ombre} di tutta la scena; spostando l'oggetto SunSky, invece, non cambia nulla.
+Una precisazione: qui la directional light è un \textbf{componente} del SunSky; nei
+livelli degli studenti è un \textbf{actor} a sé (la distinzione della
+sezione~\ref{gd14:sec:ripasso}).
+
+\paragraph{Non ci capirete niente, ed è normale.} Il docente dà un primo sguardo al
+villaggio: ``un ambiente medievale fatto giocabile'', a un livello di qualità ``da
+produzione di altissimo livello''. Serve per due motivi: avere un punto di
+riferimento, e poter guardare dietro le quinte come sono state fatte le cose. Ma
+``se ci guardate dentro adesso, non ci capirete niente''. Innanzitutto il livello è
+pieno di icone (si tolgono e si rimettono con \textbf{G}). E poi molte cose sono
+fatte con strumenti che non si sono ancora visti: per esempio, cliccando sull'erba,
+invece del \emph{landscape} si seleziona un pezzo di terreno. ``Non preoccupatevi
+se non ci capite niente. È normale. A fine anno ci capirete molto di più.'' Si nota
+anche la \textbf{nebbia} (\emph{fog}) in lontananza, ``che fa questo effetto così''.
+``Tutto quello che volete studiare e con cui giocare è qui.''
+
+\subsection{Il colore del sole, e la notte}
+
+Nei \emph{Details} della directional light ci sono molti valori, e alcuni si sono
+già visti. Il primo è il \textbf{colore}. ``Volete fare la scena finta notte? Lo
+spostiamo un po' sul blu.'' E abbassando un po' la luce, la scena diventa notte:
+\begin{quote}
+Come a Hollywood, in realtà la notte non esiste come concetto. Che cos'è la notte?
+\textbf{La notte è il giorno con una tinta blu.}
+\end{quote}
+Ovviamente, con un po' più di studio rispetto alla dimostrazione, ``in cui l'unica
+cosa che ho fatto è cambiare la luce''. (È la tecnica cinematografica nota come
+\emph{day for night}, la ``notte americana''.)
+
+\subsection{Cascade Shadow Maps: i valori tecnici}
+
+Tra i valori ce n'è uno che il docente mostra come esempio: nella sezione
+\textbf{Cascaded Shadow Maps}, la \textbf{Dynamic Shadow Distance} indica la qualità
+delle ombre: più è alto il valore, più le ombre sono \textbf{definite} a distanza.
+Serve soprattutto a far vedere che i valori nei \emph{Details} non sono solo luce,
+posizione e simili: ci sono anche molti valori tecnici. ``Non andate a toccarli
+per ora.''
+
+\paragraph{Uno screenshot a un frame al secondo.} ``Tutto quello che stiamo facendo
+noi è fare screenshot. Se anche il vostro computer va a un frame al secondo, basta
+per fare uno screenshot.'' Quindi, per il primo anno, niente preoccupazioni di
+ottimizzazione.
+
+\paragraph{Quando un valore non fa niente.} Una cosa da ricordare sempre: se si
+tocca un valore di una luce e non cambia niente, c'è la possibilità che quel valore
+influenzi \textbf{solo certi tipi di luce} (solo le statiche, solo le stazionarie e
+le mobili, e così via). Unreal non mostra un pop-up che avvisa ``guarda che questo
+valore tocca solo le luci mobili''. Però, \textbf{lasciando il mouse sopra} un
+valore, compare spesso una descrizione di cosa fa e, nel caso delle luci, per
+quale mobilità vale. ``Tenetele d'occhio, queste cose, perché tendono a essere le
+robe in cui modifichi e dici: non sta succedendo niente, come mai?''
+
+% ---------------------------------------------------------------------
+\section{La Sky Light e il colore delle ombre}
+\label{gd14:sec:skylight}
+
+``Vi ricordate che l'avevo accennata la scorsa volta? Che cos'è la Sky
+Light?''\footnote{Nella trascrizione ``Skylite''.} Daniele risponde: dà i colori
+della luce nell'atmosfera. La \textbf{Sky Light} è la \textbf{diffusione della luce
+nell'atmosfera}: è il motivo per cui il cielo è azzurro invece di essere nero,
+perché la luce si diffonde nell'atmosfera e, diffondendosi, dà
+un'\textbf{illuminazione di fondo generale}: il tono generale del colore della luce
+che si riflette nel cielo.
+
+\paragraph{Detto in modo brutale: le ombre.} ``In una maniera un po' più brutale, la
+Sky Light sono le ombre.'' Cioè: è \textbf{la luce dove non arriva la luce diretta del
+sole}. Nella lezione precedente, costruendo un livello da zero, si era visto che
+con il solo sole (tolto il discorso dell'illuminazione dinamica approssimata di
+Lumen) un oggetto è illuminato da un lato solo
+(sezione~\ref{gd11:sec:da-zero}): è il motivo per cui la Luna ha lo spicchio, perché
+il sole non la illumina dall'altro lato, che quindi è totalmente nero. La Sky
+Light è responsabile di \textbf{che cosa c'è dentro le ombre} (``in parte, perché
+tutti i sistemi si sovrappongono'').
+
+\paragraph{Cambiare il colore delle ombre.} Questo significa che, se per motivi
+stilistici si vuole cambiare il \textbf{colore}, la ``temperatura'', delle ombre, si
+seleziona la Sky Light e si cambia il suo colore. Il docente lo mostra in
+\emph{Medieval Village}:
+\begin{itemize}
+  \item un \textbf{horror medievale}, con un'atmosfera realistica ma più cupa: Sky
+        Light verso il \textbf{rosso}. Un rosso acceso ``è veramente pesante'';
+        abbassato un po', dà alla scena un tono leggermente rosso, ``un po' più
+        tetro'';
+  \item un villaggio coperto dal ``\textbf{muschio elfico}'': Sky Light sul
+        \textbf{verde}.
+\end{itemize}
+Spinti al massimo sono ``un pugno in un occhio'', ma servono a far capire come
+funziona. Poi si riporta la Sky Light al \textbf{bianco}, la luce neutra. (Il
+risultato è attenuato dal fatto che il post-processing di questo livello è molto
+\textbf{desaturato}, e toglie parecchio colore in generale: ``ma ce ne
+preoccuperemo più avanti''.)
+
+\paragraph{Approfondimento: un'unica luce, molte atmosfere.} Totten racconta il
+caso del gioco per dispositivi mobili \emph{SWARM!}, in cui i limiti dei dispositivi
+permettevano \textbf{una sola directional light} per livello. I designer dovevano
+quindi piazzarla con cura, all'angolo da cui volevano che arrivasse la luce, e
+regolare il \textbf{colore della luce ambientale}, l'intensità e il colore della
+luce stessa: con qualche ritocco creativo si ottenevano condizioni di luce molto
+diverse con una sola luce. È la stessa lezione della dimostrazione: rotazione e
+colore del sole più il colore della luce ambientale bastano a cambiare l'ora del
+giorno e il genere del gioco.
+
+% ---------------------------------------------------------------------
+\section{La point light e la verosimiglianza: tre esempi da Lies of P}
+\label{gd14:sec:liesofp}
+
+\subsection{La point light, di nuovo}
+
+``Ancora un po' di luce. Point light, l'abbiamo già vista. Cos'è una point light?''
+Una luce \textbf{radiale}: un punto specifico che emana luce \textbf{in tutte le
+direzioni} attorno a sé (figura~\ref{gd14:fig:tipi}), e che proietta ombre tutto
+intorno.
+
+\paragraph{F11.} ``Pro tip di Unreal, e seguitemi perché questo è utilissimo'':
+premendo \textbf{F11} l'editor va \textbf{a schermo intero}, così si posizionano le
+cose più comodamente. In questo caso Unreal avvisa anche che renderizzare a 4K una
+scena del genere significa ``\emph{expect extremely poor performance}'': infatti
+il computer va a pochi fps. (Della \textbf{scalabilità} dell'engine si parlerà in un
+altro momento; per ora, di nuovo, niente ottimizzazione.)
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  gd14ray/.style={-{Stealth[length=4pt]}, thick, orange!80!black},
+  gd14cap/.style={font=\scriptsize\bfseries, align=center},
+]
+  % directional
+  \begin{scope}
+    \foreach \y in {0,0.45,...,2.25} {
+      \draw[gd14ray] (0,\y) -- (2.4,\y-0.9);
+    }
+    \fill[gray!40] (0.2,-1.3) rectangle (2.8,-1.1);
+    \node[gd14cap] at (1.4,-1.8) {Directional\\raggi paralleli, infiniti:\\conta solo la rotazione};
+  \end{scope}
+  % point
+  \begin{scope}[xshift=4.6cm]
+    \fill[yellow!80!orange] (1.2,0.8) circle (0.12);
+    \foreach \a in {0,30,...,330} {
+      \draw[gd14ray] (1.2,0.8) ++(\a:0.2) -- ++(\a:1.0);
+    }
+    \node[gd14cap] at (1.2,-1.8) {Point\\da un punto, in ogni\\direzione (una sfera)};
+  \end{scope}
+  % spot
+  \begin{scope}[xshift=8.8cm]
+    \fill[yellow!80!orange] (1.2,1.8) circle (0.12);
+    \fill[yellow!25] (1.2,1.8) -- (0.1,-1.0) -- (2.3,-1.0) -- cycle;
+    \fill[yellow!50] (1.2,1.8) -- (0.6,-1.0) -- (1.8,-1.0) -- cycle;
+    \foreach \x in {0.3,0.75,1.2,1.65,2.1} {
+      \draw[gd14ray] (1.2,1.7) -- (\x,-0.9);
+    }
+    \node[gd14cap] at (1.2,-1.8) {Spot\\da un punto, dentro un cono\\(cono interno ed esterno)};
+  \end{scope}
+\end{tikzpicture}
+\caption{Tre delle luci viste a lezione. La Sky Light non ha una forma: è la luce
+diffusa dall'atmosfera che riempie le zone d'ombra. Ricostruzione schematica.}
+\label{gd14:fig:tipi}
+\end{figure}
+
+\subsection{Il barile che brucia}
+
+Sulla slide c'è uno screenshot. ``Chi conosce questo gioco?'' È \emph{Lies of
+P}.\footnote{Nella trascrizione ``IsoFP'', ``Lise of P'', ``Eyes of Pie'', ``Light
+of P'', ``Light of Python''.} In una strada c'è un \textbf{barile} con dentro il
+fuoco. ``Parliamo solo di luce, non di materiali: cosa sta succedendo qui?'' Gli
+studenti partono a dire come lo avrebbero fatto loro; il docente li ferma: ``non vi
+sto chiedendo come l'avreste fatto, vi sto chiedendo che cosa c'è in questa
+immagine''. C'è una point light sul fuoco, certo. Ma \textbf{dove}?
+
+\paragraph{Dove l'hanno messa.} Guardando le ombre proiettate, la point light è di
+sicuro lungo una certa linea, e precisamente \textbf{sopra il barile}, non dentro.
+``Non è un po' strano, se ci riflettiamo?'' A livello di verosimiglianza dello
+scenario, la luce dovrebbe venire dall'origine del fuoco, cioè da dentro il barile.
+
+\paragraph{Perché verosimiglianza e non realismo.} ``E qui iniziamo a vedere perché
+io preferisco parlare di \textbf{verosimiglianza} e non di \textbf{realismo}.'' Nella
+realtà:
+\begin{enumerate}
+  \item un barile che brucia fa \textbf{pochissima luce} (``ma quello è un discorso
+        a parte'');
+  \item se la sorgente fosse \textbf{dentro} il barile, tutta la parte sotto
+        sarebbe in ombra, perché la luce sarebbe schermata dal barile stesso. Nella
+        foto non si distinguerebbe nemmeno il barile, si vedrebbe solo il fuoco.
+\end{enumerate}
+In \emph{Lies of P} la luce è stata messa sopra perché \textbf{lo scopo del barile è
+fornire una giustificazione per l'illuminazione della zona}. Messa dentro, la
+luce renderebbe invisibile ciò che conta; messa sopra, giustifica una point light
+fortissima che illumina tutta quella sezione della città. E se si mettesse un
+barile qui e uno là, con la luce dentro? Si proietterebbero ``un sacco di buchi''
+d'ombra lungo le pareti, ``bruttissimo da vedere''. La point light è piazzata in un
+modo che illumina l'area \textbf{e} dà l'impressione che la luce venga dal barile,
+anche se è fisicamente impossibile (figura~\ref{gd14:fig:barile}).
+
+\begin{quote}
+Non impuntatevi sul realismo, ragionate sulla verosimiglianza. \textbf{Non stiamo
+facendo fotografie, stiamo facendo film.} I film illuminano con uno scopo
+artistico. Il nostro obiettivo non è il realismo, è la verosimiglianza.
+\end{quote}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  gd14cap/.style={font=\scriptsize, align=center, text width=5.2cm},
+]
+  % --- realistico ---
+  \begin{scope}
+    \fill[gray!65] (-0.2,0) rectangle (5.0,3.2);
+    \fill[yellow!35, opacity=0.7] (2.4,1.0) -- (1.2,3.2) -- (3.6,3.2) -- cycle;
+    \draw[thick] (-0.2,0) -- (5.0,0);
+    \fill[gray!40] (2.0,0) rectangle (2.8,1.0);
+    \fill[yellow!80!orange] (2.4,0.85) circle (0.1);
+    \node[font=\scriptsize, text=white] at (0.9,0.4) {buio};
+    \node[font=\scriptsize, text=white] at (3.9,0.4) {buio};
+    \foreach \a in {60,75,90,105,120} {
+      \draw[-{Stealth}, orange!80!black] (2.4,0.95) -- ++(\a:1.4);
+    }
+    \node[gd14cap] at (2.4,-0.7) {\textbf{Realistico}: la luce dentro il barile.
+      Il barile scherma la luce: la strada resta al buio, si vede solo il
+      fuoco.};
+  \end{scope}
+  % --- verosimile ---
+  \begin{scope}[xshift=6.4cm]
+    \fill[gray!15] (-0.2,0) rectangle (5.0,3.2);
+    \begin{scope}
+      \clip (-0.2,0) rectangle (5.0,3.2);
+      \fill[yellow!30, opacity=0.8] (2.4,2.1) circle (2.3);
+    \end{scope}
+    \draw[thick] (-0.2,0) -- (5.0,0);
+    \fill[gray!70] (2.0,0) rectangle (2.8,1.0);
+    \fill[orange!70] (2.4,1.05) ellipse (0.35 and 0.12);
+    \fill[yellow!80!orange] (2.4,2.1) circle (0.12);
+    \node[font=\scriptsize\bfseries] at (3.3,2.4) {point light};
+    \draw[dashed] (2.4,2.0) -- (2.4,1.1);
+    \node[gd14cap] at (2.4,-0.7) {\textbf{Verosimile} (\emph{Lies of P}): la point
+      light è sopra il barile. La strada è illuminata, e il fuoco ``giustifica''
+      la luce.};
+  \end{scope}
+\end{tikzpicture}
+\caption{Il barile di \emph{Lies of P}: dove starebbe la luce nella realtà e dove la
+mette il level designer. Ricostruzione schematica.}
+\label{gd14:fig:barile}
+\end{figure}
+
+\subsection{La lampada senza ombra}
+
+Secondo esempio, sempre da \emph{Lies of P}: una lampada a muro. ``Da dove viene la
+luce, a livello di realismo?'' Da dentro la lampada. ``E c'è qualcosa che manca?''
+Manca \textbf{l'ombra}. Se la luce venisse davvero da dentro la lampada, dov'è
+l'ombra della lampada stessa proiettata sul muro? Invece la luce si proietta ad arco
+``come se la lampada non esistesse''.
+
+\paragraph{Non proiettare ombre.} È una cosa che Unreal permette: si possono segnare
+degli oggetti come \textbf{non proiettanti ombre}, ed è uno strumento usato molto
+spesso dai level designer per evitare ombre brutte che non si vuole che compaiano.
+``Nessuno si fermerà a dire: che schifo, non ci sono le ombre realistiche della
+fonte di luce.'' Molto meglio così che avere ombre che si proiettano a caso lungo
+le pareti e illuminano tutto male. ``Perché? Perché noi stiamo simulando quello
+che sarebbe il \textbf{riflettore fuori dallo schermo} di un'illuminazione da
+cinema.'' Non un'illuminazione iperrealistica, ma un'illuminazione verosimile.
+Infatti, lì accanto, l'insegna del negozio (un'aragosta rossa\footnote{Nella
+trascrizione ``l'insegna del Red Lobster'': si riporta come descrizione
+dell'insegna.}) \textbf{l'ombra ce l'ha}: la scelta è fatta caso per caso.
+
+\subsection{La luce motivata del corridoio}
+
+Ultimo esempio prima della pausa: un corridoio con una lampada. ``Ignorate il
+riflesso della luce sul personaggio protagonista. C'è qualcosa di particolare?''
+Uno studente nota che la luce sembra arrivare da un altro punto. È una \textbf{luce
+motivata} (``ma lo vedremo in un'altra lezione''): nella finzione del gioco, l'area
+deve essere illuminata per \textbf{necessità di gameplay}, perché il gameplay si deve
+vedere. Il level designer ha messo una lampada per dire ``qui c'è una luce'': il
+giocatore vede la lampada e pensa ``ah, ok, la luce viene da quella lampada''.
+
+\paragraph{Dov'è la point light?} Ma la point light è \textbf{altrove}: dove c'è
+l'ombra, cioè più o meno al centro del corridoio. Si crea così un effetto curioso:
+passando davanti alla lampada, l'ombra del personaggio si proietta \textbf{davanti}
+alla lampada. ``È brutto? Sì.'' In \emph{Lies of P} ci sono un po' di punti in cui,
+con un po' di esperienza di level design, si capisce che il passaggio di
+sistemazione delle luci è stato fatto di fretta; ma l'esempio è ottimo per far
+vedere che queste cose \textbf{si fanno}.
+
+\paragraph{Non dentro la lampada.} ``Quello che voglio che vi entri in testa'' è che
+non bisogna fare ``la roba del: ogni volta che ho una lampada, ci metto la luce
+dentro, problema risolto''. Altrimenti si finisce per chiedere al docente perché
+tutti i propri livelli hanno luci orribili.
+\begin{quote}
+Andate a vedere come si illumina un film: al di fuori della telecamera ci sono
+cinquanta luci diverse che illuminano le cose che servono. Nei videogiochi è la
+stessa cosa: le luci non si usano solo dove c'è la lampada, si usano per
+\textbf{illuminare in base alle necessità estetiche della scena}.
+\end{quote}
+In \emph{Lies of P} si è fatta spesso questa scelta: sacrificare un approccio
+realistico per un approccio verosimile. Lo scopo è che il corridoio sia ben
+illuminato. ``Questi dettagli li notano pochissimi giocatori, quasi nessuno ci fa
+caso. Ma intanto la composizione delle mie luci è stata fatta in una buona
+maniera.''
+
+\paragraph{Approfondimento: la luce che guida.} Totten cita l'architetto
+Christopher Alexander, che in \emph{A Pattern Language} descrive come la luce possa
+essere usata \textbf{agli incroci} dove il progettista vuole condurre le persone:
+la luce come dispositivo per ``tirare'' gli occupanti attraverso lo spazio. E in un
+altro passaggio del libro si ricorda che siamo attratti dagli elementi che
+risaltano visivamente, che sembrano più importanti per scala, illuminazione o
+contenuto: il level designer deve mantenere una \textbf{gerarchia di importanza},
+attenuando le parti del livello che non sono primarie. È lo stesso ragionamento del
+corridoio di \emph{Lies of P}: la luce non è dove sarebbe ``davvero'', ma dove serve
+al giocatore.
+
+\paragraph{La pausa.} ``Ok, pausa: ci diamo quindici, venti minuti. Se avete voglia di
+farvi un caffè, fatevi un caffè.''
+
+% ---------------------------------------------------------------------
+\section{La pausa: ancora GTA, e una domanda sugli oggetti piazzati via codice}
+\label{gd14:sec:pausa}
+
+Durante la pausa la conversazione con alcuni studenti torna su \emph{GTA}. Anche
+qui il capitolo riporta ciò che riguarda il design e l'industria.
+
+\subsection{Monetizzazione e piedistalli}
+
+\paragraph{Gli abbonamenti.} Uno studente, che stava leggendo le notizie, riferisce
+che con l'abbonamento a \emph{GTA} (circa tredici dollari al mese) si ottengono
+oggetti anche nel single player, e che per avere ``il gioco vero'' bisogna pagare
+cento euro, altrimenti mancano missioni e certi negozi restano chiusi. Il docente
+conferma che la serie è ``monetizzata in maniera folle'', e che l'online sarà
+ancora peggio: in \emph{GTA Online} i soldi del gioco si possono ottenere giocando,
+ma si possono anche \textbf{comprare} (le \emph{Shark Card}).
+
+\paragraph{Tutti vogliono che sia un successo.} ``Qui ti sto dicendo una mia
+opinione.'' Uno dei problemi dell'industria è che \textbf{molte volte si cerca un
+piedistallo} su cui mettere qualcosa. Tutti vogliono che \emph{GTA 6} sia un
+successo, per una lunga serie di motivi:
+\begin{itemize}
+  \item i \textbf{produttori}, perché sperano che sia un ritorno alle condizioni
+        economiche di cinque--dieci anni fa: il modello AAA ``sta scricchiolando
+        sempre di più, se non è già crollato'', il modello del singolo gioco che
+        vende un sacco di copie e per cui tutti comprano una PlayStation;
+  \item i \textbf{media}, che sperano in un ritorno all'epoca in cui ci si
+        concentrava sui grandi giochi singoli, invece che su quelli come i giochi
+        di Hoyoverse\footnote{Nella trascrizione ``i giochi di Mikoyo, ai
+        Gaia'': probabilmente HoYoverse (miHoYo); non ricostruibile con
+        certezza.} o i giochi per cellulare che stanno prendendo piede;
+  \item i \textbf{giocatori casual}, perché \emph{GTA} è ``il buon nome''.
+\end{itemize}
+Questo potrebbe portare ad avere ``un po' di paraocchi'' e a ignorare certe cose.
+
+\paragraph{La varietà, non la profondità.} Resta il fatto che, a livello di
+contenuti, di quantità, di tipi di gameplay, di varietà, di sistemi (centinaia di
+veicoli diversi), ``lo può fare solo Rockstar''. In quanti altri giochi, se si ha
+voglia di fare il vigilante, si può rubare un'auto della polizia e fare le missioni
+di arresto, o prendere un camion dei pompieri e spegnere gli incendi, ricevendo
+soldi da spendere nella trama principale? È una serie con \textbf{poca profondità
+lato meccaniche, ma una varietà allucinante}. Non esistono i montaggi di trickshot
+o di sniping come in \emph{Call of Duty}: tutte le meccaniche di tutti i \emph{GTA}
+sono sempre state \textbf{funzionali allo spazio di gioco}, non alla sfida meccanica
+in sé. E questo aiuta il pubblico casual: non ci si deve allenare per giocare a
+\emph{GTA} come ci si allena per \emph{Counter-Strike} o \emph{Call of Duty}. Ci si
+gioca dall'inizio alla fine facendo un po' quello che si vuole: ``vuoi fare il
+tassista? Vai a fare il tassista.''
+
+\paragraph{Un finto MMO.} ``Per questo io dico che in realtà \emph{GTA} è un
+\textbf{finto MMO}.'' \emph{GTA Online}, soprattutto, è fatto di comunità che fanno
+\emph{role play}: c'è chi fa il guidatore delle rapine, perché esiste la meccanica
+per farle, e il gruppo lo designa (``tu aspetti fuori, quando usciamo salti su e
+portiamo via l'incasso''). Si avvicina a un MMO, e tutto funziona: ``ma funziona
+abbastanza? Questa è la mia domanda.'' Basterà a risollevare Rockstar, e
+un'industria in una crisi ``abbastanza forte''? ``È un salto nel vuoto. L'unica
+compagnia che lo può fare è Rockstar.'' E se non ci riesce, lo si saprà tra anni:
+bisognerà calcolare i risultati di \emph{GTA Online} (abbonamenti, vendita di
+denaro di gioco, contenuti, macchine), non quelli di \emph{GTA 6}, ``e diffida di chi
+ti dice di aver tratto delle conclusioni entro uno o due anni''.
+
+\paragraph{Il nuovo online.} Un altro studente ricorda che con il preordine di
+\emph{GTA 6} venivano date \emph{Shark Card} per \emph{GTA 5}. ``Certo: nel momento
+in cui annunciano \emph{GTA 6 Online}, tutti smettono di giocare a \emph{GTA 5
+Online}.'' La mappa di \emph{GTA 6} sarà la mappa del nuovo online; c'è anche la
+possibilità, ipotizza il docente, che lo aggiungano a quello esistente (``prendi
+l'aereo da Los Santos e atterri a Vice City'') e ``allora sì che diventa un MMO''.
+Di sicuro lo annunceranno solo quando saranno pronti, dopo che la gente avrà
+comprato il gioco, per non bruciare i ricavi dell'online attuale. ``Normalmente ti
+direi che secondo me non lo fanno; ma Rockstar ha una quantità di soldi così
+enorme che potrebbe riuscirci. Vedremo.''
+
+\paragraph{I valori di produzione.} C'è perfino un internet interno, con i social
+media del gioco. ``Se non ci giochi, non capisci la quantità di \textbf{valori di
+produzione}'': sono tutte cose non difficili in sé, ``ma la cosa principale che
+richiedono è soldi, una quantità di soldi enorme''. Chi lo comprerà? Il docente
+aspetterà: pare che su console non giri benissimo, il che è comprensibile, perché
+la PlayStation~5 è uscita sei anni fa (``stai girando su hardware di sei anni
+fa''). La pausa, spiega, serve anche a lui, ``per non perdere la voce parlando sei,
+sette ore di seguito''.
+
+\subsection{Piazzare oggetti via codice: le spline e i geometry node}
+
+Uno studente fa una domanda più tecnica: il posizionamento degli oggetti in una
+scena \textbf{tramite codice} si fa solo per i giochi procedurali, o anche per le
+rifiniture, per essere precisi al pixel?
+
+\paragraph{Le staccionate.} ``Ci sono procedure diverse.'' In Unreal, uno degli usi
+delle \textbf{spline} (introdotte la volta precedente,
+sezione~\ref{gd11:sec:spline}) sono le \textbf{staccionate}. Si ha l'asset di un
+pezzo di staccionata e si deve circondare un quartiere americano, dove ogni casa
+ha la sua. Mettere a mano ogni pezzo, a ogni incrocio, lungo ogni curva, richiede
+un tempo enorme. In Unreal si può fare un \textbf{Blueprint} che, nel
+\textbf{Construction Script}, dice: ``ho questa spline, metti i pezzi di staccionata
+lungo la spline''. Trascinando la spline, la staccionata si costruisce da sola.
+\begin{itemize}
+  \item In \textbf{Blender} queste cose si fanno con i \textbf{geometry node}.
+  \item Con \textbf{Unity} spesso si costruisce l'ambiente direttamente in Blender,
+        non dentro l'engine (sezione~\ref{gd11:sec:brush}).
+\end{itemize}
+
+\paragraph{In editor, non al buio.} La costruzione avviene nel Construction Script
+``perché così puoi vedere il risultato in editor; altrimenti stai lavorando al
+buio''. Lo studente chiede se, quando si preme Play, venga tutto ricalcolato: si
+fa anche quello, ``a seconda delle necessità del progetto'', soprattutto se
+l'ambiente si evolve o si trasforma durante il gioco, o se il gioco è
+\textbf{procedurale}: \emph{Minecraft} ``non ha un editor dei livelli, ha un
+generatore algoritmico''.
+
+% ---------------------------------------------------------------------
+\section{Troppe luci: quando Unreal spegne le ombre}
+\label{gd14:sec:troppe-luci}
+
+``Riprendiamo. L'ultima ora, giornata pesante.'' Prima un controllo che ci siano
+tutti, anche Federica da casa. Poi un'avvertenza legata al discorso della mobilità
+e di Lumen: \textbf{Unreal ha la tendenza a non farti sapere quando ti stai tirando
+la zappa sui piedi da solo}. Ci sono situazioni in cui Unreal \textbf{disattiva cose
+senza dirlo}, e una riguarda proprio le luci.
+
+\paragraph{Le luci che si spengono.} Se si piazzano \textbf{troppe luci capaci di
+proiettare ombre, una vicino all'altra}, Unreal comincia a \textbf{spegnerle}. Uno
+studente l'ha appena sperimentato: ha messo sei point light. ``Esattamente: si
+disattivano perché Unreal\footnote{Nella trascrizione, per un errore di
+riconoscimento, ``Harry Potter''.} automaticamente dice: questa roba è una quantità
+allucinante di calcoli, per sicurezza la disattivo.'' Sulle luci coinvolte compare
+un simbolino \textbf{X} (rosso): le luci magari illuminano ancora l'ambiente, ma
+\textbf{smettono di proiettare ombre}.
+
+\paragraph{Non toccare le impostazioni: imparare a risolvere.} Il consiglio, finché
+si è studenti, è di \textbf{non andare a cambiare le impostazioni} per aggirare il
+limite, perché si rischia di creare grossi problemi ai propri progetti: meglio
+imparare come risolverlo. Le soluzioni sono tre:
+\begin{enumerate}
+  \item cambiare la \textbf{mobilità} a statica (ma, con Lumen attivo, non è detto
+        che cambi qualcosa, sezione~\ref{gd14:sec:mobilita});
+  \item togliere il \textbf{Cast Shadows};
+  \item \textbf{distanziare} le luci, in modo che non si sovrappongano.
+\end{enumerate}
+
+\subsection{Il Cast Shadows}
+
+Il docente lo mostra in \emph{Medieval Village}. Mette una point light accanto
+all'insegna di un negozio: la luce proietta l'ombra dell'insegna sul muro. Nei
+\emph{Details}, invece di scorrere fino in fondo, si usa la casella di
+\textbf{ricerca} (``che è il modo più rapido, se sapete già come si chiamano le
+cose''): si scrive \emph{shadow} e compare \textbf{Cast Shadows}. Togliendo la
+spunta, resta l'illuminazione, ma \textbf{la luce non proietta più ombre}.
+
+\paragraph{Il negozio importante.} Togliere il Cast Shadows ``torna utile per molte
+cose''. Supponiamo che in questo livello ci sia un \textbf{negozio importante}, quello
+dove il giocatore compra l'arma segreta\footnote{Il nome dell'arma inventata dal
+docente per l'esempio è incomprensibile nella trascrizione.}, e che la zona sia
+troppo buia: il negozio dovrebbe essere più notevole. L'istinto è prendere una point
+light e piazzarla lì. ``E questo è il tipico aspetto che hanno molti \textbf{giochi
+studenteschi}: ombre sparate ovunque.'' La luce, messa per far notare che lì c'è
+qualcosa di importante, proietta ombre di ogni minima imperfezione, anche solo
+delle piante, ombre molto brutte sulla parete. Si fa allora quello che si è visto in
+\emph{Lies of P} con la lampada (sezione~\ref{gd14:sec:liesofp}): \textbf{via il Cast
+Shadows}. Un lato dell'insegna è così illuminato che si legge, senza il fastidio
+fortissimo delle ombre. Poi si regolano i valori necessari, magari riducendo un po'
+l'intensità: nella dimostrazione la luce è ``molto più forte di quanto la farei
+normalmente, ma è per renderla visibile''.
+
+\paragraph{La porta da notare.} Altro esempio: il giocatore arriva camminando da una
+certa direzione, e si vuole che noti una \textbf{porta} lì davanti. Si mette una point
+light, si tolgono le ombre: le ombre non distraggono, e la porta diventa più
+visibile da quel punto di vista.
+\begin{quote}
+Vi ricordate il discorso verosimile e non realistico? Togliere le ombre è
+importante, perché se non le togli rovini la verosimiglianza. È un
+\textbf{vantaggio che hanno i videogiochi rispetto ai film}: possiamo illuminare
+quello che ci serve che sia notato, senza sbatterlo in faccia al giocatore.
+\end{quote}
+E c'è un vantaggio pratico: \textbf{le luci che non proiettano ombre se ne possono
+mettere molte}, a differenza delle altre.
+
+\paragraph{Ambienti, non livelli.} ``E voglio che sia chiara anche questa cosa:
+\textbf{noi per ora non creiamo livelli, noi per ora creiamo ambienti}.'' Se in un
+ambiente c'è una parte troppo buia, si usa una point light (o una spot light) senza
+ombre per alzare un po' il livello di luce in quel punto. Se l'effetto non piace, si
+può duplicare la luce e aggiustarla. ``Poi lì va a gusto estetico'': la
+dimostrazione è ``molto brutale''; normalmente la luce si farebbe \textbf{più larga,
+più soffusa, meno potente}. Ma già così, al giocatore che cammina da quella parte,
+``è impossibile che non noti che lì c'è un negozio in cui può entrare. Stiamo dando
+\textbf{informazioni pratiche}.''
+
+\paragraph{Quando le ombre servono: distanziare.} Se invece le luci non devono
+assolutamente smettere di proiettare ombre, perché sono visivamente legate a
+proiettori o lampade e sarebbe strano che il giocatore, passando davanti a una,
+facesse ombra e davanti all'altra no, \emph{Lies of P} insegna che basta
+\textbf{posizionarle in modo che non si sovrappongano}. Distanziate, il problema è
+risolto. ``Ancora: sono cose che i giocatori, se non si fermano a guardarle, non
+notano neanche.''
+
+% ---------------------------------------------------------------------
+\section{La spot light}
+\label{gd14:sec:spot}
+
+La \textbf{spot light}, vista la volta precedente, è ``una point light che fa effetto
+torcia'': si dirama sempre da un punto, ma i raggi sono \textbf{limitati all'interno
+di un angolo}, un cono (figura~\ref{gd14:fig:tipi}). Simula una torcia, un faro, un
+faretto: ``se avete mai usato una torcia in un videogioco horror, è una spot
+light''. Come per la point light, si può \textbf{allargare l'origine} (il
+\emph{source radius}) perché la luce non nasca da un punto ma da una superficie.
+Anche qui ci sono molti valori da toccare, come il \textbf{cono interno} e il
+\textbf{cono esterno}: ``vi lascio esplorare da soli; se avete dubbi, chiedetemi
+pure''. Non si vede ogni singolo parametro, ``se no non riusciamo a fare tutta la
+lezione''.
+
+% ---------------------------------------------------------------------
+\section{Medieval Village è giocabile}
+\label{gd14:sec:play}
+
+Una piccola curiosità prima di passare oltre: \emph{Medieval Village} \textbf{è
+giocabile}. Premendo Play (scorciatoia \textbf{Alt+P}), il computer si blocca per un
+attimo, ``perché è una scena professionale di alto livello''. C'è una breve
+sequenza iniziale, che il docente salta, e poi si può esplorare il villaggio
+``proprio come un videogioco''. Un tasto (\textbf{Q}, nella dimostrazione) toglie
+l'interfaccia. È un piccolo ambiente esplorabile, con \textbf{pareti invisibili}
+all'esterno, senza nessun tipo di gameplay: ma chi è curioso di vedere come sarebbe
+giocarci dentro può farlo.
+
+% ---------------------------------------------------------------------
+\section{Leggere una mappa: Interiors Volume 1}
+\label{gd14:sec:scanlabs}
+
+\subsection{Aprire la mappa}
+
+Ora tocca al pacchetto di Scan Labs. Si importa nel proprio progetto ``nel modo che
+avevo detto'': si prende la cartella dei file già importati, la si mette nella
+cartella \texttt{Content} del progetto (dall'interno di Unreal o dal launcher) e si
+apre Unreal, o lo si chiude e riapre se era già aperto. ``Ricordatevi di
+spacchettarli, di decomprimerli.'' Dentro il pacchetto c'è una mappa chiamata
+\textbf{Interiors Volume 1}: il docente dà qualche minuto perché tutti la aprano.
+
+\paragraph{Una mappa vecchia.} È una mappa che il docente usa da tempo come esempio
+per gli studenti, fatta con una versione precedente di Unreal, ``quindi mi sa che la
+luce non è super adattata, però funziona''. Lumen ``si comporta in una maniera
+strana'': ci sono \textbf{macchie di luce che si spostano} sul muro quando si gira
+la telecamera. È Lumen che approssima l'illuminazione reale in un ambiente che non
+è stato studiato per questa versione di Unreal. ``Tuttavia è ancora perfettamente
+funzionale per i nostri scopi, ed è ancora molto bella da vedere.''
+
+\paragraph{Perché queste due mappe.} Perché lasciare agli studenti questa mappa e
+\emph{Medieval Village}? Sono gli esempi a cui il docente vuole che si dia
+un'occhiata ``per iniziare a \textbf{tarare} i vostri gusti personali e la direzione
+di quello che state facendo''. Il percorso fin qui: si è presa la mano con le forme
+di base, si sono costruite le prime cose, si è iniziato con lo Starter Content.
+\textbf{Adesso si comincia a lavorare con i prop}: si hanno a disposizione cose che
+permettono di costruire ambienti ``in una versione semifinale''.
+\begin{itemize}
+  \item ``Voglio che iniziate a studiare. Voglio che iniziate a
+        \textbf{osservare i videogiochi a cui giocate}'': come sono organizzati
+        gli ambienti, che cosa fanno, gli spazi, le dimensioni degli spazi,
+        ``tutto quello che vi colpisce''.
+  \item Questo livello di qualità è l'\textbf{obiettivo ultimo}: ``non mi aspetto
+        che lo facciate entro la prossima lezione, ovviamente: è un percorso. Però è
+        una buona idea, quando si corre, tenere a mente dov'è il traguardo.''
+\end{itemize}
+
+\subsection{Lezione numero uno: occhio non vede, cuore non duole}
+
+``Diamo un'occhiata a questa mappa. Cosa sta succedendo? Chi ha voglia di dare delle
+descrizioni? Qualunque cosa. Alleniamoci a guardare.'' Sembra il salone di una
+villa, ci sono libri, ``e fino a lì non ci piove''. Ma c'è un'uscita: che cosa
+succede, fuori?
+
+\paragraph{Fuori non c'è niente.} Fuori c'è un pezzo di verde e un'immagine sullo
+sfondo, ``perché tanto è tutto quello che si vede dall'interno della casa, e va
+benissimo''. ``Lezione numero uno'': questa è una mappa pensata per essere vista
+\textbf{da un certo punto}, e non ci si sposta più di così. ``\textbf{Occhio non vede,
+cuore non duole.}'' Se non serve fare qualcosa, la si lascia fuori dall'inquadratura.
+Anche in un gioco ambientato all'esterno, uscendo dai confini con la telecamera
+libera dell'editor, si scopre che è così: aggiungere altro sarebbe ``calcoli
+sprecati, tempo sprecato''.
+
+\paragraph{Lavorare dalla telecamera.} Il metodo (che si vedrà più avanti): si piazza
+una \textbf{telecamera}, la si tiene fissa in un riquadro della viewport, e si
+lavora in base a quello che si vede dalla telecamera, riempiendo gli spazi
+inquadrati; poi magari si sposta un po' la telecamera per controllare che vada
+bene. ``Quindi, numero uno: \textbf{mai sprecare energie}. Ragionate su quello che si
+vede e quello che non si vede: se non si vede, non lo fate.'' Con una precisazione:
+nei videogiochi la telecamera si muove, ma per ora si fanno solo screenshot.
+``Pensiamo ad ambienti, non a livelli.''
+
+\subsection{Numero due: la luce, e il chiaroscuro}
+
+``Cosa si può dire della luce in questa stanza?'' C'è un riflesso; la luce viene da
+fuori. La stanza è illuminata prevalentemente da una luce \textbf{direzionale} che
+entra attraverso la finestra, secondo regole di \textbf{chiaroscuro} di cui si
+parlerà quando si affronterà il lato più artistico delle luci. La luce
+``\textbf{dipinge} questi sprazzi che attraversano la stanza'', rendendo più
+interessante la \textbf{composizione visiva}.
+
+\paragraph{Caravaggio e il noir.} La luce che entra dalle finestre, e le ombre in
+generale, possono essere usate come \textbf{elementi compositivi artistici}.
+``Di Caravaggio ne parleremo durante una lezione''. Perché
+``questo non è un corso di tutorial di Unreal: questo è un corso di level design'',
+e quindi ci saranno momenti in cui si parlerà di Caravaggio, del
+\textbf{noir}, della tecnica del \textbf{chiaroscuro}, di teoria artistica di inizio
+Novecento: ``è una delle mie lezioni preferite''.
+
+\paragraph{Reflection capture.} Ripremendo G compaiono le icone di tutto ciò che c'è.
+Molte sono \textbf{reflection capture} (in altri engine si chiamano
+\emph{reflection probe}): ``non preoccupatevene, servono per i riflessi, e i riflessi
+sono un discorso a parte''. Precalcolano i riflessi degli oggetti intorno, e sono
+legate alle cose \textbf{statiche}. Questo ambiente, infatti, è stato creato pensando
+alle \textbf{luci statiche}, mentre ora Unreal lavora con Lumen: la rifinitura delle
+luci era pensata per un approccio diverso. È il motivo per cui la stanza sembra un
+po' più buia del normale e ha tutto quello sfarfallio.
+
+\subsection{Il pizzico di caos, e i libri}
+
+``Quello che mi interessa è il lato \textbf{compositivo}.''
+\begin{itemize}
+  \item La \textbf{caoticità} delle scarpe appoggiate sotto il divano, un po'
+        storte.
+  \item I \textbf{libri}, tutti di dimensioni leggermente diverse tra loro. E
+        cliccandoci sopra si scopre che \textbf{non sono individuali}: è
+        un'\textbf{unica mesh}, un gruppo di libri in un solo modello. Altrove,
+        però, il pacchetto ha anche le mesh dei \textbf{libri singoli}: per chi
+        vuole usarli individualmente e, per ottimizzare, hanno fatto anche le
+        mesh dei libri a gruppi.
+  \item I bicchieri, e così via.
+\end{itemize}
+``Non ho bisogno di farvi troppi discorsi'': come creazione di interni, la classe
+parte ``da un livello abbastanza buono''.
+
+\subsection{Le tre regole dell'osservazione}
+
+Il consiglio più importante della lezione riguarda \textbf{la capacità di
+osservare}, che ha tre aspetti (figura~\ref{gd14:fig:osservare}).
+
+\paragraph{Uno: i prodotti finali.} Per lavorare nel mondo dei videogiochi bisogna
+saper \textbf{analizzare i videogiochi}, i prodotti finiti. Chi lavora nel cinema
+guarda film e capisce come funziona il mondo dei film attorno a sé; chi lavora
+nella musica ascolta album per capire come sono fatte le produzioni.
+
+\paragraph{Due: dietro le quinte.} La seconda è poter \textbf{vedere dietro le
+quinte}: per questo il docente ha dato questi progetti. Per ora si resta
+nell'ambiente del \textbf{realistico moderno} (\emph{Medieval Village} è stato dato
+``un po' per sfizio''), così che tutti abbiano lo stesso punto di partenza e più o
+meno la stessa idea di cosa si sta facendo.
+
+\paragraph{Tre: le persone al tuo livello.} La terza è ``quella più importante''. Ci
+sono necessariamente grosse differenze tra i task di una persona e quelli di
+un'altra: ``non esiste una classe in cui tutti fanno i task nella stessa maniera''.
+È normale: il level design è una \textbf{specializzazione}, e il docente non pretende
+che tutti siano allo stesso livello, perché chi non diventerà level designer deve
+sapere come lavora un level designer, ma saperlo fare perfettamente ``potrebbe non
+essere la cosa che più gli torna utile''. Però vuole che ciascuno \textbf{guardi i
+risultati degli altri} (è uno dei motivi per cui il primo anno i lavori si
+correggono tutti insieme) e si chieda se è nella media o no. Scan Labs e
+\emph{Medieval Village} sono fatti da gente espertissima: ``è chiaro che voi non
+siete a livello di fare quelle robe. Ma \textbf{qual è il livello a cui potreste
+farle}? Lo scoprite guardandovi attorno'', guardando i compagni di classe e gli
+altri studenti.
+
+\begin{quote}
+Regola 1: osservare \textbf{i prodotti finali} della tua industria. Regola 2:
+osservare \textbf{che cosa succede dietro le quinte}. Regola 3: osservare
+\textbf{che cosa è in grado di fare la gente al tuo livello}. La terza è quella che ti
+radica nella realtà in cui ti trovi.
+\end{quote}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  gd14rule/.style={draw, rounded corners=3pt, thick, text width=3.6cm,
+                   minimum height=2.1cm, align=center, font=\scriptsize},
+]
+  \node[gd14rule, fill=blue!8] (r1) at (0,0)
+    {\textbf{1. I prodotti finali}\\[2pt] giocare e analizzare i giochi finiti,
+     come chi fa cinema guarda film};
+  \node[gd14rule, fill=green!8] (r2) at (4.4,0)
+    {\textbf{2. Dietro le quinte}\\[2pt] aprire progetti professionali
+     (\emph{Medieval Village}, Scan Labs) e smontarli};
+  \node[gd14rule, fill=orange!12] (r3) at (8.8,0)
+    {\textbf{3. Le persone al tuo livello}\\[2pt] guardare i task dei compagni:
+     che cosa \emph{posso} fare, adesso?};
+  \node[font=\scriptsize\itshape, align=center] at (4.4,-1.65)
+    {dove sta il traguardo (1--2) e dove sei tu (3): la terza ti radica nella
+     realtà};
+  \draw[-{Stealth}, thick] (r1) -- (r2);
+  \draw[-{Stealth}, thick] (r2) -- (r3);
+\end{tikzpicture}
+\caption{Le tre regole dell'osservazione proposte dal docente. Ricostruzione
+schematica.}
+\label{gd14:fig:osservare}
+\end{figure}
+
+\subsection{Rafforzare le luci}
+
+``Qualcuno ha altre osservazioni?'' Uno studente nota dei punti in cui la luce sembra
+più forte del previsto e chiede se lì ci siano delle luci aggiunte. ``Normalmente
+sì.'' Si farebbe proprio questo: il docente lo chiama \textbf{rafforzare le luci}
+(``un'altra delle cose che hanno un sacco di nomi diversi''). Si mette una
+\textbf{leggerissima} point light o spot light nei punti in cui sembra esserci troppa
+ombra, e si toglie il Cast Shadows, così non si nota
+(sezione~\ref{gd14:sec:troppe-luci}). ``È una buona osservazione.'' In questo caso,
+però, quelle icone sono reflection capture, e quello che si vede è un'altra cosa: la
+\textbf{luce riflessa}, simulata da Lumen.
+
+% ---------------------------------------------------------------------
+\section{Lumen, la luce riflessa e i suoi artefatti}
+\label{gd14:sec:lumen}
+
+\paragraph{La luce rimbalzata.} La luce colpisce gli oggetti nella stanza, e gli
+oggetti emettono a loro volta una \textbf{luce riflessa}, anche se non sono
+riflettenti: è luce ambientale. Con Lumen, se si punta una luce su un \textbf{oggetto
+rosso}, attorno all'oggetto si crea un \textbf{alone di luce leggermente rossa},
+``come succede nella realtà, perché tutti gli oggetti, escluso il nero puro,
+emettono luce riflessa quando vengono colpiti dalla luce''. (La dimostrazione in
+classe riesce a metà: la luce usata è troppo debole perché l'effetto si veda bene.)
+
+\paragraph{Gli artefatti.} Ed ecco ``una piccola recriminazione personale'': in
+certi giochi si nota molto la differenza tra chi sa usare l'illuminazione di Unreal
+e chi no. Quelli che si vedono nella mappa sono \textbf{artefatti} della luce: cose
+calcolate che svaniscono e appaiono; il \textbf{ghosting}, l'immagine fantasma che
+resta quando si sposta un oggetto; un \textbf{rumore} di fondo fatto di puntini e
+pallini. Sono l'effetto di un'illuminazione dinamica sempre accesa che \textbf{non è
+ray tracing}: se Lumen fosse in tempo reale, sarebbe ray tracing, e il ray tracing
+richiede hardware dedicato perché è complicato da calcolare. Lumen invece lo
+calcola \textbf{spalmato su più frame}, ``per semplificarsi la vita'', ed è ``super
+rumoroso'' perché così deve fare meno calcoli. ``Se avete giocato al remake del
+nuovo \emph{Halo}, l'avete notato quasi di sicuro, magari con le opzioni più
+basse.''\footnote{Così nella trascrizione; il riferimento esatto non è
+ricostruibile con certezza.}
+
+\paragraph{Un compromesso.} Il vantaggio è che si possono spostare oggetti, avere
+ombre e così via \textbf{senza doverci pensare}: niente \emph{baking}, e niente
+\emph{baking} da rifare ogni volta che si modifica qualcosa, come succede con
+l'illuminazione statica; e queste approssimazioni sono relativamente leggere.
+L'illuminazione di oggi è basata sull'illuminazione dinamica; ci sono giochi che
+\textbf{richiedono obbligatoriamente il ray tracing}, come l'ultimo \emph{Doom}.
+``Io personalmente lo trovo bruttissimo da vedere, questo effetto.'' Ma è un tratto
+comune dei giochi fatti con Unreal, ``una di quelle cose che contribuiscono al fatto
+che Unreal ha l'aspetto di Unreal'', e che si nota molto se gli studi non lavorano
+per compensarlo.
+
+\paragraph{Chi lo fa benissimo.} Un esempio di gioco che lo fa benissimo è
+\emph{Silent Hill}\footnote{Nella trascrizione ``Silent Till Have''; quasi certamente
+uno dei recenti \emph{Silent Hill} realizzati con Unreal Engine 5 (il remake di
+\emph{Silent Hill 2} o \emph{Silent Hill f}): non è chiaro quale.}: ``non sembra fatto
+con Unreal, da quanta attenzione ci hanno dedicato alla luce''. Essendo un horror,
+alla luce hanno dedicato tantissima attenzione.
+
+\paragraph{Una parentesi con uno studente.} Ne nasce una breve conversazione. Su un
+gioco Nintendo per Switch~2, il docente commenta che ``i laboratori di ricerca e
+sviluppo di Nintendo fanno delle robe incredibili''. Si parla di aziende che fanno
+giochi per mettere alla prova la propria tecnologia: a Nvidia ``non interessa fare
+videogiochi'', ma la \textbf{Blender Foundation} li fa, per testare sul campo il
+proprio programma di modellazione e scovarne i problemi; \emph{Dogwalk} è il loro
+ultimo gioco, ``molto carino'', e sono gratis.
+
+\paragraph{Lumen non è ray tracing.} ``Attenzione: Lumen è un'approssimazione molto
+approssimata del ray tracing.'' Il paragone serve a dare l'idea, ma Lumen si chiama
+\textbf{illuminazione dinamica} (illuminazione globale dinamica). Il ray tracing si
+può fare via \textbf{hardware} o via \textbf{software}: se la scheda grafica ha parti
+dedicate al ray tracing lo si fa molto più facilmente; via software si può, ``ma ti
+gira malissimo''. Dire che Lumen è ray tracing software ``non è esattamente
+corretto'', ma lo scopo è lo stesso: \textbf{simulare un'illuminazione dinamica che
+considera tutte le fonti di luce}. Il ray tracing lo fa in modo ``più o meno
+perfetto'', anche se in realtà anche lì c'è molto upscaling e molta
+approssimazione, perché il ray tracing reale è impossibile: calcolare per ogni pixel
+non solo tutte le fonti di luce, ma come la luce rimbalza creando fonti di luce a
+cascata, sarebbe una quantità di calcoli irraggiungibile.
+
+\paragraph{Le prime schede.} ``Io mi ricordo quando sono uscite le prime schede'':
+accendere il ray tracing faceva ``implorare pietà'' al computer, il gioco girava a
+quindici fps, ed era un ray tracing ``molto banale''. Il docente era presente, per
+lavoro, all'evento in cui Nvidia presentò per la prima volta le schede con ray
+tracing, a Colonia.\footnote{Nella trascrizione ``alla GDC a Colonia'': la fiera di
+Colonia è la Gamescom; la presentazione delle prime schede RTX avvenne lì nel 2018.}
+
+\paragraph{Per ora, Lumen acceso.} ``Non divaghiamo troppo.'' Per ora si tiene Lumen
+acceso e ci si fa una ragione dei suoi difetti: niente modifiche alla mobilità delle
+luci. F11 per tornare alla finestra normale.
+
+\paragraph{Approfondimento: ombra e penombra secondo Totten.} Totten distingue due
+condizioni di luce utili al level designer. La \textbf{penombra} (\emph{shade}) è la
+luce diffusa che entra attraverso tende, schermi o vetrate: era una caratteristica
+dell'architettura gotica (la \emph{lux nova}), ed è un caposaldo dell'horror; poiché
+un'informazione visiva incompleta invoglia a esplorare, la penombra crea attrattiva
+e ambiguità (lo spazio è sicuro o pericoloso?). L'\textbf{ombra} (\emph{shadow}) è
+invece la condizione creata quando un oggetto copre la sorgente: può nascondere chi
+vi si trova (gli sviluppatori di \emph{Splinter Cell} parlavano di
+\emph{shadowspace}) e può creare un \textbf{ritmo}, come le ombre delle finestre
+proiettate perpendicolarmente al percorso del giocatore, che lo ``tirano'' avanti. È
+lo stesso uso compositivo degli sprazzi di luce della mappa di Scan Labs: la luce che
+entra dalla finestra non illumina soltanto, \emph{disegna} lo spazio.
+
+% ---------------------------------------------------------------------
+\section{I materiali sulle luci}
+\label{gd14:sec:lightfn}
+
+Un'ultima nota, ``più che altro come curiosità'', per chi ha già fatto corsi extra
+ed è ``molto lanciato'': si possono \textbf{aggiungere materiali alle luci}. Che cosa
+vuol dire? Che \textbf{una luce proietta un'immagine}.
+\begin{itemize}
+  \item Il docente l'aveva usato in un prototipo in cui i \textbf{tutorial} erano
+        proiettati sulle pareti da degli oggetti, che mostravano che cosa bisognava
+        fare.
+  \item Se in un videogioco la \textbf{torcia} non è luce pura ma ha quella tipica
+        forma circolare delle torce, è perché la proiettano così.
+  \item In \emph{Control}, quando un proiettore manda un video su una parete e gli
+        si spara, il proiettore rotola e il video, proiettato in tempo reale, si
+        sposta lungo la stanza su tutto ciò che c'è intorno.
+\end{itemize}
+È la stessa logica: \textbf{un materiale, anche animato, assegnato alla luce}, che
+permette di proiettare un'immagine su una parete; e se ci passa davanti il
+giocatore, lascia l'ombra e tutto quanto. Sulla slide ci sono le istruzioni per
+impostare il materiale, ``ma cosa sono i materiali lo vedremo in futuro'': ``non mi
+interessa sinceramente tanto che lo facciate''.
+
+% ---------------------------------------------------------------------
+\section{Il task: una stanza illuminata con uno scopo}
+\label{gd14:sec:task}
+
+Il docente riscrive sul momento la consegna, ``perché in realtà è sbagliata''.
+
+\begin{quote}
+Create \textbf{un'altra stanza}, sullo stile di quelle fatte finora, con le stesse
+regole usate finora. \textbf{Non usate} il progetto medievale. Potete usare
+\textbf{Scan Labs} e lo \textbf{Starter Content}, ma \textbf{non riutilizzate la
+stanza di Scan Labs}: costruite l'ambiente da zero, con la geometria per i muri e i
+materiali dello Starter Content. Questa volta \textbf{ponete attenzione alle
+luci}: usatele in maniera \textbf{logica}, secondo uno \textbf{scopo preciso}, e
+\textbf{spiegate lo scopo} con cui le avete usate. \emph{Make it a significant
+room}.
+\end{quote}
+
+\paragraph{Le pareti di Scan Labs.} ``Questa è una cosa che mi dicono spesso'': Scan
+Labs ha una stanza le cui pareti sono già fatte a forma di stanza. Il docente non
+vuole che la si riutilizzi, ``a meno che non vogliate proprio cambiarla in maniera
+generale''; preferisce che si crei un ambiente da zero.
+
+\paragraph{Volutamente vago.} ``È ovvio che lo sto dicendo in una maniera molto vaga'':
+il docente vuole lasciare la libertà di interpretare l'obiettivo come si preferisce.
+Per luci si intendono point light, spot light, ``qualunque cosa vi venga in mente.
+Se avete un'idea, tiratela giù.''
+
+\paragraph{Una stanza significativa.} La regola già detta a inizio lezione
+(sezione~\ref{gd14:sec:revisione}) diventa esplicita nella consegna: ``vi ho lasciato
+la libertà per il task precedente; \textbf{d'ora in poi ci concentriamo su risultati
+pseudo-realistici}, invece di fare quello che ci pare, per allenarci ad avere un
+obiettivo preciso. Poi a un certo punto le regole cambieranno.''
+
+\paragraph{Cominciare in classe.} Manca mezz'ora alla fine: il docente fa cominciare
+subito il lavoro, così che eventuali problemi di importazione e domande si risolvano
+in aula, ``e non devo rispondere a tre persone che mi fanno la stessa domanda su
+Discord''. Dopo dieci minuti fa il giro dei banchi. (Il giro, compresa la riparazione
+dei materiali di uno studente, recuperando a mano la texture \emph{diffuse} giusta,
+è in gran parte incomprensibile nella registrazione.)
+
+% ---------------------------------------------------------------------
+\section{Le domande sul task}
+\label{gd14:sec:domande}
+
+\subsection{Fab, no; le reference, sì}
+
+\paragraph{Fab.} Prima domanda: valgono le regole della volta scorsa, cioè niente
+\textbf{Fab}, solo i pacchetti dati? ``Sì, sempre questa regola: per ora non stiamo
+usando Fab.'' A un certo punto il docente dirà di scegliere che cosa scaricare da
+Fab, ma per ora ci si concentra su quello che è stato dato. Quello che vuole evitare
+è: ``vai su Fab, trovi il pacchetto della stanza, rifai la stanza di Fab''.
+
+\paragraph{La stanza di Lynch.} Una studentessa vorrebbe ricreare come punto di
+partenza una stanza di un film o di una serie TV (``una stanza di Lynch, che ne
+so''), con lo stesso pavimento: se trova l'immagine su internet e ne ricava lei il
+materiale, vale come averlo scaricato? ``No. Per queste task potete usare solo i
+pacchetti che vi ho dato: lo Starter Content e Scan Labs. Se volete imitare qualcosa,
+se volete usare una reference, siete assolutamente liberi.''
+
+\paragraph{Arrangiarsi con quello che si ha.} ``Lo scopo di queste lezioni è
+imparare ad arrangiarsi con quello che si ha.'' Ed è una cosa che il docente aveva già
+detto individualmente a qualcuno, ma vuole ripeterla a tutti:
+\begin{quote}
+Non voglio che vi abituiate a lavorare dicendo: mi serve questa cosa, vado a prenderla
+su Fab e la butto dentro. Una delle capacità più importanti che dovete sviluppare
+(e queste lezioni sono un momento importante per farlo, in uno spazio sicuro,
+tranquillo e pensato per allenarsi) è \textbf{la capacità di arrangiarvi con quello
+che avete}.
+\end{quote}
+Si devono creare, o ricreare se si lavora da reference, spazi in base a ciò che si
+ha a disposizione. ``Altrimenti la vostra abilità principale diventa cercare su Fab,
+e nel momento in cui andate a lavorare su Unity siete fregati, detto proprio terra
+terra.'' Il docente non vuole che ci si abitui a lavorare solo con Unreal, ``perché
+non è detto che lavorerete solo con Unreal'' e, a livello personale, perché non gli
+piace che ci sia ``un monopolio così fisso'' sull'engine standard dei tripla A.
+
+\subsection{Si parte dalla luce o dall'ambiente?}
+
+Un'altra domanda: di solito si costruisce prima la scena e poi si piazzano le luci
+dove rendono meglio, oppure si parte già dall'idea di luce e si costruisce l'ambiente
+attorno? ``È nato prima l'uovo o la gallina? La risposta è: che idea hai?'' Se l'idea
+si basa su un gioco di luce, si parte dalla luce; se si basa su un ambiente (``come
+lo illumino?''), si parte dall'ambiente. In queste condizioni non c'è una vera
+risposta: quando si parlerà di layout, concettualizzazione e blockout ci saranno
+procedure precise, ma per ora si fanno ambienti per allenarsi. ``Se visualizzi la
+luce che penetra dalle sbarre di una finestra, parti dalla finestra con le sbarre e
+poi costruisci tutto; se ti piace la scrivania, parti dalla scrivania. Basta che
+trovi un \textbf{punto di partenza} a cui ancorarti.''
+
+\subsection{Modificare un materiale dello Starter Content}
+
+``Ultimissima cosa'': si può modificare un po' un materiale che è già nello Starter
+Content? La lezione sui materiali non c'è ancora stata, ``ma se è un materiale che
+già c'è nelle cose che vi ho dato, allora puoi andare a toccarlo, dai. Mi sembra
+esagerato dire che non puoi neanche toccarlo.'' Chi non ne ha voglia, non lo faccia:
+ci sarà una lezione dedicata. ``Quello te lo concedo.''
+
+\subsection{Le luci al neon sugli scaffali}
+
+Durante il giro, uno studente discute con il docente un'idea: delle \textbf{luci al
+neon} lungo gli scaffali, tipiche di certe case di alto livello. Il docente osserva
+che, in un ambiente moderno, una cosa del genere va \textbf{contestualizzata}: o i
+neon sono colorati e diventano un elemento caratterizzante, oppure diventano una
+fascia di luce che sottolinea l'elemento principale della stanza. Per una fascia di
+luce lunga potrebbe servire una \textbf{rect light}. Soprattutto, deve essere una
+stanza \textbf{funzionale}: ``vissuta'', credibile. Non deve essere un tipo preciso
+di stanza (``se mi fai un corridoio, va bene''), basta che sia un
+\textbf{interno} contestualizzato.
+
+% ---------------------------------------------------------------------
+\section{La lezione spostata e la chiusura}
+\label{gd14:sec:chiusura}
+
+\paragraph{La lezione della settimana prossima.} Un avviso: la lezione della
+settimana successiva va \textbf{spostata}, perché il docente ha una visita medica il
+mercoledì pomeriggio. La data la comunicherà la segreteria (``dovrebbe essere
+martedì pomeriggio''), e sarà quasi certamente \textbf{online} (``nove su dieci sarà
+da remoto''), perché non c'è un'aula disponibile. In ogni caso tutte le lezioni sono
+\textbf{registrate}, così chi ne perde una può recuperarla; le registrazioni vengono
+cancellate alla fine dell'anno. ``Vi chiedo scusa del disservizio.''
+
+\paragraph{La chiusura.} ``Ok, allora ci siamo. La lezione si conclude qui. Avete le
+vostre task. Se avete bisogno, sapete dove trovarmi; se avete curiosità, sapete dove
+trovarmi.'' E, nel caso qualcuno avesse dubbi: ``non mi prendo le ferie per giocare a
+\emph{GTA}''. C'è anche uno sciopero annunciato tra giovedì e venerdì: ``vedremo cosa
+succede''. ``Ciao Federica. Ci vediamo la settimana prossima.''
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item \emph{GTA 6} sarà un successo enorme, ma la vera domanda è se basterà: il
+        suo scopo è lanciare il nuovo \emph{GTA Online}, e la risposta arriverà
+        tra anni. Solo Rockstar può fare ciò che fa Rockstar, anche solo per il
+        nome. \emph{Fortnite} non è un gioco ma una piattaforma: uno spazio sociale
+        tenuto vivo da contenuti continui, con meccaniche da gioco d'azzardo, che
+        vuole diventare ``il mercato'' come Roblox.
+  \item \emph{Medieval Village} è un \textbf{progetto} (si apre con doppio clic,
+        scegliendo la 5.8); \emph{Scan Labs Interiors} è un \textbf{pacchetto di
+        asset} già importati (va decompresso e messo nella cartella
+        \texttt{Content}).
+  \item Dalla revisione: creare \textbf{spazi coerenti}, non forme a caso; niente
+        avanguardia finché non si hanno le basi; \textbf{partire dalla realtà} (una
+        reference) e modificarla dà molti più dettagli; il \textbf{manichino} nella
+        scena tiene le proporzioni; ciò che conta è che un oggetto sia
+        \textbf{leggibile}; un pizzico di caos rende gli ambienti vissuti; con i
+        mezzi che mancano ci si arrangia (assi di legno invece di tronchi).
+  \item Le viste \textbf{Top/Bottom/Left/Right} sono ortografiche e passano in
+        \emph{Unlit}. Sono \textbf{le ombre a dare la profondità}. Il terreno usa
+        livelli di dettaglio in base alla distanza. Al primo anno,
+        \textbf{dell'ottimizzazione fregatevene} (con qualche asterisco).
+  \item Genitore e figlio sono relazioni tra \textbf{actor}; un actor è fatto di
+        \textbf{componenti}. Select All Descendants / Immediate Children.
+  \item \textbf{PBR}: un metodo di rendering che approssima l'interazione
+        realistica della luce con gli oggetti. Un \textbf{materiale} è una scatola
+        di texture e numeri; una \textbf{texture} è un'immagine. \textbf{Albedo}
+        (= color, base color, diffuse) è solo il colore, ed è ciò che si vede in
+        \emph{Unlit}; la \textbf{roughness} sparpaglia i rimbalzi e spegne i
+        riflessi (anche con una mappa in scala di grigi: i bordi rovinati); lo
+        \textbf{specular} è la riflettenza, e interagisce con la roughness. Gli
+        \textbf{specular highlight} si spostano con il punto di vista.
+  \item \textbf{Mobilità}: Static (baking in lightmap, leggerissima, niente si
+        muove, va buildata con \emph{Build Lighting Only}), Stationary (luce fissa,
+        ombre dinamiche), Movable (tutto dinamico, la più costosa). Con
+        \textbf{Lumen} tutto è dinamico, approssimato tra un frame e l'altro (da qui
+        sfarfallii e rumore). Un valore che ``non fa niente'' può valere solo per
+        un tipo di mobilità: leggere il tooltip.
+  \item \textbf{Directional light}: raggi paralleli, una sola per livello, conta
+        solo la rotazione (la si può spostare dove fa comodo). La notte è il giorno
+        tinto di blu. \textbf{Sky Light}: la luce diffusa dall'atmosfera, cioè ciò
+        che c'è nelle ombre: cambiandone il colore si cambia l'atmosfera.
+  \item \textbf{Verosimiglianza, non realismo}: in \emph{Lies of P} la luce del
+        barile è sopra il barile, la lampada non proietta la propria ombra, la luce
+        del corridoio sta al centro e la lampada la ``motiva''. Non si mette la luce
+        dentro la lampada: si illumina come su un set, per lo scopo della scena.
+  \item Troppe luci con ombre vicine: Unreal le \textbf{spegne in silenzio}
+        (simbolo X). Soluzioni: statica, \textbf{Cast Shadows} disattivato,
+        distanziarle. Le luci senza ombre servono a \textbf{rafforzare} le zone
+        buie e a far notare negozi e porte. Per ora si creano \textbf{ambienti, non
+        livelli}.
+  \item Leggere una mappa: \textbf{ciò che non si vede non si costruisce}; la luce
+        dalla finestra e il \textbf{chiaroscuro} come composizione; le reflection
+        capture; i libri come mesh unica. Le \textbf{tre regole dell'osservazione}:
+        i prodotti finali, il dietro le quinte, il livello delle persone attorno a
+        te.
+  \item Lumen non è ray tracing: è un'illuminazione globale dinamica approssimata,
+        con artefatti (ghosting, rumore) che danno a Unreal ``l'aspetto di
+        Unreal''. Le luci possono proiettare materiali (torce, proiettori).
+  \item Task: \textbf{una nuova stanza significativa}, pseudo-realistica, con Scan
+        Labs e Starter Content (niente Fab, niente progetto medievale, niente stanza
+        di Scan Labs riciclata), con \textbf{luci usate per uno scopo} e la
+        spiegazione di quello scopo. Si parte da ciò a cui ci si può ancorare: la
+        luce o l'ambiente.
+\end{itemize}

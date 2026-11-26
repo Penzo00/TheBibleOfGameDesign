@@ -1,0 +1,1998 @@
+% =====================================================================
+%  Capitolo 4 — L'atomo di Koster, il production dictionary e la
+%  ricerca in pre-produzione (problema e soluzione)
+%  Fonte: trascrizione della lezione GD4 (Game Design, primo anno)
+%  Pacchetti richiesti nel preambolo del libro:
+%    \usepackage[italian]{babel}, \usepackage[T1]{fontenc},
+%    \usepackage[utf8]{inputenc} (solo pdfLaTeX), \usepackage{booktabs}
+%  Nota sulla fonte: la trascrizione automatica storpia diversi nomi
+%  propri (titoli, studi, autori). Dove il riferimento è ricostruibile
+%  con certezza lo si riporta nella forma corretta; dove non lo è, lo si
+%  segnala in nota invece di indovinare.
+% =====================================================================
+
+\chapter[Problema e soluzione]{Problema e soluzione: l'atomo di Koster, il
+production dictionary e la ricerca in pre-produzione}
+\label{cap:problema-soluzione}
+
+Il capitolo precedente ha aperto il modulo dedicato alla documentazione e al
+pitching con il ciclo di produzione, l'iterazione e le regole della buona
+documentazione. Questo quarto capitolo lo prosegue e compie un passo
+ulteriore: dalla forma dei documenti si passa a \emph{che cosa} si fa prima
+ancora di scriverli, cioè alla \textbf{ricerca}. Si torna, in altre parole,
+alla ``preistoria'' della produzione, la \emph{pre-produzione}, e a tutto ciò
+che, secondo buon uso e costume, andrebbe fatto in quella fase.
+
+La lezione è tenuta ancora da Mattia Podini, in aula a Milano con una parte
+della classe collegata da Roma. Il percorso del capitolo ne ricalca la
+struttura:
+\begin{enumerate}
+  \item il concetto di Raph Koster rimasto in sospeso dalla lezione
+        precedente: l'\textbf{atomo di gioco}, con il suo ciclo
+        problema--azione--feedback--modello mentale
+        (sezione~\ref{sec:atomo-koster});
+  \item un ripasso rapido della prima lezione di documentazione
+        (sezione~\ref{sec:recap-documentazione});
+  \item il primo tipo di documento specifico: il \textbf{production
+        dictionary} (sezione~\ref{sec:production-dictionary}), seguito da due
+        principi generali sulla documentazione, tra cui il fatto che
+        \textbf{non esistono template} (sezione~\ref{sec:due-principi});
+  \item la nuova lezione, \textbf{problema e soluzione}: il design come
+        miglior compromesso possibile, il ruolo dei dati, il \emph{design
+        thinking} e la mappa delle attività di ricerca in pre-produzione
+        (sezioni~\ref{sec:design-compromesso}, \ref{sec:dati}
+        e~\ref{sec:mappa-ricerca});
+  \item gli strumenti di quella mappa, uno per uno: competitor diretti e
+        indiretti, analisi di utenti, mercato e gameplay, \emph{client pitch
+        direction analysis}, stakeholder, problema contro necessità e analisi
+        dei competitor (sezioni~\ref{sec:competitor-diretti}--\ref{sec:analisi-competitor});
+  \item il task della settimana, il primo production dictionary
+        (sezione~\ref{sec:task-gd4}).
+\end{enumerate}
+
+La lezione sui problemi e sulle soluzioni non si conclude in questa giornata:
+il docente lo anticipa (``non credo riusciremo a finirlo'') e infatti la
+chiusura è rimandata alla lezione successiva. Il capitolo riporta quindi la
+prima parte, fino all'analisi dei competitor.
+
+% ---------------------------------------------------------------------
+\section{L'atomo di gioco di Raph Koster}
+\label{sec:atomo-koster}
+
+\subsection{Il punto rimasto in sospeso}
+
+La lezione si apre, come d'abitudine, chiedendo se ci siano domande o dubbi
+sulla lezione precedente. Nessuno ne ha; ma, come gli studenti stessi
+ricordano al docente, alla fine della volta scorsa era rimasta in sospeso
+``una cosa di cui parlare'' (sezione~\ref{sec:task-gd3}). Il docente non
+aveva detto quale: lo dice ora.
+
+Si tratta di un'aggiunta alla lezione su che cos'è un gioco
+(capitolo~\ref{cap:che-cos-e-un-gioco}), utile anche perché si collega a un
+paio di discorsi extra nati con alcuni studenti in fondo all'aula. In quella
+lezione il direttore aveva insistito in particolare sul \textbf{mindset
+giocoso}, sulla differenza tra \emph{game} e \emph{play}: l'approcciare un
+sistema con l'atteggiamento del \emph{play}, su cui si fonda tutto ciò che si
+è detto finora e il motivo stesso per cui esiste la disciplina. Noi esseri
+umani prendiamo un sistema, vi applichiamo il concetto di \emph{play} e ci
+giochiamo sopra. L'esempio era quello di puntare sul mercato azionario; ma il
+principio è lo stesso di chi, uscendo dall'aula, vede due piccioni che si
+azzuffano e ci scommette sopra (``esempio poco etico, insomma'').
+Si veda la distinzione di Koster tra artefatti ludici e sistemi ludici
+(sezione~\ref{sec:zuppa}).
+
+Da questa stessa riflessione di Raph Koster deriva un altro concetto: quello
+che in lezione viene chiamato \textbf{ludema} o \textbf{game
+atom}\footnote{Nella trascrizione il termine compare storpiato
+(``l'Udema''). Koster parla di \emph{ludemes} (le unità elementari del
+gioco) e di \emph{game atoms}: il nome, come precisa il docente, è poco
+importante.}, l'\emph{atomo videoludico}. Il nome importa poco; importa il
+concetto, che ritornerà più avanti nel corso ``in diverse salse e in diverse
+forme''. Per questo il docente lo presenta adesso: ``ve lo portate a casa''.
+
+\subsection{Gli elementi dell'atomo}
+
+L'atomo di Koster è un piccolo diagramma a ciclo. Lo si percorre punto per
+punto, soffermandosi su quelli più rilevanti.
+
+\begin{description}
+  \item[Problema] Si parte dal \textbf{problema}, inteso in senso lato (ed è,
+        tra l'altro, anche l'argomento della lezione: il termine assumerà più
+        avanti un altro significato, sezione~\ref{sec:problema-necessita}).
+        Il problema è la \textbf{situazione da affrontare di momento in
+        momento} all'interno di un gioco, o di qualsiasi sistema ludico o
+        \emph{artefatto ludico}. Il problema sta dalla parte del
+        \textbf{sistema}.
+  \item[Preparazione] Il problema porta alla \textbf{preparazione} da parte
+        del giocatore, che sta dall'altra parte: c'è un boss da battere, come
+        mi preparo? Come affronto questo combattimento? C'è una porta da
+        aprire, che cosa faccio? ``Gli esempi si sprecano.''
+  \item[Core mechanic] Segue una serie di elementi già visti, con
+        nomenclature diverse. La \textbf{core mechanic} (meccanica
+        \emph{core}) è simile al \emph{verbo di gioco}; ma, come detto la
+        lezione precedente, il verbo di gioco nel senso gergale moderno è
+        \emph{generico} (sezione~\ref{sec:qa-gd2}), mentre la core mechanic è
+        \textbf{specifica}. È ciò che costituisce il gameplay a basso
+        livello, l'azione che si ripete tante volte, quella che il giocatore
+        compie \textbf{molto più spesso di tutte le altre}. In \emph{Bubble
+        Bobble} si sparano le bolle; in \emph{Mario} la core mechanic è
+        saltare e muoversi, molto vicina al verbo perché molto semplice.
+  \item[Spazio] La core mechanic è sempre \textbf{calata in un contesto}, che
+        Koster chiama \emph{spazio} (si potrebbe espandere il discorso, ma per
+        ora basta questo). A seconda di dove viene applicata, la stessa
+        meccanica cambia effetto. In \emph{Space Invaders} sparare è la core
+        mechanic: se tra la propria navicella e l'alieno non c'è niente,
+        l'alieno muore; se c'è una copertura, il colpo ne ``mangia'' un pezzo.
+  \item[Feedback] Qui si arriva alla parte che interessa di più. Quando si
+        compie un'azione, il sistema deve rispondere al giocatore in un dato
+        modo: deve dargli il \textbf{feedback}. Ricade qui \textbf{qualsiasi
+        cosa comunichi l'effetto desiderato}, o comunque che l'azione è stata
+        compiuta. Nel framework di Schell il feedback sta a metà tra
+        meccaniche ed estetiche (sezione~\ref{sec:schell}): lo sparo, il
+        nemico che esplode, l'effetto sonoro (SFX) che fa \emph{sentire} che
+        il nemico è morto, un eventuale punteggio che sale. Sono tutti gli
+        esiti, tutti gli effetti di quell'azione. Ciò che il giocatore riceve,
+        poi, lo interpreta o meno.
+  \item[Successo e fallimento] A seconda della versione del diagramma, a
+        questo punto c'è o non c'è una \textbf{biforcazione}. Per introdurre
+        il feedback conviene non averla; ma è chiaro che se si compie
+        l'azione desiderata, se si ha successo, succede qualcosa, e se si
+        compie l'azione ``sbagliata'' succede qualcos'altro. Si apre così il
+        \textbf{reame del successo} e il \textbf{reame del fallimento}.
+  \item[Ricompensa] Nel reame del successo entra la \textbf{ricompensa}: il
+        premio per aver fatto ciò che il designer vorrebbe, quindi qualcosa di
+        positivo. In una \emph{boss battle} di \emph{Zelda}: ``hai battuto il
+        boss, sei un grande, ti diamo l'arco''. Se si sbaglia succede
+        qualcos'altro: il game over.
+  \item[Modello mentale] Infine, e qui sta il punto più importante, il
+        feedback \textbf{aggiorna il modello mentale del giocatore}.
+\end{description}
+
+Il ciclo si può complicare a piacere. In \emph{Dark Souls} ci sono i
+\emph{mimic}, i forzieri che in realtà sono mostri: bisogna stare attenti alle
+casse. Se si è bravi e si riconosce che non è un mimic, la si apre e si prende
+la ricompensa; se si riconosce che è un mimic, la si colpisce, la si sconfigge
+e si prende comunque la ricompensa; se non la si riconosce, si viene mangiati.
+Reame del fallimento, reame del successo.
+
+\begin{table}[htbp]
+  \centering
+  \caption{L'atomo di gioco di Koster, come presentato in lezione.}
+  \label{tab:atomo-koster}
+  \begin{tabular}{@{}p{0.05\textwidth}p{0.22\textwidth}p{0.15\textwidth}p{0.46\textwidth}@{}}
+    \toprule
+    & \textbf{Elemento} & \textbf{Dove sta} & \textbf{Esempio} \\
+    \midrule
+    1 & Problema & sistema & un boss da battere, una porta da aprire \\
+    2 & Preparazione & giocatore & come affronto questo combattimento? \\
+    3 & Core mechanic & giocatore & saltare (\emph{Mario}), sparare (\emph{Space Invaders}) \\
+    4 & Spazio & sistema & la copertura che assorbe il colpo \\
+    5 & Feedback & sistema & esplosione, SFX, punteggio che sale \\
+    6 & Successo / fallimento & sistema & ricompensa (l'arco) o game over \\
+    7 & Modello mentale & giocatore & ``i barili rossi esplodono'' \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Il modello mentale del giocatore}
+
+Il modello mentale è la parte più importante del framework, anche perché il
+resto, osserva il docente, è in parte ripreso da un altro designer, di cui si
+vedrà brevemente un altro framework più avanti (e che si ritroverà,
+probabilmente, al terzo anno).\footnote{Il nome del designer non è
+ricostruibile con certezza dalla trascrizione. L'idea di un ciclo
+azione--feedback che aggiorna il modello del giocatore è al centro anche degli
+\emph{skill atoms} di Daniel Cook, a cui l'atomo di Koster è spesso
+accostato.} Questo elemento sta \textbf{specificamente nel reame del
+giocatore}: esiste solo nella sua testa.
+
+Capire di aver fatto qualcosa di positivo o di negativo dipende, tra
+virgolette, solo da ``quanto si è svegli''; o meglio, non necessariamente da
+quanto si è svegli, ma dal \textbf{bagaglio} che ci si porta dietro. A tutti è
+capitato: la prima volta che si prende in mano un controller si è neofiti del
+mondo ludico. Il docente ha cominciato, suo malgrado, con \emph{Dino Crisis},
+ed era ovviamente ``massacrato ogni due per tre'', tra l'altro da molto
+piccolo. Ma con il tempo quel bagaglio cresce e lo si porta con sé.
+
+\paragraph{Le convenzioni codificate.} Nel bagaglio rientrano le convenzioni:
+``il barile rosso esplode''. Nella realtà non c'è alcun legame effettivo tra
+il colore e l'esplosione (non tutti i barili di benzina sono rossi, né tutti
+i barili esplosivi lo sono): è una scelta ormai \textbf{codificata nel mondo
+dei videogiochi}, come, banalmente, il forziere. Il giocatore ha imparato
+qualcosa del gioco che lo migliora come giocatore e gli permette di
+\textbf{approcciare di nuovo il sistema} con informazioni aggiuntive, si
+spera da giocatore migliore per quel tipo di gioco.
+
+\paragraph{Il ciclo nella testa del giocatore.} Se si compie un'azione
+positiva, il cervello non solo viene nutrito con i feedback giusti, ma
+\emph{capisce} di aver fatto giusto: grande scarica di dopamina, e si va
+avanti. Se si sbaglia, stesso discorso: forse in quel burrone non ci si
+doveva buttare. È ciò che si fa spesso con il \emph{danno da caduta}: esiste
+o non esiste? Scopriamolo: ci si tuffa da cinquecento metri e, se si muore,
+probabilmente non lo si rifà più. Lo stesso vale per il fuoco amico.
+
+Ecco il legame con la lezione del direttore: la mentalità giocosa, il modo di
+approcciare un gioco, è legata al luogo in cui risiede lo stato di
+\emph{play}, cioè \textbf{la mente del giocatore}. Lo si espanderà in futuro;
+per ora basta sapere che quel bagaglio viene aggiornato continuamente.
+
+\paragraph{Che cosa si può assumere sul giocatore.} A seconda del
+\emph{target audience}, si può assumere che il giocatore arrivi nel gioco
+con delle competenze, oppure no; in ogni caso \textbf{qualche informazione
+bisogna dargliela}. Chi approccia \emph{Dark Souls} da neofita avrà
+difficoltà a riconoscere una serie di cose, come i mimic, e potrebbe non
+aspettarseli; ma anche un giocatore che non si definirebbe veterano, una
+volta mangiato, starà più attento.
+
+\subsection{A che cosa serve nel design}
+
+Una domanda possibile: come aiuta, nel design, tutto questo? In pratica,
+\textbf{poco}, se non nel ragionare in un certo reame: quello del problema e
+della preparazione, cioè \emph{come presentare il problema} e che cosa il
+giocatore deve fare \emph{prima} di affrontarlo. È un discorso complesso, che
+per ora resta lì (``un altro strumento misterioso che lasciamo da parte'').
+
+\paragraph{Il playtest.} Ciò che di solito si fa, come accennato la volta
+precedente, è \textbf{far testare il proprio gioco ad altri}. Nella propria
+testa si ha un'idea di come si sono costruiti il livello, i sistemi e il
+resto; ma se si dà il livello in mano a una persona che non ne sa nulla,
+esperta o meno che sia, nel 90\% dei casi si scontrerà con cose a cui non si
+era mai pensato. La messa in scena e la preparazione verranno trattate in
+futuro.
+
+\paragraph{Il feedback non è mai abbastanza.} Il feedback, invece, è
+\textbf{importantissimo} e ricade nel reame dell'iterazione visto la volta
+precedente (sezione~\ref{sec:principi-iterazione}). Non ci sono mai
+abbastanza feedback: si può sempre migliorare il modo in cui si premia o si
+punisce il giocatore quando ha fatto qualcosa di giusto o di sbagliato,
+anche con modalità che si appoggiano alla psicologia. Il feedback va
+\textbf{sempre} curato, spesso manca, e ``non è mai abbastanza''. Si fa il
+sistema, si osserva come reagisce il giocatore, si ``pompa'' il feedback o lo
+si rende più chiaro (un altro effetto visivo, un SFX migliore) e si ricomincia
+il giro: sempre il processo iterativo. Spesso, \textbf{se qualcosa non viene
+capito, il problema è lì}.
+
+\paragraph{Approfondimento: la lente del feedback.} Schell dedica al tema
+una lente specifica, la \emph{Lens of Feedback} (lente n.~63 nella terza
+edizione di \emph{The Art of Game Design}). Il feedback, scrive, è molte cose
+insieme: giudizio, ricompensa, istruzione, incoraggiamento e sfida. Per
+verificare che il ciclo di feedback crei l'esperienza desiderata, suggerisce
+di chiedersi \emph{in ogni momento} del gioco: che cosa i giocatori
+\emph{hanno bisogno} di sapere ora? Che cosa \emph{vogliono} sapere? Che cosa
+si vuole che \emph{provino}, e quale feedback può creare quella sensazione?
+Qual è il loro obiettivo in questo momento? Sono le stesse domande che, nel
+ciclo di Koster, collegano il feedback al modello mentale.
+
+\paragraph{Che cosa portarsi a casa.} Più che uno strumento operativo, l'atomo
+serve per la \textbf{nomenclatura} e per fissare il concetto di \emph{play}
+come stato mentale. Ed è comunque utile avere una parola in più: la
+\textbf{core mechanic}, quasi sinonimo di verbo di gioco. L'atomo tornerà
+utile più avanti per spiegare perché alcuni design dominanti funzionano così
+bene (sezione~\ref{sec:analisi-competitor}).
+
+% ---------------------------------------------------------------------
+\section{Un ripasso della documentazione}
+\label{sec:recap-documentazione}
+
+Prima di passare oltre, il docente conclude ciò che era stato visto sulla
+documentazione la volta precedente, con un ripasso veloce ``perché questa
+roba è importante''.
+
+\begin{itemize}
+  \item La documentazione è la \textbf{prima \emph{duty}} del designer, il suo
+        primo lavoro; a seconda dell'azienda può essere più o meno
+        totalizzante (sezione~\ref{sec:perche-documentare}). Serve a
+        \textbf{trasmettere la visione}, anche in maniera specifica, con
+        documenti adatti (lo si vedrà in futuro); a \textbf{fare ricerca} e a
+        documentarla in maniera chiara; a \textbf{supportare il team}; a
+        \textbf{controllare la produzione}. Sono i quattro reami principali.
+  \item Ci sono le \textbf{golden rules} da applicare
+        (sezione~\ref{sec:golden-rules}): ``ricordatevele, stampatevele,
+        tatuatevele, fate quello che volete. Ricordatevele, però.''
+  \item Ci sono i \textbf{tipi di documenti}. Dal prossimo task questo aspetto
+        conterà; per il primo task il docente sarà più permissivo e leggerà
+        tutti i documenti, a meno di errori davvero grossolani.
+  \item Si usano \textbf{solo documenti della suite di Google} per qualsiasi
+        task da consegnare, salvo indicazioni diverse, con le linee guida su
+        quale strumento usare in quale momento: \emph{the right tool for the
+        right job} (sezione~\ref{sec:scegliere-documento}).
+\end{itemize}
+
+\paragraph{La Bibbia di design.} Il discorso della \emph{Bibbia di design}
+(detta anche \emph{compendium}) era stato saltato velocemente; se ne
+riparlerà quando si tratteranno i tipi di documenti. ``Purtroppo questa piaga
+è vera'': esiste ancora oggi, per campi specifici. Di solito questi documenti
+sono \textbf{fuori dalla produzione operativa}: non servono a fare il gioco,
+ma a questioni, tra virgolette, \emph{politiche}, come rispondere a
+stakeholder esterni. Non servono mai a fare effettivamente il gioco.
+
+\paragraph{Documentare qualsiasi cosa.} Con la documentazione si può
+comunicare qualsiasi cosa, anche concetti complessi: le \emph{Blueprint} di
+Unreal hanno una documentazione che risponde a qualsiasi domanda su un dato
+nodo o su una data funzione. In teoria \textbf{tutti i dipartimenti
+dovrebbero documentare}; in pratica non sempre lo si fa, e a volte lo si fa
+quando la persona non c'è più. Per i programmatori, ad esempio, ``la loro
+carne e le loro ossa sono la documentazione'': a meno che un \emph{engine
+programmer} non crei un tool che passerà a un altro programmatore che non
+incontrerà mai più in vita sua; in quel caso la documentazione la scrive,
+altrimenti ``la vedo dura''.
+
+\paragraph{Gli strumenti non sono solo questi.} Quelli indicati nella lezione
+precedente sono solo ``briciole'' (sezione~\ref{sec:scegliere-documento}): si
+può usare davvero qualsiasi strumento, anche per creare immagini (un
+generatore di meme, ad esempio, ammesso che esista ancora).
+
+\paragraph{La dimostrazione pratica.} Il docente assume che i task siano in
+corso applicando le regole e le golden rules viste. La dimostrazione
+promessa, in cui si prenderà un documento e lo si formatterà da capo, non si
+farà in questa settimana, perché la lezione di venerdì sarà da remoto e il
+docente preferisce farla ``in carne e ossa'': si farà \textbf{venerdì 6}, la
+prima lezione in presenza dopo il 30, compatibilmente con il tempo a
+disposizione. Nessuno ha altri dubbi sulla prima lezione di documentazione
+(``i dubbi sono sublimati''), e si può passare all'unica cosa rimasta da fare
+su quella lezione.
+
+% ---------------------------------------------------------------------
+\section{Il production dictionary}
+\label{sec:production-dictionary}
+
+\subsection{Un documento comune, con molti nomi}
+
+Nelle lezioni su documentazione e pitching si vedranno diversi tipi di
+documenti, ciascuno con il suo scopo. Il primo è il \textbf{production
+dictionary}, scelto anche perché è molto comune: probabilmente non è la
+prima volta che gli studenti vedono qualcosa di simile. È un
+\textbf{dizionario a tutti gli effetti} ed è \textbf{un documento di per sé};
+a volte può essere ibridato con altri documenti, ma è davvero raro.
+
+Ha soprattutto molti \textbf{corrispettivi}: documenti che sono la stessa
+cosa ``in salsa diversa''. I \emph{narrative designer}, ad esempio (non è
+detto che lo si veda nelle lezioni di narrativa, viste le poche ore), lo
+chiamano \textbf{lexicon}: vi inseriscono le nomenclature, cioè le singole
+voci del dizionario, divise tra nomi comuni e termini che sono neologismi o
+idiomi. Il dettaglio interessa poco; il punto da sottolineare è che
+\textbf{alcuni di questi documenti hanno un corrispettivo in altri
+dipartimenti, o sono comuni a più dipartimenti}. Non è la prima volta che li
+si vede: probabilmente è la prima volta che li si trova applicati in una
+determinata maniera.
+
+\subsection{A che cosa serve}
+
+Come gran parte della documentazione, il production dictionary serve a
+\textbf{spiegare}: il suo obiettivo è \textbf{chiarire nomi specifici}, cioè
+la lista di informazioni e nomenclature che il lettore deve conoscere per
+comprendere il gioco.
+
+\paragraph{Dove si mette.} Il motivo per cui può essere ibridato è che, a
+volte, lo si trova \emph{in testa} (o in coda) ad altri documenti: prima di
+leggere il documento, ecco la lista dei termini da sapere. Il docente precisa
+di riportarlo perché gli è stato detto, ma di non averlo mai visto in tutti i
+suoi anni di lavoro. Il problema è che \textbf{occupa spazio}. Oggi Google
+Docs ha le \emph{schede} (\emph{tab}), che permettono soluzioni molto più
+eleganti di una prima pagina che è ``un mattone di testo'' sulle informazioni
+da leggere. Non è piacevole, soprattutto alla luce delle golden rules: il
+documento deve essere esteticamente appagante e deve far venire al lettore la
+voglia di leggerlo (sezione~\ref{sec:golden-rules}).
+
+\paragraph{Il libro di cucina.} Si immagini un libro di cucina che, invece di
+mostrare subito la grande torta della nonna con le more, con l'immagine e la
+ricetta, mostri prima un testo fitto che spiega che cos'è la spatola, che
+cos'è la teglia, che cos'è una forchetta, che cos'è un bicchiere. È chiaro
+che è meno accattivante per il lettore (``non sono un grande cuoco, questa è
+un'altra mia peculiarità''). Di solito, del resto, i termini davvero unici non
+sono nemmeno così tanti.
+
+Così, nella stragrande maggioranza dei casi, il production dictionary è un
+\textbf{documento a sé}, che funziona come un dizionario e raccoglie tutti i
+termini necessari per comprendere il gioco.
+
+\subsection{Che cosa contiene}
+
+Generalmente contiene \textbf{termini unici}: le razze nuove, i tipi di
+qualcosa, e simili. Alcuni esempi dalle slide:
+\begin{description}
+  \item[Risorse con nomi propri] se nel gioco il mana non si chiama
+        \emph{mana} ma in un altro modo, va detto. Alla fine dei conti il mana
+        funziona come una specifica \emph{currency} che si spende per compiere
+        azioni: ``il mana è stamina blu''. Ma serve una definizione, e se
+        quella cosa non è mana, va detto che cos'è.
+  \item[Termini ormai condivisi] il \emph{mulligan}, oggi condiviso, molti anni
+        fa non lo era.\footnote{Nei giochi di carte, il \emph{mulligan} è la
+        possibilità di rimescolare o sostituire, del tutto o in parte, la mano
+        iniziale.}
+  \item[Categorie del proprio sistema] può essere utile definire che cos'è
+        una \emph{quest}, se ce ne sono di diversi tipi: se il sistema di quest
+        distingue principali, secondarie, terziarie, o prevede delle
+        \emph{tier} specifiche, conviene definirle (che cosa significa
+        ``primaria'', con un esempio, e così via).
+  \item[Stati dell'IA] nelle slide ci sono anche due definizioni di stati
+        dell'intelligenza artificiale (IA videoludica, non generativa: se ne
+        parlerà nella lezione apposita).
+\end{description}
+
+\paragraph{Gli stati dell'IA, un caso esemplare.} A prescindere dal
+``cervello'' usato per l'IA (quasi sempre si parlerà di \emph{behavior tree}
+o di \emph{state tree}, lo strumento più recente di Unreal Engine 5), cioè da
+quel framework applicativo che è lo standard dell'industria, \textbf{i nomi
+degli stati in cui si trova l'IA cambiano da azienda ad azienda}. Lo stato
+\emph{idle}, o di calma, o qualsiasi nome gli si voglia dare, spesso viene
+rinominato. In IO Interactive, ad esempio, uno degli stati dei nemici si
+chiama \emph{caccia}; altrove lo si chiama \emph{chase}, altrove ancora in un
+altro modo. L'importante è \textbf{far capire a tutti di che cosa si sta
+parlando}: è, alla fine dei conti, l'obiettivo della documentazione.
+
+\subsection{Esercizio in aula: una carta di Hearthstone}
+
+Il docente mette alla prova la classe con una carta di \emph{Hearthstone}, un
+\emph{Golem cristallino} (che non ha mai giocato, perché è uscito ``da questo
+turbinio'' prima che venisse pubblicata): se si dovesse fare il production
+dictionary guardando solo questa carta, che cosa bisognerebbe definire?
+
+\begin{itemize}
+  \item \textbf{I numeri sulla carta}: costo in mana, attacco, vita. Sono
+        termini più o meno condivisi; spiegarli è a discrezione del designer
+        o del \emph{lead}, a seconda di \textbf{quanto sono condivisi}.
+        Attacco, vita e mana sono generalmente comuni, il che non significa
+        che non sia utile spiegarli. Ma conta anche quanto diventa
+        ``mastodontico'' il dizionario e quanto tempo di produzione si ha a
+        disposizione: come al solito ci sono delle \textbf{priorità}.
+  \item \textbf{Le parole chiave}, che a volte non sono parole ma
+        \textbf{simboli}.
+  \item \textbf{Il tipo della carta}: \emph{Elementale} è una tipologia (una
+        sorta di tipo Elettro dei Pokémon).
+  \item \textbf{Le keyword dei giochi di carte}, una applicazione specifica,
+        vanno spiegate: \emph{Provocazione} (\emph{Taunt}: va attaccato per
+        forza prima di poter colpire l'eroe avversario), \emph{Rinascita}
+        (\emph{Reborn}: quando muore ritorna in vita), \emph{Rantolo di
+        morte} (\emph{Deathrattle}: quando muore produce un certo effetto).
+        Sono parole specifiche di \emph{Hearthstone}, non usate altrove.
+  \item \textbf{La rarità}: si può andare sempre più in profondità e definire
+        anche la rarità. La carta è comune; ci sono i soliti tier (comune,
+        rara, epica, leggendaria). \emph{Leggendaria} è già più utile da
+        spiegare in \emph{Hearthstone}, perché porta con sé un'informazione
+        che il giocatore deve avere: una leggendaria è limitata a
+        \textbf{una copia per mazzo}, mentre delle altre se ne possono avere
+        più copie.\footnote{In lezione il docente esita tra due e tre copie.
+        Nelle regole standard di \emph{Hearthstone} il limite è di due copie
+        per le carte non leggendarie e di una per le leggendarie.}
+\end{itemize}
+
+\paragraph{La regola: avere priorità.} Bisogna sempre avere una
+\textbf{priorità sui termini da spiegare}: quelli più fraintendibili o
+necessari per la comprensione vanno spiegati per primi. In questo caso,
+\textbf{tutte le keyword}.
+
+Con questo la lezione precedente è conclusa, e il docente assegna il task per
+la settimana (sezione~\ref{sec:task-gd4}).
+
+% ---------------------------------------------------------------------
+\section{Due principi sulla documentazione}
+\label{sec:due-principi}
+
+Una breve parentesi: il docente chiede se gli studenti abbiano recuperato o
+rivisto delle lezioni sull'\emph{hub} del corso, e se i paragrafi delle
+trascrizioni siano sensati (``non so come la macchina legga queste cose'').
+Poi, ``prima che me lo dimentichi di nuovo, con la mia memoria da pesce
+rosso'', aggiunge due cose importanti sulla documentazione.
+
+\subsection{La documentazione non sostituisce il gioco}
+
+La documentazione è importante e fondamentale ma, come detto nella lezione
+precedente, \textbf{non sostituisce il gioco}. Deve aiutare a creare e
+facilitare il lavoro: soprattutto nella pre-produzione, poi
+nell'implementazione, nella comunicazione e così via.
+
+\paragraph{Non tutti i documenti sono fondamentali.} Il production dictionary
+\emph{potrebbe} essere fatto, ma non è necessario in ogni produzione: come
+sempre \textbf{dipende dalle risorse} e dal tempo a disposizione. In una game
+jam, con dieci giorni di sviluppo o lavorando in due, non serve; e vale per il
+primo documento visto come per molti altri.
+
+\paragraph{I documenti come framework.} Molti di questi documenti, tra
+l'altro, possono essere usati \textbf{come framework}: se ne prende un pezzo e
+lo si unisce a un'altra parte. La somma di queste cose è il ``principe'' della
+documentazione, il \textbf{Game Design Document} (GDD), che il docente spera
+di vedere il più avanti possibile (``ma per voi, non per me''). Basta mettere
+\emph{DD} alla fine (GDD, LDD\dots) e quello è \emph{il} documento. Dentro ci
+finiscono molte cose: il versionamento, potenzialmente il production
+dictionary, ``un macello di cose'', a seconda di chi lo scrive e di dove lo si
+scrive, cioè in quale azienda. Come al solito, le aziende abilitano o non
+abilitano certe cose. Come per i framework, bisogna capire \textbf{perché}
+questi documenti si fanno e perché hanno quel contenuto: a volte è un dogma,
+più spesso no.
+
+\subsection{Non esistono i template}
+
+La seconda cosa, importantissima, è anche il motivo per cui in questa prima
+lezione non c'è un esempio di production dictionary (mentre in futuro ci
+saranno esempi di documenti specifici): \textbf{in questo lavoro non esistono
+i template}.
+
+Vale soprattutto per i GDD. Cercando corsi, approfondimenti o video, si
+trovano persone che condividono il proprio template di Game Design Document.
+Va bene, può essere un'informazione utile, e il docente stesso ha trovato
+utile vederne alcuni. Ma il consiglio è: \textbf{non applicateli mai uno a
+uno}. Anche quando si sarà trovato il proprio metodo di documentazione, e si
+faranno GDD in maniera estremamente efficace, non bisogna \textbf{rifugiarsi
+dentro template sicuri}, perché non si avrà quasi mai la certezza di poterli
+applicare al 100\%: un po' perché i tempi non saranno sempre gli stessi, un
+po' perché l'azienda potrebbe non permetterlo (il GDD di alcune aziende ha
+quei punti specifici, e quelli sono; e vale anche per altri documenti).
+
+I template aiutano a velocizzare il lavoro, o ad avere in testa che cosa è
+importante scrivere in un GDD o in un altro documento. Ma bisogna avere
+l'\textbf{elasticità mentale}, e poi la pratica, per cambiarli al volo quando
+serve. Se un template viene fornito, vale, ma ha sempre una \textbf{durata
+temporale} o, se non temporale, è \textbf{circoscritto all'azienda} in cui si
+lavora. Ciò non significa che sia inutile: se ne può prendere il meglio e
+ibridarlo con altro, e questa è una grande evoluzione. Ma bisogna
+ricordarselo.
+
+\paragraph{Approfondimento: il mito del Game Design Document.} Schell dedica
+a questo punto un paragrafo di \emph{The Art of Game Design} (``The Myth of
+the Game Design Document''). Molti aspiranti designer, scrive, immaginano che
+basti trovare ``il formato giusto'' di GDD per diventare professionisti; e lo
+smentisce scrivendolo a caratteri cubitali: \emph{the magic template does not
+exist}, il template magico non esiste, non è mai esistito e non esisterà mai.
+Riporta anche le parole del designer Jason VandenBerghe: i GDD sono
+``letteralmente superati nel momento in cui li si scrive'', perché esprimono
+\emph{teorie} su che cosa renderà il gioco buono, non piani o progetti
+esecutivi. Ogni gioco è diverso e ha esigenze diverse, di memoria e di
+comunicazione, che vanno scoperte di volta in volta: un documento cresce
+organicamente intorno al design, non viene da un modello.
+
+% ---------------------------------------------------------------------
+\section{Problema e soluzione: il design come compromesso}
+\label{sec:design-compromesso}
+
+\subsection{La preistoria della produzione}
+
+Si apre la nuova lezione, \textbf{problema e soluzione}, che parte dalla
+``preistoria della produzione'': la \textbf{pre-produzione}. Si tratta tutto
+ciò che dovrebbe essere fatto in quella fase secondo buon uso e costume. Non
+sempre viene fatto, come si è detto parlando del ciclo iterativo
+(sezione~\ref{sec:ciclo-produzione}); ma se venisse fatto, i risultati
+sarebbero ``sicuramente molto migliori di quanto non siano nel 50\% dei
+casi''.
+
+\subsection{Il miglior compromesso possibile}
+
+Come detto nella primissima lezione (capitolo~\ref{cap:introduzione-game-design}),
+\textbf{il design è il miglior compromesso possibile}: fare buon game design
+richiede di essere bravi nel compromesso, con le risorse, con la dimensione
+del team, con il tempo e così via. Le slide lo riassumono in quattro coppie
+di fattori (tabella~\ref{tab:compromesso}).
+
+\begin{description}
+  \item[Team e know-how] Quante persone si hanno a disposizione, qual è il
+        proprio ``potere di fuoco'', e che cosa si sa fare. Un designer
+        esperto di giochi horror verrà tendenzialmente assunto per fare
+        quello. Nel mondo \emph{mobile}, guardando le offerte di lavoro, la
+        prima cosa richiesta è aver già lavorato nel mobile o nelle
+        \emph{live ops} in generale: non significa che chi non lo ha fatto sia
+        automaticamente escluso ``da questo magico mondo'', ma si dà priorità
+        a chi ha già quel know-how. La \emph{creazione} del team non è
+        necessariamente compito del designer; la sua \emph{gestione} sì, è
+        possibile.
+  \item[Visione e scienza] È la parte \textbf{strettamente legata al
+        design}: riguarda \textbf{che cosa il gioco deve essere}. È il
+        ``fantomatico'' termine di \emph{visione}, già incontrato rispondendo
+        a Lorenzo sui pilastri (sezione~\ref{sec:principi-iterazione}), di cui
+        si parlerà meglio con il \textbf{documento di visione}: la
+        cristallizzazione dell'idea. Il docente di solito parla di ``messa a
+        terra'', ma l'idea non è ancora del tutto messa a terra: ``un piede
+        nella fossa e uno no''. Senza parlare ancora di documenti, la visione
+        è una \textbf{bussola} che indirizza la produzione: dove si deve
+        andare, che cosa si deve raggiungere con il prodotto e perché lo si
+        deve fare. E deve essere già stata \textbf{confutata} il più
+        possibile tramite il metodo scientifico.
+  \item[Mercato e target audience] Il prodotto è indirizzato, creato e
+        ragionato sempre in funzione del target audience; il target audience
+        è immerso nel mercato, e anche il prodotto, una volta rilasciato, lo
+        sarà per forza di cose. Ci si aspetta che l'obiettivo sia vendere, o
+        almeno fare \textbf{break even}, cioè guadagnare almeno quanto si è
+        speso. Le aspettative possono essere (si spera) molto più idilliache:
+        un'azienda non deve solo andare in pari, deve poter ``campare'' altri
+        anni. Per farlo bisogna inserire il prodotto in un \textbf{mercato che
+        possa assorbirlo}, che abbia abbastanza spazio perché il gioco venga
+        visto, giocato e, generalmente, comprato.
+  \item[Produzione e soldi] I soldi sono ``la benzina'' dell'industria
+        videoludica, almeno ad alto livello (``brutto vederla così, ma è
+        così''). Mantenere un individuo costa una certa cifra; i soldi
+        permettono di avere un team, di pagare strumenti e ricerca, sondaggi,
+        \textbf{focus group} che giochino il gioco per verificare che in un
+        certo stato della produzione abbia senso, e aggiustare il tiro (sempre
+        l'iterazione). La \textbf{produzione} determina invece quanto è
+        efficace la macchina: lavorare 24 ore al giorno o 8, tre giorni su
+        sette o cinque, gestire i task in modo che tutti i dipartimenti
+        lavorino contemporaneamente o che qualcuno resti fermo. Se i soldi
+        sono la benzina, la produzione dice quanto l'ingranaggio è oliato. È
+        il lavoro del \emph{producer}, una specializzazione ``tosta'' con i
+        suoi documenti specifici da adottare, cambiare e riapplicare, di cui
+        non si parla ora.
+\end{description}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Le quattro coppie del compromesso di design.}
+  \label{tab:compromesso}
+  \begin{tabular}{@{}p{0.25\textwidth}p{0.67\textwidth}@{}}
+    \toprule
+    \textbf{Coppia} & \textbf{Domanda di fondo} \\
+    \midrule
+    Team e know-how & Quante persone abbiamo e che cosa sappiamo fare? \\
+    Visione e scienza & Che cosa deve essere il gioco, e lo abbiamo
+                        verificato con i dati? \\
+    Mercato e target audience & A chi lo diamo, e c'è spazio per lui nel
+                                mercato? \\
+    Produzione e soldi & Quanta benzina abbiamo, e quanto è oliata la
+                         macchina? \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Cinquanta per cento scienza, cinquanta per cento arte}
+
+Il docente riprende una citazione del direttore, ``molto succinta, molto
+\emph{on point}'' (sezione~\ref{sec:inquiry}):
+
+\begin{quote}
+\centering
+\textbf{Il game design è per il 50\% scienza e per il 50\% arte.}
+\end{quote}
+
+La parte \textbf{scientifica}, quella di questa lezione (e non solo), è il
+processo di \emph{smontare l'idea}: fare ricerca, trovare i dati, anzi partire
+con l'obiettivo di \textbf{avere dei limiti} e di navigare entro quei limiti.
+I limiti potenziano la creatività e permettono di evitare strade
+problematiche fin dalla partenza. Si vuole fare un MMO, ma si è in tre
+persone? Forse non conviene. Si vuole fare un \emph{hero shooter} con gli
+\emph{stickman}? Forse sì, forse no: bisogna trovare i dati, non lo si può
+dire così. Con il processo scientifico si ottengono dati, li si lima, si
+cerca di arrivare a una serie di possibilità, di strade percorribili.
+
+Una volta posto questo filtro scientifico, però, \textbf{dove andare lo
+decide il designer}, la sensibilità del singolo: è il 50\% di arte. Può
+emergere in momenti diversi della produzione, anche prima, nella scelta
+dell'idea; ma l'idea in sé vale poco, perché le idee possono averle tutti.
+L'obiettivo è filtrarle, trovare la migliore possibile, applicarla, trovare
+l'implementazione giusta. Trovare soluzioni creative fa parte del lavoro, ma
+non ne è il tutto: ne è il 50\%.
+
+% ---------------------------------------------------------------------
+\section{Senza dati si è solo un'altra persona con un'opinione}
+\label{sec:dati}
+
+\begin{quote}
+\centering
+\textbf{``Senza dati, sei solo un'altra persona con un'opinione.''}\\
+\emph{(W.~Edwards Deming)}
+\end{quote}
+
+È ciò che serve nel 50\% di scienza del lavoro. Non si può confutare il
+design di qualcun altro, e nemmeno iniziare a discuterne, \textbf{senza dati}.
+I dati possono essere quelli che il designer ha cercato nella parte di
+ricerca del documento, ma vale anche il discorso fatto sul target audience
+(sezione~\ref{sec:principi-iterazione}): si può discutere di qualsiasi cosa,
+ma la scelta migliore tra la mia e la tua non dipende da quanto è forte l'uno
+o l'altro; dipende da \textbf{chi avrà in mano il gioco}, da chi dovrebbe
+giocarlo.
+
+\paragraph{Gioco ``bello'', gioco ``brutto''.} È il discorso fatto con
+Federica (sezione~\ref{sec:qa-gd2}): non serve dire che un gioco è bello o brutto (parole bandite,
+sezione~\ref{sec:vocabolario}); serve dire che tipo di estetiche ha. Sono dati
+\emph{qualitativi}, ma sono dati, e sono verificabili. Lo stesso vale per
+``all'utenza piacerebbe'' o ``non piacerebbe'': si fa ricerca, si chiede
+all'utenza, al potenziale gruppo di persone. Se bisogna fare un gioco che
+venda su Reddit, si va su Reddit a chiedere; se servono i più grandi fanatici
+dei \emph{soulslike}, nel peggiore dei casi si fermano le persone per strada:
+``sei un gran fan dei soulslike?''. Prima o poi si trova qualcuno, gli si fa
+una serie di domande, si raccolgono i dati, li si filtra. Servono per iniziare
+a parlare di questioni concrete, o per andare a discuterne.
+
+Deming, economista statunitense, ha fatto molto altro: ha avuto grande
+successo in Giappone, in particolare sui \emph{processi produttivi}, temi più
+legati alla sfera della produzione che a quella del design; magari se ne
+parlerà più avanti.
+
+\subsection{Quanti dati, e quando}
+
+Come si ottengono i dati? ``Guarda un po''': tramite la \textbf{ricerca}, la
+prima parte di questa lezione. Si possono raccogliere dati
+\textbf{quantitativi} e \textbf{qualitativi}, in qualsiasi maniera:
+l'importante è che \textbf{siano dati}.
+
+Chiedere a una o due persone del target audience se ha senso fare una cosa
+o un'altra non basta: due persone sono troppo poche per un bacino statistico,
+ne servono \textbf{almeno cento}. Non sempre si avrà il tempo di farlo; ma
+nella pre-produzione la parte di ricerca va fatta \textbf{attentamente},
+proprio per questo. Si costruiscono fondamenta solide, si raccoglie una
+``marea'' di dati che magari non servono tutti subito ma a cui si può tornare
+in futuro, e soprattutto, facendolo ora, non lo si deve fare nel vivo della
+produzione, quando il tempo scarseggerà davvero.
+
+La ricerca si fa in diverse maniere e forme: alcune molto aziendali e
+condivise, altre meno. La lezione serve proprio a dare \textbf{più strumenti
+possibili} per la ricerca e, potenzialmente, per l'ideazione e il
+\emph{brainstorming}. Non tutti saranno sempre applicabili: è una lista ``più
+che estensiva'', e va valutato di volta in volta che cosa usare.
+
+\subsection{Il design thinking in cinque passi}
+
+Per rendere concreto il discorso, il docente mostra un breve video sul
+\textbf{design thinking}, che descrive il processo come un viaggio senza
+destinazione certa, ``ma con la fiducia che si arriverà in un posto
+fantastico''. L'esempio: un team riceve la sfida di far muovere di più i
+bambini americani, per contrastare l'obesità infantile. L'idea di partenza è
+dare ai bambini un lettore musicale digitale con un sensore di movimento,
+premiandoli in base all'attività. Ma la grande domanda è: i bambini lo
+userebbero davvero, e abbastanza a lungo da vederne i benefici?\footnote{Il
+video è quello con cui lo studio di design IDEO illustra il proprio approccio
+al design thinking; il progetto descritto ha portato a un dispositivo di
+monitoraggio dell'attività per ragazzi, collegato a una piattaforma online.}
+
+\begin{enumerate}
+  \item \textbf{Imparare dalle persone} (\emph{learn from people}). Il team
+        parla con i bambini, passa del tempo nelle loro case e nelle loro
+        scuole, ascolta i loro limiti, le abitudini, ciò che li entusiasma e
+        ciò che li frustra. La ricerca include bambini ``nella media'', ma
+        anche bambini molto attivi e molto sedentari: chi sta agli
+        \textbf{estremi} sa dare voce a problemi che chi sta nel mezzo
+        percepisce, ma fatica a mettere a fuoco.
+  \item \textbf{Trovare degli schemi} (\emph{find patterns}). Le osservazioni
+        finiscono su centinaia di post-it, disposti per dare un senso a ciò
+        che si è imparato; con un'intuizione informata si cercano gli schemi
+        che indicano delle opportunità. Daniel dice: ``mi annoio con i
+        videogiochi in solitaria, sono quelli multigiocatore che mi fanno
+        tornare''. Meg dice: ``non porto l'iPod quando corro perché voglio
+        parlare con le persone''.
+  \item \textbf{Definire i principi di design} (\emph{define design
+        principles}). Frasi come queste rivelano uno dei principi che
+        porteranno al concept: \emph{facilitare l'interazione sociale in ogni
+        momento}. Ne emergono molti, e insieme formano i ``pali della porta''
+        di un'esperienza che il team è fiducioso possa funzionare con i
+        bambini.
+  \item \textbf{Rendere tangibile} (\emph{make tangible}). Domande del tipo
+        ``come potremmo\dots?'' colmano la distanza tra principi e idee
+        specifiche; le migliori vengono trasformate rapidamente in prototipi
+        grezzi.
+  \item \textbf{Iterare senza sosta} (\emph{iterate relentlessly}).
+        Dispositivi fisici di cartone ed esperienze digitali simulate con
+        carta e matita permettono di imparare in fretta; a ogni prototipo il
+        concept si evolve, viene riportato ai bambini, si ascolta e si impara.
+\end{enumerate}
+
+Il risultato non è l'idea iniziale del lettore musicale, ma un piccolo
+\textbf{monitor di attività} da agganciare ai vestiti o da mettere in tasca:
+un portale verso un mondo online in cui i ragazzi condividono e celebrano con
+gli altri e con le famiglie i risultati raggiunti nel mondo reale. In uno
+studio clinico, il risultato è stato un \textbf{aumento del 59\%
+dell'attività fisica}.
+
+``Grande successo: l'America è salvata dall'obesità'', commenta il docente.
+L'obiettivo era far alzare i bambini dalla sedia e ``fargli toccare l'erba''.
+È un esempio molto contenuto di cinque punti che possono essere espansi, e
+che sono contenuti nella prima parte della lezione: sono \textbf{il cuore} di
+ciò che si vedrà, e non vanno dimenticati.
+
+\subsection{Partire da un problema o da una necessità}
+
+Il primo passo è partire da un \textbf{problema} o da una \textbf{necessità}
+(la distinzione verrà chiarita nella sezione~\ref{sec:problema-necessita}):
+può essere semplicemente qual è l'obiettivo del progetto, del team. A volte su
+questo obiettivo si costruisce un'identità intera, cosa più riconoscibile tra
+i publisher, ma visibile anche tra gli studi.
+
+\paragraph{Esempio: Milestone.} Quale potrebbe essere la missione di
+Milestone? Per dirlo bisogna sapere che cosa fa: \emph{MotoGP}, i giochi su
+Valentino Rossi e simili. L'obiettivo è fare \textbf{simulazioni di guida},
+giochi a due e quattro ruote simulativi. Magari lo studio non era nato con
+quell'obiettivo, ma nel tempo si è solidificato: hanno già chiaro che cosa
+devono fare, quale problema risolvere e in quale mercato affacciarsi. Per
+un'altra azienda può non valere: si potrebbe volere ``un sacco di soldi'', e
+allora l'obiettivo è trovare un'applicazione, un progetto che dia quel
+risultato. Come? Facendo ricerca: chiedendo alle persone se c'è un problema o
+una necessità.
+
+\subsection{Esercizio in aula: che cosa non va nei soulslike?}
+
+Per mostrare come si raccolgono i dati, il docente intervista i giocatori di
+soulslike presenti in aula: che cosa non piace dei soulslike? Le risposte:
+\begin{itemize}
+  \item una studentessa, gran fan del genere, fatica a trovare difetti; l'unica
+        cosa che le viene in mente riguarda la \textbf{console} su cui gioca,
+        non il gioco;
+  \item Pedro cita le \textbf{risorse limitate}: in alcuni titoli, finiti gli
+        oggetti curativi, bisognava tornare a \textbf{farmarli} prima di
+        riprovare (il \emph{grinding});
+  \item Antonino cita la \textbf{curva di difficoltà} tra l'inizio e il resto
+        del gioco: l'inizio è difficilissimo;
+  \item un altro studente porta l'esempio del DLC di \emph{Elden Ring}: la
+        difficoltà principale dei boss, secondo lui, non nasce dall'averli
+        resi più dinamici, ma dall'aver alzato i numeri (vita, velocità,
+        attacco, danno), mentre nei capitoli precedenti il combattimento era
+        un'alternanza bilanciata tra schivata e attacco, sia del giocatore sia
+        del boss.
+\end{itemize}
+
+Il docente avverte che il discorso è complesso e lo si sta semplificando.
+Se l'obiettivo è fare un soulslike, bisogna capire come ci si è arrivati: un
+buco di mercato, giocatori che chiedono qualcosa a gran voce, mille altre
+ragioni (``magari siamo FromSoftware e facciamo quello''). E bisogna chiedere
+al proprio target audience che cosa vuole.
+
+\paragraph{La curva a campana.} Va anche capito se gli intervistati sono
+\textbf{esattamente il tipo di giocatore che si vuole}, e dove si collocano
+sulla curva. La distribuzione normale vista nel video è la condizione
+naturale delle cose: se si chiede a tutta l'Italia ``ti piace la pizza?'', nel
+mezzo della curva a campana ci sono quelli che la mangiano una volta a
+settimana, e agli estremi chi non la mangia mai e chi la mangia ogni singolo
+giorno. Bisogna capire dove si trovano gli intervistati: grandissimi fan di
+\emph{Dark Souls}, con ``un santino di Miyazaki a casa'', oppure no. Al
+docente, ad esempio, dei soulslike non piace per nulla la narrativa,
+``estremamente criptica, convoluta, complicata''; ma non sono quelli i
+problemi emersi in aula.
+
+\paragraph{Registrare tutto.} Dalle risposte emergono già due questioni,
+\textbf{complessità/difficoltà} e \textbf{grinding}. Queste interviste servono
+a prendere dati: bisogna segnare tutto e, potenzialmente, \textbf{filmare}
+(la lezione stessa è registrata). Bisogna osservare le reazioni delle
+persone: se fanno fatica a trovare le risposte, se si animano parlando di
+qualcosa. Non conta solo ciò che dicono, ma \emph{come} lo mostrano e che
+cosa potrebbero pensare. Poi si setacciano i dati per vedere quali tornano
+utili.
+
+\paragraph{Trovare archetipi e categorie.} Il modo che conviene più di tutti è
+\textbf{trovare archetipi}, categorie in cui far ricadere le risposte. È anche
+per questo che è stata data la lista di emozioni (sezione~\ref{sec:vocabolario}),
+e il concetto verrà esplorato e rifinito. Tutto ciò di cui si è parlato in
+aula (la progressione, il tipo e la curva di progressione, la sfida, quanto
+alta o bassa, il grinding) ricade nello stesso reame: la \textbf{challenge}.
+Uno studente osserva che in \emph{Elden Ring} il problema degli oggetti
+curativi è stato risolto (le fiasche si ricaricano ogni volta che si muore),
+segno che probabilmente un processo del genere c'è stato; e lo stesso si può
+dire della telecamera e del \emph{level design} dei primi \emph{Dark Souls}.
+Se invece qualcuno avesse detto ``in \emph{Dark Souls} mi piace un sacco
+parlare con il Cavaliere Cipolla'', o ``vorrei un compagno, vorrei un
+cane'', ci starebbe (``chi sono io per dire di no''), ma sarebbe rimasto fuori
+da questa potenziale ``molla'' della challenge, che include sfida, grinding e
+progressione.
+
+\subsection{Correlare, chiudere la visione, prototipare}
+
+Una volta ottenuta questa ``enorme bacinona di dati'', bisogna cercare la
+\textbf{correlazione}: trovare gruppi, cose che collidono, capire \emph{perché}
+succedono certe cose. È più evidente, ad esempio, quando un mercato è molto
+saturo e le persone non vogliono più giocare a un certo genere: la questione
+del recente filone dei \emph{friendslop}, per esempio.\footnote{Termine
+gergale per l'ondata di giochi cooperativi economici, pensati per essere
+giocati con gli amici in streaming. Nella trascrizione compare come
+``friend slot''.} Oppure il motivo per cui una parte dei giocatori dedica ai
+videogiochi meno tempo che, poniamo, nel 2022: il Covid ha avuto la sua
+influenza. Bisogna trovare questi legami per poter rispondere sensatamente
+alle domande che ci si pone dentro il team, e anche fuori.
+
+\paragraph{Chiudere la visione.} Verso la metà o la parte finale della
+ricerca bisogna, se non lo si è già fatto, \textbf{iniziare e poi chiudere la
+visione}. Ciò che si deve fare con il progetto viene \textbf{blindato}:
+questi sono i punti, queste le cose incluse, che per forza di cose ci devono
+essere. Altre, per forza di cose, non ci saranno. Se si fa un soulslike, i
+giocatori si aspettano un certo tipo di difficoltà e certi sistemi: se si
+muore si perdono le risorse e bisogna andarle a riprendere, è lo standard. A
+volte è un'aspettativa anche la narrativa, la cosiddetta narrativa
+\emph{apofenica} dei soulslike (motivo per cui il docente ``se la sorbisce''
+anche in \emph{Hollow Knight}). La visione è ciò che deve condividere tutto il
+team: tutti devono essere \emph{onboarded}, devono sapere dove si va e qual è
+la direzione del progetto.
+
+\paragraph{Prototipare.} Poi il \textbf{prototyping}: prima lo si fa, meglio
+è (lo si è già visto, sezione~\ref{sec:segreti-iterazione}). Si raggiungono il
+prima possibile versioni concrete, fisiche o digitali, per testare ciò che si
+sta facendo; le si gioca, si raccolgono feedback, si modifica, si itera. In
+pre-produzione lo si fa in maniera ridotta rispetto alla produzione, ma già si
+mettono le mani nell'engine: è sicuramente ancora pre-produzione.
+
+% ---------------------------------------------------------------------
+\section{La mappa della ricerca in pre-produzione}
+\label{sec:mappa-ricerca}
+
+Il docente presenta i punti che verranno toccati nella prima parte della
+lezione. Come sempre, la lista \textbf{non è esclusiva né limitata} a queste
+voci: sono modi di fare ricerca, prendere dati specifici e potenzialmente
+correlarli.
+
+\begin{description}
+  \item[Client pitch direction analysis] Capire se si ha \textbf{qualcuno
+        sopra}, se c'è una situazione ``clientelare'': i limiti non sono solo
+        quelli del target audience, ma anche quelli di chi fornisce i soldi.
+        Se si fa un progetto per qualcun altro, bisogna capire che cosa vuole
+        quella persona; e, come sempre, \textbf{ciò che le persone dicono non è
+        sempre ciò che vogliono}: va tradotto, contestualizzato, analizzato.
+        È legata alla definizione di stakeholder
+        (sezioni~\ref{sec:client-pitch} e~\ref{sec:stakeholder}).
+  \item[Stakeholder e il loro peso] Non tutti quelli che stanno sopra pesano
+        allo stesso modo. Un investitore che ha messo un milione di dollari
+        nel gioco ma ha il grosso dei suoi interessi altrove (``nel campo del
+        petrolio'') si interesserà relativamente del progetto: qualsiasi cosa
+        si faccia, bene o male andrà in porto (``la semplifico molto, ma
+        molto''). Uno stakeholder che si aggiorna spesso, impone deadline
+        specifiche ed è sempre ``sulla spalla'' a controllare ha un peso
+        diverso. C'è chi non dà soldi e non influisce economicamente, e chi
+        dà soldi senza avere competenze definite in ambito videoludico.
+        Bisogna capire chi c'è sopra, che cosa vuole e quale peso ha nella
+        produzione.
+  \item[Problema contro necessità] Capire se c'è un problema o una
+        necessità da risolvere nel mercato, e non solo
+        (sezione~\ref{sec:problema-necessita}).
+  \item[Analisi dei competitor] Fondamentale: ``non si sfugge''. Là fuori ci
+        sono giochi che hanno qualcosa in comune con il proprio, anche se il
+        proprio non è ancora uscito. Quali sono i propri competitor,
+        \textbf{diretti} o \textbf{indiretti}? (Sezioni~\ref{sec:competitor-diretti}
+        e~\ref{sec:analisi-competitor}.)
+  \item[Analisi degli utenti] Chi dovrebbe giocare il gioco
+        (sezione~\ref{sec:utenti-mercato}).
+  \item[Analisi di mercato] Dove ci si affaccia, e con quali regole.
+  \item[Analisi di gameplay] Correlare i dati e mettersi la maschera del
+        target audience, fino alla \textbf{visione}.
+\end{description}
+
+% ---------------------------------------------------------------------
+\section{Competitor diretti e indiretti}
+\label{sec:competitor-diretti}
+
+\subsection{Il competitor diretto}
+
+Per chiarire la distinzione, il docente chiede un genere alla classe: i
+soulslike. Mostra \emph{Enotria: The Last Song} e chiede quale potrà mai
+essere il competitor diretto di un soulslike (``perché avete paura di
+parlare, ragazzi?''). La risposta è ovvia: \textbf{qualsiasi cosa faccia
+FromSoftware}. Sono competitor diretti perché condividono la stragrande
+maggioranza degli aspetti del gioco: il sistema di progressione, la
+difficoltà, potenzialmente la telecamera.
+
+Come osserva Federica, però, a seconda di quanto è innovativo un gioco
+\textbf{i competitor diretti non sono mai uno solo}: bisogna individuare quelli
+più vicini. Lo scopo del progetto e la sua grandezza sono molto minori
+rispetto a una produzione FromSoftware, quindi il competitor più diretto sarà
+qualcosa di più indipendente (un ``doppia A'', mettiamola così); ma il gioco è
+immerso nel mercato dei soulslike, e per forza di cose \emph{Dark Souls} sarà
+uno dei suoi competitor diretti. Artisticamente, però, \emph{Enotria} è
+diverso: gli sviluppatori lo definiscono un \textbf{\emph{Summer Souls}}, un
+soulslike ``estivo''. Anche questa è una scelta di vendita, come si era detto
+dei \emph{roguelite} nella prima lezione.
+
+\subsection{Il competitor indiretto}
+
+Si può trovare anche un \textbf{competitor indiretto}: un gioco che ha in
+comune con il proprio \emph{solo} un aspetto, artistico o meccanico, una
+specifica meccanica, un sistema o una direzione artistica. Qualcosa di
+\textbf{estremamente limitato e circoscritto} che ricorda un altro gioco, con
+cui però non si compete direttamente nello stesso mercato.
+
+\paragraph{Pokémon e Palworld.} \emph{Palworld}, o qualsiasi titolo simile,
+è un competitor \emph{diretto} di \emph{Pokémon}, perché va a intaccarne il
+monopolio. Ha un'ampia distanza su una serie di cose (``lo schiavismo dei
+Pokémon, le armi, le mitragliatrici''), ma lo stile artistico è molto simile
+a quello dei \emph{companion} e dei \emph{monster collectible}, il genere su
+cui Pokémon ha una presenza estrema, un vero monopolio di mercato.
+\emph{Clair Obscur: Expedition 33}, invece, non lo è.
+
+\paragraph{Un caso italiano.} Il docente cita anche un \emph{monster
+collector} di un team italiano, che riprende da Pokémon e da altri titoli il
+sistema di combattimento con la \emph{timeline} e ha una direzione artistica
+che sembra animata da uno studio d'animazione giapponese.\footnote{I titoli e
+gli studi citati in questo passaggio non sono ricostruibili con certezza dalla
+trascrizione; si riporta il ragionamento, non i nomi.} Non possono competere
+con Pokémon: hanno un costo in risorse diverso (e bisognerebbe capire quanto
+investono Nintendo e Game Freak) e uno scopo diverso, perché il loro è,
+teoricamente, un \emph{roguelike}. Pokémon resta un competitor diretto, ma
+hanno \textbf{deviato il tiro} in un'altra direzione, per intercettare un
+certo tipo di persone ed evitare certi problemi, o rispondere a certe
+necessità, previste dalla ricerca. Anche questo è il punto della ricerca:
+identificare i competitor diretti o simili aiuta a capire che cosa gli altri
+hanno fatto bene o male, se si può fare meglio o peggio (``peggio si evita,
+chiaramente'') e soprattutto \textbf{come ci si può differenziare}. E poi i
+competitor vanno \textbf{analizzati}: non restano lì nel nulla.
+
+\subsection{Gli esempi della classe}
+
+La classe propone diversi esempi, e la discussione è vivace.
+\begin{description}
+  \item[Pokémon TCG Pocket e Yu-Gi-Oh!] Un gioco mobile, quindi bisogna
+        capire il panorama mobile e prendere i TCG mobile con partite di
+        durata ridotta. Indiretti potrebbero essere \emph{Hearthstone} o
+        \emph{Gwent}; diretti, probabilmente, \emph{Yu-Gi-Oh! Duel Links} (e,
+        in misura minore, \emph{Master Duel}), forse \emph{Marvel Snap}.
+  \item[Expedition 33 e la serie Mario \& Luigi] Uno studente li avvicina per
+        il controllo che il giocatore ha durante il turno nemico (il
+        \emph{parry}, le azioni a tempo): non è un gioco di ruolo a turni
+        ``puro''. Il docente concorda: è \textbf{indiretto}. Non lo fa solo
+        lui, ma c'è quella specifica cosa in comune. Allo stesso modo il
+        sistema di morte di \emph{Dark Souls} viene ripreso in titoli che non
+        sono soulslike. Pokémon ed \emph{Expedition 33} hanno meccaniche
+        simili, ma giocatori ``completamente opposti''.
+  \item[Sekiro e Final Fantasy VII Remake] Un altro studente si chiede se
+        siano indiretti per il combattimento reattivo, non strategico. Non
+        sono paragoni sbagliati: il punto è che \textbf{è uno spettro}, e
+        quanto ci si avvicina o allontana dipende.
+  \item[Resident Evil 2 e Silent Hill 2] Probabilmente diretti, forse più in
+        passato che oggi: \emph{Resident Evil} si è spostato molto più verso
+        l'action che verso il survival, mentre \emph{Silent Hill}, pur non
+        avendo mantenuto del tutto la visione iniziale, resta molto meno
+        action.
+\end{description}
+
+\paragraph{Indiretto non significa ``stesso target, mezzi diversi''.} Uno
+studente chiede se indiretto significhi che il target è lo stesso ma con
+mezzi diversi. \textbf{Non necessariamente}. C'è un elemento, o più di uno, in
+comune con il proprio prodotto, ma è estremamente limitato; a volte è
+proprio un mercato diverso. Chi condivide lo stesso sistema ha molto più in
+comune di un \emph{Expedition 33}; e due giochi con arte completamente diversa
+ma meccaniche simili, o con la stessa arte ma meccaniche diverse, sono casi
+ancora diversi. ``Sono tutti esempi giusti'', conclude il docente: sono su uno
+spettro, su scale diverse, ed era lui a sbagliare insistendo a cercarne uno
+ancora più vicino.
+
+\paragraph{Un caso di confine: Nine Sols e Hollow Knight.} Questi due giochi
+stanno davvero \textbf{sulla linea di demarcazione} tra diretto e indiretto.
+Possono essere percepiti come molto simili (e andrebbe verificato se i
+giocatori di \emph{Hollow Knight} sono andati a comprare \emph{Nine Sols} per
+la somiglianza); ma a livello di gameplay e di combattimento sono molto
+lontani: \emph{Nine Sols} è molto più basato sul \emph{parry} (il docente ci
+fa ``una fatica tremenda''), \emph{Hollow Knight} è più veloce. Sono lontani
+anche nella trama: in \emph{Nine Sols} la parte narrativa, con il sistema di
+dialoghi e i personaggi che parlano, è molto più spinta ed esplicita. Senza
+dati, il docente li considera indiretti, ``ma proprio di un pelo''.
+
+\subsection{Come individuarli: i punti insindacabili}
+
+Come sempre è uno spettro, e lo si verifica \textbf{con i dati}: si fa
+ricerca, si prende una lista di più giochi possibile. Un modo giusto per
+arrivarci è partire da ciò che per il proprio gioco è
+\textbf{insindacabilmente necessario}: le cose ad alto livello che il gioco
+deve avere, ad esempio le \emph{game qualities} di Romero e Schreiber
+(sezione~\ref{sec:romero-schreiber}). Magari sono già state messe sul tavolo
+dagli stakeholder: se si deve fare un monster collectible si è già molto
+dentro certi limiti. Se invece si deve fare un generico gioco da tavolo, bisogna
+capire l'obiettivo: se è vendere tanto, forse conviene guardare ai
+\emph{party game}, ai giochi popolari che hanno venduto oltre una certa soglia,
+ai più conosciuti, o a quelli entro una certa fascia di prezzo.
+
+Trovati i punti insindacabili, si limita su di essi la ricerca dei
+competitor:
+\begin{itemize}
+  \item i giochi che ne hanno \textbf{di più} in comune, e sono più vicini, sono
+        i \textbf{competitor diretti};
+  \item quelli che ne hanno magari \textbf{uno solo}, in maniera estremamente
+        attinente, sono gli \textbf{indiretti}.
+\end{itemize}
+Non è un discorso facile di base, e serve tanta ricerca per far emergere
+queste cose; lo si approfondirà.
+
+\subsection{L'opposizione}
+
+Si possono identificare anche i giochi in \textbf{opposizione}: titoli molto
+lontani dal proprio, in netta contrapposizione. A che cosa servono? Non sempre
+a qualcosa: può non valere per prodotti che puntano a un mercato specifico. Ma
+possono servire a \textbf{fare innovazione}, ad esempio unire una direzione
+artistica unica a un gameplay mai fatto prima, o a qualcosa che nessuno ha
+fatto (o, molto più probabilmente, che nessuno ha fatto con successo). Unire
+titoli o meccaniche davvero lontani tra loro può \textbf{stimolare la
+creatività}, anche nel brainstorming.
+
+Il docente prova a pensare a un esempio: un action con un'arte molto poco
+leggibile, come \emph{Superhot} (``il tempo si muove solo se ti muovi''), che
+ha un'arte simile a quella di \emph{The Unfinished Swan}. Non essendo un
+artista, nota però alcune differenze: \emph{The Unfinished Swan} è più
+morbido nelle linee, più circolare, \emph{Superhot} è molto più spigoloso; ma
+nella palette, bianco e nero, ``siamo lì''.
+
+\paragraph{That's Not My Neighbor e Papers, Please.} Uno studente chiede se
+\emph{That's Not My Neighbor} e \emph{Papers, Please} siano indiretti. Sì, per
+il docente è un buon esempio. Il primo è un gioco abbastanza semplice in cui
+si controllano le persone che bussano alla porta prima di farle entrare, con
+una deriva horror; \emph{Papers, Please} è radicato in una realtà fittizia,
+con la sua dinamica burocratica. Lo studente osserva che sono giochi di una
+nicchia strana, in cui è difficile trovare un competitor diretto. È un'altra
+domanda da porsi: perché hanno meccaniche simili? Perché è una nicchia di
+mercato estremamente stretta, e chi gioca quel tipo di giochi può richiedere
+necessità specifiche. Probabilmente \emph{That's Not My Neighbor} è andato in
+un'altra direzione proprio per non scontrarsi direttamente.
+
+\paragraph{I competitor nel pitch.} Soprattutto nel \emph{pitching}, i
+competitor rendono molto più facile comunicare, anche la commistione di
+elementi che non sono meccaniche: ``il nostro gioco è come \emph{Limbo}, ma
+l'arte è completamente diversa''. Si chiama in causa un gioco che magari non
+c'entra nulla, ma ha un punto artistico o sonoro vicino al proprio. Come
+analizzare i punti tra competitor diretti e indiretti lo si vedrà; e quasi
+certamente lo tratterà anche Daniele nelle lezioni di narrativa, perché il
+marketing è la sua grande specialità.
+
+\paragraph{Analizzare i propri giochi.} Valerio chiede se, potendo disporre di
+una vasta varietà di giochi propri (ad esempio, per Pokémon, i titoli
+principali e quelli secondari), li si possa usare nell'analisi. Certamente: si
+parte avvantaggiati, un po' perché la documentazione c'è già, un po' perché,
+nel caso di Game Freak, si ha il monopolio del mercato e si fa quella cosa da
+più di vent'anni. Proprio per questo diventa \textbf{ancora più importante
+chiedere al target audience che cosa vuole}; e quello di Pokémon non è uno
+solo, è molto frammentato. Ciò che il docente chiede a Pokémon non è ciò che
+chiedono i ragazzini che lo giocano per la prima volta, e il rapporto è
+probabilmente di uno a dieci. È il motivo per cui \emph{Scarlatto e Violetto}
+e \emph{Spada e Scudo} hanno una difficoltà e una struttura così lineari ed
+esplicite: la frangia di veterani è in numero molto minore rispetto a chi
+deve comprare il gioco. Si potrebbe anche discutere del fatto che i giochi
+non siano la principale fonte di guadagno di The Pokémon Company, che vuole
+vendere soprattutto le carte; ma per vendere peluche e carte serve una nuova
+generazione di Pokémon.
+
+% ---------------------------------------------------------------------
+\section{Analisi degli utenti, del mercato e del gameplay}
+\label{sec:utenti-mercato}
+
+\subsection{Analisi degli utenti}
+
+Come si cercano i giochi simili al proprio, si cerca di capire \textbf{chi
+dovrebbe giocare} il proprio gioco. È la ``cartina tornasole'' di tutte le
+scelte di produzione: ciò che si fa è legato a questi dati. Se sono sbagliati,
+o estremamente vaghi, diventa difficile ragionare sulla soluzione migliore,
+perché non si è stretta abbastanza la ``falce'' sulle possibilità: si
+potrebbe fare qualsiasi cosa. Bisogna quindi capire:
+\begin{itemize}
+  \item la \textbf{demografica} degli utenti;
+  \item che cosa fanno, che cosa giocano;
+  \item che cosa piace loro e che cosa non piace;
+  \item che cosa dicono dei titoli già rilasciati e, in futuro, del proprio.
+\end{itemize}
+
+Ci si può già chiedere se un'idea funziona: si va dal proprio target
+audience ideale e si chiede ``ti piacerebbe se facessimo \emph{Dark Souls}
+con i pony di \emph{My Little Pony}?''. Se l'80\% delle persone risponde
+``incredibile, non vedevo l'ora'', si sta andando nella direzione giusta; se
+risponde ``non so\dots'', allora no.
+
+\paragraph{Il vantaggio dell'opposizione.} È anche il vantaggio di cercare i
+giochi in opposizione: unire generi lontani anni luce. Il docente giocherebbe
+volentieri \emph{My Little Pony} in versione \emph{Dark Souls}, e fa notare
+che sono giochi che esistono. \emph{Dark Souls} è \emph{grimdark}, è
+\emph{Berserk}, è l'atmosfera cupa di un mondo completamente distrutto e alla
+deriva; se se ne prendono le meccaniche e lo si porta in fondo al mare, in un
+mondo da cartone animato, si ottiene \emph{Another Crab's Treasure}, un
+soulslike con un granchio come protagonista. E, sempre per il target
+audience, ha una \emph{easy mode} in cui il granchio ha una pistola e spara a
+tutti i boss: un pubblico chiaramente molto lontano da quello di FromSoftware,
+o meglio, non solo quello. \emph{Palworld} funziona esattamente così:
+l'innocenza dei Pokémon unita allo schiavismo delle multinazionali e alle
+armi.
+
+\subsection{Analisi di mercato}
+
+Dove ci si affaccia? In quale mercato? È \textbf{saturo} o no?
+\begin{itemize}
+  \item un \textbf{blue ocean} è uno spazio in cui c'è qualcosa che nessuno ha
+        mai fatto (chiedendosi perché);
+  \item un \textbf{red ocean} è il contrario: un mercato estremamente saturo
+        di prodotti, in cui è estremamente difficile emergere. Lo sono, ad
+        esempio, i \emph{battle royale}, gli \emph{hero shooter}, i
+        \emph{friendslop}, e ce ne sono altri.
+\end{itemize}
+
+\paragraph{Approfondimento: oceani e barriere.} Schell riprende la stessa
+metafora in \emph{The Art of Game Design}: i mercati inondati di offerta sono
+\emph{red ocean}, un mondo ``pesce mangia pesce'' con molto sangue
+nell'acqua, in cui la sfida non è più arrivare nello store ma emergere tra
+migliaia di concorrenti. Per sopravvivere o si è il pesce più grande, o si
+trova un \emph{blue ocean}, un posto con pochi concorrenti: a volte perché il
+mercato è nuovo, a volte perché ci sono \textbf{barriere} che tengono fuori
+gli altri (tecniche, hardware, di competenza, di vendita e distribuzione). Il
+suo esempio: in un mercato saturo come quello delle app iOS, all'epoca, circa
+il 90\% dei giochi perdeva soldi; nel mercato delle slot machine, protetto da
+regolamenti, hardware e competenze specifiche, circa il 90\% era in attivo.
+
+\paragraph{Le regole del mercato.} A seconda del mercato a cui ci si affaccia,
+alcune cose si possono fare e altre no, perché ci sono regole.
+\begin{itemize}
+  \item \textbf{Cina}: se l'obiettivo è rilasciare in Cina, bisogna
+        premunirsi. O si fa un gioco senza teschi, senza ossa e senza
+        iconografia legata alla morte o al cristianesimo (come le tombe con
+        la croce), oppure si dovrà rifare il lavoro dopo. È successo, ad
+        esempio, a \emph{Rainbow Six Siege}, che per il rilascio in Cina ha
+        dovuto cambiare numerosi asset.
+  \item \textbf{Germania}: non si può avere iconografia nazista; la svastica
+        non può comparire in nessuna forma.
+  \item \textbf{Belgio}: lo stesso vale per le \emph{loot box}.
+\end{itemize}
+O ci si pensa prima, decidendo di non rilasciare in quel mercato, o si
+produce in modo che la produzione abbia quel margine. Se nel gioco ci sono
+ossa o tombe con la croce, e quell'asset si può rendere generico (versione X,
+versione Y, cambia solo una \emph{decal} o un nome), adattarlo è semplice; se
+invece si è costruito un livello con mille asset raggruppati, diventa
+difficile. Poi ci sono casi come \emph{Dead Space}: i nemici sono
+\emph{necromorfi}, bestie mutate che si disintegrano con le ossa che escono,
+grondanti di sangue. \emph{Dead Space} non si può fare senza necromorfi, e
+quindi non si vede in Cina: ma ci si preclude una grossa fetta di mercato.
+Questo ragionamento \textbf{va fatto prima}.
+
+\subsection{Analisi di gameplay e visione}
+
+L'analisi di gameplay, generica, si vedrà alla fine di tutto: si
+\textbf{correlano i dati} per raggiungere una certa consapevolezza. È come
+\textbf{mettersi la maschera del target audience}. Oltre ad avere dati su cui
+tornare e su cui discutere, l'obiettivo è mettersi nei panni di chi giocherà
+il gioco, capirne le necessità, i desideri, ciò che gli piacerebbe fare.
+
+È più facile se si fa un gioco per cui si è già naturalmente predisposti come
+giocatori, ma va fatto comunque. Ed è più difficile, ed è ciò che fa
+diventare professionisti, mettersi nei panni di qualcuno molto lontano da ciò
+che si gioca. Anche il primo caso ha le sue insidie: il docente, grande amante
+dei TCG, quando ci ha lavorato ha sbagliato, mettendo \textbf{il proprio ego
+dentro il design}: voleva più complessità, perché è ciò che si aspetterebbe
+lui da giocatore, ma non necessariamente ciò che si aspetta il target
+audience di quel gioco.
+
+La concretizzazione di tutto questo è la \textbf{visione di gioco} (\emph{game
+vision}), molto più generale dei pilastri. Si cristallizza in un documento
+che, quando verrà fatto (e quando il docente lo insegnerà), ``quello è e
+quello rimane'': \textbf{la visione non può cambiare in corsa}. Ci sono dei
+limiti, e quelli sono.
+
+\subsection{Dopo la pausa: game qualities e generi}
+
+Dopo una pausa di sei minuti (``ci rivediamo alle 4''), e qualche battuta con
+Alessandro, studente del terzo anno presente in aula per studiare, il docente
+risponde a una domanda arrivata durante la pausa sulle \emph{game qualities}
+come punti insindacabili. Se le game qualities sono ``prima persona, PvP'',
+i giochi sono un milione. Se si aggiunge il genere, \emph{hero shooter}, la
+falce si chiude: dentro ci sono \emph{Overwatch}, \emph{Deadlock},
+\emph{Valorant} (in prima persona), \emph{Team Fortress}. Identificare altri
+elementi, che non fanno necessariamente parte delle game qualities ma sono
+più specifici, rende più semplice spiegare il gioco e anche
+\textbf{pitcharlo}. Ci può stare anche la direzione artistica, se ad alto
+livello; ma bisogna considerare che le game qualities sono comunque
+\textbf{molto macroscopiche}.
+
+% ---------------------------------------------------------------------
+\section{Client pitch direction analysis}
+\label{sec:client-pitch}
+
+Si torna alla mappa e la si percorre punto per punto, partendo dalla
+\emph{client pitch direction analysis}: i modi per cercare, fare domande,
+chiedere.
+
+\subsection{Fate domande}
+
+All'inizio si fanno \textbf{tante domande}. Ma vale sempre, sottolinea il
+docente: se si hanno dubbi, si fanno domande; se c'è qualcosa, si parla, si
+chiede. In aula e fuori, non bisogna avere paura di fare domande, perché
+altrimenti il rischio è \textbf{darsi da soli una risposta sbagliata}. Vale
+anche al lavoro: se non si capisce qualcosa, si chiede; se viene fatta una
+domanda senza tutte le informazioni necessarie, si chiede, ``per favore,
+parlate'' (si veda anche la sezione~\ref{sec:soft-skill}).
+
+\subsection{Le cinque W}
+
+I metodi sono estremamente semplici. Il primo sono le classiche domande
+inglesi, le \textbf{cinque W} (\emph{where}, \emph{when}, \emph{who},
+\emph{why}, \emph{what}), a cui si aggiunge \emph{how}.\footnote{In aula la
+lista viene ricostruita a memoria con l'aiuto degli studenti; la formula
+classica è \emph{5W + 1H}.} Danno informazioni specifiche su una serie di
+elementi molto diversi, come lo spazio e il tempo. Non sono un framework: sono
+domande, la base per spiegare qualsiasi tipo di storia. Se si deve spiegare il
+concept del proprio gioco, lo si può fare con queste domande in una frase, o
+al massimo in cinque righe, e diventa molto chiaro:
+\begin{itemize}
+  \item \emph{dove} è ambientato il gioco?
+  \item \emph{quando} è ambientato?
+  \item \emph{chi} è il protagonista?
+  \item \emph{perché} fa ciò che sta facendo?
+  \item \emph{che cosa} deve fare?
+  \item \emph{come} lo fa?
+\end{itemize}
+Le risposte iniziano a separare le cose. \emph{Metroid} e \emph{Hollow
+Knight}, pur avendo lo stesso sistema di progressione, hanno stili di
+combattimento diversi: il \emph{what} e lo \emph{how} cambiano notevolmente
+(e, tra i due, anche il \emph{who}).
+
+\subsection{I nove perché e la root cause analysis}
+
+L'altro metodo sono i \textbf{nove perché}: qui le domande sono solo
+\emph{why}. C'è un ``mantra'' secondo cui si può raggiungere la radice di
+qualsiasi problema rispondendo nove volte alla domanda ``perché?''. C'è un
+problema: ci si chiede perché; l'interlocutore dà una risposta; si chiede di
+nuovo perché, e così via. Aiuta a \textbf{eliminare possibili
+fraintendimenti}. È il metodo dei bambini molto piccoli, che continuano a
+chiedere ``perché?''; filosoficamente si potrebbe dire che serve a raggiungere
+l'essenza delle cose (il docente non ci crede, ma la possibilità c'è).
+Elencare le risposte a questi perché, sempre più in profondità, è la
+\textbf{root cause analysis}, l'analisi delle cause
+radice.\footnote{Nella letteratura di management la tecnica è più nota come
+\emph{5 Whys} (``cinque perché''), nata nei processi produttivi di Toyota; la
+versione a nove domande, \emph{Nine Whys}, è una delle \emph{Liberating
+Structures} citate più avanti (sezione~\ref{sec:problema-necessita}). Il
+principio è lo stesso: ripetere la domanda finché non emerge la causa di
+fondo.}
+
+\subsection{Osservare, intervistare, filmare}
+
+\begin{itemize}
+  \item \textbf{Chiedere}: se c'è qualsiasi dubbio, se qualcosa è formulato in
+        maniera incomprensibile, si chiede.
+  \item \textbf{Osservare e intervistare} l'utente e il cliente, con
+        \textbf{domande strutturate}. Quella fatta in aula ai fan dei
+        soulslike (``che cosa ti piace, che cosa non ti piace?'') è una
+        domanda possibile, ma estremamente vaga. Con \emph{poll} e
+        \emph{survey} (se ne parlerà) si possono limitare le risposte, se si ha
+        già un'idea di dove ci si vuole muovere, o migliorare la domanda
+        andando sempre più nello specifico.
+  \item \textbf{Filmare} le persone, se possibile, per non perdere dati:
+        mentre giocano, mentre le si intervista. Non bisogna perdersi niente:
+        anche i responsi emotivi, i sorrisetti, i dubbi, i silenzi sono
+        importanti. È un materiale enorme e non è detto che serva tutto; ma
+        se serve, è lì.
+  \item \textbf{Giocare e interagire}: tutto questo dovrebbe portare
+        all'\emph{insight}; ci si arriverà, e insieme alla correlazione porterà
+        ad altro.
+\end{itemize}
+
+\subsection{Priorità e visione del cliente}
+
+\paragraph{Ordinare le priorità.} Il cliente avrà priorità maggiori e
+minori. A volte consegna la lista di ciò che vuole, ma \textbf{ordinarla spetta
+al designer}: alcune cose saranno più pertinenti, altre più negoziabili.
+
+\paragraph{La visione e la linea editoriale del cliente.} Qual è la visione
+del cliente? Come si diceva di Milestone, il cliente può avere una
+\emph{missione}, una verticalità costruita negli anni: fa solo giochi, o
+videogiochi, o solo un certo tipo di esperienze. Se si cercano finanziamenti
+per un gioco con un mago gatto che spara vodka infuocata, forse a
+\textbf{Devolver Digital} può interessare: il suo catalogo è pieno di giochi
+di questo tipo, come \emph{Enter the Gungeon}, dove tutto è proiettili, o
+\emph{My Friend Pedro}, dove una banana parlante guida il protagonista a
+suon di sparatorie. Le \textbf{linee editoriali} sono importanti: il cliente
+potrebbe avere già una visione specifica da abbracciare, se si lavora sotto di
+lui.
+
+\subsection{Must have e nice to have}
+
+Questo è l'esempio che si riporterà nella visione: le cose da fare per forza.
+\begin{description}
+  \item[Must have] Ciò che è \textbf{indiscutibile}, senza compromessi: le
+        meccaniche, i sistemi, le cose da implementare per forza.
+  \item[Nice to have] Ciò che è buono che ci sia, ma non è detto che ci sarà.
+        Generalmente sono \textbf{aggiunte alla produzione} a cui,
+        realisticamente, ci si può dedicare se si hanno più tempo e risorse,
+        dopo aver risolto i must have. Se mancassero, l'anima del gioco, il suo
+        \emph{core}, resterebbe intatta: il gioco resta solido, comunica lo
+        stesso messaggio, resta coerente con sé stesso. ``Se ci fossero
+        sarebbe meglio; se non ci sono, vanno in pace, ce ne faremo una
+        ragione.''
+\end{description}
+
+\paragraph{Dove finiscono i nice to have.} Uno studente cita un gioco uscito
+senza un sistema di mappa, aggiunto due mesi dopo il
+lancio.\footnote{Il titolo non è ricostruibile con certezza dalla
+trascrizione.} Esatto: \textbf{DLC e patch} sono gli esempi perfetti per
+inserire i nice to have o per rispondere a esigenze dell'utenza a cui prima
+non si era pensato o che non si riuscivano a risolvere. Nel DLC di \emph{Elden
+Ring}, ad esempio, l'utenza faticava a battere Radahn, e il sistema è stato
+modificato in risposta (si può discutere se sia stato giusto, se il feedback
+sia stato recepito e se la reazione sia stata corretta, ma è successo). Uno
+studente aggiunge che, secondo lui, anche la seconda fase del boss finale del
+gioco base era pensata per essere affrontata a cavallo, cosa che non è
+successa; il docente non lo sapeva, ma è ``un ottimo esempio''. Sono sistemi
+molto specifici che restano nel reame del ``possiamo farlo se'': se si fa
+tutto il resto, se si ha tempo, se si hanno le risorse. Vanno identificati e
+messi nel documento di visione; se ne riparlerà.
+
+\subsection{Esempi concreti e situazioni estreme}
+
+\paragraph{Usare esempi concreti.} Mentre si parla con l'utente o con il
+cliente, si usano esempi di giochi simili per capire se la linea desiderata è
+quella: giochi di successo e giochi che hanno fallito. Più avanti si cercherà
+anche di capire \emph{perché} hanno fallito: se il proprio competitor diretto
+è un gioco che ha fallito, bisogna assolutamente rispondere a quella domanda.
+L'assunto di base, chiaramente, è che il proprio gioco non fallirà.
+
+\paragraph{Pensare a situazioni estreme.} Se nessuno giocasse al nostro gioco,
+falliremmo? Va capito. Non è necessariamente compito del designer, ma se si
+dovesse fare un piano di produzione e di rilascio, ci sono diverse fasce:
+\begin{itemize}
+  \item quante copie servono per arrivare al \textbf{break even}, in pari tra
+        spese e guadagni?
+  \item in quante copie si traduce un \textbf{insuccesso}? E un risultato
+        \textbf{disastroso} (probabilmente zero clienti)?
+  \item quanto vale un \textbf{successo}? E un \textbf{successo folle}, quello
+        per cui ``andiamo tutti alle Maldive per tutta la vita'' (o dovunque si
+        voglia andare)?
+\end{itemize}
+E se si avesse un milione di utenti? Se il gioco è online, con server
+dedicati, e l'affluenza è esagerata, che cosa succede? È capitato più volte:
+con \emph{Overwatch} all'inizio, e di recente con un altro gioco \emph{live
+service}. Bisogna pensarci prima, per \textbf{limitare i danni}: prevedere
+tutto non è possibile, ``è inumano''. E se la Terra esplodesse?
+Provocatoriamente: forse si giocherebbe su Marte (``io sicuramente non ci
+giocherei, perché non ci arriveremo''). Anche questo è un esempio di root
+cause analysis.
+
+% ---------------------------------------------------------------------
+\section{Gli stakeholder}
+\label{sec:stakeholder}
+
+\subsection{Chi sono}
+
+Uno \textbf{stakeholder} è qualsiasi persona, organizzazione, gruppo sociale
+o società in senso lato che ha uno \emph{stake}, una posta, nel progetto: ha
+qualcosa da dire, ``ha le mani in pasta''. Ha dei \textbf{diritti} sul
+progetto, ma si porta dietro anche dei \textbf{doveri}. Gli stakeholder vanno
+\textbf{identificati}: bisogna capire, dentro e fuori dal team, chi c'è e
+quanta importanza ha.
+
+Anche gli utenti rientrano in questa categoria; ma di solito, parlando di
+stakeholder, è più rilevante \textbf{chi sta sopra} che chi sta sotto. Gli
+utenti sono i ``principi'', ma qui interessa chi può modificare la
+traiettoria del progetto al di là di ciò che si potrebbe prevedere, chi ha (o
+avrebbe) qualcosa da dire durante una deadline, una milestone e così via. Si
+definisce, in sostanza, \textbf{tutto ciò che è fuori dal team operativo}.
+
+Si torna alla piramide già vista: i \emph{director} (creative director, game
+director, art director, sound director\dots), poi i \emph{lead}, poi le
+seniority (senior, mid, junior, come si vuole). Accanto c'è la produzione, con
+il \emph{producer}, già un livello a sé, che potrebbe essere identificato come
+stakeholder; e da un'altra parte, completamente, c'è il \textbf{team di
+marketing}.
+
+\paragraph{Il marketing e il CEO.} ``Una cosa molto brutta che succederà a voi
+e succederà anche a me in futuro'': il team di marketing può bussare alla
+porta e dire ``questa cosa non è abbastanza \emph{screenshottabile}''. Il
+designer può rispondere che a lui serve la meccanica, non che finisca su
+Instagram; ma il marketing può comunque venire a fare richieste. Oppure c'è il
+\textbf{CEO}, che con la produzione non ha nulla a che vedere: ``ieri ho visto
+su History Channel che Giulio Cesare aveva una spada gigantesca: mettiamo una
+spada gigantesca nel gioco''. Non dovrebbe essere il designer a rispondere di
+no: la richiesta dovrebbe essere filtrata prima, ma a volte non succede. Il CEO
+è uno stakeholder \emph{definitivo}, come si vedrà.
+
+\subsection{Classificarli}
+
+Ci sono diversi modi di identificare gli stakeholder e di dar loro un volto
+\textbf{archetipale}, cioè farli ricadere in gruppi specifici. Aiuta a
+ragionare e a rispondere in maniera diversa, ma codificata, a seconda del
+gruppo: al marketing in un modo A, al CEO in un modo B, e così via.
+
+\paragraph{La matrice potere--interesse.} Un primo modo è collocarli su un
+piano cartesiano con due assi, \textbf{potere} e \textbf{interesse}
+(tabella~\ref{tab:potere-interesse}).
+
+\begin{table}[htbp]
+  \centering
+  \caption{La matrice potere--interesse degli stakeholder.}
+  \label{tab:potere-interesse}
+  \begin{tabular}{@{}p{0.2\textwidth}p{0.36\textwidth}p{0.36\textwidth}@{}}
+    \toprule
+    & \textbf{Interesse alto} & \textbf{Interesse basso} \\
+    \midrule
+    \textbf{Potere alto} & \emph{Promotori} (es.\ il CEO): tenerli buoni,
+      aggiornarli e rassicurarli costantemente &
+      \emph{Latenti} (es.\ un investitore interessato solo ai ricavi):
+      tenerli soddisfatti \\
+    \addlinespace
+    \textbf{Potere basso} & \emph{Difensori} (es.\ la critica
+      videoludica): tenerli informati &
+      \emph{Apatici}: monitorarli, perché possono cambiare posizione \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{description}
+  \item[Promotori] molto potere e molto interesse: il CEO, ad esempio. Vanno
+        tenuti buoni sempre, aggiornati costantemente ed eventualmente
+        rassicurati, costantemente.
+  \item[Latenti] molto potere ma poco interesse: vanno \textbf{tenuti
+        soddisfatti}. Se un'azienda ha investito nel gioco ma non è
+        interessata a come esce, bensì a quanti soldi fa, le si danno
+        informazioni sulla produzione: se si è in pari con le deadline, se i
+        costi sono nel reame del previsto, se i prospetti di vendita sono
+        allineati. Se si è cambiata una meccanica, se si è aggiunto o tolto un
+        boss, se era un drago gigante o una viverna sottomarina, al latente
+        interessa poco; e non conviene nemmeno dirglielo, perché potrebbe
+        creare più problemi che altro. Se c'è un problema di costi, si parla di
+        quello. Il design è meno rilevante.
+  \item[Apatici] poco potere e poco interesse: vanno \textbf{monitorati}.
+        Possono cambiare il loro valore sulla scala: in questo momento della
+        produzione restano lì, ma in futuro potrebbero avere più potere o più
+        interesse.
+  \item[Difensori] poco potere e molto interesse: vanno \textbf{tenuti
+        informati}. Possono essere, ad esempio, la critica videoludica (e
+        bisognerebbe capire quanto potere abbia nel mondo moderno:
+        relativamente poco, ``o almeno mi piace pensarlo''). Non hanno potere
+        sulla modifica del progetto, ma vanno tenuti informati.
+\end{description}
+
+\paragraph{Il modello della salienza.} Un altro modo usa un diagramma a tre
+insiemi\footnote{Si tratta del \emph{modello della salienza degli
+stakeholder} (\emph{stakeholder salience model}) di Mitchell, Agle e Wood; nella
+trascrizione il nome è storpiato.}, le cui categorie sono \textbf{potere},
+\textbf{legittimità} e \textbf{urgenza}. Uno stakeholder può avere molto
+potere sul progetto ma poca legittimità (ciò che dice è poco attinente), e
+molta urgenza (deve essere aggiornato di frequente). Un producer, ad esempio,
+ha generalmente sempre molta urgenza e, non necessariamente ma a seconda dei
+casi, meno legittimità nelle sue richieste. Lo stakeholder
+\textbf{definitivo} le ha tutte e tre; gli altri ne uniscono due o ne hanno
+una sola. Non si entra troppo nel dettaglio per questioni di tempo, ma lo
+strumento è nelle slide.
+
+% ---------------------------------------------------------------------
+\section{Problema contro necessità}
+\label{sec:problema-necessita}
+
+\subsection{Due definizioni}
+
+Nel gergo comune tutto è un problema: se c'è qualcosa da affrontare, un
+intoppo, è un problema. Ma si può dare una definizione più sottile, che
+distingue il problema dalla necessità.
+
+\begin{description}
+  \item[Problema] appare in una \textbf{struttura già esistente}. È qualcosa
+        di facile da risolvere, ed è necessario risolverlo in maniera
+        efficiente: prima lo si risolve, meglio è. Un buco nel muro; nascondere
+        ``la polvere sotto il tappeto''; qualcosa che si fa velocemente. Un
+        \textbf{bug} è generalmente un problema, se non nasce da una struttura
+        disintegrata del sistema. Di solito si assume (il docente lo assume)
+        che il programmatore pensi l'implementazione in prospettiva futura:
+        rende esplicite le variabili per i designer, o ne nasconde alcune
+        perché il designer non distrugga tutto mettendo uno zero dove non
+        deve. Se in un sistema del genere capita un bug, è un problema. Nel
+        reame della vendita: se i fan dei soulslike chiedono qualcosa per
+        sistemare la difficoltà o per avere una curva di progressione diversa,
+        è un problema, perché sta in una struttura già esistente (il soulslike
+        stesso): vanno toccati alcuni punti che non modificano l'identità del
+        titolo.
+  \item[Necessità] è qualcosa di \textbf{nuovo}, che può portare a grossi
+        danni a cascata. Se là fuori qualcuno chiede a gran voce un monster
+        collectible in cui si schiavizzano i mostri, li si ``massacra di
+        botte'' e li si arma con un AK-47, quella è una necessità: non appare
+        in una struttura esistente, bisogna \textbf{costruirci un gioco
+        attorno}.
+\end{description}
+
+\paragraph{Non sono mutualmente esclusivi.} Uno studente riprende il boss
+finale di \emph{Elden Ring} pensato per essere combattuto a cavallo, dove il
+cavallo non si poteva usare nelle prime patch: problema o necessità? Si può stare \textbf{a metà tra le due}. Probabilmente era più vicino alla necessità, ma è
+stato risolto come un problema, per i soliti limiti di tempo, soldi e
+produzione. Nulla vieta di farlo, se il tempo è poco.
+
+\paragraph{Un caso vissuto: il quest log.} Al docente è capitato di avere
+sistemi complessi che, tramite l'iterazione, mostravano delle mancanze: un
+sistema di quest, o il fatto che in un certo momento della progressione
+dovesse accadere un evento specifico. Serviva una \textbf{struttura nuova},
+proprio per il discorso sulla programmazione fatto prima: qualcosa che
+accogliesse un sistema di quest complesso, un \emph{quest log} fatto come si
+deve, sia nella presentazione all'utente sia ``sotto il cofano'', con
+un'implementazione sensata. Non c'era tempo, e si faceva un
+\textbf{``accrocchio'' in Blueprint}, qualcosa che funzionasse e che, lato
+utente, desse lo stesso risultato: la quest veniva risolta, la porta si
+apriva, l'oggetto veniva dato. Ma non era la forma corretta: lì serviva un
+sistema complesso, era una necessità, e per necessità (appunto) la si è
+trattata come un problema. Non è l'ideale, ma capita. Succede anche quando si
+fa un titolo innovativo o si vuole testare un sistema nuovo: è una necessità
+perché richiede qualcosa che non è mai stato fatto, o un lavoro complesso che
+si porta dietro una forma complessa.
+
+\paragraph{Forma e funzione.} In modo semplicistico: nella necessità
+\textbf{la forma è maggiore della funzione} (quanto maggiore, va capito); nel
+problema la funzione ``ha la meglio''. È la differenza tra mettere un cerotto
+e fare i punti di sutura, o asportare un rene e richiudere la ferita. Sistemi
+complessi, potenzialmente innovativi, richiedono emozioni complesse da
+evocare e pensare, meccaniche e sistemi da soddisfare.
+
+\paragraph{Approfondimento: la lente del problem statement.} Schell parte
+dallo stesso punto: lo scopo del design è risolvere problemi, e prima di
+generare idee bisogna sapere \emph{perché} lo si fa. Un buon \emph{problem
+statement} dichiara insieme l'obiettivo e i vincoli (``come posso fare un
+gioco per browser che piaccia davvero agli adolescenti?''), e va calibrato:
+troppo largo porta a soluzioni che non centrano l'obiettivo, troppo stretto
+taglia fuori soluzioni brillanti. I vantaggi sono tre: uno spazio creativo più
+ampio, un criterio chiaro per misurare le idee (quanto bene risolvono il
+problema?) e una comunicazione migliore nel team. La \emph{Lens of the Problem
+Statement} (lente n.~14) chiede: quale problema sto davvero cercando di
+risolvere? Ho fatto supposizioni che non c'entrano con il vero scopo? Un gioco
+è davvero la soluzione migliore? Come saprò che il problema è risolto? In apertura
+del paragrafo Schell riporta una massima anonima: ``non innamorarti della tua
+soluzione, innamorati del tuo problema''.
+
+\subsection{Strumenti per metterlo a terra}
+
+I modi per mettere a terra questa analisi sono parecchi.
+
+\paragraph{Il diagramma a lisca di pesce.} Il \textbf{diagramma di
+Ishikawa} (a lisca di pesce) aiuta a identificare le cause secondo
+dipartimenti, materiali, macchine e così via: per ogni area principale si
+individuano cause primarie e secondarie, disposte ``a lisca''. È un modo tra
+tanti, lasciato a disposizione.
+
+\paragraph{Le Liberating Structures.} Molti di questi strumenti si trovano
+nelle \textbf{Liberating Structures}, una raccolta di metodi che si usano sia
+nella fase di ricerca sia, più avanti, nel brainstorming. Esistono anche in
+forma di carte, con un valore simile a quello delle carte di design di Schell
+(il \emph{Deck of Lenses}, sezione~\ref{sec:lenti}), per risolvere problemi.
+Tra queste ci sono i \textbf{nove perché} e, ad esempio, la \emph{Troika
+Consulting}, una consulenza a turno in piccolo gruppo. Altri strumenti si
+vedranno in futuro, sempre per il brainstorming.
+
+\paragraph{Il framework Cynefin.} Un altro modo, se non si sbaglia derivato
+dallo stesso ambito\footnote{Si tratta del framework \emph{Cynefin}, ideato
+da Dave Snowden, che le Liberating Structures includono tra i propri
+strumenti.}, invece di distinguere problema e necessità, categorizza
+``l'impiccio'' che si ha davanti (per non dire problema) in quattro categorie:
+\textbf{semplice}, \textbf{complicato}, \textbf{complesso},
+\textbf{caotico} (tabella~\ref{tab:cynefin}).
+
+\begin{description}
+  \item[Semplice] La difficoltà sta \textbf{nel compiere l'azione}, mai nella
+        lista di azioni da fare. Non saper fare una UI in Unreal può essere un
+        problema semplice: si cerca un tutorial, si ha la lista di cose da
+        fare, le si fa, risolto. Una ricetta: fare la torta è un problema
+        semplice, perché si assume che, seguendo gli step esattamente come
+        indicato, il risultato sia \textbf{altamente riproducibile}.
+  \item[Complicato] Il grado di difficoltà si alza, perché la lista di
+        protocolli non è legata a una sola disciplina, ma a \textbf{più
+        discipline}, magari molto lontane tra loro e molto complesse. Far
+        decollare un razzo richiede calcoli matematici complessi, simulazioni
+        fisiche, materia prima (una lega che resista a quel calore),
+        l'addestramento di chi ci sale, il carburante. La percentuale di
+        successo è molto più bassa che nel semplice: \textbf{si può
+        prevedere}, si può ridurre il rischio, come si fa con qualsiasi lancio,
+        ma è più difficile.
+  \item[Complesso] La prevedibilità viene meno: il problema diventa
+        \textbf{non categorizzabile}. L'esempio è educare un bambino, perché
+        ogni individuo è a sé. Chi ha fratelli o sorelle è stato
+        probabilmente educato in modo simile, perché il modello educativo dei
+        genitori è quello; ma a seconda dei casi i genitori aggiustano il
+        tiro sulla risposta dell'``utente'', il figlio. Il docente ha una
+        sorella ed è completamente diverso da lei, nonostante siano cresciuti
+        in maniera molto simile.
+  \item[Caotico] L'unica discriminante la fanno la \textbf{collaborazione}
+        tra i membri e l'\textbf{improvvisazione}. Gli esempi sono mosca cieca
+        e \emph{Taboo}: un certo numero di parole da non dire, un tempo
+        limitato per far indovinare una parola al proprio compagno di squadra.
+        Tra amici si usano \emph{inside joke}, un gergo che solo il gruppo
+        conosce: far capire qualcosa a qualcuno con cui si ha grande intimità è
+        più semplice, perché si condividono esperienze e intuito. Per spiegare
+        una parola si cita un meme che entrambi conoscono.
+\end{description}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Le quattro categorie dell'``impiccio'' (framework Cynefin).}
+  \label{tab:cynefin}
+  \begin{tabular}{@{}p{0.16\textwidth}p{0.42\textwidth}p{0.34\textwidth}@{}}
+    \toprule
+    \textbf{Categoria} & \textbf{Dove sta la difficoltà} & \textbf{Esempio} \\
+    \midrule
+    Semplice & nell'eseguire, non nel sapere che cosa fare & una ricetta, un
+      tutorial di UI in Unreal \\
+    Complicato & più discipline intrecciate; prevedibile ma rischioso & il lancio
+      di un razzo \\
+    Complesso & non prevedibile né categorizzabile; si aggiusta il tiro &
+      educare un bambino \\
+    Caotico & solo collaborazione e improvvisazione & mosca cieca,
+      \emph{Taboo} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Sono modi per \textbf{categorizzare} il problema, la necessità, qualsiasi cosa
+ci sia da affrontare: dargli un nome o una categoria può aiutare, per
+semplicità.
+
+% ---------------------------------------------------------------------
+\section{Analisi dei competitor}
+\label{sec:analisi-competitor}
+
+\subsection{La SWOT e le domande}
+
+Ci sono diversi modi, più o meno precisi, per analizzare i competitor, e
+molti si vedranno nel corso: lo stesso framework dei \emph{core elements}
+(sezione~\ref{sec:schell}) serve anche all'analisi, ed è proprio ciò che si
+sta facendo nel task; non è l'unico.
+
+\paragraph{La SWOT analysis.} Tra i modi ormai conosciuti c'è la
+\textbf{SWOT analysis}: punti di forza (\emph{strengths}), punti di
+debolezza (\emph{weaknesses}), opportunità (\emph{opportunities}) e minacce
+(\emph{threats}), cioè ciò che minaccia il progetto. La si può disporre a
+matrice. Non si usa solo nell'industria videoludica, anzi: è presa dal
+management generico.
+
+\paragraph{Le domande sui competitor.} Per i singoli competitor conviene però
+porsi delle domande, soprattutto sui \textbf{diretti}, che vanno analizzati
+in profondità (``su questo non ci piove''):
+\begin{itemize}
+  \item che cosa fanno, e come lo fanno?
+  \item c'è un \textbf{design dominante}? Perché?
+  \item c'è qualche design che si tende a \textbf{evitare}? Perché?
+  \item quanto hanno venduto?
+  \item quali sono i loro \textbf{unique selling point}?
+  \item che cosa piace al loro target audience, e che cosa no? Che cosa
+        comunica? Ci sono parole specifiche?
+  \item c'è una categoria specifica di \emph{influencer} che adotta o gioca
+        quel tipo di giochi? (Ormai è necessario per il marketing.)
+  \item ci sono feature di gameplay specifiche che vengono mostrate, o no, nel
+        marketing? Come si fa marketing, con quale tono di voce? (Questo
+        ``grosso peso'' il docente lo lascia a Daniele.)
+  \item sono stati un successo o un fallimento? Perché?
+  \item che cosa si può fare realisticamente, sempre entro soldi, team e
+        così via?
+\end{itemize}
+
+\paragraph{Informarsi senza giocare.} Bisogna guardare interviste, talk di
+settore, come hanno fatto. E se non si riesce a giocare un titolo (magari non
+è ancora uscito) si guarda il \textbf{gameplay senza commento}, come diceva
+il direttore. Nemmeno il docente gioca a tutto, e realisticamente non
+potrebbe: ci sono modi laterali per ottenere informazioni su un gioco
+guardandolo.
+
+\subsection{Il design dominante}
+
+Il \textbf{design dominante} è ciò che sta dietro al detto ``non reinventate
+la ruota'': quella ruota esiste già da qualche parte. È qualcosa che viene
+riapplicato $N$ volte, nella stessa identica maniera: perché?
+
+In \emph{Dark Souls}, ad esempio, il sistema di morte e recupero delle anime
+è uno standard, e non solo lì: anche fuori dal genere. C'è un motivo: è
+\textbf{estremamente efficace}. E qui torna l'atomo di Koster visto
+all'inizio (sezione~\ref{sec:atomo-koster}): \emph{Dark Souls} funziona così
+bene proprio per quel discorso di \textbf{feedback} e di \textbf{educazione
+del modello mentale del giocatore}. Se ne riparlerà quando si parlerà di
+psicologia, a fine anno.
+
+\paragraph{Si può brevettare una meccanica?} Uno studente chiede se si possa
+brevettare una meccanica. Il grande vantaggio del game design è che
+\textbf{le meccaniche non hanno brevetti}, con un asterisco. Sono come
+\textbf{blocchi di Lego}: così specifiche nell'applicazione, ma così generali
+nelle regole. Non si può brevettare il salto, perché il verbo di gioco è lo
+stesso tra \emph{Mario} e \emph{Uncharted}, ma le applicazioni sono
+completamente diverse; anche tra \emph{Celeste} e \emph{Mario}, pur essendo
+entrambi platform. Si possono quindi prendere meccaniche e sistemi di gioco
+uno a uno da giochi anche lontani dal proprio, e va benissimo. A volte lo si fa
+per un gioco intero: il primo \emph{Lords of the Fallen} è, di fatto, ``la
+\emph{skin} di \emph{Dark Souls}'', con gran parte dei sistemi riprodotti uno
+a uno. Funziona; non è particolarmente creativo e potrebbe non essere
+l'aspirazione di un designer, ma si fa, per tempistiche e per semplicità.
+
+\paragraph{I casi limite.} Ci sono casi limite di brevetti, ma sono
+estremamente rari.
+\begin{itemize}
+  \item \textbf{Pokémon}: il brevetto usato nella causa contro \emph{Palworld}
+        riguarda, se il docente ricorda bene, la creatura che finisce dentro
+        un oggetto portatile e la possibilità di evocare direttamente una
+        creatura cavalcabile.\footnote{Il docente afferma che Nintendo avrebbe
+        perso; la vicenda legale tra Nintendo, The Pokémon Company e
+        Pocketpair era ancora in corso di cronaca al momento della lezione, e
+        se ne riporta l'affermazione così com'è.} Lo si può aggirare in modo
+        molto semplice: la creatura non entra nella sfera, entra nello zaino o
+        nelle scarpe; e quando la si lancia non la si cavalca, ma ci si infila
+        ``come un canguro'' nel suo marsupio. Non si può brevettare una
+        meccanica estremamente specifica: ``nessuna agenzia ti darà l'ok''.
+  \item \textbf{Il Nemesis System} di \emph{Middle-earth: Shadow of Mordor},
+        un ``caso triste'' che il docente cita spesso, perché per chi l'ha
+        giocato è probabilmente la cosa più memorabile del gioco, e non lo si
+        usa più. L'orda di Mordor (orchi, sul modello del \emph{Signore degli
+        Anelli}) ha una \textbf{gerarchia interna}: capi, gruppi, sottogruppi.
+        Quando si uccide, o non si uccide, un orco, questo può salire o
+        scendere di grado. Se lo si uccide viene rimosso e qualcuno prende il
+        suo posto; se sopravvive a uno scontro, si ricorderà del giocatore e
+        vorrà vendicarsi. Se uccide il giocatore, questi rinasce normalmente:
+        la morte è prevista nell'esperienza come prosecuzione del sistema, e
+        l'orco viene promosso per aver ucciso una figura di alto rango. Questo
+        sistema è \textbf{brevettato}. Il docente pensa che si possa fare
+        qualcosa che faccia percepire lo stesso responso emotivo, ma è
+        difficile.
+\end{itemize}
+Sono casi rari: in generale è molto liberatorio poter prendere qualsiasi
+meccanica e ``rivestirla''.
+
+\paragraph{Perché il design dominante si riproduce.} Il discorso di
+\emph{Dark Souls} si ripete un po' perché funziona estremamente bene a
+livello di design (si capirà perché), un po' perché \textbf{il target audience
+se lo aspetta}. Un giocatore di soulslike che prova un altro soulslike si
+aspetta quel sistema: glielo si può dare tranquillamente, e anzi si fa meno
+lavoro, perché lo si riprende uno a uno. Sempre che non si voglia innovare:
+\textbf{innovare costa}, e non è nemmeno una necessità.
+
+\subsection{Gli unique selling point}
+
+Gli \textbf{unique selling point} (o \emph{unique selling proposition},
+USP) vanno valutati \textbf{prima della produzione}. Sono cose uniche: una
+\textbf{commistione di fattori} che solo quel gioco ha. Di solito sono
+\textbf{tre, al massimo tre}. Per \emph{Palworld}, ad esempio, il fatto che
+ci sia un monster collectible con un'arte ``pucciosa'' e le armi: non è solo
+questo, ma è chiaramente l'elemento unico di punta.
+
+\paragraph{Un nome famoso è un USP?} Valerio chiede se possa essere un USP
+anche qualcosa che non è una feature del gioco: ad esempio, il nome di
+Kojima. La risposta è ``sni''. Volendo essere molto generosi, sì; ma è un
+\emph{selling point}, non uno \emph{unique} selling point, perché di giochi
+``di Kojima'' ce n'è già più di uno. Certo, se si è Kojima si va da Sony o da
+Microsoft (``mi paga uno, mi paga l'altro, è uguale'') e si ottengono i
+finanziamenti. Ma non bisogna limitarsi a questo: il docente è convinto che,
+nella direzione in cui sta andando l'industria, non sarà più così vero.
+
+\paragraph{Il terzo capitolo di una saga.} Uno studente racconta che, al primo
+anno, si era discusso di quale fosse l'USP di un \emph{Borderlands}: si
+citavano lo shooter e molte altre cose, finché qualcuno disse ``è il terzo''.
+Il punto è: che cosa dà in più rispetto agli altri? Il docente ricorda il
+caso del \emph{Pre-Sequel}, che è insieme un prequel e un sequel: quello sì è
+un modo unico di vendere il prodotto. Allo stesso modo, in \emph{Hollow
+Knight: Silksong} l'USP non è ``siamo nel mondo di \emph{Hollow Knight}'', ma
+``non gioco con il Cavaliere, gioco con Hornet''. Si può dire che il terzo
+titolo di una saga è unico, ma bisogna \textbf{formularlo in maniera più
+chiara}: il fatto che il titolo faccia parte della saga e \emph{aggiunga un
+pezzo}. Lo si fa con gli spin-off: ambientato in quel mondo, ma con queste
+meccaniche in più. Il nuovo \emph{A Plague Tale} citato in aula mantiene la
+mitologia e la proprietà intellettuale (IP, \emph{intellectual property}) della
+serie, ma ha meccaniche diverse: meno stealth, più action.
+
+\paragraph{Una parentesi: fate domande.} A uno studente che si scusa per aver
+riportato la lezione indietro, il docente risponde che è assolutamente
+legittimo: ``non ho interesse a concludere la lezione, fare le tre ore e
+andare a casa. Siamo qua per discutere''. Se c'è qualcosa che non si capisce,
+ci si ferma e se ne parla; ``e sono pure pagato per parlare di giochi''. Se le
+domande deviano il discorso e rendono le informazioni più utili, tanto meglio.
+
+\paragraph{Esempio: gli USP di Enotria.} Essere un soulslike è un
+\emph{selling point} (\emph{Enotria} vende anche perché è un soulslike), ma
+non è \emph{unique}. Gli USP di \emph{Enotria} sono altri; il docente fatica a
+trovarne un terzo, ma due li trova:
+\begin{enumerate}
+  \item sistemi da soulslike con una direzione artistica lontana dal
+        grimdark: è il \textbf{Summer Souls}, e in più è \textbf{ambientato in
+        Italia}, con il folklore italiano che si fonde con la mitologia
+        tipica dei soulslike, boss enormi e mostruosi;
+  \item il \textbf{sistema di maschere}: in un contesto soulslike, si possono
+        avere diverse \emph{build} e cambiarle in tempo reale durante il
+        combattimento, come se in \emph{Bloodborne} si cambiasse arma mentre
+        si combatte (cosa che, più o meno, in parte si può fare).
+\end{enumerate}
+Si possono vendere tante cose, ma per pitchare il gioco come unico bisogna
+far emergere questo. Per giochi piccoli l'USP potrebbe essere anche uno solo
+(ma il docente invita a identificarne di più); per giochi molto grandi in
+genere si arriva a tre. Sono cose che nessun altro ha fatto: in quella forma,
+in quella dimensione, ``in quella salsa'', solo il proprio gioco.
+
+\paragraph{Esempio: Metroid Other M e Metroid Dread.} Il docente, grande fan
+della saga, porta l'esempio di \emph{Metroid}. Gli USP si recuperano anche da
+trailer e interviste.
+\begin{itemize}
+  \item \emph{Metroid: Other M} è l'ennesimo capitolo della saga, e il suo USP
+        era Samus come protagonista \textbf{umana}: si racconta il suo
+        passato in un contesto in cui Samus parla e si relaziona con gli
+        altri. Samus è riconoscibile, amata dai fan, ma più umana, e parla:
+        ``infatti è piaciuta a pochissimi''. Ha delle intuizioni interessanti,
+        ma la narrativa non è il suo punto forte. Samus, in genere, non parla
+        in nessun gioco; qui ``parla e straparla'', mostrando lati deboli che
+        non sono emersi nella maniera ideale per il target.
+  \item \emph{Metroid Dread} lo ha capito: Samus parla, ma non in una lingua
+        comprensibile: ma nella lingua degli alieni (i Chozo, da
+        cui è stata cresciuta). È ``la cosa più figa dell'universo'': non
+        mostra paura, è dura, cruda, precisa, esattamente la cacciatrice di
+        taglie che si è abituati a giocare.
+\end{itemize}
+Ma l'USP di punta di \emph{Dread} è un altro: gli \textbf{E.M.M.I.}, nemici
+che inseguono e cacciano il giocatore e che non si possono uccidere fino a un
+certo punto. Ed è un collegamento con la storia della serie: in
+\emph{Metroid Fusion} c'era già un nemico simile, l'SA-X, una copia della
+tuta di Samus presa vita a causa di un parassita, che dà la caccia al
+giocatore in alcune sezioni del livello. Lì era estremamente limitato (il GBA
+era un'altra epoca); gli E.M.M.I. di \emph{Dread} sono quel concetto espanso,
+e qui è molto più predominante. L'USP è simile, ma diventa il centro
+dell'esperienza.
+
+\subsection{Che cosa resta da vedere}
+
+La prossima volta si concluderà questa parte e si vedrà che cos'altro si può
+fare con i competitor, perché non è limitato a questo. Questi sono modi di
+analizzarli ad alto livello, ponendosi un certo tipo di domande; ma molti dei
+framework di design visti servono anche a \textbf{spacchettare i giochi}, e
+conviene usarli nella fase di analisi.
+
+% ---------------------------------------------------------------------
+\section{Il task della settimana}
+\label{sec:task-gd4}
+
+Il nuovo task viene assegnato a metà lezione, subito dopo il production
+dictionary (sezione~\ref{sec:production-dictionary}). La scadenza è
+\textbf{lunedì della settimana successiva} (``lunedì tra una settimana'').
+
+\begin{description}
+  \item[Che cosa] Il \textbf{production dictionary} di un qualsiasi gioco
+        \textbf{Pokémon della saga principale} (\emph{mainline}) a scelta. Non
+        valgono gli spin-off: niente \emph{Mystery Dungeon}, niente
+        \emph{Pokémon Snap}, niente \emph{Pokémon Rumble} (``ce ne sono un
+        sacco, non li voglio''). A Daniele, uno studente, viene assegnato
+        invece un \emph{Final Fantasy} con un numero inferiore a 10.
+  \item[Dove] Questa volta spetta agli studenti ``l'onere e l'onore'' di
+        creare la cartella e organizzare tutto secondo le regole del Drive
+        (sezione~\ref{sec:drive-regole}).
+  \item[Strumento] Un documento di Google, con le regole formali del corso
+        (sezione~\ref{sec:regole-formali}). L'impostazione della pagina resta
+        quella standard, salvo indicazioni diverse: sempre A4, stampabile.
+  \item[Vincolo] \textbf{Non si deve superare una pagina}. Il limite serve a
+        far ragionare sulla \textbf{priorità} delle parole e dei termini
+        necessari: quali vanno spiegati per primi, perché più fraintendibili o
+        più necessari alla comprensione.
+\end{description}
+
+Uno studente fa notare che i termini sono tanti e che, con limiti del genere,
+si rischia di dover correre: proprio per questo il limite c'è. Se ne
+riparlerà quando tutti avranno consegnato e il docente avrà letto i
+documenti.
+
+Valgono, come sempre, le golden rules (sezione~\ref{sec:golden-rules}) e i
+termini banditi (sezione~\ref{sec:vocabolario}); e vale quanto detto sui
+template (sezione~\ref{sec:due-principi}): nella lezione non viene mostrato un
+esempio di production dictionary proprio perché non ce n'è uno da copiare.
+
+\paragraph{Prossimi appuntamenti.}
+\begin{itemize}
+  \item Le slide della lezione non vengono caricate subito: lo saranno quando
+        la lezione sarà conclusa, cioè \textbf{mercoledì}.
+  \item \textbf{Venerdì} la lezione si terrà \textbf{da remoto}, a causa
+        dello sciopero dei mezzi (lo si scriverà anche su Discord per chi è
+        arrivato dopo).
+  \item La dimostrazione di formattazione di un documento si farà in presenza,
+        \textbf{venerdì 6} (sezione~\ref{sec:recap-documentazione}).
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item L'\textbf{atomo di gioco} di Koster: problema, preparazione,
+        \textbf{core mechanic} calata in uno spazio, \textbf{feedback},
+        successo o fallimento (con ricompensa), e infine l'aggiornamento del
+        \textbf{modello mentale} del giocatore, che vive solo nella sua testa.
+  \item La core mechanic è l'azione specifica che il giocatore ripete più
+        spesso; il verbo di gioco, in senso gergale, è più generico.
+  \item Il feedback \textbf{non è mai abbastanza}: se qualcosa non viene
+        capito, spesso il problema è lì. Si itera: si osserva, si rinforza, si
+        ritesta.
+  \item Il \textbf{production dictionary} chiarisce i termini necessari a
+        comprendere il gioco; di solito è un documento a sé, ha corrispettivi
+        in altri dipartimenti (il \emph{lexicon}) e richiede
+        \textbf{priorità}: prima i termini più fraintendibili o necessari.
+  \item La documentazione non sostituisce il gioco, non tutti i documenti sono
+        sempre necessari, e \textbf{non esistono template}: si prende il
+        meglio, lo si ibrida, lo si adatta.
+  \item Il design è il \textbf{miglior compromesso possibile} tra team e
+        know-how, visione e scienza, mercato e target audience, produzione e
+        soldi; è \textbf{50\% scienza e 50\% arte}.
+  \item ``Senza dati si è solo un'altra persona con un'opinione'': servono
+        dati, quantitativi e qualitativi, da almeno un centinaio di persone,
+        raccolti in pre-produzione, osservati, filmati, ordinati in archetipi e
+        correlati.
+  \item Il design thinking in cinque passi: imparare dalle persone, trovare
+        schemi, definire principi, rendere tangibile, iterare senza sosta.
+  \item La mappa della ricerca: client pitch direction analysis,
+        stakeholder, problema contro necessità, competitor, utenti, mercato,
+        gameplay, fino a una \textbf{visione} che non cambia in corsa.
+  \item I \textbf{competitor diretti} condividono la maggior parte dei punti
+        insindacabili; gli \textbf{indiretti} uno solo, molto attinente; è uno
+        spettro. I giochi in \textbf{opposizione} aiutano a innovare.
+  \item Il mercato può essere un \textbf{red ocean} o un \textbf{blue ocean}, e
+        ha regole (Cina, Germania, Belgio) a cui pensare prima.
+  \item Strumenti di indagine: cinque W, nove perché e root cause analysis,
+        interviste strutturate, must have contro nice to have, scenari
+        estremi.
+  \item Gli stakeholder si classificano per \textbf{potere e interesse}
+        (promotori, latenti, difensori, apatici) o per \textbf{potere,
+        legittimità e urgenza}.
+  \item Il \textbf{problema} sta in una struttura esistente e si risolve in
+        fretta (un cerotto); la \textbf{necessità} richiede una struttura nuova
+        (i punti di sutura). Ishikawa, Liberating Structures e Cynefin aiutano
+        a categorizzare.
+  \item Nell'analisi dei competitor: SWOT, design dominante (le meccaniche,
+        salvo rari brevetti, sono di tutti), \textbf{unique selling point}
+        (al massimo tre, davvero unici).
+  \item Task: production dictionary di un Pokémon mainline, \textbf{una sola
+        pagina}, per lunedì della settimana successiva.
+\end{itemize}

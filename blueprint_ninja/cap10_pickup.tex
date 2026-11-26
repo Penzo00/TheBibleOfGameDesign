@@ -1,0 +1,79 @@
+\section{I pickup e i potenziamenti}\label{sec:pickup}
+
+Un solo padre, \var{BP\_Pickup}, fa girare e ondeggiare l'oggetto e gestisce la raccolta; i figli decidono soltanto cosa succede quando lo si prende. Nel C++: \texttt{APlatformerPickup} con \texttt{ACoinPickup}, \texttt{AAbilityPickup}, \texttt{AHealthPickup}, \texttt{ABatteryPickup}.
+
+\begin{ricetta}
+  \item \var{BP\_Pickup}: \var{Sfera} (Sphere Collision, raggio 60, root), \var{Mesh}, \var{Luce} (Point Light, intensità 8, raggio piccolo), \var{Scritta} (Text Render, rivolta alla telecamera). Variabili: \var{Giro} (120\textdegree/s), \var{Onda} (12\,cm), \var{VelOnda} (0,8), \var{Orologio}, \var{ZBase}.
+  \item Funzione vuota \var{Raccolto(Eroe)} che ritorna un Bool: \emph{True} se il pickup va consumato.
+\end{ricetta}
+
+\subsection{Girare e ondeggiare}
+
+\begin{bpgraph}
+\bpnode{t}{(0,0)}{bpev}{Event Tick}{-}{exec/,float/Delta Seconds}
+\bpnode{o}{\dx{t}{0.6}{0}}{bpvarh}{Set Orologio}{exec/,float/Orologio + dt}{exec/}
+\bpnode{r}{\dx{o}{0.6}{0}}{bpfn}{Add Local Rotation}{exec/,obj/Mesh,rot/(0 ; Giro $\cdot$ dt ; 0)}{exec/}
+\bpnode{z}{\sotto{r}{0}{-0.4}}{bppure}{ZBase + Sin(Orologio $\cdot$ VelOnda $\cdot$ 2$\pi$) $\cdot$ Onda}{-}{float/}
+\maxx{m1}{r,z}
+\bpnode{l}{\dxy{m1}{t}{0.6}{0}}{bpfn}{Set Relative Location}{exec/,obj/Mesh,vec/(0 0 Z)}{exec/}
+\bpexec{t-out1}{o-in1}\bpexec{o-out1}{r-in1}\bpexec{r-out1}{l-in1}\bpwire{float}{z-out1}{l-in3}
+\end{bpgraph}
+
+Il \nodo{Sin} lavora in radianti: per questo il $2\pi$. Con \var{VelOnda} 0,8 l'oggetto fa quasi un'onda al secondo.
+
+\subsection{La raccolta (nel padre)}
+
+\begin{bpgraph}
+\bpnode{ov}{(0,0)}{bpev}{On Component Begin Overlap (Sfera)}{-}{exec/,obj/Other Actor}
+\bpnode{c}{\dx{ov}{0.6}{0}}{bpcast}{Cast To BP\_Eroe}{exec/,obj/Object}{exec/,exec/Cast Failed,obj/As BP Eroe}
+\bpnode{rc}{\dx{c}{0.6}{0}}{bpfn}{Raccolto}{exec/,obj/Eroe}{exec/,bool/Consuma}
+\bpnode[2.4]{br}{\dx{rc}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{snd}{\dx{br}{0.6}{0}}{bpfn}{Play Sound at Location}{exec/,obj/Sound,vec/Location}{exec/}
+\bpnode{d}{\dx{snd}{0.6}{0}}{bpfn}{Destroy Actor}{exec/}{exec/}
+\bpexec{ov-out1}{c-in1}\bpwire{obj}{ov-out2}{c-in2}\bpexec{c-out1}{rc-in1}\bpwire{obj}{c-out3}{rc-in2}\bpexec{rc-out1}{br-in1}\bpwire{bool}{rc-out2}{br-in2}\bpexec{br-out1}{snd-in1}\bpexec{snd-out1}{d-in1}
+\end{bpgraph}
+
+\subsection{I figli: ridefinire \var{Raccolto}}
+
+Nel figlio, nel pannello \emph{My Blueprint} $\rightarrow$ \emph{Functions} $\rightarrow$ \emph{Override} $\rightarrow$ \var{Raccolto}.
+
+\begin{bpgraph}
+\bpnode{f}{(0,0)}{bpcustom}{Raccolto (Moneta)}{-}{exec/,obj/Eroe}
+\bpnode{m}{\dx{f}{0.6}{0}}{bpvarh}{Set GI.Monete}{exec/,int/Monete + Valore}{exec/}
+\bpnode{r}{\dx{m}{0.6}{0}}{bpflow}{Return Node}{exec/,bool/Consuma: true}{-}
+\bpnode{f2}{\sotto{f}{0}{-0.5}}{bpcustom}{Raccolto (Abilità)}{-}{exec/,obj/Eroe}
+\bpnode{a}{\dx{f2}{0.6}{0}}{bpfn}{SbloccaAbilita}{exec/,obj/GI,enum/Abilita}{exec/}
+\bpnode{msg}{\dx{a}{0.6}{0}}{bpfn}{Mostra Messaggio}{exec/,text/Descrizione}{exec/}
+\bpnode{r2}{\dx{msg}{0.6}{0}}{bpflow}{Return Node}{exec/,bool/Consuma: true}{-}
+\bpexec{f-out1}{m-in1}\bpexec{m-out1}{r-in1}\bpexec{f2-out1}{a-in1}\bpexec{a-out1}{msg-in1}\bpexec{msg-out1}{r2-in1}
+\end{bpgraph}
+
+\begin{bpgraph}
+\bpnode{f}{(0,0)}{bpcustom}{Raccolto (Salute)}{-}{exec/,obj/Eroe}
+\bpnode{c}{\sotto{f}{0}{-0.4}}{bppure}{Eroe.Vita $<$ 100}{-}{bool/}
+\maxx{m1}{f,c}
+\bpnode[2.4]{br}{\dxy{m1}{f}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{d}{\dx{br}{0.6}{0}}{bpfn}{Apply Damage}{exec/,obj/Damaged Actor: Eroe,float/Base Damage: $-$40}{exec/}
+\bpnode{r}{\dx{d}{0.6}{0}}{bpflow}{Return Node}{exec/,bool/Consuma: true}{-}
+\bpnode{rf}{\sotto{d}{0}{-0.4}}{bpflow}{Return Node}{exec/,bool/Consuma: false}{-}
+\bpexec{f-out1}{br-in1}\bpwire{bool}{c-out1}{br-in2}\bpexec{br-out1}{d-in1}\bpexec{d-out1}{r-in1}\bpexec{br-out2}{rf-in1}
+\end{bpgraph}
+
+Con la vita piena la salute \emph{non} si consuma: resta lì per dopo. La batteria fa lo stesso con \var{Batteria} della torcia (+15\,s, \nodo{Min} con il massimo).
+
+\subsection{Il potenziamento con il testo}
+
+Il brief chiede potenziamenti ``semplici, con un testo''. Il \var{BP\_PickupAbilita} ha una variabile \var{Abilita} (\var{E\_Abilita}, \emph{Instance Editable}) e nel \nodo{Construction Script} scrive da solo il proprio cartello:
+
+\begin{bpgraph}
+\bpnode{cs}{(0,0)}{bpev}{Construction Script}{-}{exec/}
+\bpnode{sw}{\sotto{cs}{0}{-0.4}}{bppure}{Select (E\_Abilita)}{enum/Index: Abilita,text/DoppioSalto: "Doppio salto",text/WallRun: "Corsa sul muro",text/Jetpack: "Jetpack (tieni Salto)",text/GeneratoreCasse: "Casse (F)"}{text/}
+\maxx{m1}{cs,sw}
+\bpnode{t}{\dxy{m1}{cs}{0.6}{0}}{bpfn}{Set Text}{exec/,obj/Target: Scritta,text/Value}{exec/}
+\bpnode{col}{\dx{t}{0.6}{0}}{bpfn}{Set Vector Parameter Value on Materials}{exec/,obj/Mesh,name/"Colore",vec/colore dell'abilità}{exec/}
+\bpexec{cs-out1}{t-in1}\bpwire{text}{sw-out1}{t-in3}\bpexec{t-out1}{col-in1}
+\end{bpgraph}
+
+Il \nodo{Construction Script} gira anche nell'editor: cambiate l'abilità nel pannello Details e il cartello si aggiorna mentre costruite il livello.
+
+\ninja{Un pickup che si ``ricorda'' di essere già stato preso fra un livello e l'altro? Dategli un \var{ID} (Name) e, in BeginPlay, se \var{GI.Raccolti} contiene l'\var{ID}, \nodo{Destroy Actor}. È così che le abilità non ricompaiono dopo averle prese.}

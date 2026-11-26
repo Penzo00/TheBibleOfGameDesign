@@ -1,0 +1,2590 @@
+% =====================================================================
+%  Analog Game Design, lezione 3 — I framework: da chi gioca a chi
+%  progetta, MDA e DPE, il Player Involvement Model di Gordon Calleja e
+%  il Mixing Desk of Larp
+%  Fonte: trascrizione della terza lezione (AGD3) del corso breve di
+%  Analog Game Design, seconda edizione: una lezione online su Zoom di
+%  circa tre ore, tenuta da un solo docente (Ruggero), con una pausa di
+%  una decina di minuti tra i due framework "grossi", molte domande
+%  degli studenti e un esercizio di analisi dal vivo alla fine.
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Analog Game Design", terzo capitolo
+%  (numerazione propria 2.3). Nel file principale del libro, subito dopo
+%  il capitolo 2.2:
+%
+%    \input{AGD/AGD1_introduzione_all_analog_game_design}
+%    \input{AGD/AGD2_casi_studio}
+%    \input{AGD/AGD3_i_framework_di_design}
+%
+%  Tutte le etichette di questo capitolo hanno il prefisso "a3:"
+%  (a3:cap:..., a3:sec:..., a3:fig:..., a3:tab:...). Il capitolo è
+%  autonomo: non contiene \ref verso altri capitoli.
+%  Le figure e le tabelle sono ricostruzioni schematiche di quanto il
+%  docente spiega a voce e con le slide, non copie delle slide. Le
+%  posizioni dei cursori nelle figure sono qualitative e riprendono le
+%  valutazioni fatte a lezione.
+% =====================================================================
+
+\chapter[I framework del game design]{I framework: dal giocatore al designer,
+il Player Involvement Model e il Mixing Desk}
+\label{a3:cap:framework}
+
+Questa è la \textbf{terza lezione} del corso di \textbf{Analog Game Design}, ed è
+la prima davvero ``tecnica''. Dopo l'introduzione al corso e la lunga panoramica
+dei casi studio, si comincia a mettere in mano agli studenti degli
+\textbf{strumenti}: i \textbf{framework}, cioè delle strutture di pensiero che
+permettono di analizzare un gioco già esistente e, soprattutto, di progettarne
+uno nuovo ``in maniera più focalizzata, in maniera più precisa''. La lezione ne
+presenta quattro. Due li riprende dalla prima lezione e li approfondisce
+(\textbf{MDA} e \textbf{DPE}); gli altri due sono ``la fetta grossa'' della
+serata, perché sono ``impegnativi'' ma anche ``i framework più utili
+pragmaticamente'': il \textbf{Player Involvement Model} di Gordon Calleja e il
+\textbf{Mixing Desk of Larp}, nato nella scena del gioco di ruolo dal vivo
+nordico. Sono, dice il docente, ``gli unici due framework che io personalmente vi
+chiederò di sapere da questo corso''.
+
+La lezione si svolge \textbf{online}, su Zoom, ed è tenuta da \textbf{un solo
+docente}: ``oggi avete lezione, tra l'altro, solo con me''. È
+\textbf{Ruggero}\footnote{Il nome del docente non viene mai pronunciato dalla
+trascrizione. Che sia Ruggero lo dicono diversi indizi convergenti: è il docente
+che terrà il tutoraggio del sabato 3 ottobre; cita come propri i playtest di
+\emph{Marvel United}, del gioco da tavolo di \emph{Cyberpunk} e di
+\emph{Status}, gli stessi giochi che Ruggero aveva elencato presentandosi; e
+nella prima lezione Daniele aveva promesso che proprio la lezione di Ruggero
+``sull'\emph{involvement}'' avrebbe spiegato il divieto della parola
+\emph{immersione}. Alla fine della registrazione la trascrizione gli fa dire
+``sono Leopoldo'': è con ogni probabilità un errore del riconoscimento
+vocale.}, che il corso conosce già: game designer con un portfolio ``misto'' di
+giochi da tavolo, giochi di ruolo, LARP e videogiochi, oggi impegnato in
+\textbf{ricerca e sviluppo}. La lezione comincia alle \textbf{17:10}, con una
+pausa a metà e una mezz'ora abbondante di domande, esempi e analisi in fondo.
+
+Tre avvertenze di lettura, le stesse dei capitoli precedenti. La prima: la
+trascrizione è automatica e storpia moltissimi nomi propri, soprattutto quelli
+stranieri (``Kaleia'' e ``Callea'' per Calleja, ``Jesse Shell'' per Schell,
+``Joanna Coleone'' per Johanna Koljonen, ``Goobs'' per GURPS, ``Genga'' per
+Jenga\ldots). Dove la ricostruzione è sicura, o molto probabile, il capitolo usa
+la forma corretta e lo segnala in nota; dove non lo è, riporta la forma della
+trascrizione e lo dice. La seconda: all'inizio della registrazione e,
+soprattutto, durante la pausa, la trascrizione registra frasi senza senso
+ripetute in loop per decine di righe (``il numero di persone è molto più
+basso\ldots'', ``qual è la risposta che ci può essere?''), che il capitolo
+ignora. La terza: gli studenti intervengono spesso a voce o in chat senza che la
+trascrizione segnali chi parla; il capitolo li nomina quando il contesto lo
+rende chiaro (il docente li chiama per nome, o leggono la chat), e resta
+generico altrimenti.
+
+Quanto alla data, la lezione si colloca con ogni probabilità \textbf{lunedì 14
+settembre 2026}\footnote{La data non è mai detta. La si deduce da alcuni indizi:
+la seconda lezione, di venerdì 11 settembre, si era chiusa con l'appuntamento
+``a lunedì'' e con la presentazione di Giordano rinviata alla lezione
+successiva, e qui Giordano si presenta; Gianmarco arriva in ritardo spiegando che
+``lunedì'' ha un impegno di lavoro fino alle 17:30; la lezione di ``venerdì 18''
+viene citata come futura; i gruppi saranno annunciati ``il 25''. È una
+deduzione, non un'informazione esplicita.}. Rispetto a quanto annunciato alla
+fine della lezione precedente, l'ordine è cambiato: la lezione
+sull'\emph{emotional design} non è questa, e arriverà ``non nella prossima
+lezione, ma in quella dopo''. Il calendario, del resto, era stato presentato fin
+dall'inizio come modificabile.
+
+\paragraph{Come leggere questo capitolo.} Diversamente dal catalogo della lezione
+precedente, questa è una lezione di \textbf{concetti}, e il capitolo la tratta
+come tale: ogni framework è ricostruito per intero, con le definizioni, gli
+esempi (volutamente ``cross mediali'', dal Jenga a \emph{GTA}), le domande degli
+studenti e le risposte del docente, che spesso sono la parte più utile. Il
+docente insiste continuamente su un punto che vale per tutto il capitolo: le
+categorie del primo framework e i cursori del secondo \textbf{non sono
+qualitativi}, cioè non dicono se un gioco è bello o brutto, ma \emph{che cosa}
+fa e \emph{dove} si può lavorare. Qua e là, dei paragrafi di
+\textbf{approfondimento} collegano la lezione ai libri di game design di
+riferimento (\emph{The Art of Game Design} di Jesse Schell, \emph{A Theory of
+Fun for Game Design} di Raph Koster, \emph{Challenges for Game Designers} di
+Brenda Brathwaite e Ian Schreiber, \emph{21st Century Game Design} di Chris
+Bateman e Richard Boon); sono segnalati come tali e non fanno parte della
+lezione.
+
+Il percorso del capitolo segue quello della lezione:
+\begin{enumerate}
+  \item l'attesa prima dell'inizio: i link in chat, i tutoraggi, i gruppi e i
+        task (sezione~\ref{a3:sec:attesa});
+  \item perché si studiano i framework: \textbf{da giocatore a designer}, il
+        design come \textbf{opposto della tradizione}, il gioco come
+        \textbf{esperienza creata da regole} (sezioni~\ref{a3:sec:designer}
+        e~\ref{a3:sec:esperienza});
+  \item alcuni \textbf{concetti di base}: le lenti, il gioco come medium
+        mediato ed emergente, la pipeline \textbf{design, playtest,
+        iterazione} e il modo giusto di ascoltare il \textbf{feedback}
+        (sezioni~\ref{a3:sec:base} e~\ref{a3:sec:pipeline});
+  \item \textbf{MDA} e \textbf{DPE}, ripresi e approfonditi
+        (sezione~\ref{a3:sec:mda});
+  \item la presentazione di Giordano (sezione~\ref{a3:sec:giordano});
+  \item il \textbf{Player Involvement Model}: perché non dire
+        ``immersione'' e le sei forme di coinvolgimento
+        (sezioni da~\ref{a3:sec:pim} a~\ref{a3:sec:pim-domande});
+  \item il \textbf{Mixing Desk of Larp}: otto cursori più uno libero, e la
+        sua modularità (sezioni da~\ref{a3:sec:mixing} a~\ref{a3:sec:moduli});
+  \item un'\textbf{analisi dal vivo} con il Mixing Desk: \emph{Exit},
+        gli Hidden Games e \emph{Profiler} (sezione~\ref{a3:sec:analisi});
+  \item le \textbf{domande finali} e la \textbf{responsabilità} di chi
+        progetta giochi (sezioni~\ref{a3:sec:perche-due}
+        e~\ref{a3:sec:domande}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'attesa: link, tutoraggi e gruppi}
+\label{a3:sec:attesa}
+
+Il docente si collega in anticipo e ``muta'' ancora qualche minuto. All'inizio
+c'è solo uno studente; arriva \textbf{Giordano}, che aveva avvisato di poter
+arrivare più tardi (``c'è stata una riunione convocata e cancellata''): ``ti
+facciamo presentare subito, appena iniziamo''. In realtà, ``tra una cosa e
+l'altra'', la presentazione slitterà di nuovo, fino alla semi-pausa prima del
+primo framework grosso (sezione~\ref{a3:sec:giordano}). Mentre si aspetta, il
+docente invita a fare domande: ``se avete qualcosa da chiedere o da dire, sono
+qui''.
+
+\paragraph{Niente task, per ora.} Il docente avverte subito: ``anche oggi non vi
+daremo task per la prossima lezione''. È un'altra lezione ``che non vi darà i
+compiti a casa''. Ma \textbf{dalla prossima} cominceranno ad arrivare dei
+\textbf{piccoli task} in preparazione; ``poi il grosso task sarà quello di creare
+il gioco, effettivamente''.
+
+\paragraph{I link in chat non funzionano.} Uno studente fa una domanda ``che non
+c'entra niente col corso'': nella lezione precedente i link scritti nella chat di
+Zoom non si aprivano. Altri confermano. Il docente fa una prova al volo,
+incollando in chat il sito dell'accademia\footnote{La trascrizione dice ``il sito
+dell'IV'' e, poco dopo, ``i corsi dell'EV'' e ``il reparto tecnico di IV'': è la
+sigla dell'ente che organizza il corso, non ricostruibile con certezza dalla
+trascrizione.}: non è cliccabile, e qualcuno non riesce nemmeno a copiarlo con
+Ctrl+C e Ctrl+V, tanto da doversi riscrivere i link a mano. ``Scusateci, non lo
+sapevamo'': è probabilmente il primo anno che succede, forse perché in estate
+sono cambiate alcune impostazioni della piattaforma Zoom per tutti i corsi. Il
+docente ne parlerà con la segreteria e con il reparto tecnico; nel frattempo,
+eviterà di mettere link in chat e li metterà \textbf{su Discord}, e chi ha
+problemi può chiedere i link via email.
+
+\paragraph{I tutoraggi.} Un'altra domanda, ``tra virgolette pratica'': i
+\textbf{tutoraggi} con il docente si fanno di sabato, dalle 11 alle 13, tutti i
+sabati? No. Le date sono nel calendario mostrato nella prima lezione: \textbf{3
+ottobre}, \textbf{7 novembre} e \textbf{14 novembre}. Come aveva detto Daniele,
+sono date ``potenzialmente modificabili'' in caso di necessità. Lo studente
+chiede se sia possibile spostare quella del 3 ottobre: per il docente ``non è
+impossibile'', ma per ragioni ``burocratiche'' non ha l'autorità di cambiare le
+date, quindi bisogna \textbf{scrivere una mail a Daniele}.
+
+\paragraph{I gruppi, il 25.} Quando verranno comunicati i gruppi? ``Il
+venticinque''. Per formarli, i docenti terranno conto anche dei \textbf{task} che
+gli studenti faranno prima del 25: non quelli di oggi (che non ci sono), ma
+quelli della prossima lezione e di quella successiva. Servono come base per
+capire in che gruppo mettere ciascuno, e anche per capire ``come vi approcciate
+al \emph{problem solving} nel game design'', ``al come creare un gioco''.
+L'obiettivo è fare gruppi ``il più coesi'' possibile e che lavorino bene insieme.
+
+\paragraph{Lo scaffale.} Uno studente nota la libreria di giochi alle spalle del
+docente: ``viene voglia di giocare''. Il docente confessa di sentirsi ``quasi in
+colpa'': alcuni li ha comprati e non è ancora riuscito a giocarli (``mi guardano
+e mi dicono: maledetto, hai già speso soldi''). Alcuni sono facili da
+intavolare, altri più intensi, e non è facile trovare le persone adatte. Ne
+indica uno, ``\emph{2045}''\footnote{Il titolo è riportato come nella
+trascrizione e non è verificabile.}: un \textbf{cooperativo} fino a cinque
+persone, progettato da designer \textbf{taiwanesi}, ambientato nel 2045, in cui
+la Cina invade Taiwan e i giocatori devono difenderla. Solo che dura
+\textbf{tre ore} di gioco strategico, e quando lo propone il gruppo ``non è
+proprio invogliatissimo'' di giocare tre ore di geopolitica.
+
+Alle 17:10 si comincia. Il docente chiede di fermarlo se, concentrato sulle
+slide, non si accorgesse di qualcuno che entra, ``perché voglio segnarvi le
+presenze in modo corretto''. Il programma: alcuni framework ``a volo d'aquila''
+già accennati nella prima lezione, poi due framework grossi, con una pausa in
+mezzo. Il primo potrebbe andare lungo: ``vi chiedo di resistere in questo primo
+blocco'', perché sono due framework che ``non è facile spezzettare più di
+così''.
+
+% ---------------------------------------------------------------------
+\section{Da giocatore e facilitatore a designer}
+\label{a3:sec:designer}
+
+Prima dei framework, una domanda di fondo: \textbf{che cosa siamo qui a fare?}
+Il docente dà per acquisito (``ce l'avete detto anche voi'') che il gioco
+interessi agli studenti come tema e come \textbf{medium}, e che prima ancora di
+essere persone che vogliono creare giochi siano \textbf{persone che i giochi li
+giocano}. È comprensibile: a chi non legge non viene in mente di scrivere un
+libro, e allo stesso modo è plausibile che gli studenti abbiano giocato giochi
+significativi, ``che vi abbiano lasciato qualcosa dentro'', e che si siano
+detti: \emph{ma perché no? Magari posso crearli anch'io}. ``Intanto vi
+assicuro: potete crearli anche voi''. È il primo passo.
+
+Ma il corso, e questa lezione in particolare, servono a imparare a farlo
+\textbf{in maniera più strutturata}. Perché? \textbf{Per buttare meno tempo
+possibile}. Creare giochi, ``per fortuna o per sfortuna'', non è una cosa
+recente: l'umanità crea giochi da millenni, e da secoli in maniera più
+strutturata. Molte persone hanno incontrato problemi nel game design e li hanno
+risolti prima di noi, identificando i punti più sensibili, problematici e
+delicati del processo. I \textbf{framework} sono il deposito di questo lavoro:
+strutture su cui basarsi per
+\begin{itemize}
+  \item \textbf{risparmiare tempo} nel creare giochi;
+  \item creare giochi in maniera \textbf{più focalizzata} e \textbf{più precisa};
+  \item assicurarsi che i giochi portino a chi li gioca \textbf{quello che si
+        vuole che arrivi emotivamente}. (Sulla questione emotiva in senso
+        stretto si tornerà nella lezione sulle emozioni.)
+\end{itemize}
+
+\subsection{Il design è l'opposto della tradizione}
+
+Il docente lancia una citazione di \textbf{Johanna Koljonen}\footnote{La
+trascrizione dice ``Joanna Coleone'' e, più avanti, ``Ioanna Coleonen''. Il
+docente la presenta come ``una designer svedese''; Johanna Koljonen è una
+designer e studiosa di giochi di ruolo dal vivo nota nella scena nordica.}:
+\begin{quote}
+\textbf{fare design è l'opposto di seguire la tradizione}.
+\end{quote}
+Se si rimette in un gioco qualcosa \textbf{solo perché si è sempre fatto così},
+non si sta facendo design: si sta seguendo una tradizione, creando qualcosa nel
+modo in cui è sempre stato fatto. ``Questo ha dei pro e dei contro'', ma
+l'importante è esserne \textbf{consapevoli}.
+
+\paragraph{L'esempio del gioco di ruolo.} A livello culturale i giochi di ruolo
+hanno alcune caratteristiche ricorrenti: la figura del \textbf{master}, i
+\textbf{dadi}, le \textbf{schede personaggio}. Ma sono elementi \emph{formali},
+intrinseci al gioco di ruolo, o fanno parte di una \emph{tradizione}? I casi
+studio lo hanno mostrato: esistono giochi di ruolo \textbf{senza master}.
+Quando sono usciti i primi, la reazione è stata fortissima: ``questi non sono
+giochi di ruolo perché non hanno un master''. Con gli anni si è capito che lo
+sono, semplicemente \emph{masterless} (o \emph{masterful}, a seconda delle
+definizioni). Lo stesso per i dadi: \emph{Dungeons \& Dragons}, \emph{Pathfinder}
+e GURPS\footnote{La trascrizione dice ``Da Genentech hanno i dadi, Pathfinder
+hai i dadi, Groups hai i dadi'': si tratta con ogni probabilità di \emph{D\&D},
+\emph{Pathfinder} e GURPS, che la trascrizione più avanti chiama anche ``Gurps'',
+``Goobs'' e ``GuardStore''.} hanno i dadi, ma moltissimi altri giochi di ruolo
+non ce li hanno: usano le carte da poker, le carte da briscola, oppure non hanno
+proprio sistemi di generazione della casualità, e hanno altri aspetti che li
+rendono giochi di ruolo. Della storia e delle forme del gioco di ruolo parlerà
+più nel dettaglio Daniele, nella lezione dedicata.
+
+\paragraph{La domanda da farsi.} Quando si crea un gioco si ha spesso in mente
+un \textbf{genere di riferimento}. Il docente chiede di distinguere:
+\begin{itemize}
+  \item gli elementi che si vogliono nel gioco \textbf{perché ha senso che ci
+        siano};
+  \item gli elementi che si stanno mettendo, magari inconsapevolmente,
+        \textbf{solo perché il genere li ha sempre avuti}.
+\end{itemize}
+In una frase: \textbf{chiedetevi che cosa state mettendo nel vostro gioco, e
+perché}.
+
+% ---------------------------------------------------------------------
+\section{Il gioco è un'esperienza creata da regole}
+\label{a3:sec:esperienza}
+
+La seconda frase che il docente vuole alla base della lezione, e del resto del
+corso, è la definizione di gioco di \textbf{Anna Anthropy}, dal libro già
+menzionato \emph{Rise of the Videogame Zinesters}\footnote{La trascrizione dice
+``Anantrophy'' e ``Rise of Video Games in Esters''. Il libro di Anna Anthropy,
+del 2012, è un manifesto a favore dei giochi fatti da autori indipendenti e non
+professionisti.}:
+\begin{quote}
+\textbf{il gioco è un'esperienza creata da regole}.
+\end{quote}
+Chi ha già letto di game design e cercato definizioni la troverà ``molto più
+generica delle altre''. Ma \textbf{regole} ed \textbf{esperienza} sono ``le
+uniche due cose che davvero sono sempre presenti nei giochi'', e sono le cose da
+ricordare ``nella maniera più assoluta''. Quando si crea un gioco, due sono le
+cose che interessano:
+\begin{description}
+  \item[L'esperienza] su cui \textbf{non si ha controllo}: non si può obbligare
+        una persona a provare emozioni.
+  \item[Le regole] su cui \textbf{si ha controllo}, e che sono l'unico strumento
+        che aiuta a portare l'esperienza che si vuole.
+\end{description}
+Da qui la definizione del mestiere: \textbf{il lavoro del game designer è creare
+regole che creino esperienze}. ``So che vi sembra banale, ma vi giuro'': spesso,
+anche nelle presentazioni, al docente arrivano prototipi da valutare che
+``meccanicamente hanno anche senso'', ma quando l'autore dice \emph{che
+esperienza} vuole che il gioco dia, si scopre che le regole non danno
+quell'esperienza ``neanche per sbaglio''. La raccomandazione è far
+\textbf{combaciare} quello che si vuole far arrivare con le regole che si
+mettono nel gioco.
+
+\paragraph{Approfondimento: il gioco non è l'esperienza.} La stessa distinzione
+è uno dei pilastri di \emph{The Art of Game Design}. Schell la formula così:
+``il gioco non è l'esperienza. Il gioco \emph{rende possibile} l'esperienza, ma
+non è l'esperienza''. La illustra con il vecchio indovinello zen dell'albero che
+cade nella foresta senza che nessuno lo senta: se per ``suono'' si intendono le
+molecole d'aria che vibrano, il suono c'è; se si intende l'esperienza di
+sentirlo, no. Al designer, dice Schell, dell'albero e di come cade importa poco:
+importa l'esperienza di sentirlo cadere, e l'albero è solo un mezzo. Il giocatore
+e il gioco sono reali, l'esperienza è ``immaginaria'', ma i designer vengono
+giudicati proprio sulla qualità di questa cosa immaginaria; e se potessimo
+creare esperienze direttamente, senza tabelloni, schermi e regole, lo faremmo.
+Non potendo, si lavora sull'unica cosa su cui si ha presa: il gioco, cioè le
+regole e i componenti. È esattamente la divisione di Anna Anthropy tra regole
+(controllabili) ed esperienza (non controllabile).
+
+\subsection{Il gioco per tutti non esiste}
+
+\textbf{Tiziana} chiede di intervenire (scusandosi, come sempre, di chiedere il
+permesso: ``è la regola generale delle lezioni con me: potete sempre
+interrompermi''). Porta la sua esperienza di giocatrice, ``perché poi ogni
+giocatore cerca un'esperienza diversa'': ci sono giochi con meccaniche
+``meravigliose'' che lei però percepisce come \textbf{astratti}, perché il tema
+è appiccicato e ``potresti metterci qualsiasi tematica e funzionerebbero lo
+stesso''. Lei preferisce i giochi più \textbf{ambientati}, che portano dentro un
+tema e fanno fare l'esperienza legata a quel tema.
+
+Il docente risponde che è legittimo, ed è proprio quello che i casi studio
+hanno mostrato: le tipologie di giochi, e anche le ``psicometrie di approccio'',
+sono molto diverse. A lei un astratto dice poco, ``non è un tuo
+\emph{drive}''; a chi gioca un astratto per le meccaniche, una
+\emph{visual novel} può far venire voglia di spararsi dopo mezz'ora. Il docente
+conosce persone che giocano tantissimo ma che, ``se devono leggere in un gioco,
+già le abbiamo perse'': una visual novel investigativa, per quanto incredibile,
+``non è pane per i loro denti''. E viceversa, per qualcun altro può diventare
+uno dei titoli preferiti. È come per i film: lo stesso film può essere odiato da
+una persona e amato da un'altra.
+
+Da qui una regola da ricordare: \textbf{il gioco per tutte le persone non
+esiste}. Bisogna uscire dal \emph{mindset} per cui il proprio gioco debba essere
+per tutti.
+
+\paragraph{Accessibilità non vuol dire ``per tutti''.} Il docente distingue
+subito un concetto vicino, che verrà ripreso più avanti nel corso:
+l'\textbf{accessibilità}. Un gioco deve essere accessibile \textbf{per le
+persone che vogliono giocarlo}; questo non vuol dire che il gioco sia per tutti,
+ma che deve essere ``per tutte le persone per cui quel gioco è''. ``Un po'
+intricato'', ammette, e fa un esempio: una persona ama leggere e vuole una visual
+novel investigativa lunga e tosta; quella visual novel esiste, ma è scritta in
+un font piccolissimo, e la persona ha problemi di vista. Il gioco c'è, ma lei non
+può farne esperienza se nelle opzioni non ci sono le impostazioni di
+accessibilità e di qualità della vita. Gli stessi problemi esistono nel gioco da
+tavolo e nel gioco di ruolo: il docente ha visto \textbf{manuali con font non
+leggibili}, ``e non puoi mettere un font non leggibile in un regolamento, che è
+il modo principale in cui le persone imparano i giochi''. Avrebbe degli esempi,
+``ma vi voglio troppo bene per farveli vedere adesso'': li mostrerà quando gli
+studenti saranno ``psicologicamente in grado di sopportare la vista di un manuale
+della GMT''.
+
+% ---------------------------------------------------------------------
+\section{Concetti di base}
+\label{a3:sec:base}
+
+\subsection{``Buon game design'' vuol dire tutto e niente}
+
+Si parte dai concetti di base, e il primo è quasi una provocazione: \textbf{il
+``buon game design'' vuol dire tutto e niente}. Per questo servono strumenti più
+precisi, e un vocabolario condiviso.
+
+\subsection{Le lenti di Schell}
+
+Il docente cita uno dei libri più noti del settore, ``non necessariamente perché
+ve lo consigliamo da leggere, ma perché se finite a fare game design il termine
+di \textbf{lenti} lo incontrerete prima o poi''. Il termine viene da \emph{The
+Art of Game Design: A Book of Lenses} di \textbf{Jesse Schell}, che esiste in
+inglese e in italiano, e in cui l'autore ha catalogato ``una cinquantina'' di
+lenti\footnote{Il numero è quello detto a lezione. La terza edizione inglese del
+libro, quella usata come riferimento in questo volume, ne conta in realtà più di
+cento: l'indice va dalla \emph{Lens of Emotion} (\#1) alla \emph{Lens of the
+Raven} (\#112), più una \emph{Lens of Your Secret Purpose} numerata con il
+simbolo dell'infinito.}: \textbf{metodi di osservare il proprio design}.
+
+Il concetto è quello, già noto come modo di dire, del \textbf{mettersi cappelli
+diversi}: in questo momento guardo il gioco con la lente della qualità della
+vita, in quest'altro guardo come sono scritte le regole, in quest'altro guardo
+l'esperienza di chi gioca. Il giudizio del docente è sfumato:
+\begin{itemize}
+  \item ``non sono tutte utilissime, queste lenti, se vogliamo proprio essere
+        onesti'': alcune aiutano, altre no, e alcune, secondo lui, sono
+        \textbf{dannose} (ne parlerà più avanti);
+  \item il corso non userà molto il termine, ma è giusto averlo nel proprio
+        \textbf{glossario}, perché molte persone nel settore lo usano;
+  \item ``il libro non è neanche brutto, secondo me'': si può leggere in
+        autonomia.
+\end{itemize}
+
+\subsection{I giochi sono un medium}
+
+Il secondo concetto, già detto nella lezione introduttiva, è che \textbf{i
+giochi sono un medium}. Vuol dire che hanno le stesse problematiche, e le stesse
+funzionalità, degli altri media: \textbf{con i giochi si comunica}. ``Non stiamo
+semplicemente mettendo qualcosa nel vuoto dello spazio e un alieno poi se lo
+gioca'': chi crea giochi è una persona e fa ``cose da persone'', e chi gioca è a
+sua volta una persona, con la propria vita ``in mezzo'' tra sé e il gioco. Ne
+discendono alcune caratteristiche (figura~\ref{a3:fig:medium}).
+
+\begin{description}
+  \item[Il feedback è bidirezionale.] Il designer comunica con chi gioca, e chi
+        gioca comunica con il sistema: non con il designer direttamente, ma con
+        la sua creazione.
+  \item[Il gioco è un'esperienza differita.] Tranne rari casi (alcuni giochi a
+        evento, alcuni giochi pervasivi o LARP), si crea un regolamento oggi e
+        qualcuno lo gioca domani\footnote{La trascrizione dice ``esperienze
+        indifferenti'': dal contesto, il senso è quello di esperienze
+        \emph{differite}, in cui chi progetta e chi gioca non condividono lo
+        stesso momento.}. ``Non arrivate con le scatole dei giochi'' a casa di
+        chi li compra (``altrimenti qui c'è gente che mi dovrebbe pagare
+        l'affitto un bel po'''): bisogna fidarsi, incrociare le dita, e sperare
+        che sia tutto chiaro quando qualcuno apre la scatola e legge.
+  \item[Il gioco è mediato.] ``Non siamo in grado di comunicare con la
+        telepatia'': non si possono instillare pensieri nella mente di chi gioca,
+        quindi la conversazione va \textbf{mediata}, e di solito lo strumento
+        di mediazione è il \textbf{regolamento}. Con un asterisco: nel gioco di
+        ruolo da tavolo, nel gioco di ruolo dal vivo e nel gioco pervasivo il
+        regolamento scritto potrebbe non esserci, ma esiste comunque una
+        mediazione: procedure, \textbf{workshop pregioco}, sistemi di principi,
+        linee guida. ``Il gioco è mediato sempre'', anche quando lo si spiega a
+        voce.
+  \item[Il gioco è emergente.] È un \emph{foreshadowing}: ci si tornerà
+        parlando di playtest. ``A meno che non abbiate l'onniscienza'', non si
+        può sapere in anticipo come le persone mischieranno le meccaniche, e
+        spesso chi gioca trova interazioni particolari tra le regole e ne fa
+        uscire \textbf{dinamiche} che il designer non aveva minimamente
+        immaginato. A gioco pubblicato non si può dire ``no, il gioco non
+        suggeriva così'': nessuno ascolterà, il gioco è già nelle case delle
+        persone. Bisogna imparare a \textbf{prevedere} il più possibile questi
+        comportamenti emergenti \textbf{prima}.
+\end{description}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    attore/.style={draw, thick, rounded corners=4pt, fill=gray!12,
+                   minimum width=2.6cm, minimum height=1.0cm, align=center},
+    medio/.style={draw, thick, dashed, rounded corners=4pt, fill=white,
+                  text width=3.6cm, align=center, inner sep=5pt},
+    nota/.style={font=\footnotesize, align=left, text width=4.6cm},
+    freccia/.style={-{Stealth[length=2.5mm]}, thick}
+  ]
+  \node[attore] (des) at (0,0) {\textbf{Chi progetta}\\ \footnotesize oggi};
+  \node[medio]  (reg) at (4.6,0) {\textbf{Il gioco}\\ \footnotesize
+    regolamento, componenti, procedure, workshop pregioco};
+  \node[attore] (gio) at (9.2,0) {\textbf{Chi gioca}\\ \footnotesize domani};
+  \draw[freccia] (des) -- node[above, font=\footnotesize]{scrive} (reg);
+  \draw[freccia] ([yshift=2pt]gio.west) -- node[above, font=\footnotesize]{gioca}
+    ([yshift=2pt]reg.east);
+  \draw[freccia, gray] ([yshift=-6pt]reg.east) --
+    node[below, font=\footnotesize, text=black]{risponde} ([yshift=-6pt]gio.west);
+  \draw[freccia, dashed, gray] (gio.south) to[bend left=28]
+    node[below, font=\footnotesize\itshape, text=black]
+    {feedback (playtest, recensioni, comunità)} (des.south);
+  \node[nota, anchor=north] at (4.6,-2.15) {\textbf{differito}: designer e
+    giocatore quasi mai si incontrano\\ \textbf{mediato}: nessuna telepatia,
+    solo regole\\ \textbf{emergente}: chi gioca combina le regole in modi
+    imprevisti};
+\end{tikzpicture}
+\caption{Il gioco come medium, nella lettura del docente: chi progetta non
+parla a chi gioca, ma al sistema che ha costruito; chi gioca interagisce con il
+sistema, e solo indirettamente, attraverso il feedback, con chi lo ha
+progettato.}
+\label{a3:fig:medium}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Design, playtest, iterazione e feedback}
+\label{a3:sec:pipeline}
+
+``E a proposito: il playtest e il design''. Nella \textbf{pipeline} della
+creazione di un gioco ci sono passi che \textbf{non si possono saltare}:
+``perlomeno in questo corso non dovete saltare. Poi, fuori da questo corso,
+potete fare quello che volete'' (``non sono un poliziotto, non entrerò in casa
+vostra a spaccarvi i mobili se non fate i playtest''). Ma nel corso, e in
+generale nell'industria, la pipeline esiste e va rispettata
+(figura~\ref{a3:fig:pipeline}).
+
+\subsection{Il playtest non si salta}
+
+Si parte dalla \textbf{progettazione}; e quella progettazione, prima di andare in
+stampa o di arrivare a chi il gioco deve giocarlo alla fine del percorso,
+\textbf{va testata}. ``Vi prego, non saltate il playtest''. Ci sarà una lezione
+di tre ore dedicata, quindi per ora non bisogna preoccuparsi di \emph{come} si
+fa: deve restare che \textbf{si deve fare}. E si deve fare in ogni caso:
+\begin{itemize}
+  \item se si vuole proporre il gioco a un \textbf{editore}, cioè pubblicarlo con
+        uno scopo commerciale;
+  \item se il gioco \textbf{non ha uno scopo commerciale}: per sé, per gli amici,
+        per motivi artistici;
+  \item persino se è un gioco che non giocherà nessuno, ``ma magari esposto in un
+        museo'': ``il gioco va playtestato''.
+\end{itemize}
+
+\paragraph{La caccia alle lumere.} Uno studente porta un'esperienza personale.
+A fine ottobre dell'anno precedente ha organizzato con altre persone una sorta
+di \textbf{caccia alle lumere} (le lanterne con le zucche) in un bosco, con
+\textbf{sei percorsi} segnati da fili di lana. Sapeva che l'ideale sarebbe
+stato far provare i percorsi a qualcuno prima, ma non è stato possibile: e
+infatti sono emerse delle difficoltà. ``Tu metti giù, pensi che sia chiaro'',
+risponde il docente, ``perché tu conosci il percorso''; poi qualcuno che non lo
+conosce lo fa, e ci si rende conto che così chiaro non è. Anche nelle cose più
+semplici.
+
+\paragraph{I giochi pervasivi e il mondo reale.} Restando sul gioco pervasivo,
+il docente ha giocato giochi in città progettati da persone che \textbf{quelle
+città non le vivevano}: su Google Maps due tappe erano vicine, nella realtà
+erano a \textbf{40 minuti} di distanza perché c'era una strada in mezzo che non
+si poteva attraversare. I giochi pervasivi sono molto sensibili ai cambiamenti
+del mondo reale: se si organizza un evento in un parco per un certo giorno senza
+assicurarsi che il parco sia agibile, ``vi potete beccare, come è successo, dei
+bei cantieroni'' che restaurano proprio la statua che era ``un pezzo
+importantissimo'' dell'enigma ambientale. ``Buona fortuna'' a chi giocherà
+senza poter vedere quelle informazioni.
+
+\paragraph{Anche i modelli matematici vanno testati.} Nel gioco pervasivo è facile
+accorgersene, perché il corpo e i suoi limiti fisici impattano con il mondo
+reale. Ma anche in un gioco da tavolo ``astratto'' \textbf{i modelli matematici
+non sono meno da testare} del resto: se c'è un componente troppo sbilanciato,
+troppo forte, una \textbf{strategia dominante}, bisogna poterla ``beccare'' il
+prima possibile. Gli strumenti per farlo arriveranno con la lezione sul
+playtest.
+
+\subsection{L'iterazione}
+
+Dopo il playtest arriva una cosa ``che non piace a nessuno, ma va fatta'':
+l'\textbf{iterazione}. Il playtest funziona \textbf{come una spia}: ``non una
+spia di un agente segreto tipo 007, una spia della macchina'', cioè un
+\textbf{segnale} che qualcosa non funziona o che qualcosa è potenzialmente un
+problema. Ricevuto il segnale, bisogna mettersi al lavoro e \textbf{modificare il
+prototipo}, cambiando quelle che erano le regole precedenti. L'iterazione può
+essere:
+\begin{itemize}
+  \item banalmente, \textbf{riscrivere una regola} perché non sia ambigua;
+  \item oppure \textbf{tagliare una meccanica} a cui si è affezionati.
+\end{itemize}
+Il secondo caso ``succede a chiunque, succede anche a me''. Il docente è ``un
+grandissimo amante'' dei \textbf{giochi da tavolo in tempo reale}, e prova
+sempre a mettere una clessidra, un timer, qualcosa del genere nei suoi prototipi
+di board game. E troppe volte succede che il tempo reale non ci sta, e va tolto:
+``peccato, va bene così, se ne va. Tornerà al prossimo prototipo. Ma per ora se
+ne deve andare''.
+
+\paragraph{Il ping pong.} Dopo l'iterazione si torna al playtest, e si fa
+\textbf{ping pong} (iterazione, playtest, iterazione, playtest) finché:
+\begin{itemize}
+  \item si va \textbf{in stampa}, oppure
+  \item si consegna il prodotto finale all'\textbf{editore}, oppure,
+  \item se il gioco non è commerciale, si è \textbf{soddisfatti} e il gioco è
+        pronto.
+\end{itemize}
+
+\paragraph{La perfezione ha un costo infinito.} ``Tra virgolette'', perché
+\textbf{la perfezione ha un costo infinito}: si può sempre migliorare un gioco,
+spendendo tempo, risorse, energie e soldi infiniti. Si può playtestare per anni,
+e il docente ne è un esempio:
+\begin{itemize}
+  \item nei giochi commerciali, come \emph{Marvel United} o il gioco di
+        \emph{Cyberpunk}, ha avuto periodi di playtest lunghi, \textbf{uno o due
+        anni}, ``perché un editore più di quel periodo non li può reggere'';
+  \item per \emph{Status}\footnote{La trascrizione dice ``ho quasi come status
+        qua dietro'': il docente indica con ogni probabilità la scatola di
+        \emph{Status}, il gioco sulla geopolitica che aveva citato tra i propri
+        lavori nella prima lezione.}, che ha dietro di sé, ci sono stati
+        \textbf{sei mesi} di playtest;
+  \item per i progetti personali non commerciali ha giochi in playtest da
+        \textbf{sette, otto anni}: ``chi mi ferma? Niente, non è commerciale''.
+\end{itemize}
+Nelle aziende, negli editori, nei publisher questo è un grosso problema:
+\textbf{nessuno darà tempo infinito di playtest}, e spesso le scadenze sono
+strette. Gli editori di solito dicono quanti mesi di playtest o di sviluppo
+possono dedicare a un prodotto, e la maggior parte tende a dare la priorità a
+progetti già sviluppati. ``È un vaso di Pandora che non apriamo adesso''.
+
+\subsection{Il feedback: il sentimento, non la soluzione}
+
+Ultimo elemento della pipeline, su cui si tornerà nel dettaglio: il
+\textbf{feedback}. Quando un \emph{playtester} indica un problema, \textbf{non sta
+necessariamente indicando la cosa corretta}: quello che serve è
+\textbf{l'emozione, il sentimento} che sta provando. Chi playtesta non ha
+necessariamente basi di game design, e non saprà dire ``questa carta nel modello
+matematico pesa la metà delle altre''. Dirà: ``questa carta fa schifo''. E magari
+non è la carta che fa schifo, ``magari è un numerino da cambiare su quella
+carta''. Il metodo è:
+\begin{enumerate}
+  \item \textbf{ignorare la soluzione} proposta dal playtester;
+  \item \textbf{risalire al sentimento}: che cosa sta provando?
+  \item cercare \textbf{la fonte} di quel sentimento, il \textbf{problema reale}
+        che lo genera;
+  \item dare \textbf{la propria soluzione}: ``non ve la deve dare il playtester,
+        non è chi playtesta che deve risolvere il vostro gioco''.
+\end{enumerate}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    fase/.style={draw, thick, rounded corners=4pt, fill=gray!12,
+                 minimum width=2.6cm, minimum height=1.0cm, align=center},
+    uscita/.style={draw, thick, rounded corners=4pt, fill=white,
+                   text width=3.2cm, align=center, font=\footnotesize},
+    nota/.style={font=\footnotesize\itshape, align=center, text width=3.4cm},
+    freccia/.style={-{Stealth[length=2.5mm]}, thick}
+  ]
+  \node[fase] (d) at (0,0) {\textbf{Design}\\ \footnotesize progettazione};
+  \node[fase] (p) at (4.2,0) {\textbf{Playtest}\\ \footnotesize la ``spia''};
+  \node[fase] (i) at (4.2,-2.6) {\textbf{Iterazione}\\ \footnotesize
+    riscrivere, tagliare};
+  \node[uscita] (u) at (9.8,0) {\textbf{stampa}, consegna all'editore, o gioco
+    ``pronto'' per chi lo ha fatto};
+  \draw[freccia] (d) -- (p);
+  \draw[freccia] (p.south west) to[bend right=25]
+    node[left, font=\footnotesize]{feedback} (i.north west);
+  \draw[freccia] (i.north east) to[bend right=25]
+    node[right, font=\footnotesize]{nuovo prototipo} (p.south east);
+  \draw[freccia, dashed] (p) -- node[above, font=\footnotesize]{quando basta}
+    (u);
+  \node[nota] at (0,-2.6) {il feedback dice \emph{che cosa si prova}: la
+    soluzione è compito del designer};
+  \node[nota] at (9.8,-2.6) {la perfezione ha un costo infinito: un editore
+    concede mesi, non anni};
+\end{tikzpicture}
+\caption{La pipeline che ``va rispettata'': si progetta, si playtesta, si itera,
+e si fa ping pong tra playtest e iterazione finché il gioco va in stampa, viene
+consegnato o è pronto.}
+\label{a3:fig:pipeline}
+\end{figure}
+
+\paragraph{Approfondimento: il ciclo e le domande dopo il playtest.} I libri di
+riferimento descrivono lo stesso anello. \emph{Challenges for Game Designers}
+lo scompone in quattro passi (prototipo, playtest, revisione, ripetizione) e
+nota che a volte la revisione è un piccolo cambiamento incrementale, altre volte
+il designer scopre ``dinamiche di gioco inattese'' che portano il gioco in una
+direzione completamente diversa: è l'emergenza di cui parla il docente. Lo
+stesso libro definisce il playtest come ``il test sistematico di gameplay,
+sistemi, bilanciamento e interfaccia'' per trovarne errori e incoerenze. Schell,
+dal canto suo, dedica un capitolo intero all'iterazione e la riassume in una
+regola che dichiara senza eccezioni, la \emph{Rule of the Loop}: più volte si
+testa e si migliora un design, migliore sarà il gioco. Sul feedback, poi, Schell
+offre un aiuto pratico in linea con il consiglio del docente: per il dopo-sessione
+suggerisce domande che fanno emergere \emph{che cosa} hanno provato, come ``qual è stato il
+momento più frustrante?'', ``qual è stato il momento preferito?'' e ``che cosa
+stavi facendo?''. E avverte che i playtester tendono a non voler ferire i
+sentimenti di chi ha progettato, motivo in più per non prendere alla lettera i
+loro giudizi.
+
+% ---------------------------------------------------------------------
+\section{MDA e DPE, di nuovo}
+\label{a3:sec:mda}
+
+``E adesso parliamo un attimo di framework principali''. Sono quattro; due si
+vedranno in maniera approfondita, mentre MDA e DPE, già visti nella lezione
+introduttiva, qui ricevono ``un po' più di spazio''.
+
+\subsection{L'MDA: su che cosa abbiamo controllo?}
+
+``Qualcuno si ricorda dell'MDA?'' Il docente fa per chiamare \textbf{Tancredi}
+(``io stavo aspettando voi, in realtà''), e uno studente ricostruisce: le
+\textbf{meccaniche} sono come funziona il gioco; le \textbf{dinamiche} come si
+attuano nella realtà, nel giocare il gioco; l'\textbf{estetica} è l'esperienza
+che fa il giocatore. ``Esatto''.
+
+Seconda domanda: su quale di questi aspetti ha controllo il game designer?
+\begin{itemize}
+  \item \textbf{Sulle meccaniche}, sì: ``non siamo telepati, non siamo maestri di
+        ipnosi''.
+  \item Un po' meno sulle dinamiche, che ``in realtà sono semplicemente la
+        conseguenza delle nostre azioni di game design'': sono l'applicazione in
+        tempo reale delle meccaniche da parte di una persona, e possono emergere
+        cose che non si erano previste.
+  \item Se si è fatto bene il lavoro, si punta a una specifica
+        \textbf{estetica}, e per arrivarci si modificano le meccaniche.
+\end{itemize}
+In sintesi, \textbf{si ha potere sulle meccaniche}, e \textbf{non si possono
+imporre dinamiche}. Non si può dire a qualcuno ``ehi tu, devi provare fretta'':
+gliela si fa provare, ``mettendo magari un timer, una clessidra'', tornando al
+tempo reale che magari nei prodotti non entra, ``ma entra in questi esempi''
+(figura~\ref{a3:fig:mda-adrenalina}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    blocco/.style={draw, thick, rounded corners=3pt, fill=gray!12,
+                   text width=3.0cm, minimum height=1.6cm, align=center},
+    freccia/.style={-{Stealth[length=2.5mm]}, thick}
+  ]
+  \node[blocco] (a) at (0,0) {\textbf{Estetica}\\ \footnotesize ``voglio un
+    gioco adrenalinico''};
+  \node[blocco] (d) at (5.4,0) {\textbf{Dinamica}\\ \footnotesize ``voglio
+    metterti fretta''};
+  \node[blocco] (m) at (10.8,0) {\textbf{Meccanica}\\ \footnotesize una
+    clessidra, un timer};
+  \draw[freccia] (a) -- node[above, font=\footnotesize]{il designer}
+    node[below, font=\footnotesize]{ragiona} (d);
+  \draw[freccia] (d) -- node[above, font=\footnotesize]{e costruisce} (m);
+  \draw[freccia, gray, dashed] (m.south) to[bend left=22]
+    node[below, font=\footnotesize\itshape, text=black, align=center]
+    {chi gioca incontra le regole e, se il design funziona, prova fretta;\\
+     ma può non capirlo leggendo il regolamento}
+    (a.south);
+\end{tikzpicture}
+\caption{L'esempio del docente letto nelle due direzioni dell'MDA: il designer
+parte dall'estetica e arriva alla meccanica, l'unica leva su cui ha davvero
+controllo; chi gioca fa il percorso inverso.}
+\label{a3:fig:mda-adrenalina}
+\end{figure}
+
+\paragraph{Il gap tra estetica promessa ed estetica arrivata.} Chi gioca non è
+detto che, leggendo un regolamento, capisca che cosa proverà. Anzi: ``vi è
+successo sicuramente'' di leggere un regolamento e non avere la certezza del
+tipo di esperienza che aspettava; o di leggere un gioco, dire ``sembra bello'',
+giocarlo e trovarlo pessimo. Perché? Perché c'è un \textbf{gap tra l'estetica
+promessa e l'estetica che poi arriva}.
+
+\paragraph{Il costruttivismo personale.} Il docente richiama un concetto già
+menzionato: il \textbf{costruttivismo personale}. Ogni persona ha una propria
+vita, con esperienze necessariamente diverse da quelle di ogni altra; quello che
+arriva a una persona in un certo modo non arriva uguale a un'altra. Lo stesso
+gioco può essere pessimo per una persona e il preferito di un'altra.
+
+\subsection{Progettato bene, giocato volentieri}
+
+Per questo, ricorda il docente, nella prima lezione si era separato il
+\emph{game} dal \emph{play}, il gioco dal giocare. Bisogna \textbf{allenarsi} a
+farlo, e non è facile: è facile pensare a giochi progettati bene che piace
+giocare, e a giochi progettati male che non piace giocare. Ma sono i due casi
+intermedi, ``quelli più bizzarri'', che bisogna imparare a riconoscere
+(figura~\ref{a3:fig:gameplay}):
+\begin{itemize}
+  \item giochi \textbf{progettati bene che non piace giocare};
+  \item giochi \textbf{progettati male che piace giocare}.
+\end{itemize}
+Danno informazioni su che cosa piace a sé come persone, e danno gli strumenti
+per fare game design migliore: capire che il buon game design \textbf{non è
+necessariamente quello che porta a giochi che piacciono a sé}. Lavorando nel
+settore, potrebbe essere chiesto di creare giochi che non piacciono, ma che
+hanno senso per un publisher. È come uno scrittore che scrive fantasy e a cui
+l'editor chiede un \emph{romance fantasy}, quando a lui la parte romance non
+piace per niente.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    cella/.style={draw, thick, minimum width=4.4cm, minimum height=2.4cm,
+                  align=center, text width=4.0cm},
+  ]
+  \node[cella, fill=gray!8]  (a) at (0,0)    {progettato bene,\\ mi piace giocarlo\\
+    \footnotesize\itshape facile da riconoscere};
+  \node[cella, fill=gray!22] (b) at (4.4,0)  {progettato bene,\\ \textbf{non} mi
+    piace giocarlo\\ \footnotesize\itshape da imparare a riconoscere};
+  \node[cella, fill=gray!22] (c) at (0,-2.4) {progettato male,\\ mi piace
+    giocarlo\\ \footnotesize\itshape da imparare a riconoscere};
+  \node[cella, fill=gray!8]  (d) at (4.4,-2.4) {progettato male,\\ non mi piace
+    giocarlo\\ \footnotesize\itshape facile da riconoscere};
+  \node[font=\footnotesize\bfseries] at (0,1.5) {mi piace (\emph{play})};
+  \node[font=\footnotesize\bfseries] at (4.4,1.5) {non mi piace};
+  \node[font=\footnotesize\bfseries, rotate=90] at (-2.55,0) {design buono};
+  \node[font=\footnotesize\bfseries, rotate=90] at (-2.55,-2.4) {design debole};
+\end{tikzpicture}
+\caption{Separare il gioco dal giocare: i due casi ``bizzarri'' in grigio scuro
+sono quelli che insegnano di più, sia su sé stessi come giocatori sia sul game
+design.}
+\label{a3:fig:gameplay}
+\end{figure}
+
+\subsection{Il DPE}
+
+L'MDA è stato poi \textbf{iterato} nel \textbf{DPE}, \emph{Design, Play,
+Experience}, il cui paper è citato in cima alla slide\footnote{È il paper di
+Brian Winn, \emph{The Design, Play, and Experience Framework}, pubblicato alla fine degli anni Duemila nello \emph{Handbook of Research on Effective Electronic Gaming in
+Education}. La trascrizione riporta il titolo come ``Design Play Experience di
+PA Framework by Win''.}. Nasce da un approccio \textbf{educativo e formativo}:
+è un'iterazione che punta a parlare dei giochi nell'uso didattico. Ma, secondo
+il docente, nel farlo riesce a semplificare e a ``distillare'' il cuore
+interessante dell'MDA, con tre nomi ``più accurati'':
+\begin{description}
+  \item[Design] la parte in cui chi progetta crea le meccaniche;
+  \item[Play] chi gioca, che applica e ``esperisce'' le dinamiche;
+  \item[Experience] che cosa rimane, a livello esperienziale, a chi ha giocato.
+\end{description}
+
+Il DPE dispone queste tre parti su diversi \textbf{livelli} (\emph{layer})
+tematici. Nel livello del \emph{gameplay}, il design contiene le meccaniche, il
+play le dinamiche, l'experience la parte affettiva ed esperienziale. Nel livello
+dell'\textbf{apprendimento}, se si parla di gioco formativo, il design contiene
+il \textbf{contenuto pedagogico} (che cosa il gioco deve affrontare e far
+passare), il play il momento in cui quel contenuto viene insegnato, e
+l'experience, se il gioco è andato bene, è il fatto che le persone
+\textbf{imparano} quello che il gioco voleva far loro imparare.
+
+È un paper ``un po' più tecnico'' dell'MDA, tagliato sull'ambito formativo, ma
+``non così complesso da risultare ostico'' a chi si avvicina al tema: il docente
+lo consiglia molto. Con una precisazione che vale per tutto: ``leggerlo non vuol
+dire prendere tutto per vero''. Su MDA e DPE si è dibattuto moltissimo: ``non
+prendete per vero niente, nemmeno quello che vi sto dicendo io''. I due paper
+sono abbastanza noti, soprattutto l'MDA; il DPE spesso è un po' ignorato da chi
+lavora nel videogioco perché legato all'ambito didattico, ma secondo il docente
+resta molto interessante, ``oltre che una semplificazione e un'iterazione
+dell'MDA in maniera più digeribile''.
+
+Una studentessa chiede di rivedere il titolo del paper. Le slide, come al solito,
+saranno nel Drive dopo la lezione: ``non correte a segnarvi su un post-it il
+paper''. ``Non vogliamo nascondervi le fonti''; e per qualsiasi dubbio si può
+scrivere una mail al docente. Tiziana segnala che sono entrati altri
+partecipanti: in quel momento ci sono \textbf{Lorenzo}, \textbf{Giordano},
+\textbf{Nicola}, \textbf{Tancredi} e \textbf{Tiziana}.
+
+\paragraph{Approfondimento: i livelli del DPE.} Nel paper di Winn i livelli
+sono più di due. Oltre al \emph{gameplay} e all'apprendimento
+(\emph{learning}), il framework prevede un livello di \emph{storytelling}, uno
+di \emph{user experience} e, alla base di tutto, la \emph{technology}, che
+abilita ma non determina gli altri. Ogni livello ha la propria terna design,
+play, experience: per esempio, nello storytelling il designer scrive la storia
+``del designer'', il play produce la storia ``del giocatore'' (quella che
+emerge dalle sue scelte), e l'experience è il coinvolgimento che ne deriva. È
+un'idea vicina a quanto il docente sta per dire sul coinvolgimento narrativo, e
+alla distinzione tra regole ed esperienza da cui la lezione è partita.
+
+% ---------------------------------------------------------------------
+\section{Giordano si presenta}
+\label{a3:sec:giordano}
+
+``MDA, DPE, e adesso arriviamo alla parte importante''. Il docente annuncia il
+primo framework grosso, il \textbf{Player Involvement Model}, con una promessa:
+``se faccio il mio lavoro in maniera corretta, alla fine di questa lezione vi
+sarà immediatamente chiaro perché non dovete usare \emph{immersione} come termine
+nel corso. E se ho fatto il mio lavoro ancora meglio, non lo userete mai più
+nella vita. Ma questo è un obiettivo più ambizioso''.
+
+Arriva \textbf{Gianmarco}, in ritardo: il lunedì ha un impegno di lavoro fino
+alle 17:30. ``Non ti preoccupare''. Il docente ne approfitta per una
+\textbf{semi-pausa} prima di tuffarsi nel dettaglio, e chiede finalmente a
+Giordano di presentarsi (``mi stavo dimenticando'') con le solite domande, che
+scrive anche in chat: nome, che cosa fa nella vita, perché vuole fare giochi,
+che cosa lo ha portato qui, che esperienza ha già.
+
+\paragraph{La presentazione.} Giordano gioca a \textbf{Magic: The Gathering}
+``dall'alba dei tempi''. Dopo il COVID si è spostato di più su \textbf{giochi da
+tavolo} e \textbf{giochi di ruolo}, soprattutto negli ultimi due anni, anche per
+lavoro: è quasi il suo \textbf{secondo lavoro}. Lavora come
+\textbf{facilitatore e dimostratore} per un editore\footnote{La trascrizione dice
+``per la Genos'' e, poco dopo, ``Ministro Ghienos'': si tratta con ogni
+probabilità dell'editore italiano Ghenos Games.}, e collabora con
+un'\textbf{associazione} che fa il giro delle \textbf{biblioteche della Brianza}
+organizzando serate di giochi da tavolo e di ruolo, dove gli capita di fare da
+master o di aiutare nella promozione dei giochi.
+
+Ha scelto il corso perché è \textbf{focalizzato solo sul gioco analogico}, senza
+la parte di videogioco e di programmazione, e quindi più compatibile con un
+lavoro a tempo pieno. Lo fa per due ragioni: acquisire una \textbf{competenza di
+base}, ``a livello analitico'', per coltivare meglio la sua passione; e riuscire
+a fare qualcosa, ``non necessariamente da pubblicare'', da proporre negli eventi
+dell'associazione. ``Figata'', commenta il docente, che gli chiede se sarà a
+\textbf{Play}\footnote{Con ogni probabilità Play -- Festival del Gioco di
+Modena, la principale fiera italiana del gioco da tavolo.} come dimostratore.
+Quest'anno no, perché gli erano saltati gli appoggi per dormire. L'anno prima,
+invece, era saltato un altro ragazzo, e lui si è ``beccato'' \emph{Rival
+Cities}: circa \textbf{24 ore} di dimostrazioni dello stesso gioco in due
+giorni. ``Chiaro, chiaro, chiaro''.
+
+% ---------------------------------------------------------------------
+\section{Il Player Involvement Model}
+\label{a3:sec:pim}
+
+``Ora che Giordano si è presentato'' ci si butta nel primo framework,
+``tuffandoci con cautela ma anche con determinazione''. Il \textbf{Player
+Involvement Model} è uno dei due framework che il docente chiederà di
+\textbf{sapere}: ``non nel senso che vi interrogo'', ma nel senso che, dal suo
+punto di vista (``non ho la verità in tasca, tutto quello che dico è il mio punto
+di vista''), è uno strumento \textbf{pragmatico} e utile in due direzioni:
+\begin{itemize}
+  \item per capire che cosa fa un gioco \textbf{già pubblicato};
+  \item per mettere le basi del \textbf{proprio} gioco.
+\end{itemize}
+
+\subsection{Il libro di Calleja}
+
+Il framework viene da un libro di \textbf{Gordon Calleja}, \emph{In-Game: From
+Immersion to Incorporation}, pubblicato dalla MIT Press\footnote{La
+trascrizione dice ``Gordon Callea'', ``Kaleia'' e ``Calleia'', e chiama
+l'editore ``Meatpress''. Il libro è del 2011; Calleja è un game designer e
+studioso maltese. Il docente lo chiama sia \emph{Player Involvement Model} sia
+\emph{Player Involvement Framework}.}. Secondo il docente se ne trova il PDF
+gratuito; chi non lo trova può scrivergli e glielo manda. Ma non sarà richiesto
+leggerlo: ``se ho fatto le mie slide correttamente'', è già condensato lì tutto
+quello che serve.
+
+La tesi di partenza: per Calleja \textbf{``immersione'' è una parola che ormai
+non vuol dire niente}, ``per mille ragioni che non sto qua a dirvi''. Da
+designer è più utile chiedersi \textbf{che cosa intende la gente} quando parla di
+immersione: capendolo, diventa più facile progettarla. ``Immersione'' resta una
+parola vietata: la si usa in queste slide, per contesto, ``ma poi non la voglio
+più sentire nominare''.
+
+\subsection{Che cos'è un gioco immersivo?}
+
+``Se io vi dico: voglio un gioco più immersivo, che cosa vuol dire?'' Le
+risposte degli studenti:
+\begin{itemize}
+  \item un'esperienza \textbf{più coinvolgente}, che non permette ai giocatori di
+        distrarsi;
+  \item un gioco che dà la sensazione di vivere un'esperienza \textbf{il più
+        vicina possibile alla realtà}; il docente nota subito che è soggettivo,
+        perché dipende da persona a persona;
+  \item \textbf{Lorenzo}, appena entrato (il docente gli riassume dove si è
+        arrivati), propone: un gioco in cui la \textbf{sospensione
+        dell'incredulità} funziona bene.
+\end{itemize}
+
+\paragraph{Le provocazioni.} Il docente risponde con una serie di domande
+``provocatorie''.
+\begin{description}
+  \item[Gli scacchi sono un gioco immersivo?] ``Dal punto di vista cognitivo,
+        sì'', risponde qualcuno. Ma gli scacchi non chiedono sospensione
+        dell'incredulità, né di fare un'esperienza simile alla realtà. Uno
+        studente osserva che bisogna capire che cosa si intende, perché negli
+        scacchi si è concentrati, non ci si immedesima (``oh, sono il cavaliere,
+        il pedone'').
+  \item[Il \emph{flow}.] Qui il docente introduce un termine che non ha messo
+        nelle slide: il \textbf{flow}, o \textbf{flusso}. Non è solo un termine
+        di game design ma, più in generale, di psicologia comportamentale: è
+        la zona mentale in cui si trova una persona quando fa un'attività
+        \textbf{né noiosa né troppo sfidante}, ``tra il \emph{questa cosa mi chiede
+        impegno} e il \emph{non sono frustrato da questo impegno}''. In quella zona
+        si sta molto bene, si è molto concentrati e coinvolti anche
+        emotivamente. Gli scacchi possono mandare in flow, come molti altri
+        giochi, e come lo \textbf{sport}; ma lo sport non chiede sospensione
+        dell'incredulità.
+  \item[Otto ore di \emph{Civilization}.] Una persona che gioca otto ore di fila a
+        \emph{Civilization IV} (``qualcuno di voi l'ha fatto, sono sicuro, non
+        negatelo''): uno studente confessa quattordici ore consecutive con un
+        amico (``vabbè, ma quattordici ore sono dieci minuti nel tempo del
+        giocatore''). Per lui rientra nell'immersione: si gioca al punto di
+        dimenticarsi di mangiare.
+  \item[I tornei di picchiaduro.] Chi gioca un torneo di \emph{Tekken} o di
+        \emph{Street Fighter} è immerso?
+  \item[\emph{Dance Dance Revolution}.] E chi balla su \emph{Dance Dance
+        Revolution}? E chi fa un LARP dentro un castello?
+\end{description}
+La conclusione: è ``molto difficile'' dare una definizione di immersivo che
+racchiuda tutto. ``Immersione'' viene usata come \textbf{parola jolly}, ``una
+roba che ti coinvolge tanto''; ma dal punto di vista del game design
+\textbf{non dà nessuno strumento}.
+
+\paragraph{Approfondimento: il flow nei libri.} Il concetto che il docente
+richiama viene dallo psicologo Mihaly Csikszentmihalyi, e Schell gli dedica una
+lente (la \emph{Lens of Flow}). In \emph{The Art of Game Design} il flow è
+definito come ``una sensazione di concentrazione completa ed energica in
+un'attività, con un alto livello di piacere e di appagamento'', e Schell ne
+elenca le condizioni: \textbf{obiettivi chiari}, \textbf{nessuna distrazione},
+\textbf{feedback diretto} e una \textbf{sfida continua}, che resti nello
+stretto margine tra la noia (troppo facile) e la frustrazione (troppo
+difficile), il cosiddetto \emph{flow channel}. L'esempio classico, ripreso da
+Csikszentmihalyi, è proprio uno sport: un ragazzo che impara il tennis è in
+flow finché la difficoltà è adeguata alle sue capacità, si annoia quando
+migliora senza che la sfida cresca, e si agita quando incontra un avversario
+troppo forte. Anche \emph{21st Century Game Design} dedica una sezione
+all'esperienza del flow, per capire come diversi tipi di giocatori la
+raggiungano in modi diversi. Il fatto che il flow si ottenga con gli scacchi, il
+tennis o un torneo di \emph{Tekken}, senza alcuna finzione da ``credere'', è
+proprio l'argomento del docente: sotto la parola ``immersione'' convivono almeno
+due fenomeni diversi, l'assorbimento nell'attività e la sospensione
+dell'incredulità.
+
+\subsection{Sei forme di coinvolgimento}
+
+Calleja propone di ``buttare fuori'' dal termine immersione qualcosa di
+\textbf{pragmatico e funzionale}: un \textbf{modello del coinvolgimento di chi
+gioca}. Nello specifico crea \textbf{sei categorie}, che \textbf{non sono
+mutualmente esclusive}: in ogni gioco alcune sono più alte e altre più basse, ma
+la presenza di una non esclude le altre
+(figura~\ref{a3:fig:pim} e tabella~\ref{a3:tab:pim}):
+\begin{enumerate}
+  \item il coinvolgimento \textbf{cinestetico};
+  \item il coinvolgimento \textbf{spaziale};
+  \item il coinvolgimento \textbf{condiviso};
+  \item il coinvolgimento \textbf{narrativo};
+  \item il coinvolgimento \textbf{affettivo};
+  \item il coinvolgimento \textbf{ludico}.
+\end{enumerate}
+Gli esempi saranno \textbf{volutamente cross mediali}, con anche dei videogiochi,
+``per farvi vedere fin dove si può arrivare con questi coinvolgimenti'' e per
+far capire che è una cosa trasversale a tutto il game design: ``non è che se
+parliamo di giochi da tavolo, allora alcune di queste cose non ci interessano''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    centro/.style={draw, thick, circle, fill=gray!18, minimum size=2.5cm,
+                   align=center},
+    dim/.style={draw, thick, rounded corners=4pt, fill=gray!8,
+                text width=3.3cm, align=center, inner sep=4pt}
+  ]
+  \node[centro] (c) at (0,0) {\textbf{Coinvolgimento}\\ \footnotesize di chi
+    gioca};
+  \node[dim] (k) at (90:3.1)  {\textbf{Cinestetico}\\ \footnotesize il corpo che
+    si muove, il controller, i dadi};
+  \node[dim] (s) at (30:3.9)  {\textbf{Spaziale}\\ \footnotesize ambiente,
+    level design, world building};
+  \node[dim] (sh) at (-30:3.9) {\textbf{Condiviso}\\ \footnotesize altre
+    persone, personaggi, entità};
+  \node[dim] (n) at (-90:3.1) {\textbf{Narrativo}\\ \footnotesize trama, scene,
+    scelte che pesano};
+  \node[dim] (a) at (210:3.9) {\textbf{Affettivo}\\ \footnotesize le emozioni
+    provate};
+  \node[dim] (l) at (150:3.9) {\textbf{Ludico}\\ \footnotesize meccaniche che
+    attraggono};
+  \foreach \x in {k,s,sh,n,a,l} \draw[thick, dashed] (c) -- (\x);
+  \draw[gray, thick, densely dotted] (k) -- (s) -- (sh) -- (n) -- (a) -- (l) -- (k);
+\end{tikzpicture}
+\caption{Le sei dimensioni del Player Involvement Model di Calleja come le
+presenta il docente. Le linee punteggiate ricordano che le aree ``si parlano'':
+non sono stanze stagne, e una stessa scelta di design ne tocca spesso più
+d'una.}
+\label{a3:fig:pim}
+\end{figure}
+
+\subsection{Il coinvolgimento cinestetico}
+\label{a3:sec:cinestetico}
+
+È il coinvolgimento che si ha quando un gioco \textbf{coinvolge il corpo} e ci si
+\textbf{muove}. \emph{Dance Dance Revolution}, giocare con la Wii, fare sport,
+entrare nella realtà virtuale: tutto coinvolgimento cinestetico. Lo è anche un
+\textbf{boffer LARP}, quando bisogna combattere con spade imbottite e schivare i
+colpi. Ma anche cose molto più piccole:
+\begin{itemize}
+  \item \textbf{usare un controller} è cinestetico;
+  \item \textbf{tirare i dadi} è cinestetico;
+  \item \textbf{pescare carte} è cinestetico: ``se vi piace pescare carte, un
+        gioco che vi fa pescare carte a manetta andrà a titillare il vostro
+        senso di apprezzamento dell'esperienza'';
+  \item prendere una pedina e muoverla è cinestetico, anche a
+        \emph{Monopoly}.
+\end{itemize}
+Nel gioco da tavolo c'è un intero genere che si basa su questo coinvolgimento:
+i \textbf{giochi di destrezza} (\emph{dexterity}), dalle schicchere ai giochi in
+cui bisogna impilare cose. Il \textbf{Jenga}\footnote{La trascrizione dice
+``Genga'' e ``Gengar''.} ha un coinvolgimento cinestetico? Sì.
+
+\paragraph{Cursori, non interruttori.} Da qui un'avvertenza che vale per tutte
+le categorie: \textbf{non sono booleane}, ``non è che o c'è o non c'è''. Vanno
+immaginate come \textbf{cursori} (\emph{slider}): ce ne può essere pochissimo,
+poco, abbastanza, tantissimo. Il Jenga ha un coinvolgimento cinestetico molto
+alto; il tennis più alto ancora; ma non per questo il Jenga ``non è
+coinvolgente'' cinesteticamente rispetto al tennis.
+
+\subsection{Il coinvolgimento spaziale}
+
+È il coinvolgimento che riguarda \textbf{l'ambiente}: il \textbf{level design}, il
+\textbf{world building} del gioco.
+\begin{itemize}
+  \item Un LARP fantasy o medievale in un \textbf{castello}: la slide mostra un
+        castello polacco ``famoso perché ci hanno fatto centinaia di LARP''
+        \footnote{Con ogni probabilità il castello di Czocha, in Polonia, noto
+        per i LARP della serie \emph{College of Wizardry}; la trascrizione dice
+        ``un castello bassa famoso''.}. ``Non sono nel mio salotto di casa, sono
+        in un castello''.
+  \item Il caso studio di \emph{Monitor Celestra}, visto la volta precedente:
+        un LARP di fantascienza dentro un incrociatore, con i neon e le pareti
+        metalliche. ``Un certo effetto te lo fa''.
+  \item I \textbf{videogiochi di guida}: se ci si pensa, sono tutti basati sul
+        \textbf{tracciato}, e il tracciato è una strada, cioè spazio che si
+        attraversa. ``Il design di quello spazio è il 90\% di questi giochi'':
+        curve strette o larghe, rettilinei. E si può estendere all'atmosfera,
+        al clima: piove, c'è nebbia, c'è il sole, è notte, ci sono i neon.
+  \item Un \textbf{dungeon crawler} in un gioco di ruolo cartaceo: la mappa del
+        dungeon, anche se i giocatori non la vedono perché è dietro lo schermo
+        del master, è coinvolgimento spaziale; e lo è quando il master
+        \textbf{descrive} un ambiente, che cosa si sente, i suoni, gli odori, i
+        rumori. ``Non è che se non vediamo lo spazio non c'è: ce lo stiamo
+        immaginando, e quell'immaginarcelo ci coinvolge spazialmente''.
+  \item Gli \textbf{open world}, nei videogiochi ma anche nei giochi da tavolo:
+        generi che si basano su un mondo aperto ed esplorabile, in cui
+        \textbf{lo spazio non è una limitazione ma un punto di \emph{agency}}.
+        Lo spazio dice: puoi andare dove vuoi, puoi fare quello che vuoi.
+\end{itemize}
+
+\subsection{Il coinvolgimento condiviso}
+
+È il coinvolgimento che si ottiene quando si \textbf{condivide l'esperienza con
+altre entità}.
+\begin{itemize}
+  \item Di solito sono \textbf{amici}: un gioco online, come \emph{World of
+        Warcraft} ``all'epoca'', giocato con persone amiche. Si è coinvolti in
+        un gioco che da soli magari non si giocherebbe, o che non prenderebbe
+        così tanto; e invece ``ogni martedì sera ci si trova a giocare''.
+  \item Ma si estende anche ai \textbf{personaggi digitali}: un personaggio che
+        mi sta subito simpatico (``non so chi sia, ma\ldots''); oppure esce
+        l'ennesimo titolo di una serie con lo \textbf{stesso protagonista}, e
+        ``io sono già coinvolto prima ancora di accendere il gioco''.
+  \item Il \textbf{gioco di ruolo da tavolo} punta tantissimo sul coinvolgimento
+        condiviso: è spesso un'esperienza sociale.
+\end{itemize}
+Va tenuto in considerazione soprattutto nei giochi \textbf{multiplayer}, perché lì
+il coinvolgimento condiviso ``ce lo mette in mezzo'' comunque: \textbf{se non lo
+progettate voi, lo progettano le persone al posto vostro}. E non è sempre
+un'idea fantastica, perché vuol dire che parte dell'esperienza è fuori dal
+controllo del designer.
+
+\subsection{Il coinvolgimento narrativo}
+
+È il coinvolgimento che arriva dall'\textbf{esplorazione narrativa}: trame, plot,
+twist, sviluppo di quello che succede in scena, scene, momenti, dialoghi. È
+quello che fa dire: \textbf{voglio sapere come finisce questa storia}.
+\begin{itemize}
+  \item Un gioco investigativo \textbf{in tribunale}\footnote{La trascrizione
+        dice ``E Saturday''. Dalla descrizione (un avvocato in tribunale che
+        deve scagionare il proprio cliente, sei capitoli principali) si tratta
+        con ogni probabilità della serie \emph{Ace Attorney}.}, in cui si è un
+        avvocato che deve capire che cosa è successo e scagionare il proprio
+        cliente: ``ne hanno fatti sei'', ed è un successo gigantesco proprio
+        perché il coinvolgimento narrativo è fortissimo. I casi sono intriganti
+        e si vuole sapere la verità dietro il mistero.
+  \item I giochi di Telltale\footnote{La trascrizione dice ``Dreadnought
+        Helltail'': con ogni probabilità Telltale Games, lo studio noto per le
+        avventure narrative a scelte ramificate.}, ``di fatto l'equivalente di
+        libri game in formato digitale'': scelte ramificate, A o B, che
+        impattano sul mondo di gioco e possono cambiare drasticamente la
+        narrazione. La \emph{agency} ha un peso narrativo: non ``mi vesto di
+        blu, mi vesto di rosso'', ma ``muore Tizio o muore Caio''.
+  \item Il \textbf{gioco di ruolo}: spesso non si gioca solo per entrare nel
+        dungeon, uccidere mostri, prendere il tesoro e uscire (``alcune persone
+        giocano anche per quello''): gran parte del suo fascino è
+        l'\textbf{agency emergente}, la possibilità di impattare la storia con
+        le proprie scelte.
+  \item \emph{Non cedere al sonno}\footnote{È l'edizione italiana di \emph{Don't
+        Rest Your Head} di Fred Hicks, già citato nella lezione sui casi
+        studio; la trascrizione dice ``Non ci Dare al Sonno''.}: la slide mostra
+        un pezzo della scheda personaggio. Alla creazione non si chiedono
+        numeri, non statistiche come destrezza, forza, intelligenza: si chiede
+        \textbf{che cosa ti tiene sveglio}, che cosa ti è successo, come gli
+        altri ti percepiscono \textbf{in superficie} e come sei
+        \textbf{dentro}. Si può giocare tantissimo su questa collisione
+        narrativa. È chiaramente un gioco che, \textbf{già da design}, fa creare
+        personaggi sfumati.
+\end{itemize}
+
+\subsection{Il coinvolgimento affettivo}
+
+``Questo ve lo dico per esperienza: molte persone lo confondono e lo
+sovrappongono con il narrativo, ma non è così''. Il coinvolgimento
+\textbf{affettivo} riguarda \textbf{le emozioni provate}. Spesso le emozioni le
+danno le storie, ``perché siamo esseri umani'', e quindi un gioco che coinvolge
+affettivamente spesso coinvolge anche narrativamente. Ma non necessariamente:
+\textbf{anche gli scacchi possono coinvolgere affettivamente}, ``e non è che lo
+storytelling, il world building degli scacchi sia proprio questo capolavoro''.
+\begin{itemize}
+  \item Ci rientrano molti \textbf{giochi focalizzati}, giochi su tematiche
+        delicate, giochi che puntano a provocare specifiche emozioni molto
+        forti, ``giochi in cui si piange a manetta''.
+  \item Ma il coinvolgimento affettivo può anche essere \textbf{positivo}: un
+        gioco che fa ridere tantissimo, come un \textbf{party game}.
+  \item I giochi \textbf{Jeepform} visti come casi studio (\emph{Fat Man Down}, il
+        gioco della coppia perfetta\footnote{La trascrizione lo chiama ``Lady
+        E8'' e ``le IDE8''; nella lezione precedente era trascritto ``Lady 8''.
+        Il titolo resta non verificabile.}): narrativamente non hanno quasi
+        niente, ``è una riga la premessa del gioco''. Non si giocano per il
+        coinvolgimento narrativo: si giocano perché hanno un coinvolgimento
+        affettivo ``grosso come un tir che ti viene in faccia''.
+\end{itemize}
+
+\paragraph{\emph{Involved}, non \emph{immersed}.} In chat \textbf{Lorenzo} chiede
+se allora ``immersione'' vada intesa più come \emph{to be involved} che come
+\emph{to be immersed}. Il docente precisa: qui si sta parlando di un framework
+specifico, quello di Calleja, e la \textbf{policy del corso} è adottare questo
+framework per parlare di ciò che di solito si chiama immersione. Immersione resta
+una parola vietata perché \textbf{non dà strumenti}: se qualcuno chiede ``un
+gioco più immersivo'', non vuol dire niente; se chiede ``un gioco con più
+coinvolgimento affettivo'' o ``più coinvolgimento narrativo'', si hanno già delle
+\textbf{aree operative}, si sa dove andare a lavorare.
+
+E le aree servono a progettare proprio perché non si escludono: un gioco può
+avere tanto coinvolgimento su più fronti, e magari nessuno su altri che non
+interessano. Il docente mette a confronto due estremi
+(figura~\ref{a3:fig:pim-profili}):
+\begin{itemize}
+  \item a un \textbf{Jeepform} del coinvolgimento spaziale ``non gliene frega
+        niente'': lo si gioca vestiti come si è, nel salotto di casa;
+  \item un \textbf{LARP \emph{blockbuster}} di due giorni in un castello punta
+        invece tantissimo sul coinvolgimento spaziale.
+\end{itemize}
+``Non c'è giusto o sbagliato'': il framework \textbf{non è qualitativo}. Non
+dice che se c'è tanto di tutto il gioco è bello per forza, e se c'è poco di tutto
+è brutto per forza. Serve a dire \textbf{che cosa interessa e che cosa serve} al
+proprio gioco.
+
+\subsection{Il coinvolgimento ludico}
+
+L'ultimo tipo è il coinvolgimento \textbf{ludico}: quello dato da
+\textbf{meccaniche che piacciono}, che attraggono, che ``a vederle vi fanno dire:
+questo gioco devo provarlo''.
+\begin{itemize}
+  \item Piace tirare i dadi? In un nuovo gioco si tirano un sacco di dadi: ``già
+        magari ci prende bene''. Ma per chi odia tirare i dadi, vedere dei dadi
+        in un gioco funziona già da \textbf{anti-coinvolgimento}.
+  \item Il docente ama gli \textbf{economici azionari ferroviari}: ne vede uno
+        nuovo e ``sono già intrigato, voglio già provarlo''. Altri amano i giochi
+        di ruolo, le escape room.
+  \item Piace costruire un \textbf{mazzo personalizzato} come in \emph{Magic: The
+        Gathering}, \emph{Yu-Gi-Oh!}, \emph{Pokémon}? È un tipo di
+        coinvolgimento che si può progettare, pensando a \textbf{per chi} è il
+        gioco.
+  \item Il \textbf{piazzamento lavoratori} (\emph{worker placement}), genere che
+        ``va molto in Germania, in Europa'': il docente conosce almeno tre
+        persone a cui ``si illuminano gli occhi'' quando gli si propone un
+        piazzamento lavoratori, e altre che invece ``se ne vanno''.
+\end{itemize}
+Il coinvolgimento è soggettivo: \textbf{non esiste un passe-partout che coinvolga
+tutte le persone}. Le aree servono a capire che cosa serve al proprio gioco, che
+cosa metterci, dove andare a lavorare.
+
+\paragraph{Le scelte di design toccano più aree.} Uno studente trova interessante
+la distinzione, perché pensava che il ludico rientrasse nell'affettivo. Il
+docente aggiunge una cosa importante: \textbf{molte scelte di design coprono più
+aree}. Un \textbf{boffer LARP} dark fantasy con le armi di gommapiuma e un
+sistema di combattimento è coinvolgimento cinestetico, perché porta a combattere
+fisicamente; ma il boffer è anche una categoria meccanica, e chi apprezza le
+meccaniche boffer andrà a giocare boffer: quindi è anche coinvolgimento
+\textbf{ludico}. ``Queste non sono sei aree murate con dei muri di acciaio che
+separano in maniera stagna le aree del game design'': si ibridano, si mischiano,
+e una meccanica che si aggiunge può impattarne molte.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.6cm}p{4.4cm}p{6.1cm}@{}}
+\toprule
+\textbf{Coinvolgimento} & \textbf{Che cosa coinvolge} & \textbf{Esempi citati a
+lezione} \\
+\midrule
+Cinestetico & il corpo, il movimento, la manipolazione & \emph{Dance Dance
+Revolution}, Wii, VR, sport, boffer LARP; controller, dadi, pescare carte,
+muovere pedine; giochi di destrezza, Jenga \\
+Spaziale & ambiente, level design, world building, atmosfera & LARP nel castello,
+\emph{Monitor Celestra}, tracciati dei giochi di guida, il dungeon descritto dal
+master, open world \\
+Condiviso & altre persone o entità con cui si condivide l'esperienza & amici
+online (\emph{World of Warcraft}), personaggi ricorrenti di una serie, il GDR da
+tavolo come esperienza sociale \\
+Narrativo & trama, plot, twist, scene, scelte che cambiano la storia & la serie
+in tribunale (\emph{Ace Attorney}), i giochi Telltale, l'agency emergente del
+GDR, la scheda di \emph{Non cedere al sonno} \\
+Affettivo & le emozioni provate, anche positive & giochi focalizzati, party
+game, Jeepform (\emph{Fat Man Down}, la coppia perfetta), persino gli scacchi \\
+Ludico & meccaniche che attraggono (o respingono) & tirare dadi, economici
+ferroviari, deck building, piazzamento lavoratori, boffer, tornei \\
+\bottomrule
+\end{tabular}
+\caption{Le sei forme di coinvolgimento del Player Involvement Model, con gli
+esempi della lezione.}
+\label{a3:tab:pim}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\footnotesize,
+    x=1cm, y=1cm
+  ]
+  % assi e etichette
+  \foreach \nome [count=\i] in {Cinestetico,Spaziale,Condiviso,Narrativo,
+      Affettivo,Ludico} {
+    \node[anchor=east] at (-0.2,-\i*0.62) {\nome};
+    \draw[gray!40] (0,-\i*0.62) -- (4,-\i*0.62);
+    \draw[gray!40] (6,-\i*0.62) -- (10,-\i*0.62);
+  }
+  \node[font=\small\bfseries] at (2,0) {Jeepform (salotto)};
+  \node[font=\small\bfseries] at (8,0) {LARP \emph{blockbuster} (castello)};
+  % Jeepform
+  \foreach \v [count=\i] in {0.8,0.3,2.6,0.7,3.8,1.2} {
+    \fill[gray!60] (0,-\i*0.62-0.18) rectangle (\v,-\i*0.62+0.18);
+  }
+  % blockbuster
+  \foreach \v [count=\i] in {3.2,3.9,3.0,2.6,2.6,2.8} {
+    \fill[gray!60] (6,-\i*0.62-0.18) rectangle (6+\v,-\i*0.62+0.18);
+  }
+  \draw[thin] (0,-0.3) -- (0,-4.0);
+  \draw[thin] (6,-0.3) -- (6,-4.0);
+  \node[gray] at (0.2,-4.2) {poco};
+  \node[gray] at (3.8,-4.2) {tanto};
+  \node[gray] at (6.2,-4.2) {poco};
+  \node[gray] at (9.8,-4.2) {tanto};
+\end{tikzpicture}
+\caption{Due profili di coinvolgimento, a titolo puramente illustrativo. Il
+docente cita solo il contrasto sullo spaziale (nullo nel Jeepform, altissimo
+nel LARP in castello) e l'affettivo ``grosso come un tir'' del Jeepform; gli
+altri valori sono ipotesi plausibili, utili a ricordare che il modello descrive
+un profilo, non un punteggio.}
+\label{a3:fig:pim-profili}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Le domande sul coinvolgimento}
+\label{a3:sec:pim-domande}
+
+\paragraph{E la competizione?} Una domanda: un coinvolgimento legato alla
+\textbf{competizione} rientra nel modello? Il docente rilancia: che cos'è che
+attrae della competizione? Se è il senso, ``più lato sportivo'', di
+\textbf{superare un altro essere umano}, o un'altra squadra di esseri umani,
+allora si è nel coinvolgimento \textbf{condiviso}: sapere che dall'altra parte
+c'è un altro essere umano da battere. Ma la competizione può anche essere
+\textbf{meccanica}: molte persone vanno a un \textbf{torneo} con un approccio da
+\emph{min-maxer}, perché quel gioco ``meccanicamente mi attrae'', e allora è
+coinvolgimento \textbf{ludico}. Le due cose non sono sbagliate: si torna sempre a
+\textbf{per chi è il gioco}. Un gioco può essere competitivo senza essere da
+torneo, senza essere per chi fa min-maxing, senza essere per chi vuole muoversi
+fisicamente. ``Non esiste una combinazione giusta di queste aree'': sono uno
+strumento ``sulla carta'' per dire su che cosa il gioco spinge e su che cosa non
+spinge, o non interessa.
+
+\paragraph{Non fate \emph{Magic} 2.0.} Anche perché, ``purtroppo'', spingere su
+tutto costa tantissimo in termini di budget, risorse, tempo, playtest. Il docente
+ribadisce: \textbf{non fate giochi giganteschi in questo corso}, ``lo dico per
+voi, perché se no poi non li portate a compimento''. ``Non fate \emph{Magic: The
+Gathering} 2.0''. Si può fare un gioco di carte, ce ne sono tantissimi anche
+compatti. \emph{Magic} è stato citato da più persone, anche nelle presentazioni
+(``Giordano, tu sicuramente''); ma esistono giochi di carte compatti, creati
+anche da persone che hanno lavorato a \emph{Magic}, come
+\emph{Compile}\footnote{La trascrizione cita ``Redlands o Compile''. Il primo
+titolo non è ricostruibile con certezza; il docente li presenta come giochi di
+carte competitivi, compatti, con pochissime carte in una scatola piccola.}, che
+hanno le stesse dinamiche interpersonali di competizione di \emph{Magic} con un
+numero di carte ridottissimo, in una scatola molto compatta: ``più nell'ottica di
+cose che potete fare all'interno di questo corso''.
+
+\paragraph{Il \emph{checkpoint} prima della pausa.} Prima della pausa il docente
+si ferma: ``da quando facciamo la pausa, io darò per scontato che voi avete capito
+questo framework''. ``Non esistono domande stupide'', e una domanda che sembra
+stupida può essere importantissima anche per gli altri. Rimette la slide con le
+tipologie di coinvolgimento e scrive in chat il nome del libro di Calleja (il
+nome, non il link, visto il problema dei link).
+
+\paragraph{Perché il coinvolgimento al centro?} Una studentessa chiede: se il
+coinvolgimento è ovviamente qualcosa da perseguire, perché il modello lo mette al
+centro? Qual è il fine ultimo? Il docente risponde che il modello nasce dalla
+necessità di \textbf{smettere di usare ``immersione''}; ma l'immersione non
+sarebbe una parola così usata e pervasiva se non fosse \textbf{qualcosa che chi
+gioca cerca}. Tutti cercano e apprezzano l'immersione, pur avendone definizioni
+diverse: ``adesso qui siete in sette, e avete sette definizioni di immersione
+diverse'', magari sovrapponibili per alcuni giochi. Ma gli studenti, da qui,
+sono \textbf{game designer}, non solo persone che giocano, e serve loro sapere
+\textbf{su che cosa stanno lavorando}: avere strumenti pratici per
+\textbf{confrontare il proprio lavoro con le intenzioni}. Lo stesso lavoro di
+decostruzione si farà più avanti con il \textbf{divertimento}. E il docente
+torna alla slide iniziale: \textbf{il gioco è un'esperienza creata da regole};
+si possono creare quelle regole, e dentro quelle regole si può lavorare su
+questi tipi di coinvolgimento.
+
+\paragraph{La distanza tra esperienza intesa ed esperienza giocata.} Il salto da
+un'idea a un regolamento scritto, senza perdere cose per strada, ``è molto
+difficile''. È un tema a cui il docente tiene moltissimo: la sua \textbf{tesi di
+master} era proprio sul \textbf{gap tra le intenzioni di progettazione} di un
+game designer e le persone che interpretano il regolamento per poi vivere
+l'esperienza, misurando \textbf{quanta distanza c'è tra esperienza intesa ed
+esperienza giocata}. \textbf{Lorenzo} scrive in chat che un designer può
+pianificare un prodotto per coinvolgere l'utente su certi aspetti, ma poi è
+quest'ultimo a decidere che cosa lo coinvolge davvero. ``È esattamente quello
+che vi ho appena detto'': la parte difficile del lavoro, e quella che, se fatta
+bene, fa fare passi avanti, è \textbf{distillare in un regolamento non ambiguo}
+procedure, meccaniche, ``un ecosistema di regole'' che porti a far giocare
+un'esperienza specifica a chi gioca, \textbf{senza che vi conosca e senza che vi
+possa chiedere cose}.
+
+È facile se il gioco lo si organizza di persona: lo si spiega, si corregge chi
+sbaglia. Ma è un caso rarissimo. Nella maggior parte dei giochi pubblicati, il
+designer non lo si incontrerà mai, e a volte non si sa nemmeno chi sia: ``che ne
+sapete del suo costruttivismo personale?'' Che cosa c'è nel gioco perché quella
+persona ci crede fermamente, ed è parte del suo paradigma, e che cosa c'è
+\textbf{per sbaglio}? ``Lo farete anche voi'', non per sfiducia, ma perché è
+inevitabile: non si può essere costantemente attenti a tutto, e a volte si
+prendono decisioni di design senza pensarci, \textbf{per vestigialità, per
+abitudine}. In quel momento si sta riproponendo un paradigma: si torna a
+\textbf{fare tradizione}, non design.
+
+\paragraph{Le domande di Tiziana.} Tiziana fa due domande. La prima: il playtest
+si fa quando si ha il regolamento? Il docente la ferma subito, ``non perché non
+mi interessa la domanda'': ci sarà una lezione apposta, e aprire adesso ``il vaso
+di Pandora di come si struttura un playtest'' impedirebbe di arrivare al secondo
+framework. Ed è una fase delicatissima: se la progettazione e il prototipo sono
+``la vostra mente e il vostro gioco'', il playtest è il momento in cui ``questa
+roba va a schiantarsi con persone esterne che non l'hanno mai giocata''.
+
+La seconda: le categorie del modello le sono sembrate molto puntuali. Si era
+chiesta perché non ci fosse un ``coinvolgimento sociale'', e si è risposta da
+sola: ``sociale'' vuol dire una marea di cose, ``condiviso'' è più preciso.
+Esatto, e non solo: \textbf{condiviso} permette di includere entità
+\textbf{non necessariamente umane}. Il personaggio a cui si è affezionati in altri
+giochi della serie coinvolge non per la meccanica né per la storia: in
+\emph{Mario Kart}, ``che non è un gioco con altissima narrazione'', rivedere un
+personaggio già incontrato può far dire ``scelgo questo perché mi sta
+simpatico''. Di nuovo: le aree non sono mutualmente esclusive, ``si parlano''.
+
+\paragraph{La pausa.} ``Facciamo pausa''. Il docente la fissa fino alle ``e
+trenta'', cioè fino alle \textbf{18:30}\footnote{La trascrizione dice ``sono le
+21, facciamo pausa fino alle 30'' e subito dopo ``ci si ritrova qui alle 18.30'':
+la pausa comincia quindi alle 18:21 circa. Durante la pausa la trascrizione
+registra per decine di righe frasi senza senso ripetute in loop.}.
+
+\paragraph{Approfondimento: oltre le sei dimensioni.} La lezione si ferma alle
+sei dimensioni, ma il titolo del libro di Calleja indica dove l'autore vuole
+arrivare. Nel suo modello ogni dimensione si può osservare su due scale di
+tempo: il coinvolgimento \textbf{micro}, momento per momento, mentre si gioca, e
+quello \textbf{macro}, che riguarda il rapporto con il gioco nel tempo, anche
+quando non si sta giocando (la voglia di tornarci, il pensarci, il parlarne). La
+parola \emph{incorporation}, che Calleja propone al posto di
+\emph{immersion}, indica il momento in cui le diverse dimensioni del
+coinvolgimento si fondono e il giocatore ``assimila'' il mondo di gioco nella
+propria coscienza come uno spazio abitabile, con il proprio avatar come punto
+di presenza. Il passaggio è lo stesso che il docente chiede agli studenti:
+sostituire una metafora vaga (l'immersione, come in una piscina) con una
+descrizione delle componenti, su cui si può lavorare una per una.
+
+% ---------------------------------------------------------------------
+\section{Il Mixing Desk of Larp}
+\label{a3:sec:mixing}
+
+``Rieccoci qua''. Dopo la pausa (Lorenzo conferma di esserci) si parte con il
+secondo framework grosso, ``non che quello di prima fosse piccolo''.
+
+\subsection{Da dove viene}
+
+Il framework \textbf{nasce all'interno dei movimenti scandinavi} di gioco di
+ruolo, nella scena del \textbf{Nordic LARP}\footnote{Il \emph{Mixing Desk of
+Larp} è stato sviluppato nei primi anni Dieci da designer norvegesi legati alla
+\emph{Larpwriter Summer School}, e poi più volte rielaborato; la storia è
+raccontata nell'articolo di \emph{Analog Game Studies} che il docente consiglia
+alla fine della lezione (sezione~\ref{a3:sec:perche-due}).}. Ma per sua natura
+è uno strumento \textbf{estremamente flessibile}: è stato applicato anche al
+gioco da tavolo e si può applicare ad altre tipologie di giochi. È
+\textbf{modulare}: lo si può modificare, aggiungere o togliere pezzi in base a
+quello che serve per il proprio gioco, ``perché non tutti i moduli, non tutte le
+parti di questo framework vi servono sempre''.
+
+Molti esempi saranno giochi di ruolo dal vivo, ``solo perché è più facile
+spiegare'' alcuni cursori così. Il docente chiede di fare ogni volta il
+\textbf{parallelismo}: questo pezzo del framework è nato sul gioco di ruolo, ma
+come si applica al resto? Per alcuni cursori il salto è facile, per altri più
+complesso; ma ``se tutto va bene, e mi è sembrato bene in passato'', alla fine
+gli studenti dovrebbero avere un'ottima idea di come funziona e, soprattutto, di
+come \textbf{applicarlo in modo pragmatico}.
+
+\subsection{Un doppio uso}
+
+Ancora più del Player Involvement Model, il Mixing Desk ha un \textbf{doppio
+utilizzo}:
+\begin{description}
+  \item[Analisi] si prende un gioco già pubblicato, lo si ``fa passare'' nel
+        framework e si guarda che cosa ne esce.
+  \item[Progettazione] è ``un framework ottimo per crearvi delle
+        \textbf{linee guida}'': voglio un gioco che faccia A, B, C, D, e il
+        framework aiuta a capire che cosa sono A, B, C, D e come si vuole che
+        arrivino.
+\end{description}
+
+\subsection{Il mixer}
+
+Il nome è ``abbastanza autoesplicativo'': la slide mostra quello che sembra un
+\textbf{banco di mixaggio} luci e audio. L'idea è che ogni gioco possa essere
+identificato da una serie di \textbf{cursori} (\emph{slider}, o \emph{fader}),
+le levette che si spingono su e giù in un mixer, e che l'insieme dei cursori
+usati per progettare o analizzare il gioco ne dia una \textbf{visione
+d'insieme}: che cosa fa questo gioco, ``non tanto a livello micro, cioè nelle
+singole regole, ma a livello esperienziale, cioè dall'alto''
+(figura~\ref{a3:fig:mixer}).
+
+L'ultimo cursore della slide è \textbf{``inserisci qui il tuo fader''}
+(\emph{your fader here}): ``modificate questo slider come volete''. Nella sua
+storia il Mixing Desk è stato elaborato, modificato e rimaneggiato più volte,
+anche da settori paralleli come il gioco di ruolo formativo e il gioco da tavolo.
+Il docente mostra ``il primo, quello da cui è nato''; online se ne trovano
+``mille versioni''. Il consiglio non è andarle a cercare, ma \textbf{capire che
+cosa serve al proprio gioco e creare i propri cursori}.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\scriptsize,
+    x=1cm, y=1cm
+  ]
+  \draw[thick, rounded corners=6pt, fill=gray!10] (-0.6,-0.9) rectangle (15.0,5.5);
+  \foreach \alto/\basso/\pos [count=\i] in {
+      verbale/fisica/0.55,
+      trasparenza/segreto/0.25,
+      360°/indip. materiale/0.5,
+      player/designer/0.5,
+      attiva/passiva/0.5,
+      giocabile/plausibile/0.5,
+      storia/azioni/0.6,
+      intrusive/discrete/0.5,
+      {il tuo}/fader/0.5} {
+    \pgfmathsetmacro{\x}{(\i-1)*1.65+0.2}
+    \draw[line width=2.2pt, gray!55] (\x,0.4) -- (\x,4.0);
+    \fill[black] (\x-0.3,{0.4+3.6*(1-\pos)-0.12}) rectangle
+                 (\x+0.3,{0.4+3.6*(1-\pos)+0.12});
+    \node[align=center, text width=1.55cm] at (\x,4.45) {\alto};
+    \node[align=center, text width=1.55cm] at (\x,-0.05) {\basso};
+  }
+  \foreach \nome [count=\i] in {{Comunica-\\ zione}, {Apertura\\ tematica},
+      {Diegesi\\ ambientale}, Personaggi, Gestione, {Universo\\ narrativo},
+      {Rappr.\\ tematica}, Meccaniche, {Your fader\\ here}} {
+    \pgfmathsetmacro{\x}{(\i-1)*1.65+0.2}
+    \node[font=\scriptsize\bfseries, align=center, text width=1.6cm] at
+      (\x,5.05) {\nome};
+  }
+\end{tikzpicture}
+\caption{Il Mixing Desk come banco di mixaggio: otto cursori della versione
+mostrata a lezione più il cursore libero. Le posizioni sono qui tutte centrali
+o quasi, solo per mostrare che ogni cursore può stare a qualsiasi altezza: nessun
+estremo è ``meglio'' dell'altro.}
+\label{a3:fig:mixer}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{I cursori del Mixing Desk}
+\label{a3:sec:cursori}
+
+\subsection{Comunicazione: verbale o fisica}
+
+Si prende un LARP, un gioco in cui si interpreta fisicamente il proprio
+personaggio. \textbf{La comunicazione tra chi gioca è verbale o fisica?} E
+``lo ricordo: questo è uno slider, non è un pulsante on, off, uno, zero''. Ci
+sono vie di mezzo.
+\begin{itemize}
+  \item Un \textbf{boffer LARP} è molto fisico: il combattimento è una parte
+        importante del gioco, e impugnare un'arma in plastazote, colpire,
+        schivare, prendere lo scudo, riattaccare dal fianco è un'interazione
+        molto fisica.
+  \item Il gioco della coppia perfetta, il Jeepform citato prima, è
+        ``estremamente verbale''.
+  \item Nei giochi da tavolo, un \textbf{party game} va di solito più sul
+        verbale. Negli \textbf{scacchi} si parla pochissimo: l'interazione ludica
+        non è di dialogo, è ``io muovo cose'', e muovere cose è un'azione fisica.
+\end{itemize}
+La domanda da farsi: \textbf{il mio gioco è un gioco in cui si parla o un gioco
+in cui si spostano cose?} E le ``cose'' possono essere anche le persone stesse,
+come negli sport o nel gioco dal vivo. ``Spostare cose'' riassume il fatto di
+interagire fisicamente con qualcosa. Ci si può stare in mezzo: un gioco in cui si
+parla e si spostano cose, ma si parla più di quanto si spostino cose, o
+viceversa.
+
+\paragraph{I giochi verbali e i loro limiti.} ``Qualcuno ha un esempio di un gioco
+da tavolo estremamente verbale?'' Uno studente propone \textbf{Dixit}. È
+verbale, ``ma non è così tanto verbale'', perché ha moltissime
+\textbf{limitazioni sulla comunicazione}: se in \emph{Dixit} si potesse parlare
+liberamente di tutto, il gioco crollerebbe. Lo stesso vale per \emph{Secret
+Hitler}, per \emph{Taboo}, per \emph{Codenames} (``nomi in codice''), dove si può
+dire una parola e un numero, non di più. Molti giochi deduttivi o induttivi hanno
+fortissime limitazioni su che cosa si può e non si può dire.
+
+\paragraph{L'obiezione di Gianmarco.} Gianmarco vede una difficoltà: qui verbale e
+fisico sono messi in contrapposizione, ma l'esempio dei giochi verbali con
+limitazioni sembra non stare sullo stesso asse. Il docente spiega che sono
+messi come \textbf{estremi}, come \textbf{direzioni di game design diverse}:
+``immagina che hai cento chili di roba nel tuo game design, e di decidere quanti
+chili voglio che siano fisici e quanti verbali'' (``una metafora che non
+funziona, ma spero che ci siamo capiti lo stesso''). Una studentessa aggiunge
+che \emph{Taboo} non è solo verbale: c'è gestualità, comunicazione non verbale,
+``non giochiamo bendati''. E le limitazioni verbali, chiede Gianmarco, si
+trasformano in dinamiche fisiche? ``Non necessariamente'', ma spesso si
+trasformano in \textbf{altre cose da fare al tavolo}: le carte illustrate di
+\emph{Dixit} sono un elemento fisico usato per comunicare in modo non verbale;
+la griglia di parole di \emph{Codenames} è un aspetto fisico di interazione,
+anche se ha parole scritte sopra. Il Mixing Desk non va guardato come ``lo stato
+oggettivo del gioco dall'alto'', ma come una \textbf{bilancia}: se si spinge da
+un lato, l'altro tende a scendere.
+
+\paragraph{Gli estremi.} Ci possono essere anche giochi all'estremo totale.
+\emph{Stranger}, il LARP della designer danese visto nei casi studio, quello
+della nazione blu e della nazione verde, è un gioco in cui \textbf{è vietato
+parlare} e fare suoni: è tutto fisico. All'opposto, ci sono giochi con
+\emph{roleplay} in cui la componentistica è praticamente inesistente; e anche
+\emph{Dungeons \& Dragons}, se si giocano i combattimenti senza griglia, diventa
+molto verbale e molto poco fisico. Ma ``non siamo esperimenti in astratto'': è
+quasi impossibile eliminare del tutto uno dei due estremi.
+
+\subsection{Apertura tematica: trasparenza o segreto}
+\label{a3:sec:apertura}
+
+``Cercherò di spiegarmi al meglio, perché è importante ma apre dei vasi di
+Pandora''. Supponiamo che il gioco abbia un \textbf{tema}. Quel tema arriva a chi
+gioca \textbf{in modo trasparente}, o è un \textbf{tema segreto} che si scopre
+durante o alla fine del gioco?
+\begin{description}
+  \item[Trasparenza.] \emph{Twilight Struggle}, della GMT: Stati Uniti contro
+        URSS, la \textbf{Guerra Fredda}. Due persone, una gioca gli Stati Uniti,
+        l'altra l'URSS; non ci si combatte direttamente con i carri armati, ma si
+        cerca di vincere ottenendo influenza e supporto di varie nazioni. Il tema
+        è trasparente: entrambi i giocatori sanno che cosa stanno giocando.
+  \item[Segreto.] Un gioco in cui si trasportano cubetti e risorse in treno da un
+        posto all'altro, e vince chi ne trasporta di più. Alla fine si scopre che
+        si stavano trasportando \textbf{ebrei nei campi di concentramento}. ``Questo
+        è un caso studio esistente'': è \emph{Train} di \textbf{Brenda
+        Romero}\footnote{La trascrizione dice ``Trains di Prenderò Mero''.
+        \emph{Train} (2009) fa parte della serie di giochi da tavolo \emph{The
+        Mechanic is the Message} di Brenda Romero, all'epoca Brathwaite,
+        coautrice di \emph{Challenges for Game Designers}.}, ``storicamente
+        riconosciuto come gioco dal tema offuscato'' che viene rivelato durante
+        il gioco.
+\end{description}
+Anche qui ci sono vie di mezzo: molti LARP ``vecchia scuola'' hanno \textbf{trame
+segrete}, plot nascosti noti solo ad alcuni personaggi, che si rivelano nel
+\emph{debriefing} (``sapevate che in realtà Tizio faceva anche questo?'').
+
+\paragraph{La preferenza del docente.} È una cosa soggettiva, e il docente lo
+dice come tale: preferisce i giochi \textbf{trasparenti}. Trova ``molto pigro''
+affidarsi ai segreti, specialmente quando si tratta di temi delicati. Ma giochi
+così esistono, e il cursore esiste.
+
+\paragraph{Si gioca una volta sola?} Tiziana chiede se un gioco così si giochi
+una volta e poi rischi lo \emph{spoiler}. ``Non è un problema'': non sono
+esperienze meno significative. Come i \textbf{giochi investigativi}, che si
+basano proprio su un'apertura tematica segreta. Fare un investigativo in cui si
+dice subito chi è l'assassino e come ha ucciso è ``molto difficile'', ma ci sono
+le eccezioni. Il docente cita \textbf{il tenente Colombo}, ``che amo
+particolarmente'' (``vi prego, ditemi che non sono l'unico''): la serie si apriva
+mostrando l'assassino e l'omicidio, e solo dopo arrivava Colombo a indagare. Lo
+spettatore sa già tutto; il protagonista no. L'interesse sta nel conflitto tra
+chi sa e chi non sa, nel capire come Colombo arriverà a ciò che lo spettatore ha
+visto. Allo stesso modo si può avere un investigativo da tavolo in cui si sa già
+com'è morta una persona: ``è una bella sfida''.
+
+\paragraph{Un segnalibro.} Quando si parla di \textbf{giochi formativi o
+didattici}, questo cursore è per il docente ``particolarmente sensibile e
+importante''. E, di nuovo, non tutti i cursori interessano ogni gioco: in un
+astratto alla scacchi o dama, ``che ve ne importa dell'apertura tematica?''.
+
+\paragraph{Approfondimento: \emph{Train} e il tema sotto le meccaniche.}
+\emph{Train} compare anche in \emph{A Theory of Fun for Game Design} di Raph
+Koster, che lo cita come esempio della serie \emph{The Mechanic is the Message}:
+un gioco sulla \textbf{complicità} dei giocatori nel compiere azioni terribili,
+o nel trovare il modo di sovvertire il sistema. Lo stesso libro propone un
+esperimento mentale che illumina il rapporto tra tema e meccaniche: si immagini
+un gioco in cui si lasciano cadere vittime innocenti di ogni forma e misura in
+una camera a gas a forma di pozzo, dove cercano di arrampicarsi le une sulle
+altre; se ci riescono si perde, se le si incastra abbastanza bene quelle in
+fondo muoiono. ``Non voglio giocare questo gioco. E voi?'', chiede Koster. Eppure
+è \emph{Tetris}. La conclusione di Koster è che \textbf{le meccaniche nude non
+determinano il significato} di un gioco: come il cinema non è solo fotografia o
+sceneggiatura, il gioco è l'insieme di meccaniche, regia, grafica. \emph{Train}
+usa esattamente questa distanza tra meccanica e tema: le stesse azioni,
+caricare cubetti su un vagone, cambiano completamente significato nel momento in
+cui il tema viene aperto. Il cursore dell'apertura tematica, in questo caso, è
+la leva principale dell'esperienza.
+
+\subsection{Diegesi ambientale: 360° o indipendenza materiale}
+
+Quello che c'è attorno a chi gioca, l'ambiente in cui si gioca: il coinvolgimento
+spaziale è \textbf{a 360 gradi}, o il gioco ha un'\textbf{indipendenza
+materiale}? Nel gioco di ruolo dal vivo:
+\begin{itemize}
+  \item si gioca un fantasy dentro un castello, a cavallo, ``e abbiamo un vero
+        cavallo'' sotto di noi;
+  \item oppure si gioca il gioco della coppia perfetta nel bagno di casa, ma
+        lo si potrebbe giocare in salotto, o in giardino.
+\end{itemize}
+Il gioco richiede una \textbf{diegesi il più alta possibile} per essere giocato,
+oppure no? E ci sono vie di mezzo: si può giocare nello studio di casa
+\textbf{vestiti da cavalieri}, ``why not?''. Molti \textbf{chamber LARP} italiani
+degli anni '90 e 2000 funzionavano così, e il docente mostra al volo una slide:
+un LARP in costume giocato \textbf{nello scantinato} della casa di qualcuno. Non è
+completamente indipendente dal materiale, perché i costumi erano richiesti, ma
+``non siamo in un castello, è uno scantinato''.
+
+Vale anche per gli altri giochi: un \textbf{dungeon crawler} da tavolo mostra
+l'ambiente nel dettaglio, o ne dà una rappresentazione metaforica, astratta?
+
+\subsection{Creazione dei personaggi: chi gioca o chi progetta}
+
+Ancora pensando al LARP (``sui personaggi abbiamo una lezione apposta'', e
+arriverà presto): i personaggi possono essere scritti \textbf{da chi partecipa}
+o \textbf{da chi progetta il gioco}, e sono due esperienze chiaramente diverse.
+\begin{description}
+  \item[Lato player.] Chi gioca crea il proprio personaggio e decide chi
+        interpretare. È spesso la formula dei \textbf{giochi molto grossi}, i
+        LARP \emph{blockbuster} da 300, 400, 500 persone, o i boffer tedeschi da
+        mille persone: i designer non si mettono a scrivere mille personaggi, ma
+        chiedono di scriverlo e di mandarlo, a volte, per approvazione. Se non ci
+        sono cose particolarmente sbagliate, si gioca chi si vuole.
+  \item[Lato designer.] Il personaggio è creato da zero da chi progetta il
+        gioco. Il vantaggio: si può mettere \textbf{tematicamente} nel
+        personaggio quello che si vuole.
+\end{description}
+Non è così diverso dai videogiochi di ruolo: ci sono i \emph{Final Fantasy},
+soprattutto i più recenti, in cui i designer hanno creato i personaggi e se ne
+segue la storia; e ci sono i giochi di ruolo occidentali, i CRPG, con una fase
+di \emph{character creation} in mano al giocatore, magari con dei paletti messi
+dal designer.
+
+\paragraph{I paletti di \emph{Non cedere al sonno}.} Un esempio di via di mezzo.
+In \emph{Non cedere al sonno} si giocano persone \textbf{insonni} che vedono una
+città che non esiste, piena di orrore e di incubi. Si può fare il personaggio che
+si vuole, ma con due paletti forti, decisi dal designer: il personaggio deve
+essere \textbf{insonne}, e deve avere \textbf{un problema che lo tiene sveglio},
+cioè una motivazione specifica e consapevole della propria insonnia. Non si può
+giocare un insonne che non sa perché non dorme. Uno studente chiede di ripetere
+il titolo: \emph{Non cedere al sonno}, ripubblicato di recente in italiano da un
+editore che la trascrizione chiama ``Grampy Bear''\footnote{Con ogni probabilità
+Grumpy Bear, editore italiano di giochi di ruolo.}.
+
+\subsection{Gestione del gioco: attiva o passiva}
+
+C'è una figura, come un \textbf{master} o una persona di \textbf{facilitazione},
+che fa andare avanti il gioco, o un gruppo può giocare e finire il gioco
+\textbf{senza nessuno che facilita}? Riguarda giochi pervasivi, giochi di ruolo
+dal vivo e da tavolo.
+\begin{description}
+  \item[Gestione attiva.] Nei giochi di ruolo grossi, a campagna, o nei
+        \emph{blockbuster} da centinaia di persone, ci sono i cosiddetti
+        \textbf{PNG} (\emph{NPC}), spesso membri dell'organizzazione, che sono lì
+        per \textbf{innescare eventi specifici} e far andare avanti il gioco. C'è
+        una persona del team che spinge attivamente avanti il gioco.
+  \item[Gestione passiva.] Nessuno del team o della facilitazione spinge il
+        gioco: le persone che giocano lo portano avanti in autonomia.
+\end{description}
+
+\paragraph{Uccidere il re.} L'esempio: in un LARP fantasy, a un certo punto
+qualcuno deve uccidere il re, per ragioni di trama, e non si sa se i giocatori
+lo faranno. Allora uno dell'organizzazione si veste da assassino e uccide il re:
+\textbf{gestione attiva}. All'opposto, il gioco chiede ai giocatori di uccidere
+il re, magari con una meccanica apposita che qualcuno deve attivare, e nessuno
+dell'organizzazione interviene: le persone lo fanno in autonomia,
+\textbf{gestione passiva}.
+
+\paragraph{Il parallelo con il gioco da tavolo.} Gianmarco prova: gli
+\textbf{eventi} di \emph{Nemesis} come gestione attiva, e
+\emph{Root}\footnote{La trascrizione dice ``in route'': con ogni probabilità
+\emph{Root}, il gioco asimmetrico di fazioni in cui sono i giocatori a
+scontrarsi.}, ``in cui sono i giocatori a menarsi'', come gestione passiva? Non
+del tutto, risponde il docente: gli eventi di \emph{Nemesis} si mescolano, non se
+ne decide l'ordine. Un esempio migliore di gestione attiva nel gioco da tavolo
+sono i \textbf{giochi a campagna}, come i dungeon crawler con scenari numerati da
+giocare in ordine: il designer ha deciso che si gioca prima questo scenario, poi
+questo, poi quest'altro, e non si gioca il terzo prima ``perché ci va''. Lì la
+gestione è, in parte, di chi ha progettato la campagna.
+
+\paragraph{E nei giochi pervasivi?} Una studentessa chiede se il cursore
+riguardi solo i giochi di ruolo. No:
+\begin{itemize}
+  \item \emph{Lettere anonime per un camminatore}, il caso di Beatrice con
+        l'MP3 in cuffia, è a metà: c'è una forte gestione attiva nella traccia
+        preregistrata da chi organizza, ma le persone camminano con la propria
+        velocità e i propri tempi, ``non puoi obbligare la persona a correre'';
+  \item \emph{Journey to the End of the Night} è a gestione
+        \textbf{passiva}: runner e chaser possono metterci un'ora o cinque ore,
+        e nessuno li disturberà;
+  \item \emph{A cena col nonno} è a metà: la traccia audio dà dei tempi
+        precisi (gestione attiva), ma la conversazione al tavolo non è
+        controllata da nessun PNG, e tutte le persone sono giocatori;
+  \item nel gioco di ruolo da tavolo, il \textbf{master} è il lato attivo della
+        gestione, se il gioco ne ha uno.
+\end{itemize}
+
+\paragraph{La plancia a due facce.} Giordano chiede: e i giochi con una
+\textbf{plancia a due facce}, in cui il regolamento dice di usare per la prima
+partita il lato base e non quello avanzato\footnote{La trascrizione cita come
+esempio un gioco chiamato ``Ivan'', non identificabile.}? È una forma di
+gestione attiva? Il docente non la considera tale: rientra nelle questioni di
+\textbf{onboarding}, accessibilità e approccio al gioco, ``come dire: gioco il
+tutorial e poi, quando ho imparato, gioco la parte completa''. Il gioco non
+\emph{impone} l'ordine: lo consiglia. Se si è già giocato e lo si fa provare a
+un amico, si sceglie la plancia in base all'amico. Avere quella libertà vuol dire
+che la gestione non è attiva; diverso è un Legacy o un gioco a campagna in cui
+non si può giocare l'ottavo scenario prima del primo. Lo stesso vale per alcuni
+giochi di carte collezionabili: in \emph{Magic} il mazzo inteso è da sessanta
+carte, ma in vari eventi si sono usati \textbf{mazzi dimostrativi} preconfezionati
+più piccoli, da quaranta carte, per spiegare il gioco a chi non l'ha mai
+giocato.
+
+\subsection{Universo narrativo: giocabile o plausibile}
+\label{a3:sec:plausibile}
+
+``Questo, vi giuro, è forse il mio slider preferito''. Se c'è un cursore da
+portarsi a casa dal Mixing Desk, ``secondo me questo forse è quello che vi serve
+di più nella vita. Come paradigma''. L'universo narrativo del gioco è
+\textbf{più giocabile o più plausibile}? E uno dei punti del framework è che le
+due cose sono \textbf{in opposizione}: \textbf{più un gioco è giocabile, meno è
+plausibile}. Per esperienza, è difficile da far combaciare nella testa se non ci
+si è mai pensato a fondo.
+
+\paragraph{La provocazione di Gianmarco.} ``Chi non è d'accordo?'' Tutti
+d'accordo. Gianmarco fa una provocazione: forse l'unico gioco veramente giocabile
+e plausibile insieme è ``il gioco della nostra vita: io gioco a essere
+Gianmarco''. ``Però quello non è un gioco, purtroppo''. È una provocazione, ma
+porta alla domanda giusta: plausibile da che punto di vista?
+
+\paragraph{Che cosa vuol dire plausibile.} Su questo cursore da solo esiste un
+talk di Johanna Koljonen, la designer della citazione iniziale, che ``dura un'ora
+e passa''; il docente lo riassume. Un universo narrativo \textbf{plausibile} è un
+universo che \textbf{simula la propria esistenza}: le cose hanno azioni e
+conseguenze simulate \textbf{come se fosse la realtà}. Ma spesso l'approccio
+simulativo va in \textbf{diretta opposizione alla giocabilità}.
+
+\paragraph{La vedetta.} L'esempio ``banalissimo''. Un LARP fantasy medievale,
+magari un 360°, in un castello bellissimo, per tre giorni di fila: si dorme, si
+mangia, si cammina in personaggio, vestiti di tutto punto in armatura. È notte,
+qualcuno deve fare la guardia, e tocca a voi: state sulle mura di vedetta. Se il
+gioco fosse \textbf{pienamente plausibile}, non succederebbe niente:
+statisticamente i castelli non vengono attaccati ogni giorno, e la normale notte
+di vedetta è una notte in cui si sta svegli \textbf{otto ore} a guardare il cielo.
+``Se io metto una persona a giocare questo ruolo per otto ore, questa persona si
+butta giù dalle mura''. La \textbf{giocabilità} è l'approccio più ludico: chi
+vuole giocare la vedetta vuole che la vedetta noti cose, dia l'allarme. Lo stesso
+vale per il cavaliere: ``siete Sir Cavaliere, ecco la vostra spada, ecco il
+vostro scudo'', e in due giorni non c'è un combattimento perché è un periodo di
+pace. Plausibile; ingiocabile.
+
+\paragraph{GURPS.} Si può voler creare un gioco simulativo e plausibile, ``e ce
+ne sono tantissimi''. Nel gioco di ruolo il caso tipico è
+\textbf{GURPS}\footnote{La trascrizione lo chiama ``Gurps'', ``Goobs'' e
+``GuardStore''. \emph{GURPS} (\emph{Generic Universal RolePlaying System}) è
+il sistema di Steve Jackson Games.}: nasce con l'intenzione di essere plausibile,
+e infatti ha ``microregolette per tutto''; chi l'ha giocato sa che al tavolo
+risulta ``estremamente ostile all'essere giocato''. All'opposto, ci sono giochi
+molto giocabili ma flessibili sulla plausibilità del mondo, perché sono più
+interessati ad avere scene e momenti di gioco interessanti che plausibili.
+
+\paragraph{Gli open world.} Uno studente chiede dei giochi digitali: \emph{GTA}
+non riesce ad avere entrambe le cose? Gli \emph{open world} sono un genere che si
+associa alla plausibilità, come la serie \emph{Yakuza} / \emph{Like a Dragon}.
+Ma hanno ``grossissimi compromessi'' di giocabilità: in \emph{GTA} si può essere
+investiti, uccisi, colpiti, e si riparte dall'ospedale come se niente fosse,
+perdendo solo un po' di soldi. ``La morte non è letale'': se fosse plausibile, al
+primo incidente mortale il gioco cancellerebbe il salvataggio. Ci si può buttare
+da un palazzo e, a seconda di come si atterra, non farsi niente, o risvegliarsi
+in ospedale con la spina dorsale intatta. Molto plausibile, ma con aspetti di
+giocabilità che non toglie.
+
+\paragraph{\emph{Desert Bus} e \emph{The Longing}.} Uno studente cita un
+simulatore di guida di un autobus in cui si percorre un'intera strada nel deserto
+in tempo reale, con il bus che tende leggermente a destra e costringe a restare
+ai comandi: è \emph{Desert Bus}\footnote{La trascrizione lo chiama prima
+``simulatore di Road 66'' e ``il bus di raglia'', poi ``desert bus''; lo
+studente dice otto ore, il docente sei. \emph{Desert Bus} era un minigioco della
+raccolta mai pubblicata \emph{Penn \& Teller's Smoke and Mirrors} (1995): il
+viaggio da Tucson a Las Vegas dura circa otto ore in tempo reale.}. ``E infatti
+non è giocabile''. Tutto plausibilissimo, ``un gioco che puoi giocare'', ma non
+\textbf{giocabile}: perché ``giocabile'' non vuol dire che si può giocare, vuol
+dire \textbf{progettato per far spuntare momenti di gioco}. Un altro studente
+cita \emph{The Longing}, il videogioco in cui si devono aspettare
+\textbf{400 giorni} reali: un ``bel mix'', dice il docente, perché il passaggio
+del tempo è esattamente quello reale (``io gioco domani, e sono al giorno
+successivo''), e se si scava un passaggio con il piccone ci vogliono trenta
+giorni. Interessantissimo, ma ``molto poco giocabile'': è un gioco che gioca
+sulla \textbf{frizione}.
+
+\paragraph{Le vie di mezzo.} ``Ricordatelo: non è un pulsante''. La maggior parte
+dei \textbf{giochi strategici e di guerra da tavolo} sono plausibilissimi, puntano
+sulla plausibilità del conflitto, ma la rendono anche giocabile.
+
+\paragraph{Che cosa vuol dire giocabile.} Una studentessa torna sulla definizione:
+giocabile non vuol dire ``si può giocare''. ``È molto nebulosa questa cosa'',
+ammette il docente, ma se la si intende come ``si può giocare o no'', allora
+\textbf{tutto è giocabile}: anche andare in banca si può gamificare, e non per
+questo diventa un'esperienza giocabile. Giocabile vuol dire che \textbf{dà
+spunto a momenti di gioco}, momenti in cui si ha un approccio ludico. Un gioco
+completamente plausibile è come la realtà, e quindi, da un certo punto di vista,
+non è più un gioco. ``Un vaso di Pandora gigantesco''.
+
+\paragraph{Aragorn nella locanda.} Un altro esempio, dal \emph{Signore degli
+Anelli}: all'inizio Aragorn, alias Grampasso, aspetta gli hobbit nella locanda,
+incappucciato in un angolo. Lo si immagini in un LARP: l'obiettivo è aspettare gli
+hobbit senza farsi riconoscere, senza parlare con nessuno, perché parlare
+rischia di farlo scoprire. È un ruolo ``estremamente non bello da giocare'': una
+persona che per tre, quattro ore sta incappucciata in silenzio in un angolo senza
+interagire con niente. Plausibile narrativamente, pochissimo giocabile.
+
+\paragraph{Plausibile non vuol dire peggiore.} ``Questi slider non sono
+qualitativi''. Un gioco molto giocabile e poco plausibile non è per questo
+migliore, e viceversa: bisogna chiedersi che cosa serve al proprio gioco. Il
+docente rimette la slide con \emph{Waiting for Flight}, il LARP dell'aereo, delle
+valigie e dei cuori di vetro: tre ore in una sala d'attesa, con le informazioni
+centellinate da chi facilita, che arriva due o tre volte a portare notizie (un
+po' di gestione attiva, quindi). Per il resto, si è abbandonati a sé stessi,
+senza informazioni. \textbf{Molto plausibile}, e il gioco è ``incredibile'':
+proprio il lasciare nell'ansia del non sapere è parte della ``botta emotiva''.
+Anche un gioco molto plausibile può far arrivare emozioni fortissime.
+
+\paragraph{Approfondimento: plausibilità, coerenza e mimesi.} \emph{21st Century
+Game Design} affronta lo stesso nodo dal lato del videogioco, parlando di
+\textbf{astrazioni} del mondo di gioco. Bateman e Boon notano che la scelta delle
+astrazioni dipende da che cosa il gioco vuole essere: in un gioco di sfida
+(\emph{agon}) le astrazioni devono garantire equità e il giusto grado di
+difficoltà; in un gioco di \textbf{mimesi} (\emph{mimicry}) devono invece servire
+la sospensione dell'incredulità, perché lì ``l'immersione è più importante del
+bilanciamento''. È la stessa tensione tra giocabile e plausibile. Il libro
+aggiunge un punto utile anche a chi sceglie la giocabilità: il giocatore
+presuppone una \textbf{logica coerente} del mondo, e le eccezioni capricciose
+(una sola porta che si può distruggere, in un gioco in cui tutte le altre sono
+indistruttibili, che fa chiedere ``perché non posso farlo altrove?'') minano il
+coinvolgimento. Le convenzioni di \emph{GTA} (si muore e si riparte
+dall'ospedale) funzionano proprio perché sono regole coerenti e applicate sempre,
+non eccezioni: si può sacrificare la plausibilità, ma non la coerenza.
+
+\subsection{Rappresentazione tematica: storia o azioni}
+\label{a3:sec:rappresentazione}
+
+``Siamo quasi alla fine, vi giuro''. Mettiamo che il gioco non sia astratto, e
+che ci sia un \textbf{tema} da trattare. Il tema arriva a chi gioca
+\textbf{con la storia} o \textbf{con le azioni}? L'esempio: si vuole dare
+un'esperienza \textbf{horror}.
+\begin{description}
+  \item[Con la storia.] Una narrazione cupa, \emph{grim}, le illustrazioni, il
+        world building, i personaggi per come sono scritti e rappresentati anche
+        visivamente.
+  \item[Con le azioni.] Una meccanica di \textbf{follia}, eventi completamente
+        oppressivi e cupi che si accaniscono contro i giocatori.
+\end{description}
+È un cursore, si possono usare entrambe le cose. Ma al docente capita spesso di
+ricevere giochi da valutare presentati come \textbf{tematici}, in cui il tema è
+solo la narrazione ``agganciata sopra'': \textbf{le meccaniche non dicono niente
+di quella roba lì}. Più raramente, ``per fortuna'', arrivano giochi tematicamente
+fortissimi nelle azioni, ma in cui, come diceva Tiziana a inizio lezione, il world
+building e l'ambientazione si potrebbero spostare di duecento anni o in un'altra
+regione e il gioco resterebbe lo stesso. Non è giusto o sbagliato in assoluto:
+dipende dal tipo di gioco e dalle persone che lo giocano. Ma bisogna chiedersi
+\textbf{se le cose che il gioco trasmette le trasmette con il narrative design o
+con le meccaniche}.
+
+\paragraph{L'unico cursore ``qualitativo'' del corso.} Qui il docente fa
+un'eccezione dichiarata. Il corso è di \textbf{game design}, e gli studenti sono
+lì per diventare game designer, ``non necessariamente narrative designer''.
+Quindi questo è uno dei pochi cursori che \textbf{nel corso} diventa
+qualitativo, ``non perché è meglio'', ma per lo scopo didattico: nei task e
+soprattutto nel progetto finale, \textbf{la priorità andrà alle azioni, non alla
+storia}. ``Io voglio vedere che voi mi fate giochi che trasmettono le emozioni
+con le meccaniche''. Il perché, ``da prendere con le pinze'': è facile colpire
+emotivamente qualcuno con il mezzo della scrittura, ``che è in giro da mille
+anni''; è molto più difficile far arrivare un'emozione con una meccanica
+progettata con l'intenzione di innescare proprio quell'emozione, e vedere che
+quell'emozione arriva. È la parte difficile del lavoro. E infatti nel settore ci
+sono parecchi narrative designer e world builder; di persone che fanno game
+design ``ce ne sono tante, ma brave poche''. ``Se il tema non arriva con le
+meccaniche, che cosa fate un gioco a fare? Scrivete un racconto, fate una
+canzone, fate un quadro''.
+
+\paragraph{Non vuol dire astratto.} Dare priorità alle meccaniche non vuol dire
+fare giochi ``asciuttissimi'' e astratti, né scacchi, né dama, né ``briscola
+cyberpunk''. Che, giura il docente, esiste davvero: un gruppo di designer
+spagnoli ha fatto un gioco ambientato nelle \textbf{città italiane in versione
+cyberpunk}. ``Torniamo sul punto senza andare sui meme''. E se non è chiaro,
+``fermatemi: mi faccio prendere, poi mi scaldo, vado a sessanta gradi
+corporei''.
+
+\paragraph{Approfondimento: il ``vestito'' del gioco.} La posizione del docente
+ha un precedente illustre e una sfumatura importante. In \emph{A Theory of Fun
+for Game Design} Raph Koster sostiene che il tema è spesso un \textbf{vestito}
+(\emph{dressing}): il fatto di poter descrivere \emph{Death Race}, il famigerato
+gioco in cui si investono pedoni, come ``un gioco in cui si raccolgono oggetti su
+un piano bidimensionale'' dimostra che il suo vestito è in gran parte irrilevante
+rispetto a ciò che il gioco insegna davvero. Investire pedoni, uccidere
+terroristi o mangiare puntini scappando dai fantasmi sono ``metafore comode'' per
+il sistema formale che sta sotto, e i giocatori esperti imparano a vedere oltre.
+È esattamente il problema del gioco ``tematico'' in cui le meccaniche non dicono
+niente del tema: il tema scivola via. Ma Koster stesso, come si è visto con
+\emph{Tetris} e la camera a gas, riconosce che il significato di un gioco nasce
+dall'insieme. La richiesta del docente va letta così: non togliere il tema, ma
+\textbf{farlo passare attraverso le azioni}, in modo che il sistema formale e
+il vestito dicano la stessa cosa.
+
+\subsection{Meccaniche: intrusive o discrete}
+\label{a3:sec:intrusive}
+
+``Anche il prossimo è tosto: ho lasciato per ultimi gli slider un po' più
+tosti''. Le meccaniche sono \textbf{intrusive} o \textbf{discrete}? Per spiegarlo
+il docente deve prima spiegare le \textbf{metatecniche}, e per spiegare le
+metatecniche deve spiegare il \textbf{metagioco}.
+
+\paragraph{Il metagioco.} ``Qualcuno ha mai sentito parlare di metagioco?''
+Rispondono Lorenzo, Tiziana e Giordano. La prima definizione, dal punto di vista
+di \emph{D\&D} e dell'esperienza di un gruppo di gioco: il \emph{metagame} è
+quando un personaggio dice o fa qualcosa che \textbf{non dovrebbe sapere}, perché
+lo sa il giocatore. Il docente la riformula: una \textbf{dissonanza tra quello
+che il personaggio sa e quello che dovrebbe sapere}, spesso perché chi lo gioca sa
+più cose del personaggio, e quella conoscenza passa al personaggio ``dall'alto'',
+senza che il personaggio la impari. Tiziana e Giordano confermano la stessa
+definizione.
+
+Ha senso usare ``metagioco'' in altri ambiti? Uno studente ipotizza che, in un
+gioco da tavolo, possa indicare le \textbf{strategie}: ci sono le regole, e poi
+le strategie che si sviluppano attraverso quelle regole. ``Esiste anche questa,
+esatto''. È un \textbf{livello che non è presente nel gioco} ma nella sua
+\textbf{comunità}: strategie, azioni, sequenze di azioni vincenti. Chi le conosce
+ottiene un vantaggio rispetto a chi non le conosce. A pensarci, non è così
+diverso dal caso di \emph{D\&D}: anche se \emph{D\&D} non ha una vera condizione
+di vittoria, il meccanismo è lo stesso, si usa una \textbf{conoscenza esterna}
+per avere in gioco più possibilità di superare gli ostacoli.
+
+\paragraph{Le metatecniche.} Nel gioco di ruolo tradizionale (\emph{D\&D},
+\emph{Vampire: The Masquerade}, GURPS, \emph{Pathfinder}) il metagioco è visto
+come un \textbf{problema}, una rottura del coinvolgimento narrativo: se si gioca
+per il massimo coinvolgimento, non si dovrebbero dare al personaggio informazioni
+che non ha. Ma la \textbf{scuola scandinava} si è chiesta: perché? Perché non
+fare giochi fortemente basati sul metagioco, e anzi \textbf{giocare con il
+metagioco} come punto di interesse ludico? Nasce così una serie di meccaniche
+chiamate \textbf{metatecniche}, che nei LARP di stampo scandinavo funzionano
+tendenzialmente così: \textbf{chi gioca fa qualcosa, meccanicamente, che il
+proprio personaggio non fa}, e questo ha un impatto significativo in gioco.
+
+\paragraph{\emph{Ping the glass}.} L'esempio è ``forse la più comune metatecnica
+di tutte''. Un LARP su un party dell'alta società della Silicon Valley: si gira
+con il proprio cocktail, si parla con le persone. Ognuno ha una matita nel
+taschino, o qualcosa del genere, con cui può fare \emph{ping} sul bicchiere della
+persona con cui sta parlando; quella persona ha allora \textbf{20--30 secondi per
+dire ad alta voce che cosa sta pensando il suo personaggio}. Il personaggio non
+sta toccando un bicchiere con una matita, il giocatore sì; il personaggio non sta
+dicendo ad alta voce quello che pensa, il giocatore sì. Ne nascono momenti molto
+interessanti: un investitore dice ``interessantissimo, vedrò di investire nel tuo
+progetto''; poi qualcuno gli tocca il bicchiere e lui dice: ``vedrò di fregarlo.
+Questo è uno schema Ponzi, ma ancora non lo sa''. E poi si continua come se
+niente fosse, per i personaggi; ma non per i giocatori. Sono giochi che danno
+molto \textbf{non detto}, un po' come al cinema in \emph{Dogville}, con i muri
+che non sono muri e attraverso cui si vedono i personaggi.
+
+Uno studente chiede conferma: il personaggio continua a non sapere quella cosa?
+Sì, il personaggio no, ma il giocatore sì. \textbf{Perché} questo sia
+interessante in un gioco lo si vedrà nella lezione sulla progettazione delle
+emozioni; per ora basta sapere che le metatecniche esistono, ``ce ne sono a
+tonnellate'', e se ne vedranno altre.
+
+\paragraph{Intrusivo non vuol dire negativo.} Tornando al cursore: le
+metatecniche sono meccaniche \textbf{intrusive} perché \textbf{fermano il gioco}.
+E intrusivo ``non è negativo'', non è che in alto è sbagliato e in basso è
+giusto. Anche \textbf{tirare i dadi} durante un combattimento di \emph{D\&D} è
+una meccanica intrusiva: si ferma per un momento il gioco per applicare una
+meccanica e vederne la risoluzione. Le meccaniche \textbf{discrete}, invece, non
+fermano il gioco. L'esempio: in un LARP, un \textbf{adesivo colorato} sul
+petto\footnote{La trascrizione attribuisce due volte il colore rosso a
+significati opposti; dal contesto, il terzo colore, quello che permette le
+interazioni più aggressive, è con ogni probabilità il verde.} dice quanto
+contatto fisico si accetta: con il rosso non si deve toccare; con il giallo si
+può toccare, ma bisogna fermarsi appena l'altro lo chiede; con il verde si
+possono avere anche interazioni aggressive dirette, di combattimento. Quella
+meccanica è discreta: non si interrompe il gioco per dire ``voglio fare un
+combattimento con te''.
+
+\paragraph{Gioco da tavolo e gioco pervasivo.} Nel \textbf{gioco da tavolo} le
+meccaniche discrete sono molto difficili da fare, perché per sua natura il gioco
+da tavolo ha meccaniche molto intrusive. Nel \textbf{gioco pervasivo} è quasi il
+contrario: spesso si basa sull'idea che la realtà abbia un \textbf{livello
+alternativo} (\emph{alternate reality game}) e che tutto sia in un gioco più o
+meno plausibile. Un enigma in città può essere osservare una statua e notare che
+ha tre fiori in mano, e quei tre fiori sono la chiave dell'enigma: niente ferma
+il gioco.
+
+\paragraph{Il collegamento con il metagioco.} Uno studente non ha capito il nesso
+con il metagioco inteso come strategie efficaci. Il docente chiarisce: l'esempio
+delle metatecniche serviva a far capire \textbf{l'intrusione}. Per meccanica
+intrusiva si intende qualcosa che \textbf{chi gioca fa} e che si mette
+\textbf{in mezzo alle cose che il suo personaggio sta facendo}. Se si interpreta
+il proprio personaggio senza interruzioni, non c'è intrusione; se il gioco chiede
+in certi momenti ``tu, persona che giochi, devi fare questa cosa'', in quel
+momento si interrompe l'essere il personaggio per una meccanica. E se la
+conoscenza esterna si mette in mezzo tra sé e il personaggio, anche quello,
+meccanicamente, può essere intrusivo. Di nuovo: ``nessuno slider è meglio o
+peggio''. Anzi, il docente consiglia i giochi con le metatecniche, ``estremamente
+interessanti'', che fanno cose che si vedono raramente: ``vi auguro di poterne
+progettare uno domani, o all'interno del corso, chissà''. E la maggior parte dei
+board game ha meccaniche intrusive: ``proprio non ci sfuggite''.
+
+\paragraph{\emph{Daggerheart}.} \textbf{Nicola} propone un esempio dal gioco di
+ruolo: le meccaniche di \textbf{Paura e Speranza} di \emph{Daggerheart}. Il
+master ha sempre accesso a una riserva di segnalini, visibile a tutti i
+giocatori, che può usare per peggiorare la situazione; i giocatori (non i
+personaggi) hanno a loro volta una riserva di Speranza che possono usare per
+attivare poteri speciali. È intrusiva, perché non si sta semplicemente facendo
+roleplay: c'è una meccanica in mezzo. Il docente non l'ha ancora giocato e non
+entra nel dettaglio, ma conferma: come il tiro di dado per sfondare una porta a
+calci.
+
+\paragraph{\emph{Fiasco} e \emph{Waiting for Flight}.} Due esempi dal lato
+discreto. \emph{Fiasco}, citato da Daniele nella lezione sui casi studio, è
+interessante perché \textbf{nelle scene} è quasi tutto discreto: le scene sono
+un flusso di impostazione e risoluzione senza tirare un singolo dado, e il gioco
+dice solo chi ha l'autorità di decidere che cosa. Tra una scena e l'altra ci sono
+meccaniche intrusive, anche tante, ma dentro la scena tutto è ``molto liscio e
+fluido''. \emph{Waiting for Flight} ha meccaniche intrusive solo alla fine,
+quando arrivano le valigie; nelle tre ore prima è tutto discreto: niente regole
+di combattimento, niente metatecniche, solo l'attesa. C'è la gestione attiva di
+chi facilita, che porta informazioni, ma quelle non sono meccaniche: non chiedono
+ai giocatori di fare qualcosa, danno informazioni \textbf{attraverso il filtro di
+un personaggio}, con cui si parla.
+
+\paragraph{Approfondimento: il metagioco come dinamica.} \emph{Challenges for Game
+Designers} offre una terza definizione di metagioco, utile per collegare le due
+date a lezione. Nel capitolo sugli ``atomi'' del game design, Brathwaite e
+Schreiber notano che non tutte le dinamiche sono definite o imposte dalle
+meccaniche: alcune avvengono tra i giocatori \textbf{fuori dallo stato del
+gioco}, e sono ``comunemente chiamate metagioco'': trattative, discussioni,
+alleanze, chat, provocazioni. È un'accezione a metà strada tra le due della
+lezione: come il metagioco del gioco di ruolo, è qualcosa che passa
+\emph{sopra} la finzione e le regole; come il metagioco delle strategie, è
+qualcosa che nasce dalla comunità dei giocatori e non dal regolamento. Le
+metatecniche nordiche fanno il passo successivo: prendono questo livello
+``esterno'' e lo trasformano in una regola esplicita, progettata.
+
+% ---------------------------------------------------------------------
+\section{La modularità e gli altri cursori}
+\label{a3:sec:moduli}
+
+``Con gli slider mi fermo qui''. Ma il docente ricorda la \textbf{modularità}:
+quali altri cursori si possono avere? Oltre al \emph{your fader here} del Mixing
+Desk originale, la slide ne mostra altri che vengono da un \textbf{framework
+didattico-pedagogico}:
+\begin{itemize}
+  \item la materia trattata è affrontata in modo \textbf{performativo},
+        comportamentale, o come \textbf{elaborazione interna} di chi gioca?
+  \item il gioco è \textbf{competitivo} o \textbf{cooperativo}, o una via di
+        mezzo?
+  \item il gioco punta sull'\textbf{interazione sociale} con le altre persone
+        (\emph{social play}) o sul \textbf{gioco individuale}
+        (\emph{individual play})?
+\end{itemize}
+Valgono anche per il gioco da tavolo. Nei giochi ``alla tedesca'' gira
+l'espressione \textbf{solitario multiplayer}: si gioca in quattro, competitivo,
+ma ognuno fa le proprie cose, nessuno può distruggere niente all'altro, e
+l'interazione è magari indiretta, su un mercato comune (``io compro una carta che
+volevi tu''), ``molto più fredda rispetto a \emph{ti attacco direttamente con i
+carri armati}''. Sono giochi che puntano più sull'\emph{individual play} che sul
+\emph{social play}.
+
+E se ne possono aggiungere o togliere in base al gioco. Il docente ne suggerisce
+altri, ``anche banalmente'':
+\begin{itemize}
+  \item gioco \textbf{lungo} o \textbf{breve};
+  \item per \textbf{poche} o per \textbf{tante} persone;
+  \item interazione \textbf{diretta} o \textbf{indiretta};
+  \item informazioni \textbf{segrete} o \textbf{pubbliche}: che è un'altra cosa
+        rispetto all'apertura tematica. In \emph{Hanabi}\footnote{La
+        trascrizione dice ``Anabi''.} il tema è trasparente, ma durante il gioco
+        si hanno informazioni a cui non si ha accesso (le proprie carte).
+\end{itemize}
+La tabella~\ref{a3:tab:mixing} riassume tutti i cursori visti.
+
+\paragraph{Lo si userà nella ricerca e sviluppo.} ``Questi slider torneranno'':
+si parlerà di nuovo del Mixing Desk nella lezione su \textbf{ricerca e
+sviluppo}, perché applicarlo ai giochi pubblicati aiuta. Che cosa esce se ci si
+butta dentro \emph{Dungeons \& Dragons}? E \emph{Non cedere al sonno}? E
+\emph{Monopoly}, \emph{Risiko}, \emph{I coloni di Catan}, \emph{Magic: The
+Gathering}? E facendolo si vede anche \textbf{quali cursori sono importanti} per
+il tipo di gioco che si sta facendo, e quali no.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.8cm}p{3.2cm}p{7.2cm}@{}}
+\toprule
+\textbf{Cursore} & \textbf{Estremi} & \textbf{La domanda e gli esempi della
+lezione} \\
+\midrule
+Comunicazione & verbale -- fisica & si parla o si spostano cose? Coppia
+perfetta, party game, \emph{Dixit}, \emph{Taboo}, \emph{Codenames} contro
+boffer, scacchi, \emph{Stranger} \\
+Apertura tematica & trasparenza -- segreto & il tema è noto da subito o viene
+rivelato? \emph{Twilight Struggle} contro \emph{Train}; trame segrete,
+investigativi, il tenente Colombo \\
+Diegesi ambientale & 360° -- indipendenza materiale & serve l'ambiente vero?
+Castello e cavallo veri contro bagno di casa; chamber LARP in costume nello
+scantinato \\
+Creazione dei personaggi & chi gioca -- chi progetta & chi scrive il personaggio?
+\emph{Blockbuster} e CRPG contro \emph{Final Fantasy}; i paletti di \emph{Non
+cedere al sonno} \\
+Gestione del gioco & attiva -- passiva & qualcuno spinge avanti il gioco? PNG che
+uccidono il re, campagne numerate, master, audio guida contro \emph{Journey to
+the End of the Night} \\
+Universo narrativo & giocabile -- plausibile & momenti di gioco o simulazione
+del reale? La vedetta, GURPS, \emph{GTA}, \emph{Desert Bus}, \emph{The Longing},
+Aragorn, \emph{Waiting for Flight} \\
+Rappresentazione tematica & storia -- azioni & il tema passa dalla narrazione o
+dalle meccaniche? Horror narrato contro meccanica di follia (nel corso: priorità
+alle azioni) \\
+Meccaniche & intrusive -- discrete & la meccanica interrompe il gioco?
+Metatecniche, \emph{ping the glass}, dadi, \emph{Daggerheart} contro adesivi
+colorati, scene di \emph{Fiasco}, enigmi urbani \\
+\emph{Your fader here} & liberi & performativo -- elaborazione interna,
+competitivo -- cooperativo, social -- individual play, durata, numero di
+giocatori, interazione, informazioni, single -- multiplayer, \emph{table
+presence} \\
+\bottomrule
+\end{tabular}
+\caption{I cursori del Mixing Desk come presentati a lezione. Nessun estremo è
+migliore dell'altro; l'unica eccezione dichiarata, valida solo per i lavori del
+corso, è la priorità alle azioni nella rappresentazione tematica.}
+\label{a3:tab:mixing}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Un'analisi dal vivo: Exit, Hidden Games e Profiler}
+\label{a3:sec:analisi}
+
+``Questa era l'ultima slide di oggi''. Uno studente chiede se si possano fare
+degli esempi insieme, provando a vedere questi aspetti su un gioco. Il docente
+ha sempre una mezz'ora per le domande alla fine (``adesso un po' meno, perché
+siamo stati lunghi''): ci sono una venticinquina di minuti. ``Che gioco volete
+che vediamo passare in questo filtro?'' Dopo un'esitazione (``non fatevi remore,
+raga, è utile''), uno studente propone una tipologia invece di un gioco: le
+\textbf{escape room}. Siccome dipende molto dal formato (giocare un'escape room
+da tavolo a casa è un'altra cosa), si sceglie \textbf{\emph{Exit}}, la serie di
+escape room \textbf{da tavolo}: ibridi tra escape room e board game, \textbf{non
+rigiocabili}, che durano tra i 50 minuti e l'ora e mezza a seconda
+dell'esperienza, e che chiedono di \textbf{modificare fisicamente i componenti}:
+strappare, bagnare, piegare. Strada facendo si aggiungono due termini di
+paragone: gli investigativi \textbf{Hidden Games}\footnote{La trascrizione li
+chiama ``Hidden Games'', ``In The Games'', ``Indie Games'', ``ED Games'' e ``Den
+Gains''. Il titolo del caso giocato, ``Veleno verde'', è riportato come nella
+trascrizione.} e \textbf{\emph{Profiler}}, nel formato tascabile, che il docente
+mostra in video (tabella~\ref{a3:tab:analisi}).
+
+\paragraph{Comunicazione.} \emph{Exit} è più verbale o più fisica? ``Dipende'',
+dice uno studente, perché lo si gioca con altri. Si può giocare anche da soli,
+ma per come è inteso è un'esperienza \textbf{abbastanza verbale}: il gruppo
+condivide idee e cerca soluzioni. Non del tutto, però, perché i
+\textbf{componenti fisici} sono essenziali: senza non si risolve nulla. Anzi,
+quello che rende \emph{Exit} più fisico di altre escape room da tavolo è che usa
+\textbf{la scatola stessa} come elemento di gioco: chiede di inserire cose nel
+coperchio, di guardare da una prospettiva, nasconde scritte dietro il codice a
+barre, ``in posti che non ti aspetteresti''.
+
+\paragraph{Apertura tematica.} Abbastanza \textbf{trasparente}, ma non del tutto:
+alcune scatole hanno un finale con qualche twist. La narrazione è leggera (``non
+stiamo parlando del \emph{Signore degli Anelli}''): c'è un tesoro nascosto,
+bisogna trovarlo, chissà chi l'ha nascosto e perché. Trasparente nella
+maggior parte, con qualche aspetto segreto.
+
+\paragraph{Diegesi ambientale.} Più verso l'\textbf{indipendenza materiale}, ma
+non del tutto. È vero che non si è davvero sull'isola a cercare il tesoro; ma gli
+\emph{Exit} fanno della \textbf{materialità} un aspetto chiave: lo spessore della
+scatola, quanto è alta e larga, che cosa c'è dentro, quanto è spessa una
+tessera, possono essere chiesti da un enigma. Se lo si stampa con la stampante di
+casa, ci sono \emph{Exit} che non si possono finire, perché serve la scatola in
+mano, o serve vedere che cosa succede bagnando i componenti. Gli Hidden Games
+vanno oltre: in quello giocato dal docente (e da uno studente) c'era un
+\textbf{sacchetto di terra}, e bisognava fare il \textbf{test del suolo}: prendere
+un bicchiere in cucina, riempirlo d'acqua, metterci la terra, inserire la cartina
+tornasole e misurare il pH, perché un enigma lo chiede. Non si può giocare con un
+\emph{print and play}. È ``molto verso il 360°'', anche se si è nel proprio
+salotto e non in un laboratorio della scientifica. Uno studente chiede conferma:
+direbbe davvero ``molto verso il 360°''? Sì, o comunque a metà: ``quella è terra,
+non è un'immagine del terreno con scritto pH 5''. Sporca le mani, fa un macello
+sul tavolo, fa fango quando la si bagna, e rende l'esperienza molto intensa. Della
+materialità, del resto, si parlerà in una lezione apposta sul \textbf{paragame}.
+
+\paragraph{Personaggi.} In \emph{Exit} o negli Hidden Games i personaggi ``forse
+non esistono'', ma esiste un \textbf{ruolo}: si è degli \textbf{investigatori}.
+Come ci si chiama, quanto si è alti, come si hanno i capelli, che cosa si indossa,
+``non interessa a nessuno''; il gioco non chiede di indossare il cappello di
+Sherlock Holmes. Ma si è investigatori, e il gioco lo dice molto bene. Una
+studentessa chiede se rientrino qui i \textbf{ruoli sociali} che si assumono in
+un'escape room (l'analitico, l'organizzatore): no, se ne parlerà nella lezione
+sui personaggi (``il classico esempio in cui vi rimando ad altre lezioni, ma ve lo
+prometto''). Quindi il designer ha deciso il personaggio? Sì, ma ``decide quasi
+niente'': in questi giochi il cursore pesa poco e \textbf{non è detto che serva}.
+Diverso è \textbf{\emph{Alibi}}\footnote{La trascrizione dice ``Alibi di Genos
+da Vinci''; l'editore non è ricostruibile con certezza.}: un investigativo in cui
+si interpretano i personaggi della vicenda e il colpevole è uno di loro; lì il
+cursore conta, perché dice chi si è, che cosa sa il proprio personaggio, che cosa
+non vuole che si sappia. ``Come nel LARP \emph{A cena col nonno}'', aggiunge uno
+studente: esatto. Che un cursore esista non vuol dire che pesi uguale in tutti i
+giochi.
+
+\paragraph{Gestione del gioco.} \emph{Exit} e Hidden Games sono simili: gestione
+\textbf{abbastanza attiva}, ``ma con un twist''. Gli enigmi vanno risolti in
+ordine, e l'ordine è gestione attiva; ma il tempo speso su ciascuno lo decidono i
+giocatori, che possono correre come matti o metterci otto ore. All'estremo
+opposto c'è \textbf{\emph{Profiler}}, che il docente mostra: un pacchettino con un
+mazzo di carte \textbf{non numerate}, senza ordine, e senza nemmeno un
+regolamento, perché è chiarissimo come si gioca. Una carta presenta il caso; ogni
+altra carta è un'informazione: una fotografia, una mappa, un documento, una
+brochure, un foglio Excel, una lista di cose da fare, il contenuto di una
+valigetta. Il gioco dice solo di spargere tutte le carte sul tavolo e di
+rispondere ad alcune domande. Tutto è trasparente, si ha accesso a tutte le
+informazioni contemporaneamente, senza punizioni e senza tempo. ``Sembra facile,
+non è così facile''. È l'equivalente di un \emph{open world}: si va dove si vuole
+tra i documenti, e sta a chi gioca unire i fili. Gestione \textbf{passiva}, a
+parte la prima carta.
+
+Una studentessa chiede di \emph{Sherlock Holmes Consulente Investigativo}. ``Decidi
+tu'': è molto \textbf{attivo}, perché è più vicino al libro-gioco: per risolvere il
+caso bisogna toccare i punti che i designer vogliono. Ma è passivo nel fatto che
+si può andare dove si vuole, il che può voler dire perdersi andando a caso, o
+farsi ingannare da una falsa pista (\emph{red herring}) e buttare tempo.
+
+\paragraph{Universo narrativo.} Qui \emph{Exit} e Hidden Games vanno in
+\textbf{direzioni opposte}. Gli \emph{Exit} sono \textbf{molto giocabili} e poco
+plausibili: enigmi ``giocattolosi'', come trovarsi in una baita abbandonata e
+dover risolvere un cubo di Rubik per aprire una porta. ``Chi è il pazzo che mette
+un cubo di Rubik come serratura?'' Gli Hidden Games puntano sulla
+\textbf{plausibilità} del caso, come mostra la terra: nell'investigazione, se ci
+si vuole sentire veri investigatori, risolvere un enigma plausibile, coeso e
+coerente dà più soddisfazione. Per questo non sono ambientati nel fantasy ma nel
+\textbf{mondo reale}, con cellulari, computer e documenti, e un world building
+semplice: ``basta guardare il mondo fuori dalla finestra''.
+
+\paragraph{Rappresentazione tematica.} Uno studente metterebbe gli Hidden Games
+\textbf{a metà}, ed è giusto: c'è la storia (l'omicidio, il caso, che arrivano
+tramite testimonianze, documenti, personaggi che parlano), ma per far avanzare il
+gioco servono le azioni. Gli Hidden Games chiedono di \textbf{chiamare un numero
+di telefono}, di mandare una mail e riceverne la risposta, di andare su
+\textbf{siti fittizi} creati per le aziende del caso per capire che cosa
+vendevano. Ma soprattutto: non si è investigatori seduti in poltrona a chiedersi
+come sia morto qualcuno, si è investigatori che ``si fanno un mazzo così'' per
+unire le prove, cercare chi ha un'informazione, riascoltare un audio trenta volte
+per capire se una frase nasconde qualcosa, rileggere tre volte un foglio Excel
+per trovare il numero sfuggito. Quelle sono \textbf{azioni}: ``siamo
+investigatori perché facciamo gli investigatori, non perché il gioco ci dice che
+facciamo gli investigatori''.
+
+\paragraph{Meccaniche.} \emph{Exit} è ``totalmente intrusivo'', ``più intrusivo di
+così difficile''. \emph{Profiler} è ``ultra discreto'': l'unica cosa intrusiva è
+leggere la prima carta. Anzi, dopo un \emph{Exit} si resta straniati, perché ci
+si aspetta di essere guidati passo passo, e invece si ha tutto subito: si
+spargono i documenti sul tavolo, si collegano cose ``come nei meme dei pazzi che
+uniscono i fili al muro''. Il gioco non ferma mai, se non quando il gruppo crede
+di avere la soluzione e va a verificare.
+
+\paragraph{I cursori che mancano.} ``È chiaro che ci mancano degli slider, qua''.
+Per esempio:
+\begin{itemize}
+  \item \textbf{single player -- multiplayer}: \emph{Profiler} si può giocare da
+        soli, ma è palese che non è inteso così (``cinquanta carte sparse sul
+        tavolo da solo, ti ammazzi''), mentre gli \emph{Exit} potenzialmente sì;
+  \item la \textbf{materialità}, e in particolare uno dei cursori che il docente
+        usa per i board game: la \textbf{\emph{table presence}}, quanto spazio
+        prende il gioco sul tavolo, da \emph{Twilight Imperium} a \emph{UNO}, con
+        tutte le vie di mezzo. Un \emph{Exit} si gioca su un tavolino da caffè;
+        \emph{Profiler}, con le sue cinquanta carte, va sul tavolo della cucina,
+        per avere la visione d'insieme. E \emph{MicroMacro} ha una mappa della
+        città gigantesca, praticamente un A2: la si appende al muro e si gioca in
+        piedi davanti al poster, ``perché sul tavolo non ci sta''. È parte
+        dell'esperienza: si indaga su un foglio appeso al muro, ``ti dà anche
+        delle vibes di un certo tipo''.
+\end{itemize}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.6cm}p{3.4cm}p{3.4cm}p{3.4cm}@{}}
+\toprule
+\textbf{Cursore} & \textbf{\emph{Exit}} & \textbf{Hidden Games} &
+\textbf{\emph{Profiler}} \\
+\midrule
+Comunicazione & abbastanza verbale, ma la scatola stessa è un enigma & verbale
+e manipolativa & molto verbale (gruppo) \\
+Apertura tematica & quasi trasparente, qualche twist & segreto investigativo &
+caso dichiarato dalla prima carta \\
+Diegesi ambientale & verso l'indipendenza, ma serve la scatola vera & verso il
+360°: terra vera, pH, telefonate, siti & carte sul tavolo \\
+Personaggi & un ruolo generico (si è ``investigatori'') & idem; il cursore pesa
+poco & idem \\
+Gestione & attiva nell'ordine degli enigmi, libera nei tempi & come \emph{Exit}
+& passiva, tranne la prima carta \\
+Universo narrativo & molto giocabile, poco plausibile (il cubo di Rubik) &
+molto plausibile, mondo reale & plausibile \\
+Rappresentazione tematica & tema leggero & a metà, ma ``siamo investigatori
+perché lo facciamo'' & azioni di collegamento \\
+Meccaniche & totalmente intrusive & intrusive & ultra discrete \\
+\emph{Table presence} & tavolino da caffè & variabile & tavolo della cucina \\
+\bottomrule
+\end{tabular}
+\caption{L'analisi dal vivo fatta in classe, ricostruita. Le celle di Hidden
+Games e \emph{Profiler} per i cursori non discussi esplicitamente sono deduzioni
+da quanto detto a lezione.}
+\label{a3:tab:analisi}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Perché proprio questi due framework}
+\label{a3:sec:perche-due}
+
+Il docente chiude la parte teorica con una dichiarazione di metodo, ``con
+trasparenza'': \textbf{non è un grande amante dei framework teorico-accademici
+fini a sé stessi}. Li legge, legge i paper, lo intrigano, e il lato accademico
+del gioco e dei \emph{game studies} è ``interessantissimo'' per lui. Ma un corso
+per persone che vogliono fare game design, e non necessariamente game studies,
+deve insegnare a \textbf{saper fare i giochi}; e saper fare i giochi vuol dire
+anche usare strumenti che rendono la vita più facile. Il \textbf{Player
+Involvement Model} di Calleja e il \textbf{Mixing Desk} sono, per lui, ``due
+strumenti utilissimi''.
+
+Per chi è interessato, sul sito \textbf{Analog Game Studies} c'è un articolo
+sulla \textbf{storia del Mixing Desk}, su come è nato e come è stato sviluppato:
+molto dettagliato, ``il mio articolo preferito di tutto il sito''. Il docente lo
+carica sul canale Discord del corso (i link in chat, come si è visto, non
+funzionano). È ``lunghetto'' e ripercorre in gran parte cose già viste, quindi
+non è obbligatorio: ``quando qualcosa vi verrà richiesto, lo saprete. E di solito
+sono i task''.
+
+% ---------------------------------------------------------------------
+\section{Le domande finali}
+\label{a3:sec:domande}
+
+Restano sette minuti per le domande, ``pochi, molto pochi, ma meglio che
+niente''. ``Non censuratevi in autonomia''.
+
+\paragraph{Il venerdì e i tutoraggi.} Una studentessa torna su una cosa che non
+aveva capito: gli orari ``del venerdì''. In realtà intendeva i
+\textbf{tutoraggi} del sabato di cui si era parlato all'inizio. Il docente
+chiarisce: la lezione di \textbf{venerdì 18} è dalle 17 alle 20, come le altre,
+e sarà quella sui \textbf{personaggi}; poi arriverà quella sull'\emph{emotional
+design}, ``finalmente''\footnote{Il passaggio della trascrizione è confuso
+(``Il tutoraggio nella lezione, venerdì 18, è dalle 17 alle 20. Fra l'altro, se
+lo diano con me, farete la lezione sui personaggi. Faremo quella sull'emotion
+design''). La lettura proposta è coerente con il resto della lezione, in cui il
+docente rimanda più volte alla lezione sui personaggi e dice che quella
+sull'emotional design arriverà ``non nella prossima, ma in quella dopo''.}. I
+\textbf{tutoraggi} invece arriveranno più avanti, quando si lavorerà già ai
+giochi, e \textbf{non sono lezioni}: niente slide, sono momenti di
+\textbf{confronto diretto} con il docente sui progetti, per chiedere aiuto, una
+mano, ``un attimo magari rimettervi sulla strada per non perdervi col progetto
+di gruppo''. La studentessa aveva capito tutt'altro, e aveva aspettato la fine
+per chiedere. ``Regà, ma io cosa vi dico? Dovete farmi queste domande''.
+
+\paragraph{Il silenzio e il \emph{cringe}.} Mancano cinque minuti. ``Se state in
+silenzio, io divento super \emph{cringe}, mi metto a straparlare, e nessuno vuole
+questa scena''. Quindi: ``fate le domande e preservate il momento dalla
+contaminazione del \emph{cringe}''.
+
+\paragraph{I cursori cambiano con chi gioca?} Uno studente fa ``un piccolo salto
+logico'', ripartendo da quanto aveva scritto Lorenzo: il designer pensa a
+un'esperienza, ma il giocatore la vive in modo diverso. Allora anche i cursori
+possono cambiare a seconda di come si gioca. L'esempio: per lui \emph{Exit} è
+meno verbale di come lo si è descritto. Il docente precisa che ``molto verbale''
+era relativo: più verbale di un \emph{Agricola} o di un \emph{Catan}, meno di un
+Hidden Games o di \emph{Profiler}. Lo studente spiega: quando gioca con la sua
+compagna, sanno perfettamente chi dei due sa fare bene certe cose, e parlano meno,
+perché la loro esperienza di gioco è cambiata. La domanda: possiamo dire che un
+gioco è tanto più ben fatto quanto più \textbf{la media dei cursori dei
+giocatori corrisponde ai cursori del designer}?
+
+\paragraph{Un buon design fa arrivare le intenzioni.} ``Se per ben progettato
+intendiamo un gioco che fa arrivare l'esperienza intesa nella maggior parte dei
+casi, sì''. Il che non vuol dire che sia una \emph{bella} esperienza per chi la
+riceve: lo si vedrà nella lezione sull'emotional design, con molti esempi. Ma in
+generale \textbf{fare un buon design è assicurarsi che le proprie intenzioni
+arrivino}. L'esempio: si progetta un gioco per una certa esperienza, e chi lo
+gioca ha un'esperienza incredibile, fantastica, ma \textbf{ha capito male le
+regole} e le ha sbagliate tutte. ``Come è andato questo gioco? Che cosa vi fa
+provare questo risultato?'' E non basta che l'esperienza sia fantastica: deve
+essere in linea con i propri principi. Magari l'esperienza è fantastica e le
+persone dicono: ``perfetto, ho proprio capito che adesso devo andare per strada e
+picchiare la gente che incontro, così starò meglio''. Esperienza fantastica,
+messaggio che non si voleva far arrivare.
+
+\subsection{La responsabilità di chi progetta}
+
+Di queste cose, dal punto di vista del docente, \textbf{il designer ha la
+responsabilità}. E cita una frase che gli disse il suo professore di
+\emph{foundations of playing games} al master, ``molto forte'', che non farà
+piacere sentire:
+\begin{quote}
+\textbf{i game designer fanno \emph{brainwashing}}.
+\end{quote}
+Quando si fa game design si sta plasmando la mente delle persone: le si convince
+a fare cose che normalmente non farebbero. ``Nessuno, di propria volontà, si mette
+a muovere pedine su un tavolo senza che ci sia una ragione dietro''. Il designer
+dà alle persone \textbf{ragioni} per fare cose che non farebbero: degli
+\textbf{alibi}, delle motivazioni, delle spinte emotive. E questo porta con sé una
+responsabilità: ``io non voglio che qualcuno si faccia male giocando il mio
+gioco''.
+\begin{itemize}
+  \item È tanto più importante nel \textbf{gioco pervasivo}, che ha a che fare
+        con città, strade e persone che non sanno che si sta giocando:
+        richiede ``una delicatezza e una responsabilità forte e alta''. Se si
+        organizza un \emph{Journey to the End of the Night}, non si vuole che un
+        giocatore venga investito da un autobus.
+  \item In un board game il rischio fisico è più basso, ``ma non è
+        necessariamente più basso per davvero'': c'è il \textbf{rischio mentale,
+        psicologico}, che si vedrà nell'emotional design. ``Potete fare dei danni
+        alle persone che non avete idea''.
+\end{itemize}
+``Non ve lo dico per spaventarvi o per disincentivarvi da fare questo lavoro'',
+ma per essere persone più consapevoli della responsabilità che si ha quando si
+fanno delle cose. Se ne parlerà più nel dettaglio. ``Spero di non avervi
+spaventato''.
+
+\paragraph{Approfondimento: la lente della responsabilità.} Schell chiude
+\emph{The Art of Game Design} con un capitolo intitolato ``i designer hanno certe
+responsabilità''. L'immagine è quella dell'anello di ferro che, dal 1922, gli
+ingegneri canadesi ricevono alla laurea, al mignolo della mano dominante, in un
+rituale ideato da Rudyard Kipling per ricordare il loro obbligo verso la
+società. Schell ne offre uno, invisibile, ai lettori: ``se credete davvero che i
+giochi possano aiutare le persone'', mettetelo, e lasciate che quelle
+responsabilità guidino la vostra mano; ``pensateci bene, però, perché non si
+toglie''. La lente corrispondente (la \emph{Lens of Responsibility}) si riduce a
+una domanda: \textbf{il mio gioco aiuta le persone? Come?} È il rovescio positivo
+dell'avvertimento del docente: se i giochi possono plasmare le menti abbastanza da
+fare danni, possono farlo anche abbastanza da fare del bene, ed è il designer a
+scegliere in che direzione.
+
+\subsection{La chiusura}
+
+Il docente ringrazia e congeda la classe: ``potete andare, giocate''. E ricorda
+di giocare anche su \textbf{Tabletop Simulator}, perché il corso avrà una
+licenza, e vorrebbe che gli studenti sapessero già muoversi nell'ambiente: così
+sarà più facile spiegare come si creano giochi lì dentro. Per le domande, le
+email dei docenti le hanno. Lui cercherà di capire come caricare le slide nelle
+cartelle degli studenti, ``che di solito lo fa Daniele''. ``Potete andare, siete
+persone libere e autonome''. ``Ciao a tutti, buona serata''.
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item I \textbf{framework} raccolgono soluzioni a problemi che altri hanno già
+        incontrato: servono a perdere meno tempo, a progettare in modo più
+        focalizzato e a far arrivare l'esperienza voluta. Sono anche
+        strumenti di \textbf{analisi} dei giochi esistenti.
+  \item \textbf{Il design è l'opposto della tradizione} (Koljonen): chiedersi
+        che cosa si mette nel gioco e perché, distinguendo ciò che ha senso da
+        ciò che c'è solo perché ``il genere l'ha sempre avuto'' (master, dadi,
+        schede nel GDR).
+  \item \textbf{Il gioco è un'esperienza creata da regole} (Anna Anthropy): sulle
+        regole si ha controllo, sull'esperienza no. Il lavoro del designer è
+        creare regole che creino esperienze. Il gioco per tutti non esiste;
+        l'accessibilità riguarda tutte le persone \emph{per cui} il gioco è.
+  \item Le \textbf{lenti} di Schell sono ``cappelli'' per guardare il design;
+        utili da conoscere, non tutte utili. I giochi sono un \textbf{medium}:
+        comunicazione bidirezionale, differita, \textbf{mediata} (regolamento,
+        procedure, workshop) ed \textbf{emergente}.
+  \item La pipeline \textbf{design, playtest, iterazione} non si salta, nemmeno
+        per giochi non commerciali. Il playtest è una spia; l'iterazione può
+        voler dire riscrivere o tagliare; la perfezione ha un costo infinito.
+        Dal \textbf{feedback} si prende il sentimento, non la soluzione.
+  \item \textbf{MDA}: si controllano le meccaniche, non si impongono le
+        dinamiche. C'è un gap tra estetica promessa ed estetica arrivata, e il
+        costruttivismo personale rende ogni esperienza diversa. Imparare a
+        riconoscere giochi progettati bene che non piacciono e progettati male
+        che piacciono. Il \textbf{DPE} (Winn) ridistribuisce i termini in design,
+        play, experience su più livelli, compreso l'apprendimento.
+  \item \textbf{``Immersione'' non dà strumenti}: scacchi, sport, tornei e LARP
+        in castello sono ``immersivi'' in sensi diversi (flow, sospensione
+        dell'incredulità\ldots). Il \textbf{Player Involvement Model} di Calleja
+        la sostituisce con sei forme di coinvolgimento, non esclusive e non
+        booleane: \textbf{cinestetico, spaziale, condiviso, narrativo, affettivo,
+        ludico}. Non è qualitativo: dice su che cosa il gioco spinge.
+  \item Affettivo e narrativo non coincidono (gli scacchi coinvolgono
+        affettivamente; i Jeepform quasi senza storia). Il condiviso include
+        entità non umane. Il multiplayer ha sempre coinvolgimento condiviso: se
+        non lo si progetta, lo progettano i giocatori.
+  \item Il \textbf{Mixing Desk of Larp}, nato nel Nordic LARP, descrive un gioco
+        con cursori: comunicazione (verbale/fisica), apertura tematica
+        (trasparenza/segreto), diegesi ambientale (360°/indipendenza materiale),
+        creazione dei personaggi (chi gioca/chi progetta), gestione (attiva/
+        passiva), universo narrativo (giocabile/plausibile), rappresentazione
+        tematica (storia/azioni), meccaniche (intrusive/discrete), più
+        \emph{your fader here}. È modulare e serve sia ad analizzare sia a
+        scrivere linee guida.
+  \item \textbf{Giocabile e plausibile} sono in opposizione: plausibile è un
+        mondo che simula la realtà, giocabile un mondo progettato per far
+        nascere momenti di gioco (la vedetta, GURPS, \emph{Desert Bus},
+        \emph{Waiting for Flight}). Nessuno dei due è migliore.
+  \item Nel corso, la \textbf{rappresentazione tematica} è l'unico cursore
+        trattato come qualitativo: il tema deve arrivare \textbf{con le
+        azioni}, con le meccaniche, non solo con la storia.
+  \item Le \textbf{metatecniche} (come \emph{ping the glass}) fanno fare al
+        giocatore ciò che il personaggio non fa; sono meccaniche
+        \textbf{intrusive}, come i dadi. Intrusivo non vuol dire negativo.
+  \item Analisi dal vivo: \emph{Exit} (giocabile, intrusivo, la scatola come
+        enigma), Hidden Games (plausibili, materiali, azioni da investigatore),
+        \emph{Profiler} (passivo, ultra discreto). Cursori aggiuntivi: single/
+        multiplayer, \emph{table presence}.
+  \item Un buon design fa arrivare \textbf{le intenzioni}; e chi progetta giochi
+        ``fa \emph{brainwashing}'': dà alle persone ragioni per fare cose che non
+        farebbero, e ne ha la \textbf{responsabilità}, fisica e psicologica.
+\end{itemize}

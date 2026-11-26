@@ -1,0 +1,90 @@
+\section{La torcia e la prima persona con la rotella}
+
+La rotella del mouse accorcia e allunga il braccio della telecamera (\emph{Spring Arm}). Quando il braccio scende sotto i 40\,cm la telecamera entra nella testa: il personaggio sparisce, la visuale diventa in prima persona e si accende la torcia. Nel C++ è \texttt{UPlatformerTorchComponent}.
+
+\begin{ricetta}
+  \item In \var{BP\_Eroe}: il \var{CameraBoom} (Spring Arm) e la \var{FollowCamera} ci sono già nel template.
+  \item Sotto la \var{FollowCamera}: \var{Torcia} (Static Mesh, un cilindro scuro ruotato di 90\textdegree, posizione $(30, 18, -18)$) e \var{LuceTorcia} (\nodo{Spot Light}: Intensity 5000, Attenuation Radius 2500, Inner/Outer Cone 18\textdegree/32\textdegree, colore caldo). Entrambi \emph{Visible} = false.
+  \item Variabili: \var{BraccioVoluto} (Float, 400), \var{BraccioMax} (400), \var{PrimaPersona} (Bool), \var{Batteria} (Float, 25), \var{BatteriaMax} (25).
+  \item \var{IA\_Zoom} (Axis1D) mappata su \emph{Mouse Wheel Axis} in \var{IMC\_Ninja}.
+\end{ricetta}
+
+\subsection{La rotella cambia il braccio}
+
+Ogni scatto della rotella vale $\pm 1$: lo moltiplichiamo per 60\,cm e teniamo il risultato fra 0 e \var{BraccioMax}.
+
+\begin{bpgraph}
+\bpnode{ia}{(0,0)}{bpev}{EnhancedInputAction IA\_Zoom}{-}{exec/Triggered,exec/Started,exec/Completed,float/Action Value}
+\bpvar{bv}{\sotto{ia}{0}{-0.4}}{float}{BraccioVoluto}
+\maxx{m1}{ia,bv}
+\bpnode{calc}{\dxy{m1}{bv}{0.6}{0.4}}{bppure}{BraccioVoluto $-$ Value $\cdot$ 60}{float/BraccioVoluto,float/Value}{float/}
+\bpnode{cl}{\dx{calc}{0.6}{0}}{bppure}{Clamp (float)}{float/Value,float/Min 0,float/Max: BraccioMax}{float/}
+\bpnode{set}{\dxy{cl}{ia}{0.6}{0}}{bpvarh}{Set BraccioVoluto}{exec/,float/}{exec/}
+\bpexec{ia-out1}{set-in1}
+\bpwire{float}{bv-out1}{calc-in1}\bpwire{float}{ia-out4}{calc-in2}\bpwire{float}{calc-out1}{cl-in1}\bpwire{float}{cl-out1}{set-in2}
+\end{bpgraph}
+(Se la rotella zooma al contrario di come vi aspettate, cambiate il segno: $+$ al posto di $-$.)
+
+\subsection{Il braccio scivola verso il valore voluto}
+
+Nel Tick il braccio non salta al valore nuovo: ci arriva morbido con \nodo{FInterp To}. Poi si controlla la soglia della prima persona.
+
+\begin{bpgraph}
+\bpnode{t}{(0,0)}{bpev}{Event Tick}{-}{exec/,float/Delta Seconds}
+\bpnode{fi}{\sotto{t}{0}{-0.4}}{bppure}{FInterp To}{float/Current: Target Arm Length,float/Target: BraccioVoluto,float/Delta Time,float/Interp Speed 10}{float/}
+\bpnode{set}{\dxy{fi}{t}{0.6}{0}}{bpvarh}{Set Target Arm Length}{exec/,obj/Target: CameraBoom,float/}{exec/}
+\bpnode{lt}{\sotto{set}{0}{-0.4}}{bppure}{Target Arm Length $<$ 40}{-}{bool/}
+\maxx{m1}{set,lt}
+\bpnode{ne}{\dxy{m1}{t}{0.6}{0}}{bppure}{NOT EQUAL (Boolean)}{bool/A,bool/B: PrimaPersona}{bool/}
+\bpnode[2.4]{br}{\dx{ne}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{call}{\dx{br}{0.6}{0}}{bpcustom}{ImpostaPrimaPersona}{exec/,bool/Attiva}{exec/}
+\bpexec{t-out1}{set-in1}\bpwire{float}{fi-out1}{set-in3}
+\bpwire{bool}{lt-out1}{ne-in1}\bpwire{bool}{ne-out1}{br-in2}
+\bpdraw[bpexecw] (set-out1) .. controls +(2,0) and +(-2,0) .. (br-in1);
+\bpexec{br-out1}{call-in1}
+\bpdraw[bpdataw, draw=bpc-bool] (lt-out1) .. controls +(3,-0.5) and +(-1.5,-1) .. (call-in2);
+\end{bpgraph}
+
+Il controllo con \nodo{NOT EQUAL} serve a chiamare \var{ImpostaPrimaPersona} solo quando lo stato \emph{cambia}, non a ogni frame.
+
+\subsection{Entrare nella testa}
+
+\begin{bpgraph}
+\bpnode{f}{(0,0)}{bpcustom}{ImpostaPrimaPersona}{-}{exec/,bool/Attiva}
+\bpnode{s0}{\dx{f}{0.6}{0}}{bpvarh}{Set PrimaPersona}{exec/,bool/Attiva}{exec/}
+\bpnode{ns}{\dx{s0}{0.6}{0}}{bpfn}{Set Owner No See}{exec/,obj/Target: Mesh,bool/New Owner No See: Attiva}{exec/}
+\bpnode{off}{\dx{ns}{0.6}{0}}{bpvarh}{Set Target Offset}{exec/,obj/CameraBoom,vec/Select: (0 0 65) o (0 0 0)}{exec/}
+\bpexec{f-out1}{s0-in1}\bpexec{s0-out1}{ns-in1}\bpexec{ns-out1}{off-in1}
+\end{bpgraph}
+
+\begin{bpgraph}
+\bpnode{x}{(0,0)}{bpflow}{(continua)}{-}{exec/}
+\bpnode{yaw}{\dx{x}{0.6}{0}}{bpvarh}{Set Use Controller Rotation Yaw}{exec/,obj/Target: self,bool/Attiva}{exec/}
+\bpnode{orient}{\dx{yaw}{0.6}{0}}{bpvarh}{Set Orient Rotation To Movement}{exec/,obj/Target: Move,bool/NOT Attiva}{exec/}
+\bpnode{v1}{\sotto{yaw}{0}{-0.5}}{bpfn}{Set Visibility}{exec/,obj/Target: Torcia,bool/Attiva}{exec/}
+\bpnode{v2}{\dx{v1}{0.6}{0}}{bpfn}{Set Visibility}{exec/,obj/Target: LuceTorcia,bool/Attiva AND Batteria $>$ 0}{exec/}
+\bpexec{x-out1}{yaw-in1}\bpexec{yaw-out1}{orient-in1}
+\bpdraw[bpexecw] (orient-out1) .. controls +(1,0) and +(-1.5,0) .. ++(0,-0.9) .. controls +(-3,0) and +(-1,0) .. (v1-in1);
+\bpexec{v1-out1}{v2-in1}
+\end{bpgraph}
+
+Perché funziona: \nodo{Set Owner No See} nasconde la mesh \emph{solo} alla telecamera del proprietario (le ombre restano). \emph{Target Offset} alza la telecamera all'altezza degli occhi (65\,cm sopra il centro della capsula). \emph{Use Controller Rotation Yaw} fa girare il corpo con il mouse, come in ogni FPS; in terza persona si torna a \emph{Orient Rotation To Movement}.
+
+\subsection{La batteria}
+
+\begin{bpgraph}
+\bpnode{t}{(0,0)}{bpflow}{Tick (dopo lo zoom)}{-}{exec/,float/dt}
+\bpnode[2.4]{br}{\dx{t}{0.6}{0}}{bpflow}{Branch}{exec/,bool/PrimaPersona}{exec/True,exec/False}
+\bpnode{sub}{\dx{br}{0.6}{0}}{bpvarh}{Set Batteria}{exec/,float/Max(Batteria $-$ dt ; 0)}{exec/}
+\bpnode{rec}{\sotto{sub}{0}{-0.6}}{bpvarh}{Set Batteria}{exec/,float/Min(Batteria + 0.25 $\cdot$ dt ; Max)}{exec/}
+\bpnode{pct}{\dx{sub}{0.6}{-0.3}}{bppure}{Batteria / BatteriaMax}{-}{float/Carica}
+\bpnode{fl}{\sotto{pct}{0}{-0.3}}{bppure}{Carica $<$ 0.2 ? RandomFloatInRange(0.3;1) : 1}{float/Carica}{float/Fattore}
+\maxx{m1}{pct,fl}
+\bpnode{int}{\dxy{m1}{sub}{0.6}{0}}{bpfn}{Set Intensity}{exec/,obj/Target: LuceTorcia,float/5000 $\cdot$ Fattore}{exec/}
+\bpexec{t-out1}{br-in1}\bpexec{br-out1}{sub-in1}\bpexec{br-out2}{rec-in1}
+\bpexec{sub-out1}{int-in1}\bpwire{float}{pct-out1}{fl-in1}\bpwire{float}{fl-out1}{int-in3}
+\end{bpgraph}
+
+Sotto il 20\% la luce tremola (un'intensità casuale ogni frame), e a zero si spegne (\nodo{Set Visibility} false). Il pickup di batteria (capitolo~\ref{sec:pickup}) aggiunge 15\,s.
+
+\ninja{Il clamp sul braccio è la vera ``leva'': non servono due telecamere né un cambio di Pawn. Una sola Spring Arm con lunghezza variabile copre terza persona, inquadratura ravvicinata e prima persona.}

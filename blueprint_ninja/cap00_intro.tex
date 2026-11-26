@@ -1,0 +1,80 @@
+\section{Come leggere questa guida}
+
+Ogni meccanica del platformer (i tre livelli \texttt{L\_GD13}) è scritta nel progetto in C++, come componente o come actor. Qui la stessa logica è disegnata \emph{a nodi}, come la si costruisce nell'Event Graph di un Blueprint. Il personaggio si chiama \var{BP\_Eroe}: è un Blueprint figlio di \nodo{Character} (rinominatelo come volete). Ogni sezione ha:
+\begin{itemize}
+  \item gli \textbf{ingredienti}: in quale Blueprint si lavora, quali componenti e variabili servono;
+  \item uno o più \textbf{grafici}, da ricopiare nodo per nodo;
+  \item la \textbf{mossa da ninja}: il trucco che fa la differenza, o l'errore classico da evitare.
+\end{itemize}
+I nomi dei nodi sono quelli dell'editor in inglese (quelli che si cercano con il tasto destro nel grafo). I numeri sono gli stessi usati nei livelli: se li cambiate, cambiano le distanze che si riescono a saltare.
+
+\subsection{Legenda}
+
+\begin{center}
+\begin{tabular}{ll@{\qquad}ll}
+\toprule
+\pin{exec} & esecuzione (filo nero) & \pin{bool} & Boolean \\
+\pin{int} & Integer & \pin{float} & Float \\
+\pin{vec} & Vector & \pin{rot} & Rotator \\
+\pin{obj} & riferimento a un oggetto & \pin{class} & classe \\
+\pin{str} & String & \pin{text} & Text \\
+\pin{name} & Name & \pin{struct} & struttura (Hit Result\dots) \\
+\pin{enum} & enum & \pin{del} & delegate / evento \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{bpgraph}
+\bpnode{a}{(0,0)}{bpev}{Evento}{-}{exec/}
+\bpnode{b}{\dx{a}{0.8}{0}}{bpfn}{Funzione (impura)}{exec/,float/Ingresso}{exec/,float/Uscita}
+\bpnode{c}{\dx{b}{0.8}{0}}{bppure}{Funzione pura}{float/A,float/B}{float/Risultato}
+\bpnode{d}{\dx{c}{0.8}{0}}{bpflow}{Branch / Sequence}{exec/,bool/Condition}{exec/True,exec/False}
+\bpvar{e}{(0,-1.8)}{float}{Variabile (Get)}
+\bpnode{f}{\sotto{b}{0}{-0.5}}{bpcast}{Cast To \dots}{exec/,obj/Object}{exec/,exec/Cast Failed,obj/As \dots}
+\bpnode{g}{\sotto{c}{0}{-0.5}}{bpcustom}{Evento custom}{-}{exec/}
+\bpnode{h}{\sotto{d}{0}{-0.5}}{bptl}{Timeline}{exec/Play,exec/Reverse}{exec/Update,exec/Finished,float/Alpha}
+\end{bpgraph}
+
+Le testate colorate dicono che tipo di nodo è: \textcolor{bpev}{\textbf{rosso}} gli eventi, \textcolor{bpfn}{\textbf{blu}} le funzioni con il pin di esecuzione, \textcolor{bppure}{\textbf{verde}} le funzioni pure (senza esecuzione: si ricalcolano ogni volta che qualcuno legge il loro risultato), \textcolor{bpflow}{\textbf{grigio}} il controllo di flusso, \textcolor{bpcast}{\textbf{verde acqua}} i cast, \textcolor{bpcustom}{\textbf{viola}} eventi custom e dispatcher, \textcolor{bptl}{\textbf{arancio}} le timeline. Le capsule colorate sono le variabili lette con un \emph{Get}.
+
+Quando un nodo verde ha per titolo una formula (per esempio \nodo{Z $-$ 380 $\cdot$ dt}) è un piccolo conto: potete farlo con i nodi aritmetici uno per uno, oppure con un unico nodo \nodo{Math Expression} (tasto destro $\rightarrow$ \emph{Add Math Expression}) scrivendo la formula così com'è. Le uscite degli \emph{Hit Result} si leggono con \nodo{Break Hit Result}; i vettori con \nodo{Break Vector} / \nodo{Make Vector}.
+
+\subsection{Gli asset da creare prima}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+Asset & A cosa serve \\
+\midrule
+\var{BP\_Eroe} (Character) & il giocatore: movimento, abilità, torcia, vite, casse \\
+\var{GI\_Platform} (Game Instance) & quello che sopravvive ai cambi di livello: vite, monete, abilità, record \\
+\var{SG\_Platform} (Save Game) & il salvataggio su disco \\
+\var{E\_Abilita} (Enumeration) & \var{DoppioSalto}, \var{WallRun}, \var{Jetpack}, \var{GeneratoreCasse} \\
+\var{BPI\_Interagibile} (Blueprint Interface) & funzioni \var{Interagisci(Chi)} e \var{GetPrompt} \\
+\var{IA\_Jump}, \var{IA\_Interact} & già nel progetto (Third Person) \\
+\var{IA\_Zoom} & Input Action, Value Type \emph{Axis1D (float)} \\
+\var{IA\_GeneraCassa} & Input Action, Value Type \emph{Digital (bool)} \\
+\var{IMC\_Ninja} & Input Mapping Context: \var{IA\_Zoom} = Mouse Wheel Axis, \var{IA\_GeneraCassa} = F e Gamepad Face Button Left \\
+\var{WBP\_HUD} (Widget Blueprint) & vite, monete, carburante, batteria, casse, timer \\
+\var{GM\_Platform} (Game Mode) & Default Pawn Class = \var{BP\_Eroe}, HUD/Widget \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+In \nodo{Project Settings} $\rightarrow$ \nodo{Maps \& Modes} impostate \var{GI\_Platform} come Game Instance Class e \var{GM\_Platform} come Default GameMode.
+
+\subsection{Il primo grafo: attaccare l'input}
+
+Le azioni nuove (\var{IA\_Zoom}, \var{IA\_GeneraCassa}) stanno in un Mapping Context nostro, aggiunto \emph{sopra} a quello di base con una priorità più alta. In \var{BP\_Eroe}:
+
+\begin{bpgraph}
+\bpnode{bp}{(0,0)}{bpev}{Event BeginPlay}{-}{exec/}
+\bpnode{pc}{\sotto{bp}{0.6}{-0.5}}{bppure}{Get Player Controller}{int/Player Index 0}{obj/Return Value}
+\bpnode{ss}{\dx{pc}{0.6}{0}}{bppure}{Enhanced Input Local Player Subsystem}{obj/Player Controller}{obj/Return Value}
+\bpnode{add}{\dx{ss}{0.8}{1.6}}{bpfn}{Add Mapping Context}{exec/,obj/Target,obj/Mapping Context: IMC\_Ninja,int/Priority 1}{exec/}
+\bpexec{bp-out1}{add-in1}
+\bpwire{obj}{pc-out1}{ss-in1}
+\bpwire{obj}{ss-out1}{add-in2}
+\end{bpgraph}
+
+\ninja{Non toccate \var{IMC\_Default} del template: aggiungete un \emph{vostro} context. Se un giorno l'abilità non serve più, basta un \nodo{Remove Mapping Context} e i tasti tornano liberi.}

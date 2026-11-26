@@ -1,0 +1,2274 @@
+% =====================================================================
+%  Analog Game Design, lezione 15 — Il random nel game design: input,
+%  output e casualità combinata.
+%  La lezione di Diego Ricchiuti, direttore del corso di Game Design
+%  dell'accademia, sulla casualità (RNG, randomness). In apertura,
+%  Daniele presenta il docente ospite e ricorda il calendario. Poi:
+%  chi è Diego; le definizioni di "random" (mancanza di pattern,
+%  assenza di decisione conscia, caso contro piano, assenza di causa o
+%  di intenzione, possibilità statistica, pericolo e risultato
+%  incerto); come si calcola una probabilità (il modo matematico e
+%  quello visivo, ad albero); i tre tipi di random (vero, pseudo-random
+%  e controllato: la curva a campana, Carcassonne, Catan, Monopoly);
+%  le nove combinazioni (input, output, combinato). L'input random:
+%  carte, poker, stoppa, Magic, Monopoly, giochi a ruoli nascosti,
+%  setup variabili, briscola; pro (decisioni sensate, rigiocabilità con
+%  Cosmic Encounter, riduzione del divario di abilità), rischi (turn one
+%  win, paralisi da analisi, falsa strategia, poco controllo) e linee
+%  guida. L'output random: D&D, Betrayal at House on the Hill, il
+%  dramma (Affari tuoi, Golden Balls), rischi e mitigazione (reroll,
+%  modificatori, assicurazioni, successo nel fallimento), dove usarlo,
+%  il dado critico, Killer Bunnies. Dopo la pausa, il random combinato:
+%  il mulligan di Magic, problem solving creativo (le maledizioni, il
+%  gioco di dadi e bluff), profondità strategica (Atlantide in Risiko),
+%  narrativa (Pasión de las Pasiones); mitigazione (push your luck,
+%  sistemi ibridi con la Scoperta di Hearthstone, random controllato,
+%  progressione e dadi forgiati), l'effetto valanga e le fasi
+%  (L'eredità). Infine il pubblico e il tema, la ricerca sulle
+%  recensioni (Wingspan), il "cheat sheet" del random, le domande
+%  (Quantic Foundry, BoardGameGeek), i dadi su misura e Atmosfear.
+%  Fonte: trascrizione della quindicesima lezione (AGD15) del corso
+%  breve di Analog Game Design: una lezione online di circa tre ore,
+%  tenuta da Diego Ricchiuti. Con ogni probabilità è la registrazione
+%  della lezione sull'RNG di un'edizione precedente del corso (vedi la
+%  nota sulla data all'inizio del capitolo).
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Analog Game Design", quindicesimo
+%  capitolo (numerazione propria 2.15). Nel file principale del libro,
+%  subito dopo il capitolo 2.14:
+%
+%    \input{AGD/AGD14_gli_strumenti_dello_sviluppo}
+%    \input{AGD/AGD15_il_random_nel_game_design}
+%
+%  Tutte le etichette di questo capitolo hanno il prefisso "a15:"
+%  (a15:cap:..., a15:sec:..., a15:fig:..., a15:tab:...). Il capitolo è
+%  autonomo: non contiene \ref verso altri capitoli.
+%  Le figure e le tabelle sono ricostruzioni schematiche di quanto
+%  detto a voce e mostrato nelle slide (che non sono nella
+%  trascrizione), non copie delle slide. Dove la trascrizione è troppo
+%  rovinata per ricostruire un dettaglio (un nome, un titolo, un
+%  numero), il capitolo lo dice invece di inventarlo; dove Diego dà un
+%  numero o un fatto che non torna, il capitolo lo riporta come detto e
+%  lo corregge in nota.
+% =====================================================================
+
+\chapter[Il random nel game design]{Il random nel game design: input, output e casualità
+combinata}
+\label{a15:cap:random}
+
+Questa è la \textbf{quindicesima lezione} del corso di \textbf{Analog Game Design}, ed è
+la lezione sull'\textbf{RNG}, la casualità nei giochi, annunciata fin dal primo giorno e
+spostata più volte nel calendario. La tiene \textbf{Diego Ricchiuti}, direttore del corso
+di Game Design dell'accademia e \emph{game designer} con una lunga carriera nei videogiochi
+e qualche incursione nei giochi da tavolo. Daniele, presentandolo, promette una lezione
+``più proprio di \emph{design} vero e proprio tecnico'': che cos'è l'RNG e come lo si usa
+nel \emph{system design}.
+
+Diego costruisce la lezione come ama fare, ``a partire dalle definizioni''. Prima si chiede
+che cosa intendiamo davvero quando diciamo che una cosa è ``random'', e ne ricava sei
+ingredienti; poi mostra come si calcola una probabilità, distingue \textbf{tre tipi di
+random} (vero, pseudo-random e controllato) e li incrocia con \textbf{tre momenti} in cui la
+casualità può entrare in una decisione: \textbf{prima} (l'\emph{input random}),
+\textbf{dopo} (l'\emph{output random}) o \textbf{entrambi} (il random \textbf{combinato}).
+A ciascuno dei tre momenti dedica un blocco della lezione, con la stessa struttura: che
+cos'è, perché lo si usa, quali rischi porta, come lo si mitiga, dove funziona meglio, e
+qualche consiglio ``da persona che fa questa roba da tanti anni''. La lezione si chiude con
+il rapporto tra casualità e \textbf{pubblico}, con una tabella riassuntiva (un ``piccolo
+\emph{cheat sheet} del random'') e con le domande degli studenti.
+
+Il filo che lega tutto è un'idea che Diego ripete in più forme: il random non è un nemico
+del \emph{design}, ma il suo strumento più potente, \textbf{a patto di controllarlo}. Il
+\textbf{random controllato}, cioè sapere che cosa è statisticamente più probabile e
+costruirci sopra le regole, è ``l'arma segreta di noi designer''; e la casualità va dosata
+in modo che il giocatore si senta \textbf{più potente} e non privato della propria
+\emph{agency}. Lo dice anche in negativo: ``con il random, favorite l'\emph{interessante}
+invece del \emph{giusto}''.
+
+\paragraph{Data, formato, persone.} La lezione è \textbf{online}, su Zoom, e dura le
+``classiche tre ore'' con una pausa a metà; inizia alle 17, con il solito quarto d'ora di
+attesa per i ritardatari. La data non è mai detta, e diversi indizi fanno pensare che la
+trascrizione \textbf{non} venga da una lezione dal vivo dell'edizione in corso, ma sia la
+\textbf{registrazione della lezione sull'RNG di un'edizione precedente} del corso,
+presumibilmente la prima\footnote{Nel calendario ripassato da Ruggero nella lezione su
+Tabletop Simulator la lezione di Diego sull'RNG era fissata al 6 novembre, ed era poi stata
+sostituita dalla lezione sul \emph{playtest}; nessun capitolo successivo la ricolloca. In
+questa trascrizione, invece: gli studenti presenti hanno nomi che non compaiono mai nei
+capitoli precedenti (Mauro, Andrea, Alessandro, Davide, Giuseppe, un altro Diego, Federico,
+Daniele, Oksana, Jacopo); Daniele dice che i gruppi stanno realizzando un prototipo ``che ci
+porteranno attorno ai primi di luglio'' e che verrà finalizzato ``attorno al 20 di
+settembre''; ricorda un tutoraggio ``a inizio luglio''; e durante la pausa Diego dice di
+``morire di caldo'' e parla di ventilatori e deumidificatori. Tutto fa pensare a una lezione
+tenuta a inizio estate, durante un'edizione precedente (con ogni probabilità quella del
+2025, ``l'anno scorso'' di cui parlano i docenti nella prima lezione). Il capitolo non
+assegna una data e tratta la lezione come una registrazione messa a disposizione del corso.
+Anche l'ordine (dopo le due lezioni di Marta) è quello in cui la trascrizione è stata
+fornita, non necessariamente quello in cui la lezione è stata vista.}.
+All'inizio c'è \textbf{Daniele}, il docente titolare, che deve tornare dopo pochi minuti
+``dagli altri di \emph{Narrative}'', un altro corso in cui deve prendere le presenze. Fa
+l'appello: risultano presenti, o in arrivo, \textbf{Mauro}, \textbf{Andrea},
+\textbf{Davide} (che conosce già Diego e ``alcune cose le sa già''), \textbf{Diego} (uno
+studente omonimo del docente), \textbf{Federico}, \textbf{Oksana} e
+\textbf{Jacopo}\footnote{La trascrizione scrive anche ``Giacopo'' e ``Iacomo''. Nell'appello
+compare anche un ``Fabris'' (o ``Fabrizio''?) che non si sente più; più avanti Diego dice che
+Fabrizio è il nome di suo fratello, ma è un'altra cosa.}; \textbf{Giuseppe} segue in
+differita dalla registrazione; \textbf{Alessandro} ha avvisato che non ci sarà;
+di \textbf{Daniele} (uno studente) non si sa nulla. Intervengono a voce soprattutto
+\textbf{Jacopo}, \textbf{Davide}, \textbf{Andrea} e, alla fine, \textbf{Oksana}.
+
+\paragraph{Avvertenze di lettura.} Le stesse dei capitoli precedenti. La trascrizione è
+automatica e storpia molti nomi: \emph{Hearthstone} è ``Airstone'', \emph{Sleeping Gods}
+è ``Sleeping Garden'' o ``Sleeping God'', \emph{Clank!} è ``Crank'', \emph{Dice Forge} è
+``Forge Dice'', \emph{Among Us} è ``da Mongas'', \emph{Atmosfear} è ``Atmosphere'', il
+Texas Hold'em è ``Texas Olden'', \emph{The Settlers of Catan} è ``Settles of Catan'' o ``7
+Socratan'', \emph{Pachinko} è ``pacinco'', la Kamčatka del Risiko è ``Kamciak'',
+``canciacca'' e ``cranciacca''. Dove la ricostruzione è sicura, o molto probabile, il
+capitolo usa la forma corretta e lo segnala in nota la prima volta; dove non lo è,
+riporta la forma della trascrizione e lo dice. La trascrizione \textbf{si apre e copre
+l'intera pausa con frasi senza senso ripetute in ciclo} (``la situazione è questa, la
+migliore dal 2005'', ``il numero di persone è molto più basso dopo il raggio di persone'',
+``la struttura del giardino''), che il capitolo ignora; e \textbf{in un punto della parte
+sull'output random} una stringa ripetuta (``Output transcript'') copre una parte della
+spiegazione, che il capitolo ricostruisce per quanto possibile e segnala. Diego, infine,
+parla a braccio e dà qualche numero o fatto che non torna (la percentuale del 7 con due
+dadi, l'origine del nome della curva a campana, il numero di tessere di
+\emph{Carcassonne}, gli alieni di \emph{Cosmic Encounter}, l'età del \emph{London
+mulligan}): il capitolo riporta ciò che ha detto e, in nota, i dati corretti.
+
+\paragraph{Come leggere questo capitolo.} Il capitolo segue l'ordine della lezione. Le
+figure ricostruiscono gli schemi che emergono dal discorso o che Diego disegna a mano
+durante la lezione (l'albero delle monete, le distribuzioni dei dadi, il momento della
+casualità rispetto alla decisione, le curve di input, output e tensione, la tolleranza dei
+diversi pubblici); le tabelle riassumono le definizioni, le nove combinazioni, i pro e i
+rischi di ciascun tipo di random, le tecniche di mitigazione e il \emph{cheat sheet}
+finale. Qua e là, dei paragrafi di \textbf{approfondimento} collegano la lezione ai libri
+di game design di riferimento (soprattutto \emph{The Art of Game Design} di Jesse Schell e
+\emph{Challenges for Game Designers} di Brenda Brathwaite e Ian Schreiber), e qualche
+piccolo calcolo verifica gli esempi numerici di Diego; sono segnalati come tali e non
+fanno parte della lezione.
+
+Il percorso del capitolo:
+\begin{enumerate}
+  \item l'apertura con Daniele e la presentazione di Diego (sezioni
+        \ref{a15:sec:apertura} e~\ref{a15:sec:diego});
+  \item che cos'è il random: le definizioni, il calcolo delle probabilità, i tre tipi
+        di random e le nove combinazioni (sezioni
+        \ref{a15:sec:definizioni}--\ref{a15:sec:nove});
+  \item l'input random (sezione~\ref{a15:sec:input});
+  \item l'output random (sezione~\ref{a15:sec:output});
+  \item dopo la pausa, il random combinato e la sua mitigazione (sezioni
+        \ref{a15:sec:combinato} e~\ref{a15:sec:mitigazionecomb});
+  \item il pubblico, il tema e il \emph{cheat sheet} (sezioni \ref{a15:sec:pubblico}
+        e~\ref{a15:sec:cheatsheet});
+  \item le domande e la chiusura (sezione~\ref{a15:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'apertura: Daniele presenta Diego}
+\label{a15:sec:apertura}
+
+I primi minuti sono di attesa e di chiacchiere. Daniele e Diego si conoscono bene, e
+parlano della nuova foto del profilo LinkedIn di Diego (``la foto grande'', dice Daniele,
+``è veramente carina''); Diego osserva che quando si è a un evento professionale con un
+fotografo professionista ``si nota la differenza'', e che lui tiene ``una foto fatta bene
+all'anno''. Davide conosce già Diego, che ha avuto come docente ``quattro anni fa'': per lui
+la parte iniziale in cui Diego si presenta sarà uno \emph{spoiler}, ma ``un ripasso fa
+sempre bene''. Si aspetta, come di consueto, fino alle cinque e un quarto. Tra una cosa e
+l'altra, Daniele dice che ha seguito una conferenza stampa che lo ha molto emozionato:
+questa parte della trascrizione è però quasi del tutto incomprensibile\footnote{``Io ho
+partecipato a questa conferenza stampa, sono stato molto emotivo [\ldots] sono stati forzati
+a dare la mia mano a questo giovane iconore'': il contenuto non è ricostruibile, ed è
+probabilmente in parte rumore della trascrizione automatica.}.
+
+\paragraph{Che cosa sta facendo il corso.} Daniele spiega a Diego che la lezione è ``la
+classica da tre ore con la pausa'' e che, se vuole, può passargli le slide da caricare sul
+\emph{drive} condiviso degli studenti. I gruppi stanno già realizzando un prototipo di gioco
+analogico, che porteranno ``attorno ai primi di luglio'' e finalizzeranno per presentarlo
+``attorno al 20 di settembre''; dopo quella data, se Diego vuole, potrà vederli anche lui.
+Diego accetta volentieri.
+
+\paragraph{La presentazione.} Daniele lascia subito la parola, perché deve tornare
+``dai ragazzi di \emph{Narrative}'' (``e quando lasci da soli i topi ballano''). Presenta
+Diego come \textbf{direttore del corso di Game Design} dell'accademia\footnote{Nella
+trascrizione ``ad Ive'' e, poco dopo, ``qui a Dive'' e ``il Discord di Hive'': è con ogni
+probabilità l'accademia stessa (AIV), che i capitoli precedenti chiamano semplicemente
+``l'accademia''.} e ``grande esperto di game design, sia videoludico che \emph{tabletop}'',
+a cui è stata chiesta una lezione ``specificatamente su RNG'': che cos'è, un po' di
+\emph{system design}, ``qualcosa più proprio di \emph{design} vero e proprio tecnico''.
+
+\paragraph{Il calendario.} Daniele ricorda che ci si rivede \textbf{lunedì}, con lui e
+``forse anche Ruggero'', per la lezione sul \textbf{\emph{world building}}\footnote{Nella
+trascrizione ``War Building'': dal contesto è il \emph{world building}.}; le altre lezioni
+seguiranno il calendario, con ``piccoli cambiamenti'' sempre pensati per dare agli studenti i
+temi più utili al corso. A inizio luglio ci sarà un altro tutoraggio\footnote{Con ``Meo
+Corrugge'', secondo la trascrizione: potrebbe essere una storpiatura di ``Ruggero'', ma il
+nome non è ricostruibile con certezza.}; il calendario completo è online.
+
+\paragraph{Le registrazioni e l'Help Desk.} Prima di uscire, Daniele risponde ad Andrea, che
+da quel giorno non riesce più a rivedere le registrazioni delle lezioni sul sito (``questo
+video è inesistente'', su tutti i video). Probabilmente, dice Daniele, è ``crollato il
+server'' dove stanno i video. E dà un'indicazione che vale per tutti: per i \textbf{problemi
+tecnici} c'è, in alto nel Discord dell'accademia, un canale apposito chiamato \textbf{Help
+Desk}; lì si scrive ``sono studente di questo corso e vi segnalo questo problema'', e
+rispondono direttamente i tecnici.
+
+% ---------------------------------------------------------------------
+\section{Chi è Diego}
+\label{a15:sec:diego}
+
+Diego condivide lo schermo, chiede conferma che le slide si vedano e comincia con una
+``brevissima presentazione''. Lo si può trovare su \textbf{LinkedIn}, dove gli si possono
+fare domande anche dopo la lezione: ``è tutto per me soltanto un piacere''. Oltre a
+dirigere il corso di Game Design dell'accademia, elenca i progetti a cui ha lavorato:
+\begin{itemize}
+  \item \textbf{\emph{Tom Clancy's Ghost Recon Wildlands}}, come \emph{lead
+        designer}\footnote{Così nella trascrizione. Il capitolo riporta i ruoli come detti a
+        voce, senza verificarli.};
+  \item un titolo che la trascrizione riporta come ``\emph{Konaka Madness}''\footnote{Il
+        titolo non è ricostruibile.};
+  \item ``\emph{Donai}'', che definisce ``il primo \emph{donation game} al
+        mondo''\footnote{Il nome è riportato come nella trascrizione e non è
+        verificabile.};
+  \item \textbf{\emph{Dying Light 2}}, come \emph{lead designer};
+  \item \textbf{\emph{Enotria}}\footnote{Con ogni probabilità \emph{Enotria: The Last Song},
+        \emph{soulslike} di ambientazione italiana.}, come consulente;
+  \item \textbf{\emph{A Quiet Place}}\footnote{Con ogni probabilità \emph{A Quiet Place: The
+        Road Ahead}, il videogioco tratto dalla serie di film.}, come \emph{creative
+        director};
+  \item un gioco uscito ``letteralmente due settimane fa'', di cui è \emph{design director},
+        che la trascrizione riporta come ``\emph{Star of the Drag}''\footnote{Il titolo non è
+        ricostruibile; ``su Ovunque'' significa forse che è uscito su tutte le piattaforme.}.
+\end{itemize}
+Ha scritto anche \textbf{un libro di game design}, e dice di essere ``l'unico italiano nella
+storia ad averlo fatto''\footnote{Così nella trascrizione: il senso è con ogni probabilità
+che sia l'unico italiano ad aver scritto un libro di game design di quel tipo, o per
+quell'editore; il titolo non viene detto.}, e un secondo libro, che invece riguarda il
+\textbf{\emph{business} dei videogiochi} (trovare fondi, lavorare con i \emph{publisher}),
+scritto insieme a un caro amico, \emph{business developer}, che la trascrizione chiama
+``John Henley''\footnote{La grafia del nome non è verificabile.}.
+
+\paragraph{I giochi da tavolo.} Ha lavorato anche sui giochi analogici. Il suo primo gioco
+da tavolo è \textbf{\emph{Artonauti -- Il mosaico del tempo}}, realizzato per il marchio
+\textbf{Artonauti}\footnote{Nella trascrizione ``Artonauti'' e, più avanti, ``attornato''.
+Artonauti è un marchio editoriale italiano per ragazzi, legato a un album di figurine sulla
+storia dell'arte.}: un \textbf{\emph{family game}} per bambini tra i 6 e gli 11--12 anni e i
+loro genitori. Per lo stesso marchio ha fatto le \textbf{\emph{Elemental Cards}}: carte
+divise nei quattro elementi classici (fuoco, terra, acqua, aria), con valori e abilità, per
+poterci costruire sopra ``un gioco, fondamentalmente''.
+
+\paragraph{Perché raccontarlo.} Non per vanto, ma ``per dirvi che se sono qui a parlarvi di
+questi argomenti, è perché so di cosa sto parlando''. Fa videogiochi, e giochi in generale,
+da \textbf{16 anni}, e ne ha viste ``di tutti i tipi'': dal \emph{AAA} all'\emph{indie},
+fino al gioco da tavolo, di cui si parlerà oggi.
+
+% ---------------------------------------------------------------------
+\section{Che cos'è il random: le definizioni}
+\label{a15:sec:definizioni}
+
+Il tema di oggi è la \textbf{\emph{randomness}}, o ``randomicità'', ``se vogliamo dirlo
+all'italiana''. Chi ha visto i suoi interventi sa che a Diego ``piace iniziare dalle
+definizioni'': e così parte da una serie di definizioni del dizionario inglese, mostrate
+sulle slide, e da ognuna estrae un ingrediente di che cosa intendiamo con ``random''.
+
+\subsection{La mancanza di un \emph{pattern}}
+
+La prima definizione: \emph{randomness} è ``la qualità o lo stato di \textbf{mancanza di un
+\emph{pattern}} o di un principio di organizzazione''. Già questa è ``estremamente
+interessante'', perché contiene \textbf{due tipi di randomicità}: quella di ciò che è
+davvero casuale, e quella di ciò che \textbf{ci sembra} casuale perché non siamo in grado di
+riconoscerne l'organizzazione. Una cosa può essere organizzata, ma organizzata in un modo
+che non capiamo, e allora per noi è random.
+
+L'esempio dal mondo reale sono i \textbf{numeri primi}: li si definisce ``randomici'', eppure
+tutti continuano a sostenere che un \emph{pattern} per riconoscerli ci deve essere, ``solo che
+non l'abbiamo ancora individuato''\footnote{È un'immagine divulgativa: la distribuzione dei
+numeri primi è del tutto determinata, ma non esiste una formula semplice che li generi, e il
+loro andamento ``sembra'' irregolare. È proprio il secondo tipo di randomicità di cui parla
+Diego.}. La randomicità, quindi, sta sia nel contenuto di ciò che avviene sia
+\textbf{``negli occhi di chi guarda''}.
+
+\paragraph{La conseguenza per il \emph{design}.} È un dato importante, perché vuol dire che
+si può \textbf{progettare la randomicità in base al \emph{target}}. Nel gioco per Artonauti,
+che è per bambini, la difficoltà è abbassata non perché il gioco ``doveva essere facile'', ma
+perché il pubblico che deve impararlo ha, per natura, un minore sviluppo e quindi una minore
+capacità di comprensione. Questo non vale solo per le regole e per il sistema, ma anche per
+la randomicità: ciò che per un adulto è un \emph{pattern} leggibile, per un bambino può
+essere puro caso, e viceversa.
+
+\subsection{Senza metodo né decisione conscia}
+
+La seconda definizione: ``fatto, creato o che avviene \textbf{senza metodo o decisione
+conscia}''. Il ``metodo'' riporta alla definizione precedente (il \emph{pattern},
+l'organizzazione); la novità è la \textbf{decisione conscia}. Nella vita capita di sentir
+dire ``guarda com'è random quella persona'': sembra che agisca senza prendere decisioni, in
+modo casuale, ``priva di logica''.
+
+In ambito di \emph{design} la conseguenza è precisa: \textbf{una cosa diventa randomica se
+togliamo il potere decisionale al giocatore}. Se si toglie la decisione conscia, il
+giocatore vedrà quell'azione come \textbf{randomica}, o come \textbf{ingiusta}, o entrambe le
+cose.
+
+\subsection{Il caso contro il piano}
+
+La terza definizione: che avviene, è successo o è stato scelto ``\emph{by chance}'' invece
+che ``\emph{according to a plan}'', cioè per caso, statisticamente, invece che secondo un
+piano. Qui gli elementi sono due.
+
+\paragraph{\emph{Chance}: la probabilità.} \emph{Chance} vuol dire possibilità. Una cosa
+randomica non è necessariamente ``casuale'' nel senso di imprevedibile in assoluto: può essere
+\textbf{statisticamente legata a qualcosa}, cioè a una probabilità. La moneta è casuale, ma
+è legata a una probabilità precisa: 50\% testa, 50\% croce. Per quanto una cosa sia
+randomica, è legata a un ambito matematico, quello delle probabilità, che la lezione
+vedrà ``molto brevemente''.
+
+\paragraph{Contro un piano.} L'altro elemento è il \textbf{piano}. L'essere umano interpreta
+la casualità anche così: ``ho un piano, succede qualcosa e il mio piano va in fumo''. Diego
+cita il modo di dire sul fatto che quando un uomo fa progetti, Dio ride\footnote{Diego lo
+presenta come un detto ``tipicamente italiano''; è più noto come proverbio yiddish (``l'uomo
+progetta e Dio ride''). In italiano si dice anche ``l'uomo propone e Dio dispone''.}: si ha
+un grande piano, ``e poi domani scoppiano le guerre, come sfortunatamente sta succedendo in
+questo periodo'', e i piani vanno in fumo. Oppure: si compra il biglietto di un concerto sei
+mesi prima e quel giorno piove. ``Che sfiga!'' Ci sembra casuale, ma \textbf{statisticamente
+non lo è}: se il concerto è a ottobre è più probabile che piova che a giugno. Però, poiché
+rovina il piano, lo viviamo come sfortuna, e la sfortuna è legata alla fortuna, e la fortuna
+al caso.
+
+\subsection{Assenza di causa o di intenzione}
+
+Si passa alla \textbf{statistica}. Una definizione di \emph{chance} è ``il verificarsi di
+eventi \textbf{in assenza di qualunque intenzione o causa ovvia}''.
+
+\paragraph{La causa che non si vede.} La causa ``ovvia'' ci riporta alla prima definizione:
+l'incapacità di riconoscere il \emph{pattern}. Storicamente, quando cadevano i
+\textbf{fulmini} li si attribuiva agli dèi, ``Zeus o Thor sono arrabbiati'', perché non si
+era in grado di capire che cosa stesse avvenendo.
+
+\paragraph{L'assenza di intenzione: l'effetto farfalla.} L'altro elemento è la
+\textbf{mancanza di intenzionalità}: una cosa avviene non perché qualcuno voleva che
+succedesse, ma per una \textbf{reazione a catena}. È la \textbf{teoria del caos}: ``la
+farfalla sbatte le ali e dall'altra parte del mondo c'è un tornado''. L'immagine è
+esagerata, ma il fenomeno è comunissimo: mi sveglio male, rispondo male a una persona, che si
+arrabbia, risponde male al suo capo e perde il lavoro. ``Io che ho sbattuto i piedi di notte
+e mi sono alzato arrabbiato ho fatto perdere il lavoro a un'altra persona.'' La conseguenza
+di migliaia di microeventi può portare a qualcosa che \textbf{sembra non avere una causa},
+anche se ce l'ha.
+
+\paragraph{La roulette e il supercomputer.} Un esempio ``giusto per farvi un po' di
+simpatia'': se avessimo un supercomputer, magari quantistico, con tutti i dati del lancio
+della pallina della \textbf{roulette} (peso, dimensione, perfetta rotondità, attrito,
+velocità, energia\ldots), in teoria potrebbe calcolare dove cadrà. Noi non siamo in grado di
+farlo, ma ``tecnicamente è possibile''.
+
+\paragraph{Gli scacchi: la causa nel futuro.} Un altro esempio, gli \textbf{scacchi}, scelti
+``solo perché statisticamente famosi''. Chi non è un grande giocatore, guardando una
+partita, a volte ha l'impressione che un giocatore esperto faccia mosse casuali. In realtà
+sta giocando \textbf{nove turni in avanti}: sa che, se fa quella mossa, l'avversario farà
+una tra sette mosse, e per ciascuna ha già la risposta. Quella che sembra una mossa casuale
+``è un trappolone per farti cadere''. Sembra mancare la causa, ma solo perché \textbf{la causa
+è nel futuro}: è un piano che chi guarda non vede.
+
+\subsection{La possibilità che qualcosa accada}
+
+Un'altra definizione statistica di \emph{chance} è semplicemente \textbf{la possibilità che
+qualcosa accada}: l'1\%, il 2\%, il 50\%, il 7\%. Sembra ovvio, ma ci riporta al discorso di
+prima: \textbf{il randomico non è detto che sia effettivamente randomico}, perché dietro ogni
+evento casuale c'è una probabilità che si può conoscere e misurare.
+
+\subsection{Il pericolo e il risultato incerto}
+
+L'ultima definizione è quella del verbo: \emph{to chance}, fare qualcosa \textbf{a dispetto
+del fatto che sia pericoloso o dal risultato incerto}. È una caratteristica tipica
+dell'\textbf{imprenditorialità}, il cosiddetto ``rischio d'impresa'': chi fonda una società
+spera che vada bene, ma può andare male.
+
+\paragraph{Il gratta e vinci.} Il modo più semplice per capirlo è il \textbf{gratta e vinci}.
+Con un gratta e vinci normale si pensa: ``spendo un euro, gratto, ho perso, vabbè''. Non si
+conosce il valore statistico preciso (``una su un miliardo?''), ma l'esperienza di vita dice
+che mediamente si perde. Ora si immagini un gratta e vinci ``speciale'': costa zero euro, e
+se si vince si vincono 10 milioni, ma se si perde ``vi ammazzo''. La prima reazione è:
+``di quante possibilità stiamo parlando?'' Se sono quelle di un gratta e vinci normale, ``col
+piffero''; se si vince nel 70\% dei casi, qualcuno potrebbe anche pensarci. Il
+\textbf{pericolo} e il \textbf{risultato incerto} si collegano quindi alla statistica: è in
+base al pericolo che decidiamo se vale la pena accettare una possibilità randomica.
+
+\paragraph{\emph{The future is uncertain}.} Ricapitolando (tabella~\ref{a15:tab:definizioni}),
+``random'' è una parola estremamente vaga, che si usa in tanti ambiti (il gioco,
+l'imprenditoria, la vita) proprio perché \textbf{il futuro è incerto per natura}: è ``la base
+dell'esistenza umana''. Diego mostra una GIF ``scema'' (lui stesso che cerca di capire se può
+vincere al gratta e vinci, ``e poi non vinco mai'') per dire proprio questo: il random lo
+viviamo costantemente, ed è talmente presente fin da bambini, anche nei giochi, che non ci
+chiediamo mai da dove venga, che cosa voglia dire, come sia stato progettato.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{5.0cm}>{\raggedright\arraybackslash}p{5.0cm}@{}}
+\toprule
+\textbf{Ingrediente} & \textbf{Esempio della lezione} & \textbf{Conseguenza per il
+\emph{design}} \\
+\midrule
+Mancanza di \emph{pattern} (vera o percepita) & i numeri primi & la randomicità dipende anche
+  da chi guarda: si progetta in base al \emph{target} \\
+\addlinespace
+Assenza di decisione conscia & ``com'è random quella persona'' & togliere potere decisionale
+  rende un'azione random, o ingiusta \\
+\addlinespace
+Il caso contro il piano & il concerto sotto la pioggia & il random rompe i piani: è
+  ``sfiga'', anche quando è statistica \\
+\addlinespace
+Assenza di causa o di intenzione & i fulmini di Zeus, l'effetto farfalla, la roulette, gli
+  scacchi & ciò che sembra casuale può avere una causa invisibile o nel futuro \\
+\addlinespace
+Possibilità statistica & la moneta al 50\% & ogni evento casuale ha una probabilità che si
+  può calcolare \\
+\addlinespace
+Pericolo e risultato incerto & il gratta e vinci ``mortale'' & il rischio si accetta in
+  base a quanto è probabile e a quanto costa \\
+\bottomrule
+\end{tabular}
+\caption{I sei ingredienti della parola ``random'' ricavati da Diego dalle definizioni del
+dizionario.}
+\label{a15:tab:definizioni}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Come si calcola una probabilità}
+\label{a15:sec:calcolo}
+
+Prima di parlare di \emph{design}, ``un piccolo elemento di matematica'': non per fare
+matematica, ma perché serve. Ci sono \textbf{due modi} per fare lo studio statistico di
+qualcosa: uno \textbf{matematico} e uno \textbf{visivo}.
+
+Diego chiede come si calcola la probabilità che una moneta faccia \textbf{testa quattro volte
+di fila}. Uno studente risponde a voce (``sarebbe\ldots{} 6 e mezzo'', cioè 6,25\%).
+
+\paragraph{Il modo matematico.} Se conosco il valore di ciascun evento (la moneta è
+$\tfrac12$), moltiplico: $\tfrac12 \cdot \tfrac12 \cdot \tfrac12 \cdot \tfrac12$. Il
+risultato è una frazione, che moltiplicata per 100 dà la percentuale.
+
+\paragraph{Il modo visivo.} Disegno un \textbf{albero}: la moneta può fare testa o croce; da
+ciascuno dei due rami, di nuovo testa o croce; e così via per ogni lancio. Poi conto i rami:
+quanti sono quelli ``giusti'' e quanti in tutto. Si torna alla stessa percentuale
+(figura~\ref{a15:fig:albero})\footnote{Nella spiegazione a voce Diego dice ``1, 2, 4, 6'' e
+``1 diviso 8'', e conclude che c'è ``un ramo giusto su otto'': sono i conti per
+\textbf{tre} lanci ($1/8 = 12{,}5\%$). Per quattro lanci, come nella domanda, i rami sono 16
+e la probabilità è $1/16 = 6{,}25\%$, il valore detto dallo studente.}.
+
+\paragraph{Perché tutte e due.} Sono utili ``per ragioni diverse''. A volte è meglio il
+calcolo, in cui si prendono le probabilità e si moltiplicano; altre volte è meglio
+\textbf{vedere}, perché l'albero aiuta a capire \textbf{quante possibilità di decisione} ci
+sono e \textbf{quante possibilità di espansione}: quanto si ramifica una situazione di
+gioco.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a15n/.style={draw, circle, thick, minimum size=0.62cm, inner sep=0pt},
+  a15h/.style={a15n, fill=gray!30},
+  level distance=1.45cm,
+  level 1/.style={sibling distance=6.4cm},
+  level 2/.style={sibling distance=3.2cm},
+  level 3/.style={sibling distance=1.6cm},
+  edge from parent/.style={draw, thick}
+]
+  \node[draw, rounded corners=2pt, thick] (r) {lancio}
+    child {node[a15h] {T}
+      child {node[a15h] {T}
+        child {node[a15h] {T}}
+        child {node[a15n] {C}}}
+      child {node[a15n] {C}
+        child {node[a15n] {T}}
+        child {node[a15n] {C}}}}
+    child {node[a15n] {C}
+      child {node[a15n] {T}
+        child {node[a15n] {T}}
+        child {node[a15n] {C}}}
+      child {node[a15n] {C}
+        child {node[a15n] {T}}
+        child {node[a15n] {C}}}};
+  \node[anchor=west, font=\footnotesize] at (6.5,-1.45) {1\textsuperscript{o} lancio: 2 rami};
+  \node[anchor=west, font=\footnotesize] at (6.5,-2.9) {2\textsuperscript{o} lancio: 4 rami};
+  \node[anchor=west, font=\footnotesize] at (6.5,-4.35) {3\textsuperscript{o} lancio: 8 rami};
+  \node[font=\footnotesize, text width=12cm, align=center] at (0,-5.4) {un solo ramo
+    (in grigio) su 8 è T--T--T: $\tfrac12\cdot\tfrac12\cdot\tfrac12 = \tfrac18 =
+    12{,}5\%$; con un quarto lancio i rami diventano 16 e T--T--T--T vale $\tfrac1{16} =
+    6{,}25\%$};
+\end{tikzpicture}
+\caption{Il modo ``visivo'' di calcolare una probabilità: l'albero dei lanci di una moneta.
+Ogni livello raddoppia i rami; la probabilità è il numero di rami cercati diviso il numero
+totale. Lo stesso albero mostra quanto si ``espande'' lo spazio delle possibilità.}
+\label{a15:fig:albero}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{I tre tipi di random}
+\label{a15:sec:tipi}
+
+``Ora che abbiamo le basi della \emph{randomness}, parliamo di come si progetta il random.''
+Il random si divide in \textbf{tre grandi categorie}.
+
+\subsection{Il random vero}
+
+Il \textbf{random vero} è il lancio di un dado o di una moneta, e deriva da una
+\textbf{caratteristica fisica}: lancio un dado e ho una possibilità su sei che esca ciascuna
+faccia; lancio una moneta e ho il 50\%; lancio un D20 ``in stile D\&D'' e ho una possibilità
+su venti. Certo, esistono dadi truccati e monete con due teste, ``ci sono le possibilità di
+queste cose''; ma per semplicità si finge che dadi e monete siano onesti: probabilità
+standard, molto semplici.
+
+\subsection{Lo pseudo-random}
+
+Nei computer esiste il concetto di \textbf{pseudo-random}: i computer non sono in grado di
+fare qualcosa di veramente casuale. A livello di macchina, di programmazione, un computer
+``non è in grado di accettare'' che l'universo non sia un costante susseguirsi di cause ed
+effetti, come si è visto prima; cause ed effetti che forse siamo noi, come umanità, troppo
+piccoli per comprendere: ``lo scopriremo magari tra 10.000 anni''. Non importa quanto si
+chieda al computer di generare un numero casuale: farà sempre \textbf{un calcolo}, magari
+molto complesso, che produce una sequenza di numeri che \emph{sembrano} casuali, ma non lo
+sono.
+
+\paragraph{Perché interessa a chi fa giochi da tavolo.} Anche se il corso è sul gioco da
+tavolo, molti giochi da tavolo oggi \textbf{si fondono con elementi digitali}. Diego sta
+giocando ad \textbf{\emph{Arkham}}\footnote{Con ogni probabilità \emph{Arkham Horror}, nella
+versione \emph{Il gioco di carte} (\emph{The Card Game}), di cui Diego parla più avanti a
+proposito delle debolezze nella mano iniziale e dei segnalini estratti dal sacchetto. Non è
+chiaro a quale app si riferisca: il gioco di carte ha app di supporto, alcune ufficiali e
+altre della comunità.}, che ha una \emph{companion app} che a volte simula anche
+l'estrazione dal sacchetto. Il punto è che \textbf{una macchina pseudo-randomica può sempre
+essere individuata}. E uno degli scopi della randomicità, come si è visto nelle definizioni,
+è \textbf{l'incertezza}: per quanto un computer sia efficace, non può assicurare il 100\% di
+incertezza, che ha soltanto il mondo reale, dove si lancia davvero un dado.
+
+\paragraph{I \emph{seed}.} È importante perché ``può limitare la vita del vostro gioco, nel
+senso stretto del termine''. Nei videogiochi i \textbf{\emph{seed}}\footnote{Nella
+trascrizione ``SID''.} sono i numeri usati per generare il mondo di gioco. Una delle prime
+cose che fanno i giocatori è capire come funzionano i \emph{seed}, e poi creare il
+\emph{seed} che produce esattamente il mondo che vogliono. ``Se voi pensate, vabbè Diego,
+ma non lo farà nessuno nel mio gioco: no, lo faranno tutti, sempre.'' Perché \textbf{se i
+giocatori possono sfruttare il prodotto, lo sfrutteranno}, ``e poi si lamenteranno di averlo
+sfruttato''.
+
+\subsection{Il random controllato e la curva a campana}
+
+Il terzo tipo è il \textbf{random controllato}. Diego mostra un grafico e chiede chi lo
+riconosce. Jacopo alza la mano: è il grafico di probabilità ``di quel gioco di palline, dove
+la pallina deve scendere'' e rimbalzare. ``Ci sei andato vicino, corretto'': è la
+\textbf{distribuzione di probabilità} che in termini tecnici si chiama \textbf{curva di
+Bell}, la curva a campana\footnote{Diego dice che si chiama così ``perché l'ha scoperta il
+matematico Bell''. In realtà il nome viene dalla forma (\emph{bell}, campana): la
+distribuzione normale, o gaussiana, è legata ai nomi di de Moivre, Laplace e Gauss. Il
+``gioco di palline'' di Jacopo è la \emph{macchina di Galton} (o \emph{tavola di Galton}).},
+``una delle più grandi scoperte matematiche degli ultimi due o trecento anni''.
+
+\paragraph{Uno è random, due non lo sono.} Perché è così importante? Perché dice che
+\textbf{una cosa è randomica, ma due cose (sommate) non lo sono}. ``Voi dite: \emph{what},
+Diego?'' Se si lancia un dado, ogni faccia ha la stessa probabilità, una su sei. Ma se si
+lanciano \textbf{due dadi}, la somma non è più uniforme: il \textbf{7} esce molto più spesso
+degli altri risultati\footnote{Diego dice che ``il 34\% delle volte il risultato è 7''. Il
+valore corretto è $6/36 = 1/6 \approx 16{,}7\%$: il 7 è il risultato più probabile, sei
+volte più del 2 o del 12, ma esce circa una volta su sei. Il 34\% ricorda piuttosto la
+quota di risultati che, in una distribuzione normale, cadono tra la media e una deviazione
+standard da un lato.}. Anche se i due dadi sono singolarmente random, \textbf{la loro somma
+non lo è}. E la curva a campana si applica a qualsiasi cosa che sia la somma, o l'unione, di
+due o più elementi random. Diego mostra un video: tante palline cadono in modo casuale tra
+dei pioli, ognuna è random, ma l'insieme no, e si accumulano disegnando proprio la
+distribuzione normale (figura~\ref{a15:fig:campana}).
+
+\paragraph{Il \emph{pachinko}.} ``Perché è importante questo? Perché se io sono un
+\emph{pachinko}, dove metterò i soldi?'' Le vincite buone ai lati, le perdite al centro:
+statisticamente la maggior parte delle palline finirà al centro, e quindi la maggior parte
+dei giocatori perderà.
+
+\paragraph{L'arma più grande.} Ecco il punto: questo è ``il più grande strumento che noi come
+designer abbiamo nel nostro armamentario'', cioè \textbf{controllare il numero}. Tre esempi.
+\begin{itemize}
+  \item \textbf{\emph{Carcassonne}}. Diego chiede che cosa sia legato al numero 7 in
+        \emph{Carcassonne}; Jacopo non lo ricorda (``una domanda così su due piedi'').
+        \emph{Carcassonne} è un gioco di tessere in cui si sbloccano cose; secondo Diego il
+        numero di tessere presenti nel gioco è \textbf{un multiplo di 7}, e questo permette ai
+        designer di controllare \textbf{quanto dura la partita}\footnote{Il conto non torna con
+        il gioco base, che ha 72 tessere (71 più quella iniziale), e 72 non è un multiplo di
+        7. Non è chiaro a quale edizione, espansione o regola si riferisca Diego, né se
+        l'esempio sia ricordato in modo impreciso. Il principio (fissare il numero di tessere
+        fissa il numero di turni, e quindi la durata) resta valido.}.
+  \item \textbf{\emph{I Coloni di Catan}}. Nessuno ci ha giocato, e Diego lo spiega: è un
+        gioco in cui si raccolgono risorse, e \textbf{accumulare risorse è tendenzialmente
+        buono}. Ma c'è una pedina, il \textbf{ladro} (\emph{robber}), che si attiva ogni volta
+        che con due dadi esce il \textbf{7} e ruba le risorse in eccesso: se i giocatori
+        accumulano troppo, il ladro li punisce. Il ladro non è un giocatore: ``è il gioco
+        stesso''. E agisce sul 7, il risultato statisticamente più probabile. Perché il gioco
+        sa che la strategia più forte è accumulare risorse, e ha inserito \textbf{un sistema
+        statisticamente controllato} per punire chi accumula troppo.
+  \item \textbf{\emph{Monopoly}}. Diego apre un'immagine del tabellone originale e conta le
+        caselle dal \emph{via}: ``1, 2, 3, 4, 5, 6, 7'', una di quelle di alto valore; ``1,
+        2, 3, 4, 5, 6, 7'', un'altra di alto valore; ancora sette, una di quelle rare. La
+        disposizione ``non è casuale'', anche se può sembrarlo: è basata sul 7, in modo che i
+        giocatori \textbf{finiscano più comunemente su certe caselle}\footnote{È la lettura di
+        Diego. Le analisi probabilistiche del tabellone (con le catene di Markov o con
+        simulazioni) mostrano che la casella più visitata è la prigione e che, per effetto
+        delle uscite dalla prigione, le più frequentate tra le proprietà sono le arancioni e
+        le rosse: la somma più probabile dei dadi conta, ma insieme a prigione, imprevisti e
+        probabilità.}.
+\end{itemize}
+
+\paragraph{Controllare non vuol dire barare.} Per questo, tra tutte le forme di random,
+\textbf{il random controllato è ``l'arma segreta'' dei designer}. Controllare il random non
+vuol dire barare, ma \textbf{sapere che statisticamente qualcosa è più o meno probabile di
+qualcos'altro}, e quindi scrivere regole che favoriscano l'esperienza che si vuole favorire,
+qualunque essa sia: in \emph{Catan} punire chi accumula, in \emph{Monopoly} far finire le
+persone su certe caselle, in \emph{Carcassonne} regolare la durata.
+
+\paragraph{E allora perché gli altri due?} Se il controllato è ``la lama più forte'', a che
+servono il random vero e lo pseudo-random? Perché \textbf{a volte si vogliono proprio quelle
+caratteristiche}: l'imprevedibilità piena, l'incertezza. Il punto è \textbf{capire quando
+usare il random e quando il controllo del random}, ed è ciò che il resto della lezione
+mostrerà con esempi. Diego chiede se ci sono dubbi sulle caratteristiche del random, sul
+perché è presente nei giochi e nella vita, su come lo definiamo, sui tre tipi. Nessuno.
+``Fantastico. E allora andiamo avanti.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small, x=0.46cm, y=0.34cm]
+  % un dado
+  \node[font=\footnotesize\bfseries] at (3.5,8.4) {un dado: tutte uguali};
+  \draw[thick, ->] (0,0) -- (7.6,0);
+  \foreach \v in {1,...,6} {
+    \fill[gray!40] (\v-0.4,0) rectangle (\v+0.4,6);
+    \node[below, font=\scriptsize] at (\v,0) {\v};
+  }
+  \node[font=\scriptsize] at (3.5,7.1) {ogni faccia: $1/6$};
+  % due dadi
+  \begin{scope}[shift={(10,0)}]
+    \node[font=\footnotesize\bfseries] at (7,8.4) {due dadi: la somma è a campana};
+    \draw[thick, ->] (0,0) -- (13.6,0);
+    \foreach \v/\h in {2/1,3/2,4/3,5/4,6/5,8/5,9/4,10/3,11/2,12/1} {
+      \fill[gray!40] (\v-0.4,0) rectangle (\v+0.4,\h);
+      \node[below, font=\scriptsize] at (\v,0) {\v};
+    }
+    \fill[gray!80] (6.6,0) rectangle (7.4,6);
+    \node[below, font=\scriptsize\bfseries] at (7,0) {7};
+    \draw[thick, dashed] (1.5,0.4) .. controls (5,1.5) and (5.6,6.6) .. (7,6.6)
+                          .. controls (8.4,6.6) and (9,1.5) .. (12.5,0.4);
+    \node[font=\scriptsize, align=center] at (7,7.5) {7: $6/36 \approx 16{,}7\%$ \quad
+      2 o 12: $1/36 \approx 2{,}8\%$};
+    \node[font=\scriptsize, align=left, anchor=west] at (13.9,4.2) {il ladro\\di
+      \emph{Catan}\\agisce sul 7};
+    \draw[->, thin] (13.8,4.2) -- (7.6,5.4);
+  \end{scope}
+\end{tikzpicture}
+\caption{Il principio del random controllato: un dado è uniforme, ma la somma di due dadi
+non lo è. Il risultato più probabile, il 7, è quello su cui \emph{I Coloni di Catan} mette
+il ladro che punisce chi accumula troppe risorse. La linea tratteggiata richiama la curva a
+campana che si ottiene sommando molti elementi casuali (la macchina di Galton del video).}
+\label{a15:fig:campana}
+\end{figure}
+
+\paragraph{Approfondimento: calcolare o simulare.} Schell, in \emph{The Art of Game Design},
+usa proprio \emph{Monopoly} come esempio del \emph{metodo Monte Carlo}: quali caselle sono
+visitate più spesso? ``Sarebbe quasi impossibile ricavarlo in teoria'', ma una semplice
+simulazione che lancia i dadi e muove le pedine qualche milione di volte risponde in pochi
+minuti. È il terzo modo di calcolare una probabilità, accanto ai due di Diego: quando il
+sistema è troppo intrecciato per l'albero o per la moltiplicazione, si prova, molte volte,
+e si contano i risultati. Lo stesso Schell ricorda (è una delle sue ``regole'' della
+probabilità) che una cosa è la probabilità reale e un'altra quella \textbf{percepita} dai
+giocatori: chi ha provato tre volte un attacco senza mai colpire tende a concludere che
+``non colpisce mai''. Per chi progetta, conta anche la seconda.
+
+% ---------------------------------------------------------------------
+\section{Le nove combinazioni: input, output, combinato}
+\label{a15:sec:nove}
+
+``Ora, il random nei videogiochi e nei giochi da tavolo si usa in tre modi: come
+\textbf{input}, come \textbf{output} o \textbf{combinato}.'' È la prima cosa da capire. E
+ciascuno dei tre momenti può usare ciascuno dei tre tipi di random visti prima: un input
+può essere random vero, pseudo-random o random controllato, e lo stesso vale per l'output.
+Ne vengono \textbf{nove combinazioni} possibili (tabella~\ref{a15:tab:nove}).
+
+La differenza tra i tre momenti sta tutta \textbf{nella posizione della casualità rispetto
+alla decisione del giocatore} (figura~\ref{a15:fig:momento}): prima della decisione
+(l'input: il caso stabilisce \emph{con che cosa} si gioca), dopo la decisione (l'output:
+il caso stabilisce \emph{come va} ciò che si è deciso), o entrambe nella stessa decisione
+(il combinato).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a15box/.style={draw, thick, rounded corners=3pt, minimum height=0.9cm, text width=2.4cm,
+                 align=center},
+  a15rnd/.style={draw, thick, dashed, rounded corners=3pt, minimum height=0.9cm,
+                 text width=2.4cm, align=center, fill=gray!15},
+  a15arr/.style={-{Stealth[length=2.6mm]}, thick}
+]
+  % input
+  \node[font=\footnotesize\bfseries, anchor=east] at (-0.3,0) {input};
+  \node[a15rnd] (i1) at (1.4,0) {caso\\{\footnotesize carte, setup}};
+  \node[a15box] (i2) at (4.8,0) {\textbf{decisione}};
+  \node[a15box] (i3) at (8.2,0) {risultato\\{\footnotesize certo}};
+  \draw[a15arr] (i1) -- (i2); \draw[a15arr] (i2) -- (i3);
+  % output
+  \node[font=\footnotesize\bfseries, anchor=east] at (-0.3,-1.6) {output};
+  \node[a15box] (o1) at (1.4,-1.6) {situazione\\{\footnotesize nota}};
+  \node[a15box] (o2) at (4.8,-1.6) {\textbf{decisione}};
+  \node[a15rnd] (o3) at (8.2,-1.6) {caso\\{\footnotesize successo, entità}};
+  \draw[a15arr] (o1) -- (o2); \draw[a15arr] (o2) -- (o3);
+  % combinato
+  \node[font=\footnotesize\bfseries, anchor=east] at (-0.3,-3.2) {combinato};
+  \node[a15rnd] (c1) at (1.4,-3.2) {caso\\{\footnotesize la carta pescata}};
+  \node[a15box] (c2) at (4.8,-3.2) {\textbf{decisione}};
+  \node[a15rnd] (c3) at (8.2,-3.2) {caso\\{\footnotesize il danno da 0 a $n$}};
+  \draw[a15arr] (c1) -- (c2); \draw[a15arr] (c2) -- (c3);
+  \node[font=\footnotesize, text width=11cm, align=center] at (4.2,-4.5) {grigio
+    tratteggiato: dove entra la casualità. Nel combinato i due momenti stanno
+    \emph{nella stessa decisione}, non in fasi diverse del gioco};
+\end{tikzpicture}
+\caption{I tre momenti della casualità rispetto alla decisione del giocatore. L'input
+``inietta'' il caso prima che il giocatore scelga; l'output lo mette dopo, sul successo o
+sull'entità del risultato; il combinato fa entrambe le cose nella stessa decisione.}
+\label{a15:fig:momento}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{3.7cm}>{\raggedright\arraybackslash}p{3.7cm}>{\raggedright\arraybackslash}p{3.7cm}@{}}
+\toprule
+ & \textbf{Random vero} & \textbf{Pseudo-random} & \textbf{Random controllato} \\
+\midrule
+\textbf{Input} & pescare da un mazzo appena mischiato (poker a cinque carte) & pescare
+  sapendo che cosa è già uscito (Texas Hold'em, stoppa, briscola contata) & mazzi costruiti
+  per pescare ciò che serve (i mazzi \emph{combo} di \emph{Magic}) \\
+\addlinespace
+\textbf{Output} & il D20 della palla di fuoco & l'esito tirato da un'app o da un computer &
+  il dado con modificatore $+2$ (``sotto il 3 non vai'') \\
+\addlinespace
+\textbf{Combinato} & pesco una carta e il suo danno è random & la stessa cosa gestita da
+  un'app & \emph{push your luck}, scelte tra tre, dadi forgiati \\
+\bottomrule
+\end{tabular}
+\caption{Le nove combinazioni tra i tre tipi di random e i tre momenti della decisione,
+con un esempio per casella tratto dalla lezione (alcune caselle sono ricostruite dagli
+esempi successivi: Diego elenca le combinazioni, ma non le illustra una per una).}
+\label{a15:tab:nove}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{L'input random}
+\label{a15:sec:input}
+
+\subsection{Che cos'è: il caso prima della decisione}
+
+La definizione sulla slide: l'input random è ``\emph{the injection of chance before the
+player makes a decision}''; fornisce condizioni incerte, o risorse, con cui il giocatore
+deve poi lavorare strategicamente. È \textbf{l'aggiunta di un elemento casuale, o
+statisticamente basato, che crea incertezza nelle condizioni o nello stato del gioco}, e con
+cui i giocatori devono poi gestire il resto della partita.
+
+``Sembra complesso, ma il modo più facile è \textbf{pescare le carte}.'' Molti giochi dicono
+``all'inizio del turno pesca una carta'': quella carta è randomica, o pseudo-randomica.
+
+\paragraph{Poker a cinque carte e Texas Hold'em.} Nel poker ``all'italiana'', quello a
+cinque carte\footnote{Diego cerca il nome (``non briscola\ldots{} poker''): ``di tanto mi
+vengono i giochi italiani''.}, non si ha idea di che cosa si peschi: si pescano le carte, si
+guardano, si decide. È input \textbf{random}. Nel \textbf{Texas Hold'em} la mano è invece
+\textbf{pseudo-random}: dalle carte scoperte sul tavolo si ricavano informazioni sul resto
+del mazzo.
+
+\paragraph{Contare le carte.} Diego chiede che cosa voglia dire \textbf{contare le carte} a
+poker, e Jacopo, ``rivela i segreti'', risponde: pur non essendo un giocatore di poker, si
+conta la quantità di carte rimaste e si calcola la probabilità che esca quella che serve,
+per esempio il quarto asso. ``Esatto'': se i quattro assi sono già sul tavolo, la
+probabilità che un altro giocatore abbia un asso è zero. È semplice, ma è importante,
+perché trasforma il caso in informazione.
+
+\subsection{La stoppa: un input che diminuisce nel tempo}
+
+C'è ``un gioco italiano che io cito sempre'', perché è interessantissimo proprio su questo:
+la \textbf{stoppa}. È un gioco di carte del Sud Italia, di cui non si sa bene chi l'abbia
+inventato: un ``poker italiano'' con una caratteristica particolare. Si gioca \textbf{a
+fasi}. Nella prima fase ogni giocatore riceve \textbf{tre carte}, che hanno punteggi come nel
+poker: si può avere una mano buona o cattiva.
+
+\paragraph{Una mano.} Diego, Jacopo e Davide giocano. Diego ha una buona mano e rilancia;
+Davide ha una buona mano e vede; Jacopo ha una brutta mano e ``si fa i fatti suoi''. Diego e
+Davide continuano a rilanciare, senza pescare altre carte, finché nessuno rilancia più e si
+rivelano le carte. Diego ha un \textbf{tris di 7}, un buon punteggio\footnote{Nella
+trascrizione ``il 7 vale 21 punti nella stoppa, quindi 7, 21, 42, 63'': i valori sono
+riportati come detti, ma la sequenza è confusa e non permette di ricostruire con certezza il
+sistema di punteggio.}; Davide rivela di aver bluffato, e Diego vince.
+
+\paragraph{Le carte restano.} Nel poker a questo punto si rimischia, fine. Nella stoppa,
+invece, \textbf{tutti i giocatori tengono le proprie carte}, Jacopo compreso, e le mettono
+da parte. Diego ha vinto la mano, ma ora tutti sanno che quei tre 7 non sono più nel mazzo e
+che li ha lui; e Diego sa che cosa aveva Davide, ma non che cosa aveva Jacopo. Si continua
+così finché il mazzo finisce e ciascuno ha \textbf{dieci carte}: a quel punto si devono
+scegliere tre carte tra le proprie dieci per fare la mano migliore.
+
+\paragraph{Vincere vuol dire rivelarsi.} Che cosa significa? Che \textbf{più si è vinto nelle
+mani precedenti, più si è rivelata la propria mano finale}: se si è vinto tanto, tutti hanno
+visto le carte, e sanno esattamente che cosa c'è fra quelle dieci. Chi ha perso, o ha
+nascosto sempre le carte (come Jacopo), resta un mistero. È \textbf{un esempio di input
+random che diminuisce nel tempo}: si parte da un input del tutto casuale, l'intero mazzo, e
+pian piano l'informazione cresce e il caso si riduce.
+
+\subsection{\emph{Magic}: trasformare il random in pseudo-random}
+
+Diego chiede chi gioca a \textbf{\emph{Magic: The Gathering}}, \emph{Yu-Gi-Oh!} o altri
+collezionabili; Jacopo gioca a \emph{Magic}. Una delle caratteristiche di \emph{Magic} è
+proprio \textbf{partire dal mazzo randomico e trasformarlo in pseudo-randomico}, con carte che
+permettono di \textbf{controllare la pescata}. Jacopo fa un esempio: ci sono carte che
+fanno guardare le prime tre del mazzo, o rimischiare il mazzo; ``hai tanto controllo''.
+``Esattamente.'' I cosiddetti \textbf{mazzi \emph{combo}}, che vincono se ottengono una certa
+combinazione di carte, non sperano di pescare per caso la carta giusta: inseriscono tutta
+un'altra serie di carte che trasformano il mazzo in pseudo-randomico e \textbf{aumentano
+statisticamente la probabilità} di ottenere ciò che serve.
+
+\paragraph{Investire risorse per controllare il caso.} L'input random, quindi, è qualcosa
+che avviene \textbf{prima} delle decisioni e che i giocatori usano \textbf{per} decidere; e
+molti giochi lo collegano alla possibilità di \textbf{controllare quella randomicità a
+proprio vantaggio}, di solito \textbf{investendo risorse}. Un gioco inventato: ogni turno si
+pesca una carta e si fa ciò che dice. Diego pesca ``3 risorse'' e passa; Oksana pesca ``5
+risorse''; Diego (lo studente) pesca ``5 risorse''. Poi Diego può scegliere: pescare, o
+investire le risorse in un'abilità speciale che dal turno successivo gli fa \textbf{vedere
+due carte e sceglierne una}. È una forma tipica di \textbf{progressione} nei giochi da
+tavolo: si inizia con un input completamente casuale (random vero) e lo si trasforma in
+\textbf{random controllato}, diventando più forti. Guadagnando abilità, sbloccando risorse,
+si ottiene \textbf{più controllo}.
+
+\subsection{\emph{Monopoly}: dal random al random controllato}
+
+``Chi riesce a dirmi dove sta la trasformazione da random a controllato in
+\emph{Monopoly}?'' Silenzio (``non abbiamo la bellissima botta di Monopoly'', scherza
+qualcuno). Diego aiuta: come si guadagnano soldi a \emph{Monopoly}? Gli studenti rispondono:
+quando qualcuno finisce sulle tue proprietà; quando passi dal via (200); quando peschi la
+carta giusta negli imprevisti. Il via non si controlla, e lo si esclude; gli imprevisti
+nemmeno. Resta un elemento, e uno studente lo trova: \textbf{gli scambi}, dove ``c'è del
+controllo'', perché si decide, si contratta sul valore effettivo, sui soldi, sulle ipoteche.
+``Bravo! Si gioca su quello.''
+
+\paragraph{Il gioco in una frase.} Non si può sapere dove finirà un avversario, ma \textbf{se
+si possiede il 70\% delle proprietà, ci finirà}. ``E questo è il gioco del
+\emph{Monopoly}'': trasformare il random vero in random controllato, \textbf{solo in versione
+input}. Per questo, secondo Diego, \emph{Monopoly} è un gioco ``battuto'': esiste una
+strategia ottimale, la si può cercare (``\emph{Monopoly how to play perfectly}'') e diventare
+campioni\footnote{È un'espressione forte: \emph{Monopoly} non è un gioco ``risolto'' nel
+senso matematico in cui lo sono, per esempio, la dama o il tris, anche perché contiene una
+forte componente di trattativa. Esistono però analisi molto approfondite (con le catene di
+Markov) su quali proprietà rendono di più e quando conviene costruire, ed è a queste che
+Diego si riferisce.}. Uno dei principi è comprare le caselle che stanno ``intorno al 7''
+rispetto ai punti di passaggio più frequenti, perché statisticamente ci si finisce sopra.
+``Può sembrare banale, riduttivo'', ma è uno dei giochi di maggior successo della storia, e
+si basa soltanto sul dare ai giocatori la possibilità, con la loro competenza, di
+trasformare l'input random in random controllato.
+
+\subsection{Ruoli nascosti e \emph{setup} variabili}
+
+Chi conosce \textbf{\emph{Secret Hitler}}, \textbf{\emph{The Resistance}} o \textbf{\emph{Lupus
+in fabula}} (\emph{Werewolf})? Jacopo conosce \emph{Secret Hitler}; Davide conosce meglio
+\emph{Werewolf}: c'è un gruppo che deve eliminare gli altri, e quelli che si conoscono tra
+loro sono in svantaggio numerico. ``Esattamente.'' Qui il punto di partenza è che
+\textbf{il ruolo è casuale}: si può essere nazista o della resistenza in \emph{Secret
+Hitler}, lupo mannaro o umano in \emph{Werewolf}; ma poi si deve giocare, e l'abilità di
+giocare dipende dal ruolo avuto. Lo stesso vale per il videogioco \textbf{\emph{Among
+Us}}\footnote{Nella trascrizione ``da Mongas''.}, con gli infiltrati e gli altri: il gioco si
+basa tutto sull'individuare chi è l'altro \textbf{partendo dall'input random}.
+
+\paragraph{Gli scenari.} Infine, i \textbf{\emph{variable setup}}: chi gioca a D\&D o ad altri
+giochi di ruolo da tavolo sa che gli scenari sono letteralmente un input random: si parte da
+uno scenario che dà delle possibilità. L'input random è quindi \textbf{la capacità del
+designer di creare una situazione più o meno controllata}, usando le tecniche viste (il
+random controllato in particolare), per dare \textbf{scelte interessanti} ai giocatori.
+
+\subsection{La briscola: il rischio di contare troppo}
+
+Un altro esempio, la \textbf{briscola}, che ``penso conosciate tutti''. La primissima cosa che
+avviene è \textbf{rivelare la briscola}: e la propria mano può passare ``da una schifezza a
+meravigliosa'' in base al seme, ma anche in base alla carta stessa che è stata rivelata. Sapere
+che l'ultima carta è l'asso di briscola, o il tre, o il due (gli estremi, le carte che valgono
+tanto e quelle che ``non valgono una ceppa'') cambia completamente la partita.
+
+\paragraph{Il ``mago'' delle superiori.} Chi ha giocato alle superiori, quando la briscola
+``era lo standard'', ricorderà che c'è sempre qualcuno che all'ultimo giro dice: ``tu avrai
+un carico; tu hai sicuramente due carte di briscola, probabilmente il 7''. È un mago? ``Un Da
+Vinci incompreso? No.'' \textbf{Ha contato le carte}, in base a come si è giocato. Sta
+\textbf{comprendendo l'input random e togliendolo}, controllandolo. Se si sanno tutte le carte
+che tutti hanno in mano, si può giocare la partita perfetta; e infatti a quel punto quella
+persona dice: ``tagliamo corto: tu vincerai la seconda mano, io la prima, voi la terza''. Ed è
+così, perché giocare diversamente sarebbe giocare male.
+
+\paragraph{Il rischio.} Ecco il rischio dell'input random: \textbf{se si dà al giocatore
+troppo controllo sull'input, il random sparisce}, perché il gioco diventa prevedibile. E una
+cosa prevedibile è come il finale della briscola: ``è inutile che giochiamo le ultime tre
+mani''.
+
+\subsection{I vantaggi dell'input random}
+
+Diego passa ai pro e ai contro, con le definizioni in inglese sulle slide (``i cosi ve li
+lascio lì'').
+
+\paragraph{\emph{Meaningful decision making}.} ``\emph{Players interpret random setup and make
+optimal choices with constraints}''; sulla slide c'è anche l'esempio di \textbf{\emph{7
+Wonders}}, con il \emph{draft} delle carte e le scelte tra opzioni casuali. Se il punto di
+partenza è casuale, i giocatori devono fare \textbf{scelte complesse}, perché non possono
+avere la partenza ottimale né sapere come andranno le cose. Questo aggiunge valore
+\textbf{tattico}, non strategico, e Diego insiste sulla differenza:
+\begin{itemize}
+  \item \textbf{strategico} vuol dire \textbf{nel lungo periodo}: una strategia di guerra è
+        ``l'anno 1 invaderemo e raccoglieremo risorse, l'anno 2 faremo questo'';
+  \item \textbf{tattico} è \textbf{la battaglia}: ``ci stiamo sparando addosso'', si decide
+        minuto per minuto.
+\end{itemize}
+Le scelte di input random sono \textbf{tattiche}: si pescano le carte e si ha qualche minuto
+per decidere, non tre ore. Nei giochi di carte, \textbf{il mazzo è una scelta strategica}
+(lo si è costruito con il \emph{deck building}); \textbf{la mano che capita è tattica}: può
+essere perfetta o, ``sfiga vuole'', terrificante.
+
+\paragraph{\emph{Replayability}: \emph{Cosmic Encounter}.} Una partenza casuale
+\textbf{aumenta la rigiocabilità}, perché ogni tanto capita la mano fortunata, o quella
+strana. L'esempio è \textbf{\emph{Cosmic Encounter}}, che nessuno conosce (``la maggior parte
+della gente dice di no''): ``se siete interessati al random, è il gioco che dovreste studiare
+più di tutti''. Le regole di base sono semplicissime: ogni giocatore ha \textbf{5 pianeti}, e
+su ogni pianeta ci sono navi spaziali. Diego (rosso) attacca Jacopo (verde) per conquistargli
+un pianeta, con 10 navi; Jacopo ne ha 5 sul pianeta. Jacopo gioca una carta $+10$, e arriva a
+15; Diego gioca una carta $+5$, e arriva a 25 (il conto a voce è un po' confuso, ma il senso è
+chiaro): vince Diego, che conquista il pianeta. ``Che gioco schifoso'', direte; ``che palle!''
+Questa è solo la base.
+
+\paragraph{Gli alieni.} La cosa grande di \emph{Cosmic Encounter} è che \textbf{ognuno ha un
+alieno}, e ogni alieno ha \textbf{un'abilità che cambia completamente la partita}. Con tutte
+le espansioni, dice Diego, ce ne sono ``qualcosa come 900''; ogni partita è una combinazione
+di cinque alieni, e le possibilità sono enormi\footnote{Diego dice ``900 alieni'' e poi ``5
+elevato alla 900''. Il numero di alieni, anche con tutte le espansioni, è dell'ordine di
+qualche centinaio; e il conto corretto per scegliere 5 alieni fra $n$ è il coefficiente
+binomiale $\binom{n}{5}$, non $5^{n}$. Anche così il numero resta enorme: con 200 alieni le
+combinazioni di cinque sono circa 2,5 miliardi.}. Due esempi da partite vere.
+\begin{itemize}
+  \item Una partita tra Diego, il suo migliore amico e la moglie di lui. Diego ha un alieno che,
+        scartando una carta, ne recupera una dal proprio cimitero; la moglie dell'amico può
+        \textbf{nominare una carta} nella mano avversaria e, se c'è, rubarla; l'amico può far
+        scartare a tutti la mano e far ripescare sette carte a caso. I poteri si
+        contrastavano a vicenda: se Diego usava la sua abilità, gli altri vedevano quale carta
+        recuperava; la moglie dell'amico allora la nominava (``secondo me hai questa carta in
+        mano?''); e se l'amico vedeva che la moglie aveva preso una carta forte, faceva
+        scartare tutto. ``Questa combinazione non era mai successa.''
+  \item Un alieno che la trascrizione chiama \textbf{``Ace''}, ``il campione''\footnote{Il nome
+        dell'alieno non è verificabile; il capitolo lo riporta come detto.}, per vincere deve
+        conquistare \textbf{un solo pianeta} invece di cinque. Facilissimo? No: diventa
+        \textbf{il nemico pubblico numero uno}, perché tutti sanno che se conquista anche solo
+        un pianeta vince la partita. Il gioco si trasforma da tutti contro tutti in
+        \textbf{quattro contro uno}, e chi ha quell'alieno deve giocare in modo super difensivo
+        e aspettare il momento giusto.
+\end{itemize}
+In base agli alieni pescati, la partita cambia completamente: l'input random crea
+``infinita'' rigiocabilità.
+
+\paragraph{\emph{Encouraging skill}: livellare le abilità.} ``Questo è estremamente
+importante'': un input random \textbf{può livellare la differenza di abilità} tra i
+giocatori. Se un giocatore mediocre gioca contro un campione, e il campione ha avuto una mano
+sfortunata o il mediocre una mano fortunata, la differenza si assottiglia.
+
+\paragraph{L'esercizio del torneo di poker.} Diego propone un esperimento mentale. Non avete
+mai giocato a poker, in nessuna versione; siete finiti, in qualche modo, nella finale del
+torneo più importante del mondo, contro i tre campioni del mondo, e in palio ci sono 10
+milioni di euro. \textbf{Quale strategia applicare per ridurre la differenza di abilità}?
+``Pensateci.'' Uno studente propone di contare le carte; ma i campioni sanno contare meglio.
+Allora: che cosa rende bravo un giocatore professionista? Contare le carte, e soprattutto
+\textbf{prevedere che cosa faranno gli altri}, leggerne il comportamento; la \emph{poker
+face}, la capacità di non mostrare emozioni. Imitare il loro comportamento? Sanno farlo
+meglio. Davide ride: ha capito. La risposta è \textbf{non guardare le proprie carte}. ``Non
+puoi intuire come io gioco, se nemmeno io so come sto giocando.'' Tutta l'abilità degli
+avversari nel prevedere le mosse si annulla, e la partita si riduce alla \textbf{fortuna}: se
+le carte sono buone si vince, altrimenti si perde.
+
+\paragraph{La fortuna del principiante.} È quella che si chiama, appunto, \textbf{fortuna del
+principiante}: spesso qualcuno ha perso perché cercava di applicare tecniche avanzate contro
+qualcuno che non sapeva che cosa stesse facendo, ed è rimasto fregato. Se lo si fa davvero
+in un torneo, le probabilità aumentano, ``ma tutti vi odieranno tantissimo'': è una strategia
+conosciuta e i professionisti la detestano, perché vogliono giocare con la \emph{poker face}.
+``Però non è tecnicamente illegale.''
+
+\subsection{I rischi dell'input random}
+
+``Non è tutto oro quel che luccica'': ci sono dei pericoli.
+
+\paragraph{La \emph{turn one win}.} Se le possibilità di partenza sono troppo varie, è
+possibile vincere \textbf{al primo turno} per pura fortuna. Un esempio ``che fa veramente
+ridere'': la madre di Diego partecipa a un torneo di \textbf{scala 40}, arriva in finale,
+l'avversaria mischia, lei taglia, pesca le carte e ha la \textbf{chiusura in mano}: tredici
+carte perfette, vince il torneo. ``Non ci puoi fare niente.'' Nella scala 40 non è un
+problema, perché succede raramente; ma la domanda da porsi, con l'input random, è
+\textbf{quanto è possibile essere del tutto sfortunati o del tutto fortunati}.
+
+\paragraph{Il solitario di Diego.} Da studente, Diego aveva provato a fare un
+\textbf{solitario}: si disponevano delle carte sul tavolo e si cercava di fare una serie di
+cose. Il problema: \textbf{se la carta negativa non finiva in uno dei quattro angoli, il
+solitario era impossibile da risolvere}. Era una condizione di partenza troppo sbilanciata
+(una \emph{uneven condition} troppo aggressiva): non è giusto perdere per questo. La
+soluzione fu togliere la carta ``sfigata'' dal mazzo da mischiare e farla \textbf{aggiungere
+dal giocatore in uno dei quattro angoli, a sua scelta}, rimuovendo un'altra carta. Così la
+condizione si verificava sempre, e il solitario funzionava.
+
+\paragraph{La morale.} Si possono inserire elementi che \textbf{controllano l'input random e
+lo depotenziano} quando è ``troppo rotto'': lo riducono di potenza, lo rendono meno efficace,
+oppure lo giustificano. In \emph{Arkham}, se nella mano iniziale c'è una
+\textbf{debolezza}, la si toglie, la si rimischia nel mazzo e si pesca un'altra carta:
+perché iniziare la partita con una debolezza in mano ``è finita''. La mischiata è casuale,
+``ma se è proprio sfiga, non va bene''. Anche \emph{Magic} ha qualcosa del genere, il
+\textbf{\emph{mulligan}}, su cui la lezione tornerà.
+
+\paragraph{La paralisi da analisi.} Succede soprattutto con giochi nuovi o giocatori nuovi:
+se l'input random è troppo forte (cinque carte in mano, più cinque pedine casuali, più cinque
+altre cose casuali: venti elementi casuali), è \textbf{troppa roba da calcolare per la
+tattica}. ``Ricordatevi: strategia contro tattica.'' Se si hanno cinque minuti per decidere e
+venti cose casuali da valutare, non ce la si fa. In questi casi alcuni elementi devono
+essere \textbf{non casuali}: per esempio il numero di risorse; o il mazzo costruito dal
+giocatore, così che la pescata è casuale ma il contenuto del mazzo è noto; o
+\textbf{l'obiettivo}. Ci sono giochi in cui anche l'obiettivo è casuale, e non si sa che cosa
+fare finché non lo si è pescato.
+
+\paragraph{La riduzione della strategia, o una falsa strategia.} Se \textbf{tutto} è casuale,
+il gioco è rigiocabile ma non profondo: è ``una serie di condizioni casuali''. Come lo si
+limita? Con \textbf{obiettivi non casuali}. Se la partenza è casuale ma l'obiettivo no, si
+può sempre costruire una strategia verso l'obiettivo; se sono casuali entrambi, forse no.
+
+\paragraph{Il controllo limitato.} Infine il \textbf{\emph{limited player control}}: se tutto
+è casuale, il giocatore non ha scelta. L'input random dovrebbe stare \textbf{all'inizio}, e
+poi la decisione deve essere del giocatore.
+
+Nessun dubbio. Diego propone la pausa, ma gli studenti preferiscono continuare: ``facciamo
+l'output e poi dopo facciamo la pausa''.
+
+\subsection{Le linee guida}
+
+Prima di passare all'output, Diego riassume l'input random con qualche indicazione pratica
+(tabella~\ref{a15:tab:input}).
+
+\paragraph{Dove guardare.} Il \emph{deck building}, i giochi
+``\emph{layer}''\footnote{Così nella trascrizione: potrebbe essere ``\emph{legacy}'',
+``\emph{player}'' o altro; non è ricostruibile.}, i \textbf{giochi asimmetrici} e il
+\textbf{\emph{drafting}} sono tutti esempi di ottimi input random da prendere come
+riferimento; la slide ne elenca sette, ``come sette caratteristiche''.
+
+\paragraph{La regola unica.} Se si vuole ridurre tutto a una sola regola: \textbf{l'input
+random deve far sentire il giocatore più potente}, offrendogli \textbf{più scelte} di quelle
+che avrebbe senza, \textbf{ma non deve togliergli l'\emph{agency}}. Il giocatore non deve
+sentire di non avere controllo su ciò che avviene: non che il risultato sia necessariamente
+``corretto'', ma che \textbf{si senta} in controllo. Ed è qui che entra il random controllato:
+\textbf{i giochi basati sull'input random nascono input e finiscono controllati}.
+
+\paragraph{Le cento partite.} Un suggerimento personale: quando si fa un gioco con input
+random, \textbf{si giochino cento partite}. Se nel \textbf{30\% delle vittorie o più} conta la
+fortuna, il gioco è troppo basato sulla fortuna; \textbf{la fortuna dovrebbe influire sul
+20\% delle vittorie}\footnote{Diego non dice come stabilire, in pratica, se una vittoria
+``è dovuta alla fortuna''. Un modo possibile è far giocare insieme persone di abilità nota e
+contare quante volte vince chi è meno esperto, o confrontare i risultati con quelli di una
+strategia casuale; ma è un'aggiunta del capitolo.}.
+
+\paragraph{L'interessante prima del giusto.} E un altro consiglio ``da persona che fa questa
+roba da tanti anni'': \textbf{con il random, favorite l'interessante invece del giusto}. Dire
+``questo random è bilanciato'' è meno funzionale, in \emph{game design}, che dire ``questo
+random è interessante''. Se poi si scopre che è troppo sbilanciato, \textbf{si aggiunge una
+regola per bilanciarlo}, come la debolezza di \emph{Arkham} o il \emph{mulligan}. Pescare
+carte a caso è interessante; e ``interessante vince sempre rispetto a giusto''.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{5.0cm}>{\raggedright\arraybackslash}p{5.2cm}@{}}
+\toprule
+\textbf{Aspetto} & \textbf{Che cosa succede} & \textbf{Esempi e rimedi} \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Vantaggi}} \\
+Decisioni sensate & la partenza imperfetta chiede scelte \textbf{tattiche} & la mano
+  (tattica) contro il mazzo (strategico); \emph{7 Wonders} \\
+\addlinespace
+Rigiocabilità & ogni partenza è diversa & gli alieni di \emph{Cosmic Encounter} \\
+\addlinespace
+Livellare le abilità & la mano fortunata avvicina principiante e campione & il poker
+  giocato senza guardare le carte \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Rischi}} \\
+\emph{Turn one win} & si vince (o si perde) per la sola partenza & la chiusura in mano a
+  scala 40; il solitario di Diego: la carta ``sfigata'' piazzata dal giocatore; le
+  debolezze di \emph{Arkham}; il \emph{mulligan} \\
+\addlinespace
+Paralisi da analisi & troppi elementi casuali da valutare & rendere fissi risorse,
+  contenuto del mazzo, obiettivo \\
+\addlinespace
+Falsa strategia & tutto casuale: rigiocabile ma non profondo & obiettivi non casuali \\
+\addlinespace
+Poco controllo & il giocatore non sceglie & il caso all'inizio, poi la decisione \\
+\addlinespace
+Troppo controllo & il random sparisce, tutto è prevedibile & il finale della briscola \\
+\bottomrule
+\end{tabular}
+\caption{L'input random in sintesi. Regola d'oro: nasce input e finisce controllato, e deve
+far sentire il giocatore più potente senza togliergli l'\emph{agency}; la fortuna dovrebbe
+decidere circa il 20\% delle vittorie, non il 30\% o più.}
+\label{a15:tab:input}
+\end{table}
+
+\paragraph{Approfondimento: caso e abilità secondo il pubblico.} Brathwaite e Schreiber, in
+\emph{Challenges for Game Designers}, dedicano un capitolo all'equilibrio tra caso e
+abilità che parte esattamente dalle due idee di Diego. La prima: \textbf{il pubblico}. I
+bambini piccoli non hanno ancora gli strumenti per decisioni strategiche e giocano volentieri
+a giochi di pura fortuna (``spesso sono convinti che tirare numeri alti con i dadi sia
+un'abilità''); i giocatori competitivi vogliono che nessun tiro di dado rovini una giocata
+perfetta; i giocatori ``sociali'' tollerano molta più fortuna; le famiglie hanno bisogno di
+un po' di fortuna perché i bambini possano battere gli adulti. La seconda: \textbf{la fortuna
+livella}. ``Più fortuna c'è in un gioco, più il campo è livellato'': se vince sempre il più
+bravo, le uniche partite interessanti sono quelle tra pari; e un po' di caso toglie anche un
+po' di amarezza alla sconfitta, perché chi vince può sentirsi più abile e chi perde può
+dare la colpa ai dadi. Il libro propone anche i segnali da cercare nei \emph{playtest}: se
+i giocatori si annoiano, forse c'è troppa fortuna (si converta qualche elemento casuale in
+una decisione); se un giocatore stravince sugli altri, forse c'è troppa abilità (si aggiunga
+un po' di casualità, o un meccanismo di recupero). E, come Diego, suggerisce di
+\textbf{scambiare} caso e decisione: ``pagate 50 prima di tirare, e tirate tre dadi
+scegliendone due'' è il loro esempio su \emph{Monopoly}, ed è esattamente un input random
+reso controllato in cambio di risorse.
+
+% ---------------------------------------------------------------------
+\section{L'output random}
+\label{a15:sec:output}
+
+\subsection{Che cos'è: il caso dopo la decisione}
+
+Diego apre con alcune GIF che gli piacciono (giocatori di \emph{Commander} e una giocatrice
+che gioca ``un sacco di mazzi \emph{combo}''). L'output random è \textbf{esattamente
+l'opposto} dell'input: il random non è sulle risorse che si hanno, ma \textbf{sul risultato
+dell'azione}.
+
+\paragraph{La palla di fuoco.} Il modo più semplice per definirlo è \textbf{D\&D}. Ho
+un'abilità: lanciare una \textbf{palla di fuoco} in faccia all'avversario. Se colpisco o meno
+quel giocatore, o quel PNG, dipende dai dadi: con 15 o più colpisco, con 14 o meno no; e il
+danno dipende dal numero di dadi che lancio\footnote{È una semplificazione: nelle regole
+della quinta edizione di D\&D, contro la palla di fuoco è il bersaglio a tirare un
+\emph{tiro salvezza} su Destrezza, che dimezza il danno, e il danno è $8d6$. Il principio
+che Diego illustra non cambia: la decisione è certa, l'esito è affidato ai dadi.}. Qui non è
+la decisione, né l'abilità, a essere random: so di avere la palla di fuoco, ho deciso di
+usarla, e ne ho il totale controllo, perché fa parte del mio personaggio (``non è che ho
+pescato la carta palla di fuoco''). Ma \textbf{se colpisco e quanto danno faccio}, quello è
+random.
+
+\paragraph{La definizione.} L'output random è quando \textbf{la casualità avviene dopo che il
+giocatore ha preso una decisione}. Di solito influenza \textbf{il successo o il fallimento},
+oppure \textbf{la magnitudo}, cioè l'entità di quel successo o fallimento. Il giocatore prima
+si \textbf{impegna} (\emph{commits}) in una decisione, un piano, una tattica; poi il caso gli
+dice se ha funzionato e, nel caso, quanto. È all'estremo opposto dello spettro: l'input dice
+quali azioni si potrebbero compiere in quel momento; l'output dice ``no, le azioni le hai già
+tutte, ma il loro risultato non è scontato''.
+
+\paragraph{La domanda di Jacopo: \emph{Betrayal}.} Jacopo chiede di un gioco come
+\textbf{\emph{Betrayal at House on the Hill}}\footnote{Nella trascrizione ``B-Train'' e
+``Betrayal''. Più avanti Diego lo chiama ``Betrayal of the House of the Hill''.}, un gioco di
+piazzamento di tessere: si sceglie di muoversi e si pesca la tessera, e su alcune tessere ci
+sono i simboli degli eventi, o si pesca un oggetto. È input e output insieme, o solo input?
+Diego risponde che è \textbf{combinato}, e spiega il criterio. Quando peschi la tessera, è
+input: il caso viene prima e non hai nemmeno deciso che cosa uscirà. Poi, visto il risultato,
+prendi una decisione: e \textbf{se quella decisione può avere esiti diversi, c'è anche
+l'output}. Se la tessera dice ``prenditi tre pizze'', è solo input; se dice ``lancia un dado
+per sapere quante pizze'', è combinato. ``Hai fatto benissimo'': la lezione è un dialogo,
+``intervenite quando volete''.
+
+\paragraph{Altri esempi.} Il lancio dei dadi per un'azione in D\&D; il \textbf{Risiko} (Diego
+dice \emph{Risk}, ``che sarebbe Risiko all'italiana''); i \textbf{segnalini del sacchetto} di
+\emph{Arkham}: ``voglio menarlo''; peschi il segnalino $-3$, la tua abilità scende a 2, troppo
+debole, non ci sei riuscito; oppure peschi ``danno critico'', o ``fallimento
+critico''\footnote{Diego mescola qui il sacchetto del caos di \emph{Arkham} e il D20 di D\&D:
+il racconto dei tre fallimenti critici, uno su venti, riguarda con ogni probabilità il D20.}.
+Diego ci ha giocato ``letteralmente ieri'', e un suo amico ha tirato \textbf{tre volte di
+seguito un fallimento critico}: ``ma che cacchio, sei proprio sfigato''. È output, perché la
+decisione era presa, l'azione fatta, ma non è andata per niente bene. E poi il \textbf{lancio
+della moneta}: ``se esce testa mangio l'hamburger, se esce croce prendo una pizza''. La
+decisione è presa; il risultato dipende dall'elemento casuale.
+
+\subsection{Perché usarlo: il dramma}
+
+L'input random serve a creare scelte tattiche e a mitigare le differenze di abilità.
+\textbf{L'output random serve ad aggiungere il dramma}, ``nel senso proprio del termine,
+teatrale''. Quando non so se la mia azione avrà successo, sono teso: \textbf{non sapere crea
+tensione per natura}.
+
+\paragraph{\emph{Affari tuoi}.} L'esempio perfetto è ``il gioco dei pacchi su Rai 1''. Per
+semplicità ci sono venti pacchi: dieci ``sfigati'' (un peluche da 10 euro, un sacchetto di
+noccioline) e dieci ``fighi'' (da 5.000 a 300.000 euro). I concorrenti aprono i pacchi che
+scelgono finché ne restano pochi (per esempio cinque, tre positivi e due negativi, o
+viceversa); poi arriva un'\textbf{offerta}: ``ti do 40.000 euro e il gioco finisce adesso;
+oppure rischi, e magari c'è ancora il pacco da 300.000''. Se si sapesse di avere il pacco
+sfigato, si accetterebbe al volo; se si sapesse di avere quello da 300.000, si rifiuterebbe.
+\textbf{Il dramma sta nel fatto che l'output è sconosciuto}: ``oddio, 40.000 sono tanti
+soldi; ma se poi avessero quello da 300.000? E se beccano il calzino?''
+
+\paragraph{\emph{Golden Balls}.} Un altro esempio, ``un capolavoro'', da YouTube:
+\textbf{\emph{Golden Balls}}\footnote{Nella trascrizione ``la Golden Ball''. È il quiz
+britannico \emph{Golden Balls} (ITV); l'episodio mostrato, con i concorrenti Nick e Ibrahim, è
+uno dei più famosi del ``\emph{split or steal}''.}. Due concorrenti hanno collaborato per
+accumulare una cifra (in quella puntata circa 13.000 sterline) e ora hanno davanti due
+palline: \textbf{dividi} (\emph{split}) e \textbf{ruba} (\emph{steal}). Se entrambi scelgono
+dividi, si dividono la somma; se entrambi scelgono ruba, nessuno vince niente; se uno sceglie
+ruba e l'altro dividi, chi ha scelto ruba prende tutto. Diego fa sentire lo spezzone: Nick
+dice a Ibrahim che sceglierà \emph{steal} al 100\%, e gli chiede di scegliere \emph{split},
+promettendo di dividere i soldi con lui dopo lo spettacolo. Ibrahim incredulo: ``dopo che hai
+preso \emph{steal}?'' ``Sì.'' Che fare? Fidarsi di una promessa ``nell'aria'', o scegliere
+ruba per ripicca, ``e nessuno vince niente''? ``Fidati che i soldi te li do.'' Questa
+\textbf{incertezza del risultato crea il dramma}. ``Andatevelo a vedere, se volete sapere come
+va a finire.''
+
+\paragraph{I tre vantaggi.} Ne vengono tre punti di forza.
+\begin{enumerate}
+  \item \textbf{Il dramma e l'intensità emotiva.} Una scelta non sicura spinge l'emotività,
+        e ``fare giochi è essere emotivi'': vogliamo che i giocatori provino emozioni, e
+        rendere incerto il risultato le spinge al massimo.
+  \item \textbf{\emph{High risk, high reward}.} Non avere la certezza del risultato permette
+        di dare al giocatore scelte \textbf{molto pericolose ma potenzialmente molto
+        vantaggiose}. Se va male, ``chi è causa del suo mal pianga se stesso'': la scelta
+        rischiosa l'hai fatta tu. ``Mi è capitato migliaia di volte: se azzecco questa cosa
+        vinco; poi la sbaglio e ho perso.'' Con la certezza assoluta di riuscire, sarebbe
+        stato noioso.
+  \item \textbf{Ridurre la differenza di abilità}, come per l'input: se non sono sicuro di
+        batterti, perché potrei avere un colpo di sfortuna, tu resti in partita.
+\end{enumerate}
+
+\subsection{Il rischio: troppa sfortuna}
+
+Il rischio è che \textbf{troppa sfortuna dà fastidio}. È ciò che è successo all'amico di
+Diego: tre fallimenti critici di fila tolgono al giocatore la sensazione di \emph{agency}
+(``una volta va bene, ma tutte e tre le volte non è giusto''). Diego prova a fare il conto con
+la calcolatrice: una possibilità su 20, tre volte, ``quindi una su 60'', l'1,6\%; uno
+studente lo corregge, le probabilità vanno \textbf{moltiplicate}, ``ah, giusto, è molto più
+basso''\footnote{Il conto corretto: $\left(\tfrac1{20}\right)^3 = \tfrac1{8000} =
+0{,}0125\%$, cioè circa una volta su ottomila serie di tre tiri. È lo stesso errore che il
+modo ``visivo'' della sezione~\ref{a15:sec:calcolo} aiuta a evitare: tre eventi indipendenti
+si moltiplicano, non si sommano.}. ``Quindi è una cosa folle.'' Troppo risultato casuale
+toglie ai giocatori la sensazione di avere effetto sul gioco: fanno la loro strategia, la loro
+tattica, e poi non funziona mai perché hanno sfortuna. Per questo esistono \textbf{tecniche
+di mitigazione}, che Diego mostra subito dopo.
+
+\subsection{Quando: poco all'inizio, di più verso la fine}
+
+Mentre l'input è presente all'inizio e poi diventa controllato, \textbf{l'output random non
+dovrebbe essere presente all'inizio}. Qui la trascrizione si interrompe\footnote{Una stringa
+ripetuta (``Output transcript'') copre una parte della spiegazione. Il senso è ricostruibile
+da ciò che Diego dice dopo la pausa, quando disegna le due curve: ``l'output è l'opposto: ne
+ho poco all'inizio e diventa medio a fine partita, per dare quel momento di dramma''
+(figura~\ref{a15:fig:curve}). È andato perso anche l'inizio dell'esempio che segue.} e
+riprende nel mezzo di un esempio, che mostra come inserire l'output alla fine \textbf{senza
+annullare} ciò che è avvenuto prima.
+
+\paragraph{Il sacchetto finale.} Siamo nella fase finale, e il gioco dice: per ogni 10 risorse
+accumulate, metti nel sacchetto un segnalino del tuo colore (verde Diego, rosso Davide). Diego
+ha 100 risorse, Davide 200: Davide mette 20 segnalini, Diego 10. Poi si estrae un segnalino, e
+chi viene estratto vince. Diego ha comunque una possibilità, ma statisticamente Davide ne ha
+di più (due su tre). Il caso finale \textbf{si basa su ciò che è successo prima}: Davide
+probabilmente vincerà, ma Diego non ha abbandonato la partita, e se è fortunato vince.
+
+\paragraph{La variante con i soldatini.} Oppure, se non si vuole far decidere la vittoria in
+modo così diretto: i segnalini non decidono chi vince, ma \textbf{chi ottiene un potenziamento
+speciale} per i propri soldatini nella battaglia finale. Diego e Davide hanno 20 soldatini a
+testa; nel sacchetto Davide ha 20 segnalini, Diego 10. È più probabile che il potenziamento
+vada a Davide, ma può andare anche a Diego, e questo \textbf{crea tensione}. Il principio:
+\textbf{l'output si crea verso la fine, non deve annullare ciò che è venuto prima}, ma
+costruire la possibilità che accada qualcosa di casuale senza rovinare il resto.
+
+\subsection{Mitigare l'output random}
+
+Se c'è troppo output random il gioco diventa brutto, ``perché c'è troppa sfiga''. Le
+\textbf{tecniche di mitigazione} non servono a ridurre il random, ma a \textbf{dare ai
+giocatori la possibilità di ridurre la sfortuna} (tabella~\ref{a15:tab:mitigazione}).
+
+\paragraph{Il \emph{reroll}.} In D\&D esiste il segnalino di \textbf{ispirazione}: il master
+premia chi gioca bene dandogli l'ispirazione, che si può consumare per \textbf{ritirare i
+dadi} dopo un tiro sfortunato\footnote{Nella quinta edizione del 2014 l'ispirazione dà
+\emph{vantaggio} (si tirano due D20 e si tiene il migliore) e va spesa prima del tiro; nella
+revisione del 2024 l'\emph{ispirazione eroica} permette proprio di ritirare un dado. In
+entrambi i casi è un premio che mitiga l'output.}. Così chi ha giocato bene è premiato
+proprio quando l'output gli va male. \textbf{\emph{King of Tokyo}} ha ``letteralmente'' il
+\emph{reroll}. E \textbf{\emph{Dicey Dungeons}}\footnote{Nella trascrizione ``Dicey
+Dungeon''.}, un videogioco: si esplora un \emph{dungeon}, si tirano dei dadi e poi \textbf{li
+si posiziona}. Il giocatore del video ha tirato 1, 2, 3, 4, 5 e 6 e può decidere dove
+metterli: il 6 sul danno, o sul danno con un dado aggiuntivo, o sullo slot del ghiaccio. Come
+li si posiziona cambia la partita: c'è un input random (i dadi lanciati), una parte
+strategica (dove metterli) e un output (i dadi dell'avversario). Se si vuole massimizzare il
+danno conviene mettere i dadi più alti sul danno; se si vuole massimizzare la difesa, il 6 sul
+ghiaccio.
+
+\paragraph{I modificatori.} Giochi che aggiungono \textbf{modificatori} al random: ``tira un
+dado da 6, ma hai $+2$, quindi di sicuro sotto il 3 non vai''. Sapendolo, so che meno di 3
+danni non li farò: ho un output random che sto controllando con i modificatori.
+
+\paragraph{Le assicurazioni.} Le meccaniche di \textbf{\emph{insurance}}: il giocatore
+\textbf{investe risorse} per assicurarsi che, se le cose vanno male, non vadano malissimo.
+Diego e Jacopo devono lanciare un dado, e chi fa di più vince la battaglia. Diego spende 20
+risorse per un'assicurazione: se gli esce 1, vale come 6, quindi il suo dado ha due facce 6.
+Se gli esce 2 è comunque sfortunato, e ha anche perso le risorse dell'assicurazione. Jacopo,
+magari, non lo fa, perché preferisce tenere le risorse per altro: anche l'assicurazione è una
+scelta.
+
+\paragraph{Il successo nel fallimento.} Il quarto modo, ``più difficile da fare ma più
+interessante'' e presente in meno giochi, sono le meccaniche in cui \textbf{anche l'output
+fallimentare è in qualche modo un successo}, o dà comunque delle possibilità. Diego e Jacopo
+si contendono la \textbf{Kamčatka}\footnote{Nella trascrizione ``Kamciak'', ``canciacca'' e
+``cranciacca''. È il territorio del Risiko.} (``un classico''), in un gioco simile al Risiko
+in cui ciascuno tira un dado. La Kamčatka è di Jacopo; Diego fa 3, Jacopo 1: Diego la
+conquista. Un gioco con il successo nel fallimento potrebbe dire:
+\begin{itemize}
+  \item chi perde un territorio \textbf{pesca una carta}: Jacopo ha perso la Kamčatka, ma
+        guadagna una risorsa che magari lo aiuta;
+  \item quando si tira un 1, \textbf{il dado viene messo da parte} e diventa un modificatore
+        $+1$ per un lancio futuro.
+\end{itemize}
+Nel caso opposto (Diego attacca con tre pedine, fa 1 contro il 3 di Jacopo e perde le
+pedine), invece della sconfitta e basta:
+\begin{itemize}
+  \item per ogni pedina persa, Diego guadagna una risorsa;
+  \item oppure le pedine perse tornano nel suo ``generatore'' di pedine, e potrà generarne di
+        più in futuro;
+  \item oppure, se perde il lancio, ottiene \textbf{un'altra azione}, come un turno
+        aggiuntivo per fare qualcos'altro.
+\end{itemize}
+
+\paragraph{Perché è difficile.} Premiare la sconfitta può essere \textbf{pericoloso}, perché
+può creare scenari in cui il gioco \textbf{si blocca}: ``se chi vince vince e chi perde vince,
+che cacchio sta vincendo? Vincono tutti'', e il rischio è lo stallo. Ma \textbf{piccoli bonus}
+alle sconfitte possono ridurre la sensazione di ``ma che cacchio, sono sfigato''.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{5.4cm}>{\raggedright\arraybackslash}p{5.2cm}@{}}
+\toprule
+\textbf{Tecnica} & \textbf{Come funziona} & \textbf{Esempi della lezione} \\
+\midrule
+\emph{Reroll} & si può ritirare il dado, di solito pagando o consumando qualcosa &
+  l'ispirazione di D\&D, \emph{King of Tokyo}; il posizionamento dei dadi di \emph{Dicey
+  Dungeons} \\
+\addlinespace
+Modificatori & spostano l'intervallo dei risultati & $d6+2$: ``sotto il 3 non vai'' \\
+\addlinespace
+Assicurazione & si investono risorse perché il peggio non sia troppo brutto & pagare 20
+  risorse perché l'1 valga 6 \\
+\addlinespace
+Successo nel fallimento & anche perdere dà qualcosa & la carta a chi perde la Kamčatka; l'1
+  che diventa un $+1$ futuro; le pedine che tornano nel generatore; un'azione extra \\
+\bottomrule
+\end{tabular}
+\caption{Le tecniche di mitigazione dell'output random. Non riducono il caso: danno al
+giocatore modo di ridurre la sfortuna. Il successo nel fallimento va dosato, perché premiare
+troppo la sconfitta porta allo stallo.}
+\label{a15:tab:mitigazione}
+\end{table}
+
+\subsection{Dove usarlo}
+
+Essendo legato al dramma, l'output random funziona soprattutto in tre famiglie di giochi.
+\begin{itemize}
+  \item \textbf{I giochi tematici}, con forti elementi di dramma: horror, guerra. Non nei
+        giochi altamente \textbf{strategici}, dove ci deve essere meno dramma; nei giochi
+        altamente \textbf{simulativi} ``potenzialmente non è corretto''; e i giochi altamente
+        \textbf{sociali} hanno già il dramma nell'interazione tra le persone.
+  \item \textbf{I giochi \emph{casual}}, che nessuno affronta in modo troppo competitivo:
+        accettare la sfortuna ci sta, ``tanto siamo qua per farci due risate''. Si immagini
+        invece di giocare tre ore a Risiko e perdere perché è uscito un 1: ``vi viene la
+        rabbia''. In \textbf{\emph{Exploding Kittens}}\footnote{Nella trascrizione ``Spodding
+        Kitten''.}, invece, ``hai pescato la bomba, vabbè'': sono venti minuti, ``e chi se ne
+        frega''.
+  \item \textbf{I giochi di \emph{risk management}}, basati sulla mitigazione di tipo
+        assicurativo: c'è tanta sfortuna, e il gioco consiste nel costruire sistemi che la
+        riducano, accumulando risorse o possibilità.
+\end{itemize}
+
+\paragraph{\emph{Betrayal at House on the Hill}.} È ``uno degli elementi horror di output
+random più fighi''. Si gioca, se Diego ricorda bene, da tre a sei giocatori. Nella prima fase
+si \textbf{esplora la casa}, che è input random; poi, in base alle azioni dei giocatori e ai
+dadi, \textbf{uno di loro diventa il traditore}, il mostro che gli altri dovranno sconfiggere,
+mentre il mostro deve completare un rituale o uccidere tutti, a seconda di quale combinazione
+è uscita. A volte il traditore è nascosto, e deve attaccare gli altri in segreto. Si crea
+proprio il momento di dramma: ``ah, lo sapevo che eri te, ci avrei scommesso tutto''.
+
+\paragraph{Più limitato dell'input.} L'output, quindi, è molto più limitato dell'input:
+\textbf{può essere molto più cattivo}, ed è molto più facile creare frustrazione. L'input è
+più accettato perché ``ho le informazioni e prendo una decisione''.
+
+\subsection{Le linee guida}
+
+\paragraph{Il dramma, non ogni decisione.} \textbf{Usate l'output per il dramma, non per ogni
+decisione}: alla fine del gioco, nei momenti risolutivi, nei momenti topici.
+
+\paragraph{La domanda di Davide: il gioco dell'oca.} Davide chiede del \textbf{gioco
+dell'oca}: è solo output random? ``Assolutamente sì, ed è la ragione per cui ai bambini piace
+e agli adulti no.'' Il bambino tira un 6 e pensa: ``sono fortissimo, ho fatto 6''. L'adulto
+sa che ha lanciato il dado e gli è capitato il 6: ``ho avuto fortuna''. Il bambino ``cade
+nella cosa''; l'adulto sa che non ci poteva fare niente, letteralmente. Ed è proprio il
+punto successivo.
+
+\paragraph{Mitigazione limitata.} \textbf{Si limita l'output dando al giocatore la
+possibilità di controllarlo con un sistema di mitigazione}; ma non infiniti sistemi di
+mitigazione. Magari si hanno \textbf{cinque \emph{reroll} per tutta la partita}, e si decide
+quando usarli. Ecco che diventa \textbf{una scelta strategica}: li uso all'inizio, quando mi
+capita la sfortuna, o li tengo per la fine? E se il gioco finisce prima che li abbia usati
+tutti, ho sbagliato, avrei dovuto consumarli meglio.
+
+\paragraph{Legarlo al tema.} Quando lo si crea, si cerchi di \textbf{legarlo al momento
+tematico del gioco}: oltre a collocarlo meccanicamente verso la fine, o comunque nei momenti di
+alto dramma, lo si colleghi al \textbf{momento emotivo}, perché lo scopo dell'output random
+è dare una forte risposta emotiva.
+
+\paragraph{Il dado critico.} Un piccolo esempio da D\&D. Si tira un D20: l'1 è un fallimento
+critico, il 20 un successo critico. Una regola che Diego dà ai suoi giocatori\footnote{Diego
+dice che è ``presente nel manuale originale, in realtà dalla 3'', cioè dalla terza edizione;
+la fonte non è verificabile, e il capitolo la tratta come una regola della casa di Diego.} è
+il \textbf{dado critico}: ognuno ne ha uno, e può usarlo \textbf{al posto} di un normale D20.
+Il dado critico ha effetti potenziati: \textbf{se fallisci, fallisci molto peggio; se hai
+successo, hai successo molto meglio}. E lo decidi da solo. Magari lo usi quando sai di avere
+molti modificatori positivi; ma ``se poi viene l'uno, su chi?'' Magari lo usi per battere il
+boss finale con un colpo solo, o per convincere quel personaggio; o lo usi e fallisci, e ``ti
+sei tirato la zappa sui piedi'': hai voluto il dado critico, adesso ne hai le conseguenze.
+\textbf{Associare il dramma alla scelta del giocatore} è un modo semplice per togliere la
+frustrazione, perché è stato il giocatore a scegliere.
+
+\paragraph{L'esempio negativo: \emph{Killer Bunnies}.} Come riferimento in negativo,
+\textbf{\emph{Killer Bunnies}}, che \textbf{mette nel finale solo l'output random} e
+distrugge l'esperienza della partita\footnote{In \emph{Killer Bunnies and the Quest for the
+Magic Carrot} vince chi possiede la carota magica rivelata alla fine, estratta a caso tra
+quelle in gioco: chi ha più carote ha più probabilità, ma tutta la partita si decide con
+un'estrazione. In apparenza somiglia al sacchetto proporzionale descritto sopra; la differenza, nella
+lettura di Diego, è che il caso finale schiaccia ciò che è avvenuto prima invece di
+derivarne.},
+invece di fare ciò che si è detto: \textbf{basare l'output random su ciò che i giocatori hanno
+fatto durante la partita}. ``Non conosco \emph{Killer Bunnies}'', direte; ma si trova
+facilmente com'è il finale, e lo si capisce.
+
+\paragraph{Approfondimento: valore atteso e rimpianto.} Schell, nel capitolo sul caso, dà
+gli strumenti per ragionare sugli esempi di Diego. Il primo è il \textbf{valore atteso}:
+la media dei risultati possibili pesata sulla loro probabilità. Un attacco che fa sempre 4
+danni e uno che colpisce l'80\% delle volte facendone 5 hanno lo stesso valore atteso, 4;
+ma il valore atteso va calcolato sul valore \emph{reale}: un fulmine che fa 40 danni il 20\%
+delle volte vale 8, ma contro un nemico con 15 punti vita ne vale solo 3. Il secondo è che
+\textbf{le persone non scelgono in base al valore atteso}: nell'esperimento di Kahneman e
+Tversky che Schell riporta, l'82\% delle persone preferisce 2.400 dollari sicuri a una
+lotteria che vale in media 2.409, perché in quest'ultima c'è l'1\% di non vincere nulla. È il
+\textbf{rimpianto}: si è disposti a pagare per evitarlo, ``comprarsi la tranquillità'',
+come dicono gli assicuratori. È esattamente ciò che sfruttano le \textbf{assicurazioni} di
+Diego e l'\textbf{offerta} di \emph{Affari tuoi}; e, all'opposto, Tversky osserva che davanti
+a una piccola perdita certa e a una grande perdita probabile le persone \textbf{tendono a
+rischiare}. Schell propone infine la \emph{lente del caso e dell'abilità}, con una domanda che
+riassume questa sezione: ``i miei giocatori sono qui per essere giudicati (abilità) o per
+rischiare (caso)?''
+
+\paragraph{La pausa.} ``Abbiamo 15 minuti'', dice Diego, pensando che la lezione finisca
+prima; gli studenti gli ricordano che le ore sono tre. Si fa allora pausa adesso, ``e
+andiamo sul \emph{combined random}, che funziona molto bene''. Sono ``le 45'', dice Diego: si riprende ``alle 55'',
+dieci minuti dopo. La trascrizione della pausa è interamente coperta da frasi senza senso ripetute in
+ciclo; alla ripresa Diego aspetta ``un paio di minutini'' perché tutti rientrino, e dice di
+``morire di caldo''.
+
+% ---------------------------------------------------------------------
+\section{Il random combinato}
+\label{a15:sec:combinato}
+
+``\emph{Combined randomness}: il meglio dei due mondi. \emph{Spoiler alert}: anche il peggio,
+a volte, dei due mondi.''
+
+\subsection{Che cos'è: la stessa decisione}
+
+Il random combinato avviene quando \textbf{input e output random sono presenti nello stesso
+\emph{framework} decisionale}. È questo l'elemento importante: quando il giocatore prende
+\emph{quella} decisione, la prende con informazioni arrivate in modo casuale (l'input), e il
+risultato di quella stessa azione è casuale (l'output).
+
+\paragraph{Un gioco di carte che non esiste.} Il modo più facile per vederlo: pesco una carta
+e la tengo in mano insieme alle altre; gioco una carta, e quella carta fa \textbf{un danno
+casuale}, anche zero. È input e output: ho preso la decisione con le informazioni dell'input,
+e il risultato non è assicurato, anche nella sua \textbf{magnitudo}, cioè nell'efficacia
+dell'azione.
+
+\paragraph{Perché ``nella stessa decisione''.} Perché è pieno di giochi che hanno
+\textbf{momenti} di input e \textbf{momenti} di output diversi, anche in fasi di gioco
+diverse. Il Risiko ha l'input random nella distribuzione degli obiettivi e l'output random
+nel combattimento tra difensore e attaccante: ma sono \textbf{due momenti separati}, non
+un random combinato.
+
+\subsection{La domanda sul \emph{mulligan}}
+
+Uno studente chiede: il \emph{mulligan} di \emph{Magic}, citato prima, è input e output o
+solo input? ``È input e output, assolutamente sì. Però il nuovo \emph{mulligan} è anche
+controllato.'' Diego lo spiega per chi non lo conosce: si pesca la mano di sette carte e si può
+decidere di rimetterle nel mazzo, rimischiare e pescare una mano nuova.
+
+\paragraph{Il vecchio \emph{mulligan}.} Il primo \emph{mulligan} di \emph{Magic} (``si parla di
+vent'anni fa'') era: pesco sette carte, non mi piacciono, le rimetto, rimischio e
+\textbf{pesco sei carte}. Una mano nuova, ma con una penalità: una carta in meno. Era input e
+output random: sette carte casuali, poi sei carte casuali.
+
+\paragraph{Il \emph{London mulligan}.} Il nuovo \emph{mulligan} si chiama tecnicamente
+\textbf{\emph{London mulligan}}, perché è stato provato per la prima volta in un torneo a
+Londra\footnote{Diego dice che ``è vent'anni che c'è''. Il \emph{London mulligan} fu provato
+al \emph{Mythic Championship} di Londra all'inizio del 2019 ed entrò nelle regole poco dopo,
+nello stesso anno; prima c'erano stati il \emph{Paris mulligan}, quello ``a scendere'' che
+Diego descrive, e per un breve periodo il \emph{Vancouver mulligan}. Nelle regole, inoltre, si
+mette in fondo al mazzo \textbf{una carta per ogni \emph{mulligan}} fatto, non sempre una
+sola.}: pesco sette carte, non mi piacciono, le rimetto, rimischio, \textbf{pesco di nuovo
+sette carte} e poi \textbf{ne scelgo una da mettere in fondo al mazzo}. È input random, output
+random \textbf{controllato}. Perché controllato? Perché metterò in fondo quella che mi è meno
+utile; e non la rimischio nel mazzo, la metto \textbf{in fondo}: è un'informazione che io so.
+
+\paragraph{L'esempio del Mega Mostro.} Nella mano dopo il \emph{mulligan} c'è il ``Mega Mostro
+della Morte'', potentissimo, da dieci mana, di cui ho due copie nel mazzo. Se lo metto in
+fondo, so che (a meno di effetti che rimischiano il mazzo) non lo pescherò; e so che l'altra
+copia è da qualche parte nelle restanti carte, con una possibilità su 57\footnote{Così nella
+trascrizione; il numero dipende dalla dimensione del mazzo e dal punto della partita.} di
+pescarla. Ho perso una carta, quindi è comunque uno svantaggio; ma ho \textbf{un'informazione
+in più} su ciò che c'è nel mazzo, ``e questo è comunque utile''.
+
+\paragraph{Perché è pericoloso.} Quando la stessa decisione è influenzata da entrambi, si
+parla di random \textbf{combinato}, e ``fatta molto brutalmente'' le azioni combinate sono
+\textbf{pericolose}: aggiungere così tanto caso in un'unica decisione \textbf{toglie spesso
+potere decisionale} al giocatore. Vanno prese ``con i piedi di piombo''; mentre avere una fase
+di input e una fase di output separate va benissimo. Perché, allora, combinarle?
+
+\subsection{Il primo vantaggio: il \emph{problem solving} creativo}
+
+Combinare input e output random \textbf{costringe il giocatore a pensare fuori dagli schemi}:
+se non controllo le informazioni prima di riceverle e non ho certezza del risultato, sono in
+una situazione scomoda, e devo davvero trovare un modo per aggirare il problema.
+
+\paragraph{I \emph{malus}.} Molto spesso il random combinato si usa con i \textbf{\emph{malus}}:
+un giocatore pesca un \emph{malus} che gli resta attaccato finché non compie una certa azione,
+o non se lo toglie in qualche modo. Perché combinarli? Perché il disagio apre la possibilità
+di \textbf{una soluzione creativa}, ``ah, non ci avevo pensato a questa cosa''. Diego vorrebbe
+un esempio da \emph{Arkham}, ``ce n'è uno perfetto'', ma nessuno l'ha giocato; cerca un gioco
+che tutti conoscano, oltre alla scala 40, ma ``non ne abbiamo proprio uno in comune''. Allora
+ne inventa.
+
+\paragraph{Le maledizioni di \emph{Magic}.} \emph{Magic} ha incantesimi chiamati
+\textbf{\emph{Curse}} (maledizioni), che vengono definiti \textbf{politici}, perché creano
+relazioni politiche, cioè sociali, al tavolo; \emph{Magic} non è un gioco altamente sociale
+di base, è un uno contro uno, ma le maledizioni brillano nelle partite a più giocatori. Diego
+attacca a Diego, ``il mio omonimo'', una maledizione che dice: \textbf{quando qualcuno attacca
+Diego, genera una creatura}. Sta mettendo un bersaglio sulla testa di Diego: anche lui ci
+guadagna quando lo attacca, ma ci guadagnano tutti. È una carta \textbf{difensiva}: invoglia
+tutti ad attaccare Diego invece di attaccare lui. Non ha elementi né di input né di output, ma
+ha un elemento politico.
+
+\paragraph{La stessa maledizione, combinata.} Ora la si immagini leggermente diversa: la carta
+\textbf{si sposta tra i giocatori}. Ogni turno si lancia un dado e qualcuno se la prende: ogni
+tanto Diego, ogni tanto il docente, ogni tanto Jacopo, Davide, Oksana. E chi attacca quel
+giocatore ottiene \textbf{uno di $X$ vantaggi possibili}, estratto a caso. Ora la carta ha sia
+input (ogni turno finisce a un giocatore casuale) sia output (invece di una creatura fissa dà
+una combinazione di risorse casuale, potenzialmente molto vantaggiosa). E cambia la partita:
+la versione originale era difensiva; questa potrebbe finire tre turni di seguito a chi l'ha
+giocata, e quindi \textbf{non è più difensiva, è casuale}.
+
+\paragraph{Perché giocarla?} ``Perché dovrei giocare una carta che potenzialmente mi si può
+ribaltare addosso? Chi riesce a dirmelo?'' Uno studente risponde: se sei già avanti in
+risorse, ti conviene che gli altri perdano risorse picchiandosi, come negli scacchi conviene
+scambiare pezzo per pezzo quando si è in vantaggio. ``È assolutamente corretto.'' La carta
+genera comunque \textbf{attacchi}: la gente si picchia perché ha un vantaggio nel farlo. E
+Diego aggiunge una seconda carta di \emph{Magic}, un altro incantesimo: \textbf{quando una
+creatura muore, genero una creatura debole}. Combinando le due carte, anche quando la
+maledizione è contro di lui, Diego crea un vantaggio per sé: se gli altri si attaccano e
+uccidono creature, lui genera creature; se attaccano lui e si difende con le sue creature,
+muoiono creature e lui ne genera.
+
+\paragraph{Il principio.} Le carte combinate, di solito, \textbf{non sono buone scelte da
+sole}, ma \textbf{aprono uno spazio creativo}: combinando possibilità e risorse del gioco, si
+aprono vantaggi anche dove il vantaggio non sembra esserci.
+
+\paragraph{Il gioco di dadi e bluff.} Un secondo esempio. Diego chiede se conoscono ``gli
+Azzi''\footnote{Così nella trascrizione. Il gioco descritto è molto simile al \emph{Perudo},
+o ``dadi del bugiardo'' (\emph{Liar's Dice}); non è chiaro quale titolo Diego abbia nominato.};
+nessuno, e allora inventa un gioco simile. Ognuno ha dei dadi; li agito, guardo il risultato
+e lo tengo nascosto, e poi dichiaro: ``ho fatto 7-6''\footnote{Il formato della dichiarazione
+(``7-6'', più avanti ``4-3'') non è spiegato; dal contesto indica una combinazione o un numero
+di dadi con un certo valore.}. Gli altri possono dire ``ci credo'' o ``stai mentendo''. Se
+indovinano che mento, mi rubano un dado; se sbagliano, ne rubo uno io. Tutti iniziano con
+\textbf{5 dadi}, e il numero cambia in base a quante persone si riescono a ingannare. Qui c'è
+un output random (non so che cosa uscirà), ma \textbf{il numero di dadi} è noto.
+
+\paragraph{La strategia della prima versione.} Diego chiede come si capisce, nella versione
+originale, se qualcuno mente. Uno studente risponde: ci si basa sulla \textbf{probabilità} e
+sul \textbf{numero di dadi}, che è una certezza. Se dichiari 7-6 ma hai solo 5 dadi, è
+impossibile; se ti ho visto sbagliare due volte e hai tre dadi, ``è una cagata'', chiaramente
+falso. La strategia è usare la probabilità, e il numero di dadi per calibrarla.
+
+\paragraph{La seconda versione: l'input nascosto.} Ora si aggiunge una regola: all'inizio
+lancio anche \textbf{un altro dado, che gli altri non vedono}, un D6 che \textbf{aggiunge}
+quel numero di dadi temporanei ai miei. Se ho 5 dadi di base, posso averne da 6 a 11, e
+nessuno sa quanti. ``Ok, Diego, è solo una versione più difficile.'' Sì, ma proprio perché è
+più difficile bisogna potenziare il \emph{problem solving}. Il numero di dadi di base lo so
+sempre (se hai perso due volte ne hai 3, se hai vinto due volte 7), ma ci sono \textbf{fino a
+sei dadi in più} che non conosco: più del valore iniziale, il doppio dei dadi che controllo.
+Il valore statistico è stato annullato.
+
+\paragraph{Da statistico a sociale.} E allora su che cosa ci si basa? ``Torniamo al discorso
+del poker'': invece della probabilità, \textbf{sul modo di parlare} dell'altro. Ogni volta che
+spara certi numeri, Jacopo si tocca i capelli. Aggiungendo l'input random, \textbf{il gioco è
+passato da statistico a sociale}, o politico, da gioco di probabilità a gioco di
+\textbf{bluff}. È la soluzione creativa, il vantaggio del random combinato: cambia proprio la
+dinamica, le regole del gioco cambiano notevolmente, ``semplicemente aggiungendo un elemento
+di input, perché l'output ce l'avevamo in entrambi i casi''. Ed è anche \textbf{il grande
+pericolo}: trasformare un gioco da probabilistico a sociale è un grande cambiamento, che
+potrebbe non piacere, e ``va rischiato''.
+
+\subsection{Il secondo vantaggio: la profondità strategica}
+
+Il secondo elemento è la \textbf{\emph{strategic depth}}: creando \textbf{piccoli momenti} di
+random combinato si crea profondità strategica, non tattica. Per spiegarlo, Diego
+\textbf{disegna} (in rosso, ``che si vede meglio'') le curve tipiche di un gioco
+(figura~\ref{a15:fig:curve}).
+\begin{itemize}
+  \item \textbf{L'input}: tanto all'inizio, e diventa controllato verso la fine della partita.
+  \item \textbf{L'output}: l'opposto, poco all'inizio, e diventa medio a fine partita, per
+        dare quel momento di dramma.
+  \item \textbf{La tensione} del gioco: di solito tende a salire, ``perché la maggior parte dei
+        giochi ha questa caratteristica''.
+\end{itemize}
+
+\paragraph{Lo stallo.} Ma si supponga di vedere, nei \emph{test}, che a un certo punto i
+giocatori \textbf{si annoiano}: c'è un piccolo stallo (``a 5 minuti si annoiano''), un momento
+in cui tutti accumulano risorse, nessuno attacca nessuno, nessuno fa niente. Lì si può
+inserire \textbf{un unico momento} che sia sia input sia output random, che \textbf{spezzi la
+partita} e dia la possibilità di fare qualcosa di interessante.
+
+\paragraph{Atlantide nel Risiko.} Si torni al Risiko normale. Diego disegna una mappa
+(``questa è l'America, so che non assomiglia all'America''): l'Africa, l'Oceania, l'Eurasia,
+``vabbè, nessuno se la fila la Groenlandia'', e anche l'Islanda nel centro. I giocatori si sono
+spartiti il mondo: chi ha l'America (Jacopo), chi l'Africa (Davide), chi l'Oceania (Diego),
+chi l'Eurasia (Oksana). Tutti sono un po' arroccati, accumulano, nessuno si muove. Si aggiunge
+una regola: c'è \textbf{una carta speciale} che va inserita \textbf{tra le prime 15 carte del
+mazzo} (si mischia il mazzo, si prendono le prime 15, ci si mette la carta, si rimischiano e
+si rimettono in cima). Perché nelle prime 15? Perché si vuole che succeda presto. Quando la
+carta viene pescata va rivelata e messa sul tabellone, e diventa \textbf{un territorio in
+più}, ``come se Atlantide fosse emersa dalle acque'', attaccato al territorio dove viene
+messa. Non appartiene a nessuno, e chi lo conquista per primo pesca \textbf{il doppio delle
+carte} la prima volta.
+\begin{itemize}
+  \item Chi la pesca: \textbf{input random}, perché non si sapeva quando sarebbe successo.
+  \item Dove va: se la piazza chi la pesca, è \textbf{controllato}; se la si piazza a caso,
+        magari lanciando un dado, è \textbf{output random}. Può finire ovunque, e avvantaggiare
+        Jacopo in America, Davide in Africa, Diego in Oceania o Oksana in Eurasia.
+\end{itemize}
+
+\paragraph{Lo \emph{spike} emotivo e la strategia.} Si è aggiunto uno \textbf{\emph{spike}
+emotivo}: adesso che nessuno si attaccava, ``no, cacchio, voglio conquistare Atlantide''. Ma
+si è creata anche \textbf{profondità strategica}: i giocatori sanno che Atlantide esiste e che
+comparirà \textbf{entro il quindicesimo turno}. Quindi, anche mentre si arroccano, si stanno
+già preparando a quel momento: ``dovrei avere le mie unità più o meno in ogni macro zona, per
+essere pronto a invadere Atlantide da dovunque''. L'evento è input random (potrebbe capitare al
+primo turno o al quindicesimo) e output random (può essere piazzato ovunque), ma ha creato
+strategia.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small, x=1.15cm, y=1.0cm]
+  \draw[thick, ->] (0,0) -- (10.4,0) node[right, font=\footnotesize] {partita};
+  \draw[thick, ->] (0,0) -- (0,4.6) node[above, font=\footnotesize] {quantità};
+  \node[below, font=\footnotesize] at (0.6,0) {inizio};
+  \node[below, font=\footnotesize] at (9.6,0) {fine};
+  % input: tanto all'inizio, poi controllato
+  \draw[very thick] (0.2,3.9) .. controls (3,3.7) and (5,1.5) .. (9.8,0.8);
+  \node[font=\footnotesize, anchor=west] at (0.3,4.2) {input random};
+  \node[font=\footnotesize, anchor=west] at (8.4,0.45) {\ldots{} diventa controllato};
+  % output: poco all'inizio, medio alla fine
+  \draw[very thick, dashed] (0.2,0.4) .. controls (4,0.5) and (7,1.6) .. (9.8,2.3);
+  \node[font=\footnotesize, anchor=west] at (7.6,2.65) {output random};
+  % tensione: sale, con uno stallo, e lo spike
+  \draw[thick, gray] (0.2,0.9) .. controls (2,1.6) and (3.2,2.3) .. (4.2,2.4)
+        -- (5.2,2.4)
+        .. controls (5.5,2.4) and (5.6,3.6) .. (5.8,3.6)
+        .. controls (6.0,3.6) and (6.1,2.9) .. (6.6,3.0)
+        .. controls (8,3.2) and (9,3.8) .. (9.8,4.3);
+  \node[font=\footnotesize, gray, anchor=west] at (9.85,4.3) {tensione};
+  \draw[thin, |-|] (4.2,2.15) -- (5.2,2.15);
+  \node[font=\scriptsize, align=center] at (4.7,1.75) {stallo:\\si arroccano};
+  \draw[{Stealth[length=2mm]}-, thin] (5.8,3.7) -- (5.8,4.25)
+    node[above, font=\scriptsize, align=center] {Atlantide: un momento\\input + output};
+\end{tikzpicture}
+\caption{Le curve che Diego disegna a mano. L'input random (linea continua) è alto
+all'inizio e diventa controllato; l'output random (tratteggio) parte basso e cresce verso la
+fine, dove serve il dramma; la tensione (in grigio) di solito sale. Dove i \emph{test}
+mostrano uno stallo, un unico momento di random combinato (Atlantide nel Risiko) crea un
+picco emotivo e, insieme, una ragione strategica per prepararsi.}
+\label{a15:fig:curve}
+\end{figure}
+
+\subsection{Il terzo vantaggio: la narrativa}
+
+L'ultimo punto è il \textbf{\emph{random narrative enhancement}}. Nei giochi come
+\textbf{\emph{Clank!}}\footnote{Nella trascrizione ``Clank'' e, più avanti, ``Crank''.},
+\textbf{\emph{Sleeping Gods}}\footnote{Nella trascrizione ``Sleeping God'' e ``Sleeping
+Garden''.} e in generale nei giochi narrativi, input e output random possono creare
+situazioni estremamente interessanti proprio a livello di storia, perché la storia cambia
+completamente.
+
+\paragraph{\emph{Pasión de las Pasiones}.} Ce ne sono molti, ``come \emph{Pasión de las
+Pasiones}''\footnote{Nella trascrizione ``Passione della Passiones''. È \emph{Pasión de las
+Pasiones}, gioco di ruolo di Brandon Leon-Gambetta pubblicato da Magpie Games, ispirato alle
+telenovelas.}, ``un simulatore di telenovela spagnola, che è fighissimo''. Lì chiunque può
+affrontare chiunque. Io dico: voglio uccidere Jacopo, perché mi ha rubato la fidanzata. Si
+estrae da un sacchetto: se ti uccido, \textbf{non muori}, salti un turno, e poi devi tornare
+con \textbf{un \emph{plot twist} in stile telenovela}. ``Non ero io, era mio cugino''; ``mi
+hanno clonato''; ``sono caduto su un'isola deserta e sono tornato''. Ti ho eliminato per un
+turno; poi torni e dici ``attacco Diego''. Se ce la fai: ``sì, mi hai accoltellato, ma non mi
+hai ucciso: mi hai tagliato un braccio, e adesso sono tutto menomato''. Uno dei più comuni:
+``era un sogno''.
+
+\paragraph{Chi decide l'esito.} Qui \textbf{l'output è random} in modo particolare: io compio
+l'azione, ma \textbf{non decido il risultato}, lo decide il mio avversario. E questo si lega
+all'elemento narrativo, perché Jacopo cercherà il \emph{plot twist} più esagerato. Il random
+aggiunge \textbf{imprevedibilità alla storia}: non controllando il risultato, o l'input, o
+``entrambi, che è ancora meglio'', non posso scrivere la mia storia, ma \textbf{la storia si
+crea dinamicamente}.
+
+% ---------------------------------------------------------------------
+\section{Mitigare il random combinato}
+\label{a15:sec:mitigazionecomb}
+
+``Non è tutto oro quel che luccica'': come c'è il meglio dei due mondi, c'è anche il peggio,
+e quando si combina tanto si va nella \textbf{mitigazione}. Alcune tecniche le si è già viste,
+e funzionano anche qui:
+\begin{itemize}
+  \item \textbf{\emph{reroll} e \emph{redraw}}: ti faccio ritirare, ti faccio ripescare;
+  \item \textbf{modificatori e \emph{buff}}: rendo la cosa più controllata; sì, devi lanciare
+        il dado, ma il dado è $+2$; sì, devi pescare una carta, ma guardi le prime tre; sì,
+        devi fare una scelta, ma tra tre.
+\end{itemize}
+Ce ne sono però altre che funzionano particolarmente bene con il combinato
+(tabella~\ref{a15:tab:combinato}).
+
+\subsection{\emph{Push your luck}}
+
+La meccanica \textbf{\emph{push your luck}} dà al giocatore la possibilità di
+\textbf{aggiungere più random in cambio di una ricompensa maggiore}: trasforma il combinato
+\textbf{in una scelta}. Diego gioca con Oksana\footnote{Nella trascrizione qui ``Roxana''.}:
+pesca la sua carta (input random) e decide di usarla contro di lei. La carta dice ``fai tre
+danni''. Ma il gioco dice: invece di fare tre danni, \textbf{puoi lanciare un D6 e fare da 1 a
+6 danni}. Faccio 3, o faccio da 1 a 6? Se faccio 6 sono in grande vantaggio, se faccio 1 sono
+sfortunato. Sto decidendo \textbf{io} se trasformarlo in un random combinato: è una mia scelta
+di giocatore quanto voglio rischiare.
+
+\paragraph{Spingere ancora.} E si può spingere anche dopo. Se esce il massimo, 6, il gioco
+dice: puoi tirare un altro dado; ma se esce 1, fai zero danni e \textbf{annulli anche i
+risultati precedenti}. Allora penso: se esce qualsiasi cosa tranne 1, faccio almeno 8 danni (il
+6 di prima più almeno 2); se esce di nuovo 6, ne faccio 12; ma con l'1 faccio zero. E la cosa
+può andare avanti potenzialmente all'infinito: ``ogni 6 che esce, puoi continuare a spingere
+la tua fortuna''.
+
+\paragraph{La moneta che raddoppia.} È come se qualcuno dicesse: lancia una moneta, e ogni
+volta che fai testa \textbf{raddoppi} (e con croce perdi tutto). Si parte da 10 euro: testa,
+20; testa, 40; testa, 80. Lanceresti ancora, o ti tieni 80 euro? ``Però potrei fare 160\ldots{}
+però chi lo sa?''
+
+\paragraph{Perché funziona sul combinato.} Funziona molto bene perché \textbf{il primo random
+lo mette il gioco, il secondo lo si dà in mano al giocatore}. ``Io non ti ho obbligato, non ti
+ho detto che devi per forza avere il secondo random. Sei libero.'' Invece di una regola, il
+combinato diventa \textbf{\emph{agency}}: il giocatore sceglie se volerlo, e quanto. (A questo
+punto a Diego si spegne la telecamera: ``scusate, a volte si preme inavvertitamente il tasto''.)
+
+\paragraph{Approfondimento: quando conviene spingere.} I due esempi di Diego si possono
+verificare con il valore atteso di Schell (tabella~\ref{a15:tab:push}). Tre danni sicuri contro
+un D6: il dado vale in media 3,5, quindi rischiare conviene di poco, in media, ma con un terzo
+delle volte (1 o 2) peggio dei tre danni sicuri. Nella versione che ``esplode'', se ho
+accumulato $T$ danni e tiro ancora, perdo tutto con l'1 e aggiungo da 2 a 6 negli altri casi:
+il valore atteso del nuovo tiro è
+\[
+  \frac{0 + (T+2) + (T+3) + (T+4) + (T+5) + (T+6)}{6} = \frac{5T + 20}{6},
+\]
+che supera $T$ finché $T < 20$. In media, quindi, conviene spingere con 6, 12 e 18 danni
+accumulati, ma non più con 24: la regola produce davvero una scelta che diventa più tesa a ogni
+6. La moneta che raddoppia, invece, ha valore atteso costante: con 80 euro, lanciare vale in
+media $0{,}5 \cdot 160 + 0{,}5 \cdot 0 = 80$. Matematicamente è indifferente, e proprio per
+questo la decisione dipende solo da quanto si teme di perdere: è il rimpianto di Kahneman e
+Tversky, e la ragione per cui funziona come momento di dramma.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm}c>{\raggedright\arraybackslash}p{6.6cm}@{}}
+\toprule
+\textbf{Situazione} & \textbf{Valore atteso} & \textbf{Che cosa dice} \\
+\midrule
+3 danni sicuri & 3 & l'opzione \emph{safe} \\
+Un D6 di danni & 3,5 & in media meglio, ma con 1 o 2 (un terzo delle volte) peggio \\
+\addlinespace
+Accumulati 6, ritiro (1 azzera) & 8,33 & conviene: $8{,}33 > 6$ \\
+Accumulati 12, ritiro & 13,33 & conviene ancora \\
+Accumulati 18, ritiro & 18,33 & quasi indifferente \\
+Accumulati 24, ritiro & 23,33 & non conviene più \\
+\addlinespace
+Moneta: 80 euro, rilancio & 80 & indifferente: decide il gusto per il rischio \\
+\bottomrule
+\end{tabular}
+\caption{Il valore atteso negli esempi di \emph{push your luck} della lezione (calcolo del
+capitolo, non di Diego). Il valore atteso non dice che cosa sceglieranno i giocatori, ma dice
+dove la scelta è davvero in bilico.}
+\label{a15:tab:push}
+\end{table}
+
+\subsection{I sistemi ibridi: la Scoperta di \emph{Hearthstone}}
+
+Altri elementi che mitigano il combinato sono i \textbf{sistemi ibridi}: \textbf{garantire
+alcuni elementi} dell'output o dell'input in cambio di certi costi. Nessuno ha giocato a
+\textbf{\emph{Hearthstone}}\footnote{Nella trascrizione ``Airstone''.}, e Diego lo racconta:
+è un gioco di carte digitale, e una delle sue meccaniche ``più geniali'' è la
+\textbf{Scoperta} (\emph{Discover}): devi \textbf{scegliere una cosa casuale tra tre}. È un
+ibrido tipico: è random, ma scegli la migliore delle tre. Potrebbero capitare tre cose
+``sfigate'', ``e a volte succede''; ma magari ne capita una sfigata e due interessanti, ed è
+una scelta interessante. \emph{Hearthstone} ha poi aggiunto delle Scoperte
+\textbf{potenziate}: per esempio, le tre opzioni saranno tutte carte
+\textbf{leggendarie}, che di solito sono più forti. Con l'ibrido non solo scelgo la migliore,
+ma posso potenziarmi, cioè \textbf{ridurre il rischio}.
+
+\paragraph{Come applicarlo.} ``Guarda tre carte, scegline una.'' Oppure: se aggiungi più
+risorse, invece che fare 6 sul primo dado (l'esempio di prima), ti basta un risultato \textbf{da
+4 a 6}, quindi è più probabile che tu ce la faccia.
+
+\subsection{Il random controllato: il dado che torna indietro}
+
+Di nuovo il \textbf{random controllato} e la curva a campana. Riprendendo l'esempio: posso fare
+tre danni a Oksana, oppure \textbf{lanciare due dadi}. Il designer sa che il risultato più
+comune è 7: rispetto a tre danni sicuri, una media di sette è un'ottima scelta. Allora si può
+introdurre \textbf{un grande pericolo}: sì, mediamente sono sette danni, ma \textbf{se esce da
+2 a 6, quei danni li prendi tu}; dal 7 in su, vanno in faccia all'altro. È un
+\textbf{effetto boomerang}, e il designer, conoscendo la distribuzione, sa esattamente quanto
+è rischioso\footnote{Diego riassume ``mediamente fa 7, però i due estremi è che fa o 8 o 6
+danni in faccia a chi l'ha fatto'': il passaggio è confuso. Il calcolo: con due dadi la
+probabilità di un risultato da 2 a 6 è $(1+2+3+4+5)/36 = 15/36 \approx 41{,}7\%$; da 7 a 12
+è $21/36 \approx 58{,}3\%$. È un rischio alto, e proprio la curva lo rende misurabile.}. Lo
+stesso vale con le monete (con due monete, entrambe teste esce una volta su quattro), con i
+segnalini, con qualunque cosa: ``qui c'è un sacco di libertà''.
+
+\subsection{La progressione e i dadi forgiati}
+
+Attraverso la \textbf{progressione}, il giocatore riduce il caso. Ancora l'esempio: tre danni,
+o un dado da 1 a 6; ma \textbf{per ogni torre che possiedo, il danno è $+1$}, anche quello di
+base. All'inizio sono 3 danni; costruite due torri, sono 5 danni sicuri, oppure da 3 a 8 con il
+dado. Il giocatore può \textbf{costruire sistemi che spostano la randomicità}; ed è una
+strategia, perché le torri non sono obbligatorie, sono una delle possibilità del gioco.
+
+\paragraph{\emph{Dice Forge}.} Oppure si possono fare giochi come
+\textbf{\emph{Dice Forge}}\footnote{Nella trascrizione ``Forge Dice''. \emph{Dice Forge} è un
+gioco di Régis Bonnessée pubblicato da Libellud.}, in cui \textbf{il giocatore costruisce i
+propri dadi}: le facce si comprano e si montano sul dado (``ho comprato una faccia $+3$, e
+adesso il mio dado ha due 3 invece di uno''). Si lancia sempre il dado, ma costruendolo nello
+stile che si vuole, \textbf{la progressione va a proprio vantaggio}. Diego mostra anche dadi
+particolari: un dado che a sua volta fa lanciare un altro dado, che può far uscire solo 2, 2, 3
+o un risultato casuale; un dado a quattro facce; un dado ``per 3''; un dado che è verde o rosso.
+Progredendo, si costruisce il dado stesso, e così \textbf{si controlla la randomicità}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{5.4cm}>{\raggedright\arraybackslash}p{5.0cm}@{}}
+\toprule
+\textbf{Tecnica} & \textbf{Come funziona} & \textbf{Esempi della lezione} \\
+\midrule
+\emph{Reroll} e \emph{redraw} & ritirare, ripescare & come per l'output \\
+\addlinespace
+Modificatori e \emph{buff} & il caso resta, ma più controllato & dado $+2$; guarda le prime
+  tre; scegli tra tre \\
+\addlinespace
+\emph{Push your luck} & il secondo random è una scelta del giocatore & 3 danni o un D6; il 6
+  che ``esplode'' e l'1 che azzera; la moneta che raddoppia \\
+\addlinespace
+Sistemi ibridi & si garantisce parte dell'esito in cambio di un costo & la Scoperta di
+  \emph{Hearthstone} (e quella leggendaria); pagare per vincere con 4--6 \\
+\addlinespace
+Random controllato & la distribuzione nota rende misurabile il rischio & due dadi: media 7,
+  ma da 2 a 6 il danno torna indietro \\
+\addlinespace
+Progressione & il giocatore costruisce sistemi che spostano il caso & le torri $+1$;
+  \emph{Dice Forge} e i dadi costruiti \\
+\bottomrule
+\end{tabular}
+\caption{Le tecniche di mitigazione del random combinato. Le prime due valgono anche per
+l'output; le altre funzionano particolarmente bene perché trasformano il caso in una scelta o
+in un percorso di crescita.}
+\label{a15:tab:combinato}
+\end{table}
+
+\subsection{La linea guida: evitare l'effetto valanga}
+
+Nel random combinato, una delle cose più importanti è \textbf{evitare l'effetto
+\emph{snowball}}, l'effetto palla di neve\footnote{La trascrizione scrive anche
+``snowdrop''.}: la palla è piccola, poi rotola, diventa gigantesca e a un certo punto è
+inarrestabile. Ho avuto un po' di fortuna con l'input, un po' di fortuna con l'output, e
+adesso ``sono letteralmente imbattibile''.
+
+\paragraph{Le fasi.} Come lo si evita? \textbf{Con le fasi}. Se il gioco ha delle fasi, si
+può dire che nella fase 2 si prendono i risultati della fase 1, ma si creano nuove risorse e
+\textbf{si riparte da zero}, in un certo modo. Un gioco in cui ci si picchia, con punti vita:
+la fase 1 finisce quando il primo perde tutti i punti vita. Davide costruisce una super
+creatura e fa un sacco di danni a Diego, e si va alla fase 2. Davide, che ha vinto, guadagna
+risorse; Diego, sconfitto, perde; ma \textbf{si riparte}: nella nuova fase non si combatte
+più con le creature, si costruiscono case. Anche se Davide aveva creato un effetto valanga,
+adesso si ricomincia.
+
+\paragraph{\emph{L'eredità} e il triello.} Un esempio ``molto facile, che fa ridere'': i
+\textbf{quiz televisivi}, che usano molto questa caratteristica perché devono tenere il dramma
+per abbastanza tempo. Ne \textbf{\emph{L'eredità}}, su Rai 1, i concorrenti si sfidano in una
+serie di giochi e guadagnano soldi per ogni risposta giusta (``ve lo sto semplificando''). Alla
+fine c'è il \textbf{triello}: i tre finalisti hanno le loro cifre (per esempio Diego 20.000,
+Oksana 30.000, Jacopo 40.000: Jacopo ha il doppio di Diego). Ma nel triello ogni domanda vale
+una somma molto più alta (``100.000--150.000, se non mi sbaglio''), e quindi Diego può
+ribaltare la situazione. Poi si passa a una seconda sfida, in cui i soldi dei due rimasti si
+sommano e si gioca solo rispondendo alle domande\footnote{Il regolamento del programma è
+ricostruito a memoria da Diego e semplificato: le cifre e i passaggi sono quelli detti a voce,
+non quelli effettivi del gioco televisivo.}: anche se Jacopo aveva risposto benissimo e Diego
+era passato ``per pochissimo'', ``tecnicamente immeritevole'', la situazione si può ribaltare
+di nuovo. \textbf{Ogni volta che si può ribaltare la situazione si crea dramma}.
+
+\paragraph{Il vantaggio delle fasi.} Si creano situazioni in cui, anche se c'è l'effetto
+valanga, \textbf{il ribaltamento tra le fasi mantiene l'interesse} e nessuno si sente escluso:
+chi ha perso la fase 1 parte svantaggiato nella fase 2, ma può vincerla. Diego riassume con una
+frase che la trascrizione restituisce confusa: la randomicità all'inizio, più complicata (cioè
+più alta) all'inizio e meno andando verso la fine, perché \textbf{alla fine vogliamo le
+\emph{skill}}\footnote{Nella trascrizione ``randomness all'inizio, complicata alla fine, e meno
+complicata a metà, e meno alla fine, perché alla fine vogliamo le skill''. Il capitolo ne
+riporta il senso più probabile, coerente con le curve della figura~\ref{a15:fig:curve}: molto
+caso in ingresso all'inizio, sempre più controllo e abilità verso la fine, con l'output
+riservato ai momenti di dramma.}.
+
+% ---------------------------------------------------------------------
+\section{Il pubblico e il tema}
+\label{a15:sec:pubblico}
+
+L'ultimo elemento è il rapporto tra \textbf{\emph{target audience} e \emph{randomness}}. Come
+in tutto ciò che è \emph{entertainment}, ci sono \textbf{i gusti}: non tutti i giocatori amano
+il random, e alcuni non lo apprezzano affatto. Bisogna capirlo.
+
+\paragraph{Cinque macro-tipi di gioco.} Diego mostra una slide con cinque grandi famiglie,
+e per ciascuna un colore che indica quanto quei giocatori \textbf{tollerano} o
+\textbf{apprezzano} l'input e l'output random, su una scala in cui \textbf{5 è il valore
+medio}: sotto il 5 si tollera, sopra il 5 si apprezza (figura~\ref{a15:fig:pubblico}).
+\begin{itemize}
+  \item \textbf{Strategici}, o \textbf{\emph{eurogame}}, chiamati anche \emph{German games},
+        ``giochi di stampo tedesco''. \textbf{Apprezzano l'input}, perché è parte del processo
+        decisionale: ho le informazioni e prendo la decisione. \textbf{Non apprezzano
+        l'output}: hanno fatto un piano perfetto, ``sono il Machiavelli del gioco da
+        tavolo'', poi si lancia il dado, esce la sfortuna e il grande piano va in rovina.
+  \item \textbf{Narrativi}, dove conta soprattutto la storia. Qui \textbf{il combinato
+        funziona}: apprezzano sia l'input sia l'output, ma \textbf{soprattutto l'output},
+        perché è dramma (``oh no, mi si è ribaltata la situazione''); e anche l'input va bene,
+        perché crea situazioni potenzialmente drammatiche.
+  \item \textbf{\emph{Party} e \emph{casual}}. Apprezzamento ``al limite'' per l'input, non
+        troppo, e \textbf{ottimo apprezzamento per l'output}, perché in queste partite c'è di
+        solito un forte dislivello di competenze. L'esempio è \textbf{\emph{Mario Party}}:
+        Diego ci gioca una volta al mese, suo fratello Fabrizio una volta all'anno. Senza un
+        forte output random Diego vincerebbe sempre, il fratello non si divertirebbe; che Diego
+        possa avere sfortuna e Fabrizio una botta di fortuna è ``assolutamente accettato''.
+  \item \textbf{Tattici}, dove conta la decisione nel breve periodo. Simili agli strategici:
+        \textbf{l'input è apprezzato} e \textbf{l'output accettato}, perché essendo più veloci
+        ``alla fine è una partita finita''.
+  \item \textbf{\emph{Power game}}, dove conta la \textbf{progressione}, diventare più forti.
+        \textbf{L'output è disapprezzato}, ancora più che nei tattici, e \textbf{l'input è
+        apprezzatissimo}: si deve ``buildare'', partire da tanto input random e trasformarlo in
+        random controllato. ``E poi faccio la risata malvagia: \emph{ahahah, è tutto secondo i
+        miei piani}''; ogni volta che lancio un dado faccio 7, quando pesco ne pesco dieci e
+        scelgo la migliore, e il \emph{master plan} finalmente rivela tutto il suo potere.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small, x=1.0cm, y=0.36cm]
+  \draw[thick, ->] (0,0) -- (12.4,0);
+  \draw[thick, ->] (0,0) -- (0,10.8) node[above, font=\footnotesize] {gradimento};
+  \foreach \y in {0,5,10} \node[left, font=\footnotesize] at (0,\y) {\y};
+  \draw[dashed] (0,5) -- (12.2,5) node[right, font=\scriptsize, align=left]
+    {sopra: si apprezza\\sotto: si tollera};
+  \foreach \x/\lab/\i/\o in {1.2/strategici/7/3, 3.6/narrativi/7/9, 6.0/party e
+      casual/5.5/8.5, 8.4/tattici/7.5/5, 10.8/\emph{power game}/9/2} {
+    \fill[gray!70] (\x-0.75,0) rectangle (\x-0.05,\i);
+    \fill[gray!25] (\x+0.05,0) rectangle (\x+0.75,\o);
+    \draw (\x-0.75,0) rectangle (\x-0.05,\i);
+    \draw (\x+0.05,0) rectangle (\x+0.75,\o);
+    \node[below, font=\footnotesize, align=center, text width=2.2cm] at (\x,-0.2) {\lab};
+  }
+  \fill[gray!70] (0.4,-4.2) rectangle (0.8,-3.4);
+  \node[anchor=west, font=\footnotesize] at (0.9,-3.8) {input random};
+  \fill[gray!25] (3.4,-4.2) rectangle (3.8,-3.4); \draw (3.4,-4.2) rectangle (3.8,-3.4);
+  \node[anchor=west, font=\footnotesize] at (3.9,-3.8) {output random};
+\end{tikzpicture}
+\caption{Quanto le cinque famiglie di giocatori della slide di Diego gradiscono l'input e
+l'output random, su una scala con 5 come valore medio. \textbf{I valori sono indicativi}: la
+trascrizione riporta solo i giudizi a voce (``apprezzano'', ``tollerano'', ``disapprezzato
+ancora più dei tattici''), non i numeri della slide; il grafico ne rende l'ordine e il segno.}
+\label{a15:fig:pubblico}
+\end{figure}
+
+\paragraph{Le sottocategorie.} Certo, per ogni famiglia ci sono molte sottocategorie: nei
+giochi strategici, i giochi a carte, a turni, a \emph{round}, cooperativi. ``Il mondo qui è
+molto più vasto.''
+
+\subsection{La ricerca: leggere le recensioni}
+
+Come si fa a sapere che cosa vuole il proprio pubblico? \textbf{Facendo ricerca}. Diego mostra
+come: si sceglie il proprio gioco di riferimento, per esempio \textbf{\emph{Wingspan}}, e si
+leggono i commenti, ``14.000 commenti, non tutti ovviamente''. Si cerca di capire perché certe
+persone gli danno 9, perché qualcuno gli dà 8, che è un buon voto.
+\begin{itemize}
+  \item Chi gli dà un voto alto cita \textbf{la varietà delle strategie}: già questo dice che
+        \emph{Wingspan} rientra nei giochi strategici. Lo stesso utente lo chiama ``un
+        \emph{multiplayer solitaire}'', ma non in senso negativo.
+  \item Chi gli dà un voto basso scrive che è un gioco ``bellissimo da vedere'' ma
+        \textbf{\emph{themeless}}, senza tema: si gioca, è bello a vedersi, ma si gioca poco.
+  \item Altri lo descrivono come un \textbf{\emph{engine building}}: quindi ha anche
+        caratteristiche da \emph{power game}, perché si basa sul costruire un motore di
+        successo. Uno nota che il risultato dipende molto dalle carte della mano iniziale; uno
+        lo trova un gioco \emph{casual} che però richiede parecchio tempo.
+  \item Un altro scrive che il gioco non è gratificante soprattutto perché \textbf{il tema non è
+        integrato con le meccaniche}, e che è come giocare ``con l'attrito'' tra tema e
+        regole\footnote{Le recensioni sono lette a voce in inglese e la trascrizione le rende
+        in modo approssimativo; il capitolo ne riporta il senso.}.
+\end{itemize}
+
+\paragraph{Che cosa se ne ricava.} Qui si torna a ciò che si è detto: \textbf{l'output
+funziona soprattutto con elementi narrativi e tematici}, nei giochi ad alta tematicità. Se si
+dovesse fare un concorrente di \emph{Wingspan}, l'output random potrebbe essere interessante,
+ma \textbf{in piccole dosi}, perché i giochi strategici hanno giusto una tolleranza per
+l'output. Magari un solo momento specifico; e se avviene, deve avvenire \textbf{perché è legato
+al tema}, altrimenti non dovrebbe avvenire affatto. ``Ovviamente questa non è una ricerca'', ma
+è da questi punti che si costruiscono i dettagli alla base di una ricerca.
+
+% ---------------------------------------------------------------------
+\section{Il \emph{cheat sheet} del random}
+\label{a15:sec:cheatsheet}
+
+L'ultima slide è ``un piccolo \emph{cheat sheet} del random'': una tabella con le diverse
+\textbf{dimensioni} e, per ciascuna, il comportamento di input, output e combinato. Diego
+pensava di non leggerla tutta, ``ma ce l'abbiamo il tempo: approfittiamo''
+(tabella~\ref{a15:tab:cheatsheet}). Qualche nota sulle voci.
+
+\paragraph{Tempo e \emph{agency}.} L'input avviene \textbf{prima} della fase decisionale,
+l'output \textbf{dopo}, il combinato \textbf{prima e dopo}. Con l'input, l'\emph{agency} del
+giocatore è \textbf{la risposta all'incertezza}; con l'output è media o bassa, perché il caso
+``copre'' la decisione (``posso volerti attaccare, poi il dado mi dice che non ti ho
+attaccato''): meglio ridurlo, non annullare la decisione del giocatore ma ridurne l'efficacia.
+
+\paragraph{Profondità, tono, ruolo.} L'input ha una profondità strategica \textbf{alta},
+perché promuove pianificazione e adattamento; l'output media, perché non si vuole cancellare la
+situazione strategica. Il tono emotivo: \textbf{\emph{puzzle} e logica} per l'input,
+\textbf{dramma e tensione} per l'output, \textbf{caos} per il combinato, ``perché tutto può
+capitare''. Nel gioco di ruolo l'input è molto presente, perché spesso è il master a darlo
+(``arriva un tizio e ti dà un pugno in faccia''); l'output è medio, di nuovo per ridurre
+l'efficacia dell'azione senza annullare il giocatore.
+
+\paragraph{Tipi di gioco e attrito.} Input: \emph{eurogame}, \emph{deck builder},
+\emph{engine building}. Output: \emph{party game}, giochi di ruolo e di combattimento, e gli
+``\emph{American trash}''\footnote{Il termine corrente è \emph{Ameritrash}: i giochi
+``all'americana'', molto tematici e con molto caso, contrapposti agli \emph{eurogame}.} come
+\emph{Exploding Kittens} e \emph{Unstable Unicorns}, dove ``trash'' non è negativo: indica alto
+fattore comico, alto fattore \emph{party}, basso fattore di gioco. Quanto all'\textbf{attrito
+con la strategia} (\emph{friction}): nell'input è basso, perché se si sta già rendendo meno
+efficace il giocatore non gli si vuole dare un problema in più; \textbf{l'output è proprio dove
+l'attrito avviene}: invece di tre danni, ne hai fatti due.
+
+\paragraph{Mitigazione, frustrazione, equità.} Le mitigazioni tipiche: per l'input il
+\textbf{\emph{draft}} (ho più carte e ne scelgo una), il \textbf{\emph{cycling}} (una carta
+diventa un'altra carta) e il \textbf{\emph{setup} controllato}; per l'output \emph{reroll},
+modificatori e pagare risorse per ottenere vantaggi; per il combinato il \textbf{\emph{deck
+shaping}} (nei formati ``eterni'' di \emph{Magic} il mazzo è randomico, ma è talmente
+ottimizzato che in realtà non lo è), il \emph{push your luck} e il controllo delle risorse.
+Il \textbf{rischio di frustrazione} è minimo con l'input, che i giocatori vedono come
+un'occasione per mostrare la propria competenza; con l'output c'è se si cancellano le azioni
+dei giocatori, meno se le si mitiga; con il combinato è altissimo: ``se è tutto caso, non sento
+neanche che sto giocando''. L'\textbf{equità percepita} è alta con l'input (vedo le
+informazioni e poi decido), molto bassa con l'output, soprattutto se la decisione viene
+cancellata; con il combinato, paradossalmente, \textbf{è percepita meglio}: se tutto è casuale,
+lo si accetta. ``Ti piace la pizza? Qui fanno solo pizza. Allora è andata così.''
+
+\paragraph{Giocatore ideale, complessità, temi.} Input: pensatori, ottimizzatori,
+pianificatori; output: \emph{casual}, \emph{thrill seeker}, giocatori sociali; combinato: chi
+è guidato dalla storia, i ``caotici''. La complessità è \textbf{alta} con l'input (in base a
+come si costruisce e si riceve, si possono prendere decisioni strategiche e tattiche),
+\textbf{bassa} con l'output (che non aggiunge complessità, riduce l'efficacia), \textbf{media}
+con il combinato, che però può diventare estremamente complesso (``è randomico qui, è
+randomico là, è randomico su, è randomico giù''). I temi: astratti, economia e logica per
+l'input; combattimento, \emph{gambling} e tensione per l'output; mondi caotici, pericolo e
+imprevedibilità per il combinato.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{3.7cm}>{\raggedright\arraybackslash}p{3.7cm}>{\raggedright\arraybackslash}p{3.7cm}@{}}
+\toprule
+\textbf{Dimensione} & \textbf{Input} & \textbf{Output} & \textbf{Combinato} \\
+\midrule
+Tempo & prima della decisione & dopo la decisione & prima e dopo \\
+\addlinespace
+\emph{Agency} & alta: risposta all'incertezza & media o bassa: il caso copre la decisione &
+  --- \\
+\addlinespace
+Profondità strategica & alta: pianificare e adattarsi & media: non cancellare la strategia
+  & --- \\
+\addlinespace
+Tono emotivo & \emph{puzzle}, logica & dramma, tensione & caos \\
+\addlinespace
+Gioco di ruolo & molto presente (il master) & medio & --- \\
+\addlinespace
+Tipi di gioco & \emph{eurogame}, \emph{deck builder}, \emph{engine building} & \emph{party},
+  GdR, combattimento, \emph{Ameritrash} & --- \\
+\addlinespace
+Attrito con la strategia & basso & è qui che avviene & --- \\
+\addlinespace
+Mitigazione tipica & \emph{draft}, \emph{cycling}, \emph{setup} controllato & \emph{reroll},
+  modificatori, pagare risorse & \emph{deck shaping}, \emph{push your luck}, controllo delle
+  risorse \\
+\addlinespace
+Rischio di frustrazione & basso & alto se cancella, minore se mitiga & altissimo \\
+\addlinespace
+Esempi & \emph{Dominion}, \emph{Terraforming Mars}, \emph{Race for the Galaxy} & \emph{King
+  of Tokyo}, Risiko, D\&D, ``Headside''\protect\footnotemark & \emph{Hearthstone},
+  \emph{Gloomhaven}, \emph{Sleeping Gods}, \emph{Clank!} \\
+\addlinespace
+Equità percepita & alta & molto bassa & sorprendentemente buona \\
+\addlinespace
+Giocatore ideale & pensatori, ottimizzatori, pianificatori & \emph{casual}, \emph{thrill
+  seeker}, sociali & guidati dalla storia, caotici \\
+\addlinespace
+Complessità & alta & bassa & media (può esplodere) \\
+\addlinespace
+Temi & astratti, economia, logica & combattimento, \emph{gambling}, tensione & mondi caotici,
+  pericolo, imprevedibilità \\
+\bottomrule
+\end{tabular}
+\caption{Il \emph{cheat sheet} del random, ricostruito da ciò che Diego legge a voce. I
+trattini indicano le caselle che non legge, o che la trascrizione non restituisce.}
+\label{a15:tab:cheatsheet}
+\end{table}
+\footnotetext{Così nella trascrizione; il titolo non è ricostruibile.}
+
+Con questo, ``siamo stati perfetti'' (``51'', dice Diego guardando l'orologio): la lezione è
+finita.
+
+% ---------------------------------------------------------------------
+\section{Le domande e la chiusura}
+\label{a15:sec:chiusura}
+
+Diego prova a caricare le slide nella chat di Zoom, ma non ci riesce (``probabilmente non mi
+hanno dato i diritti''): le passerà a Daniele, che le girerà agli studenti, e ad
+Agnese\footnote{Il nome compare solo qui; dal contesto è una persona dell'accademia che
+gestisce i materiali del corso.} per chi non ha potuto seguire in diretta.
+
+\paragraph{La domanda di Oksana: da dove vengono i dati?} Oksana chiede dove si prendono le
+statistiche come quelle sulla tolleranza delle diverse categorie, della penultima slide.
+``Ottima domanda.'' Esistono siti che \textbf{aggregano} queste informazioni: \textbf{Quantic
+Foundry}\footnote{Quantic Foundry è una società di ricerca sulle motivazioni dei giocatori,
+nota per il suo modello di motivazioni e per i questionari pubblici, anche per i giochi da
+tavolo.} e \textbf{BoardGameGeek}\footnote{Nella trascrizione ``Board Game Geek'' e
+``Burgundy''.}; e anche su \textbf{Reddit} si fanno costantemente ricerche del genere. Gli
+altri due modi:
+\begin{itemize}
+  \item \textbf{analizzare da sé}, come si è fatto con \emph{Wingspan}: guardare giochi di
+        categoria simile e che cosa la gente ne apprezza e no;
+  \item \textbf{fare la propria ricerca} con un \emph{survey}, un questionario, da proporre
+        sulla pagina BoardGameGeek o sul \emph{subreddit} del gioco di riferimento.
+\end{itemize}
+Esistono anche siti a pagamento, ma Diego non li consiglia: i loro dati sono ``gli stessi
+vostri'', semplicemente già accumulati e aggregati nel tempo. ``Molto spesso non ne vale la
+pena.''
+
+\paragraph{Un commento sui \emph{dice forge}.} Uno studente dice che la lezione è stata
+chiara e molto utile per il \emph{project work}: durante la lezione gli sono venute in mente un
+paio di cose da provare, soprattutto in \emph{playtest}. E consiglia, a proposito dei giochi
+con dadi da costruire, un gioco per telefono ``vecchiotto, molto carino'', che la trascrizione
+chiama ``Diceyros''\footnote{Il titolo non è ricostruibile.}. Per Diego i \emph{dice forge}
+sono ormai diventati \textbf{un genere}: si ha il random, ma \textbf{si forgia il proprio
+random}. ``È una di quelle cose che, con il senno di poi, io come designer posso solo dire:
+\emph{wow}, ha senso''; ma avere l'idea per primi ``non è per nulla facile''.
+
+\paragraph{Lo spazio creativo del random.} Diego ne è convinto, ``è una mia opinione, ma ne
+sono convinto'': c'è \textbf{ancora tantissimo spazio creativo nel random}, nei giochi da
+tavolo e nei videogiochi, sia nel come integrarlo sia nel come usarlo. Per molti anni i
+designer sono stati limitati ai \textbf{D6 e ai D20}, per ragioni produttive: fare i dadi
+costava, e se si chiedeva a un produttore un dado da 13 ti diceva ``quanti ne vuoi? mille? sono
+centomila euro'', perché serviva un macchinario apposta, e si finiva a usare il D12 o il D10
+standard. Oggi \textbf{fare i dadi non costa più}: se si vuole un gioco con un D13, o due D13,
+perché si è calcolata la curva a campana che serve, ``si fa''. E poi c'è il
+\textbf{digitale}: con un'app si può rendere casuale quasi tutto (la posizione, l'età dei
+giocatori, le chiamate\ldots), cose che prima non c'erano.
+
+\paragraph{\emph{Atmosfear}.} L'ultimo esempio è un gioco che Diego ha sempre adorato e che
+giocava da bambino, ``per questo dicevo che molti di voi non lo conosceranno'' (``Oksana, secondo
+me, lo conosce''): \textbf{\emph{Atmosfear}}\footnote{Nella trascrizione ``Atmosphere''. È il
+gioco da tavolo con videocassetta uscito all'inizio degli anni Novanta (in origine
+\emph{Nightmare}), con il Guardiano delle chiavi (\emph{Gatekeeper}).}. Si giocava con
+\textbf{una videocassetta sul televisore}: in base a ciò che succedeva sul tabellone si doveva
+reagire in certi momenti, e il personaggio sullo schermo, il \textbf{Guardiano}, si rivolgeva
+ai giocatori. Diego fa sentire uno spezzone: tutti i giocatori sono marchiati con un colore e
+un numero; quando il Guardiano li chiama, devono rispondere ``\emph{Yes, my Gatekeeper!}''; se
+non rispondono in tempo, vengono puniti e mandati nel buco nero più vicino, e non giocano
+finché lui non lo decide; il Guardiano chiama all'improvviso un numero, ``\emph{the one who
+holds the lowest number}'', e ci sono timer, chiavi da vincere e da perdere. Uno studente
+osserva che ricorda un po' i principi dei \emph{party game} con app\footnote{Nella trascrizione
+``il principio di righe game'': il riferimento non è ricostruibile.}. ``Esatto.''
+
+\paragraph{Il valore del limite.} \emph{Atmosfear} era ``molto particolare e unico, per quanto
+limitato'': c'era il televisore, c'erano dei vincoli. Ma per esempio garantiva che la partita
+durasse \textbf{circa un'ora e dieci}, perché finiva quando finiva la registrazione. ``Anche se
+non vi sembra, c'è veramente tantissimo spazio creativo nel random.'' Diego saluta, le slide
+arriveranno tramite Daniele, ``buona serata, grazie mille''.
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item ``Random'' ha sei ingredienti: mancanza di \emph{pattern} (vera o percepita, quindi
+        relativa al \emph{target}), assenza di decisione conscia (togliere decisioni rende
+        un'azione random o ingiusta), il caso contro il piano, l'assenza di causa o di
+        intenzione, la possibilità statistica, il pericolo e il risultato incerto.
+  \item Le probabilità si calcolano in due modi: \textbf{moltiplicando} (eventi indipendenti
+        si moltiplicano, non si sommano) o \textbf{disegnando l'albero}, che mostra anche
+        quanto si espande lo spazio delle scelte.
+  \item Tre tipi di random: \textbf{vero} (dadi, monete), \textbf{pseudo-random} (i computer:
+        individuabile e sfruttabile, come i \emph{seed}) e \textbf{controllato}: la somma di più
+        elementi casuali segue la curva a campana, e conoscerla è ``l'arma segreta'' del
+        designer (il ladro di \emph{Catan} sul 7).
+  \item Il caso entra in tre momenti: \textbf{input} (prima della decisione), \textbf{output}
+        (dopo), \textbf{combinato} (entrambi nella stessa decisione): nove combinazioni con i
+        tre tipi.
+  \item \textbf{Input}: carte, ruoli, \emph{setup}. Dà decisioni tattiche, rigiocabilità
+        (\emph{Cosmic Encounter}) e livella le abilità; rischia la \emph{turn one win}, la
+        paralisi da analisi, la falsa strategia e, se controllato troppo, la prevedibilità
+        (la briscola). Nasce input e finisce controllato; deve far sentire il giocatore più
+        potente senza togliergli l'\emph{agency}.
+  \item Cento partite: se la fortuna decide il 30\% o più delle vittorie è troppa; l'obiettivo
+        è circa il 20\%. E \textbf{l'interessante batte il giusto}: se è sbilanciato, si
+        aggiunge una regola (le debolezze di \emph{Arkham}, il \emph{mulligan}).
+  \item \textbf{Output}: il caso sul successo o sull'entità del risultato. Serve al
+        \textbf{dramma} (\emph{Affari tuoi}, \emph{Golden Balls}), all'alto rischio con alta
+        ricompensa e a livellare le abilità; la troppa sfortuna toglie \emph{agency}. Poco
+        all'inizio, di più verso la fine, senza annullare ciò che è avvenuto prima.
+  \item Mitigare l'output: \emph{reroll}, modificatori, assicurazioni, successo nel
+        fallimento (con piccoli bonus, per evitare lo stallo). Usarlo per il dramma, non per
+        ogni decisione; mitigazione limitata (cinque \emph{reroll} a partita); legarlo al tema
+        e alla scelta del giocatore (il dado critico). In negativo: \emph{Killer Bunnies}.
+  \item L'output funziona nei giochi tematici, \emph{casual} e di \emph{risk management}; il
+        gioco dell'oca piace ai bambini perché credono che il 6 sia merito loro.
+  \item \textbf{Combinato}: pericoloso perché toglie potere decisionale, ma apre il
+        \emph{problem solving} creativo (le maledizioni di \emph{Magic}; il gioco di dadi che
+        con un input nascosto passa da statistico a bluff), la profondità strategica
+        (Atlantide nel Risiko contro lo stallo) e la narrativa (\emph{Pasión de las Pasiones}).
+  \item Mitigare il combinato: \emph{reroll}, modificatori, \textbf{\emph{push your luck}} (il
+        secondo random è una scelta), \textbf{sistemi ibridi} (la Scoperta di
+        \emph{Hearthstone}), random controllato (il boomerang dei due dadi),
+        \textbf{progressione} (\emph{Dice Forge}). Evitare l'\textbf{effetto valanga} con le
+        \textbf{fasi} (\emph{L'eredità}).
+  \item I pubblici tollerano il caso in modo diverso: strategici e \emph{power game} amano
+        l'input e non l'output; narrativi e \emph{party} amano l'output. Lo si scopre facendo
+        ricerca: recensioni (\emph{Wingspan}), Quantic Foundry, BoardGameGeek, Reddit,
+        questionari propri.
+  \item Il \emph{cheat sheet}: input = logica, alta \emph{agency}, alta complessità, bassa
+        frustrazione; output = dramma, attrito, alta frustrazione se cancella; combinato =
+        caos, frustrazione altissima, ma equità percepita sorprendentemente buona.
+  \item C'è ancora molto spazio creativo nel random: dadi su misura (un D13 oggi si fa), app,
+        e idee come \emph{Atmosfear}.
+\end{itemize}

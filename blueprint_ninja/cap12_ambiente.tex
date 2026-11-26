@@ -1,0 +1,53 @@
+\section{L'ambiente che si muove}
+
+Piccoli actor di contorno, ma ognuno insegna un nodo.
+
+\subsection{Il mulino: rotazione continua}
+
+\var{BP\_Mulino}: torre, \var{Mozzo} (Scene) con quattro pale figlie. Nel Tick: \nodo{Add Local Rotation} sul \var{Mozzo} con Roll = 60~$\cdot$~dt. In più, la testa del mulino oscilla lentamente di $\pm 60$\textdegree:
+
+\begin{bpgraph}
+\bpnode{t}{(0,0)}{bpev}{Event Tick}{-}{exec/,float/Delta Seconds}
+\bpnode{p}{\dx{t}{0.6}{0}}{bpfn}{Add Local Rotation}{exec/,obj/Mozzo,rot/Roll: 60 $\cdot$ dt}{exec/}
+\bpnode{y}{\sotto{p}{0}{-0.4}}{bppure}{Sin(Get Game Time $\cdot$ 0.2) $\cdot$ 60}{-}{float/Yaw}
+\maxx{m1}{p,y}
+\bpnode{r}{\dxy{m1}{t}{0.6}{0}}{bpfn}{Set Relative Rotation}{exec/,obj/Testa,rot/(0 ; Yaw ; 0)}{exec/}
+\bpexec{t-out1}{p-in1}\bpexec{p-out1}{r-in1}\bpwire{float}{y-out1}{r-in3}
+\end{bpgraph}
+
+\subsection{La luce che tremola (fuoco, candela)}
+
+\begin{bpgraph}
+\bpnode{t}{(0,0)}{bpev}{Event Tick}{-}{exec/,float/Delta Seconds}
+\bpnode{rn}{\sotto{t}{0}{-0.4}}{bppure}{Random Float in Range}{float/Min 0.7,float/Max 1.15}{float/}
+\bpnode{fi}{\dx{rn}{0.6}{0}}{bppure}{FInterp To}{float/Current: Fattore,float/Target,float/Delta Time,float/Interp Speed 12}{float/}
+\bpnode{s}{\dxy{fi}{t}{0.6}{0}}{bpvarh}{Set Fattore}{exec/,float/}{exec/,float/}
+\bpnode{i}{\dx{s}{0.6}{0}}{bpfn}{Set Intensity}{exec/,obj/Luce,float/BaseIntensity $\cdot$ Fattore}{exec/}
+\bpexec{t-out1}{s-in1}\bpwire{float}{rn-out1}{fi-in2}\bpwire{float}{fi-out1}{s-in2}\bpexec{s-out1}{i-in1}
+\end{bpgraph}
+
+Un numero a caso \emph{diretto} farebbe una luce stroboscopica. Il \nodo{FInterp To} verso un bersaglio casuale è il trucco: il fuoco ``respira''.
+
+\subsection{La staccionata lungo una spline}
+
+\var{BP\_Staccionata}: un \nodo{Spline Component} e un \nodo{Instanced Static Mesh} per i pali. Tutto nel \nodo{Construction Script}, così la staccionata si ridisegna mentre trascinate i punti della spline.
+
+\begin{bpgraph}
+\bpnode{cs}{(0,0)}{bpev}{Construction Script}{-}{exec/}
+\bpnode{cl}{\dx{cs}{0.6}{0}}{bpfn}{Clear Instances}{exec/,obj/Pali}{exec/}
+\bpnode{n}{\sotto{cl}{0}{-0.4}}{bppure}{Truncate(Get Spline Length / 200)}{-}{int/N}
+\maxx{m1}{cl,n}
+\bpnode{fl}{\dxy{m1}{cs}{0.6}{0}}{bpflow}{For Loop}{exec/,int/First 0,int/Last: N}{exec/Loop Body,int/Index,exec/Completed}
+\bpnode{tr}{\sotto{fl}{0}{-0.4}}{bppure}{Get Transform at Distance Along Spline}{float/Index $\cdot$ 200,enum/Local}{struct/}
+\maxx{m2}{fl,tr}
+\bpnode{ad}{\dxy{m2}{cs}{0.6}{0}}{bpfn}{Add Instance}{exec/,obj/Pali,struct/Instance Transform}{exec/}
+\bpexec{cs-out1}{cl-in1}\bpexec{cl-out1}{fl-in1}\bpwire{int}{n-out1}{fl-in3}\bpexec{fl-out1}{ad-in1}\bpwire{int}{fl-out2}{tr-in1}\bpwire{struct}{tr-out1}{ad-in3}
+\end{bpgraph}
+
+Le traverse (\var{Rails} = 2) si fanno con un \nodo{Spline Mesh Component} per ogni tratto fra due pali: \nodo{Add Spline Mesh Component} $\rightarrow$ \nodo{Set Start and End} con posizioni e tangenti lette dalla spline.
+
+\subsection{Lo spargitore: sassi e cespugli a caso}
+
+\var{BP\_Spargi}: un \nodo{Box} che delimita l'area e un \nodo{Instanced Static Mesh}. Nel \nodo{Construction Script}, un \nodo{For Loop} da 0 a \var{Quanti} (30): punto a caso nel box (\nodo{Random Point in Bounding Box From Stream}, con un \nodo{Random Stream} di seme 7 così il risultato non cambia a ogni modifica), un \nodo{Line Trace} verso il basso per appoggiarlo al terreno, scala a caso fra 0,8 e 1,3, yaw a caso, \nodo{Add Instance}.
+
+\ninja{\nodo{Instanced Static Mesh}: cento sassi uguali disegnati con una sola chiamata alla scheda video. Cento actor separati sono cento chiamate. Per il ``contorno'' è sempre la scelta giusta.}

@@ -1,0 +1,2163 @@
+% =====================================================================
+%  Analog Game Design, lezione 8 — Tabletop Simulator: costruire un
+%  modulo per il prototipo di un gioco da tavolo. In apertura, le
+%  domande sul pitch del 12 ottobre (che cosa si porta, perché non c'è
+%  una scaletta); poi la lezione pratica di Ruggero sul software: il
+%  menu iniziale, "un gioco da tavolo è un gioco su un tavolo" (TTS è
+%  un simulatore fisico, non un motore per videogiochi), i tavoli e la
+%  table presence, gli sfondi e la luce, i componenti standard
+%  (blocchi, plance, carte, dadi, figurine, sacchetti...), i componenti
+%  custom (PDF, token, tile, dado, mazzo con il Deck Editor), il
+%  salvataggio e il caricamento sul Workshop di Steam, il riuso dei
+%  componenti altrui, i moduli professionali di Ruggero, le funzioni
+%  avanzate (ancoraggi, catenella, adesivi, fisica) e il divieto degli
+%  script; in coda, le domande libere (fedeltà dei prototipi per i
+%  publisher, aggiornare un mazzo, il calendario fino alla final
+%  review, The Box, le risorse da seguire, il mercato italiano del
+%  gioco, i giochi lunghi).
+%  Fonte: trascrizione dell'ottava lezione (AGD8) del corso breve di
+%  Analog Game Design, seconda edizione: una lezione online di circa
+%  tre ore, condotta da Ruggero, con due pause (fino alle 18:40 e fino
+%  alle 19:35).
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Analog Game Design", ottavo capitolo
+%  (numerazione propria 2.8). Nel file principale del libro, subito dopo
+%  il capitolo 2.7:
+%
+%    \input{AGD/AGD7_obiettivi_e_design_sprint}
+%    \input{AGD/AGD8_tabletop_simulator}
+%
+%  Tutte le etichette di questo capitolo hanno il prefisso "a8:"
+%  (a8:cap:..., a8:sec:..., a8:fig:..., a8:tab:...). Il capitolo è
+%  autonomo: non contiene \ref verso altri capitoli.
+%  Le figure e le tabelle sono ricostruzioni schematiche di quanto il
+%  docente spiega a voce e mostra condividendo lo schermo, non copie
+%  di schermate. I nomi dei comandi del software sono riportati come li
+%  pronuncia il docente (in inglese, come nell'interfaccia) e,
+%  dove la trascrizione li storpia, nella forma corretta con una nota.
+%  Dove la trascrizione è troppo rovinata per ricostruire un dettaglio,
+%  il capitolo lo dice invece di inventarlo.
+% =====================================================================
+
+\chapter[Tabletop Simulator]{Tabletop Simulator: costruire il modulo di un
+prototipo, dal tavolo vuoto al Workshop}
+\label{a8:cap:tts}
+
+Questa è l'\textbf{ottava lezione} del corso di \textbf{Analog Game Design}, ed è
+la lezione più tecnica del corso. Non si parla di emozioni, di framework o di
+ricerca, ma di uno \textbf{strumento}: \textbf{Tabletop Simulator} (spesso abbreviato
+in \textbf{TTS}), il programma con cui, nel settore dei giochi da tavolo, si
+costruiscono i \textbf{prototipi digitali}, si fanno i \emph{playtest} a distanza e
+si mostrano i giochi ai \emph{publisher}. La lezione era stata annunciata nel primo
+tutoraggio, il giorno prima, dove Ruggero aveva chiesto alla classe di installare il
+software e di fare il tutorial di base; qui si passa dal saper \emph{giocare} su
+Tabletop Simulator al saperci \emph{costruire} un gioco: un \textbf{modulo}, nel
+lessico del software.
+
+Il docente è \textbf{Ruggero}, che conduce da solo tutta la lezione condividendo lo
+schermo e costruendo dal vivo, passo per passo, un ``prototipo brutto'' (il nome che
+gli darà caricandolo sul Workshop). Il suo metodo è dichiarato all'inizio: la
+lezione sarà ``piena di banalità'', frasi che suonano ovvie (``un gioco da tavolo è
+un gioco su un tavolo'') ma che, nell'ottica di Tabletop Simulator, ``non sono così
+banali''. E il principio che ripete ``fino allo sfinimento'' è uno solo:
+\textbf{Tabletop Simulator non è un software per fare videogiochi}, è un
+\textbf{simulatore fisico} di un tavolo, in cui ogni oggetto ha un peso, una massa,
+uno spazio e delle collisioni. Quasi ogni consiglio pratico della lezione discende da
+qui. Il secondo filo conduttore è meno teorico e molto sentito: il software è il
+riferimento del settore, ma è pieno di ``scelte vestigiali'' e di stranezze che vanno
+conosciute per non perderci giorni, e Ruggero le segnala tutte, con un affetto
+esasperato (``sono pazzi'', ``è un miracolo che esista'').
+
+La lezione è \textbf{online} e si colloca con ogni probabilità \textbf{venerdì 2
+ottobre 2026}\footnote{La data non è detta, ma è ricostruibile: all'inizio Ruggero
+dice che la domanda sul pitch ``è stata già chiesta ieri nel tutorial'' e che certe
+cose le aveva dette ``nel tutoraggio di ieri'' (il primo tutoraggio è stato giovedì 1
+ottobre); dopo la seconda pausa si descrive ``stanco, venerdì pomeriggio, dopo tre ore
+di Tabletop''; e nel ripassare il calendario parla di ``lunedì'' come della prossima
+lezione, seguita dal ``venerdì prossimo'' e poi dal 12.}, dalle 17 alle 20 circa.
+Ci sono due pause: la prima di sette minuti, fino alle \textbf{18:40}; la seconda
+fino alle \textbf{19:35}. Dopo la seconda pausa la lezione diventa una sessione di
+\textbf{domande libere}, che negli ultimi minuti si trasforma in una chiacchierata
+sul mestiere tra Ruggero e gli ultimi due studenti rimasti (``siamo rimasti solo noi
+tre''). All'inizio sono collegati \textbf{Tancredi}, \textbf{Gianmarco},
+\textbf{Nicola}, \textbf{Angelo} e \textbf{Tiziana}; Ruggero aspetta ancora Lorenzo e
+Giordano (``hanno ancora 4--5 minuti per entrare''), e la trascrizione non dice con
+certezza se arrivino. Più avanti intervengono \textbf{Gianmarco} con domande sulle
+carte e \textbf{Rita}, che a fine lezione dice che è stata ``la lezione più bella
+finora''. Tiziana, a quanto si capisce, lascia la lezione dopo la prima pausa.
+
+Tre avvertenze di lettura, le stesse dei capitoli precedenti. La prima: la
+trascrizione è automatica e storpia moltissimi nomi, a cominciare da quello del
+software, che diventa di volta in volta ``Tabletop Shield'', ``DevOps Simulator'',
+``Tempodos Simulator'', ``Temuto Simulator'', ``Teledo Simulator'', ``Bluetooth
+Simulator'', ``Moto Simulator'' e, per sigla, ``DTS'', ``TBTS'', ``PPS'' e ``TDS''. Il
+capitolo usa sempre \emph{Tabletop Simulator} o \emph{TTS}. Altre storpiature
+ricorrenti: ``Stem'' per Steam, ``gubetto'' e ``tubetti'' per cubetto, ``Asol'' e
+``terraform in Mark'' per \emph{Azul} e \emph{Terraforming Mars}, ``Becky Zidden'' e
+``Becky's Hidden'' per l'opzione \emph{Backs is hidden}, ``l'ifo'' per LIFO, ``Miple''
+per \emph{meeple}. Dove la ricostruzione è sicura, o molto probabile, il capitolo usa
+la forma corretta e lo segnala in nota la prima volta; dove non lo è, riporta la forma
+della trascrizione e lo dice. La seconda: durante le due pause la trascrizione
+registra per decine di righe frasi senza alcun rapporto con la lezione, ripetute in
+loop (``qual è la risposta che ci può essere?'', ``grazie a tutti per l'attenzione che
+ci ha spiegato'', ``la situazione è questa, la migliore dal 2005'', discorsi sulla
+``dottrina sul mercato del lavoro'' e perfino sul ``governo di Dalai Lama''); lo
+stesso tipo di frasi apre il file, prima che la lezione cominci. Sono artefatti del
+riconoscimento vocale e il capitolo le ignora. La terza: gli studenti intervengono
+spesso senza che la trascrizione segnali chi parla; il capitolo li nomina quando il
+contesto lo rende chiaro e resta generico altrimenti.
+
+\paragraph{Come leggere questo capitolo.} La lezione è una \textbf{dimostrazione dal
+vivo}: Ruggero clicca, carica immagini, sposta oggetti, e la trascrizione registra
+solo la sua voce. Il capitolo ricostruisce quindi le \textbf{procedure} (dove si
+clicca, che cosa chiede il software, che cosa conviene rispondere) e le
+\textbf{ragioni} che Ruggero dà per ogni scelta, nell'ordine in cui le mostra. Le
+tabelle riassumono le opzioni e le differenze tra componenti; le figure
+ricostruiscono i flussi di lavoro (il mazzo custom, il caricamento sul Workshop).
+Quando l'interfaccia di Tabletop Simulator è citata, i nomi dei comandi sono quelli
+inglesi che Ruggero pronuncia leggendo lo schermo; la sua copia del software è in
+parte in italiano (il menu ``Oggetti'', il ``tasto destro''), e il capitolo segue la
+lingua in cui il comando è detto. Qua e là, dei paragrafi di
+\textbf{approfondimento} collegano la lezione ai libri di game design di riferimento
+(soprattutto \emph{The Art of Game Design} di Jesse Schell) e alla pratica della
+prototipazione; sono segnalati come tali e non fanno parte della lezione.
+
+Il percorso del capitolo segue quello della lezione:
+\begin{enumerate}
+  \item l'attesa e le domande sul \textbf{pitch} del 12 ottobre (sezioni
+        \ref{a8:sec:attesa} e~\ref{a8:sec:pitch});
+  \item l'avvio del software e il principio della lezione: TTS è un
+        \textbf{simulatore fisico} (sezioni da~\ref{a8:sec:programma}
+        a~\ref{a8:sec:simulatore});
+  \item il \textbf{tavolo}, il caricamento delle immagini, lo \textbf{sfondo}
+        (sezioni da~\ref{a8:sec:tavoli} a~\ref{a8:sec:sfondi});
+  \item i \textbf{componenti standard}: blocchi e cubetti, misure, plance, carte,
+        dadi, figurine, miscellanea, \textbf{sacchetti} (sezioni
+        da~\ref{a8:sec:componenti} a~\ref{a8:sec:sacchetti});
+  \item i \textbf{componenti custom}: PDF e luce, \textbf{token} e \textbf{tile},
+        dado, \textbf{mazzo}, carte bucate e tabelloni (sezioni
+        da~\ref{a8:sec:custom} a~\ref{a8:sec:tabellone});
+  \item dopo la prima pausa: penna e testo, il \textbf{salvataggio} e il
+        \textbf{Workshop}, il riuso dei componenti altrui (sezioni
+        da~\ref{a8:sec:penna} a~\ref{a8:sec:riuso});
+  \item i \textbf{moduli professionali} di Ruggero e le funzioni avanzate, fino al
+        divieto degli \textbf{script} (sezioni da~\ref{a8:sec:moduli}
+        a~\ref{a8:sec:script});
+  \item dopo la seconda pausa: fisica e \emph{dexterity}, \emph{The Box}, il
+        calendario, le risorse, il mercato del gioco (sezioni
+        da~\ref{a8:sec:fisica} a~\ref{a8:sec:lunghi}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'attesa}
+\label{a8:sec:attesa}
+
+La lezione comincia, come sempre, con qualche minuto di attesa. Ruggero saluta una
+studentessa (la trascrizione la chiama ``Lucia'', ma il nome non è affidabile) con cui
+non c'è stato tempo di parlare di un \emph{task}: ``ci sarà modo sicuramente'', e in
+generale gli si può scrivere ``via mail o via Telegram senza problemi''. Lei ha
+recuperato la lezione e il punto è ``assolutamente chiaro''. Arrivano Tancredi,
+Gianmarco, Nicola. ``Come al solito, se avete delle domande, dubbi o altro, siamo
+qua''.
+
+\paragraph{La registrazione del tutoraggio.} La prima domanda è pratica: verrà
+caricata la registrazione del tutoraggio di ieri? Sì, ma con un po' di ritardo: le
+lezioni sono su \textbf{Zoom}, i tutoraggi su \textbf{Meet}, e la registrazione di Meet
+non arriva in automatico; all'inizio la si gestisce a mano, e se ne occuperà Daniele
+(``credo che vi abbia già risposto nel gruppo Discord''). Ruggero aggiunge che non sa
+bene che cosa vedano gli studenti: dal lato dei docenti, per esempio per le slide,
+``abbiamo un'altra interfaccia, non è la stessa vostra''.
+
+% ---------------------------------------------------------------------
+\section{Il 12 ottobre: un pitch che non è un pitch}
+\label{a8:sec:pitch}
+
+La seconda domanda riprende un tema del tutoraggio: il 12 ottobre bisogna
+\emph{consegnare} un pitch o \emph{fare} un pitch?
+
+\paragraph{Una lezione che non è una lezione.} Il 12 è ``una lezione particolare'':
+dalle 5 alle 8, ma ``non è una lezione, è un incontro per vedere da vicino i vostri
+progetti''. Tolti ``i tempi burocratici'', i docenti dedicheranno a ogni gruppo
+\textbf{40--50 minuti}. Da lì vogliono il pitch, ma \textbf{non il pitch commerciale}
+(``l'ho detto anche al tutoraggio''): il gruppo deve dire con chiarezza \textbf{su che
+cosa vuole lavorare}. Il dettaglio (le singole meccaniche, il bilanciamento, il come
+quell'idea sarà realizzata) verrà dopo: ``ci sarà tempo''. Nessuno si aspetta un
+prototipo già il 12. Ma i docenti vogliono, almeno a livello di espressione orale del
+gruppo, ``un \emph{agreement}'': questa è la cosa su cui lavoreremo, ``messa proprio
+per iscritto''.
+
+\paragraph{La forma è libera.} Il modo di comunicarlo è libero. Gli anni scorsi alcuni
+gruppi hanno portato presentazioni con le slide, ``proprio classiche''; altri una
+presentazione ``più dinamica, non preparata in maniera pregressa, ma che rispondesse
+comunque ai nostri dubbi''. ``Fossi in voi non mi preoccuperei della forma''. Di
+nuovo: ``non dovete venderci il vostro gioco, non dovete convincerci che il vostro
+gioco sia il più bello del mondo. Dovete farci capire su cosa lavorerete per il resto
+del corso''.
+
+\paragraph{Perché non c'è una scaletta.} Uno studente chiede se esiste un formato, una
+scaletta dei punti da toccare, visto che si tratta di un intervento lungo. I docenti
+ce l'hanno, ma \textbf{non la danno volutamente} (la domanda era già stata fatta il
+giorno prima nel tutoraggio). Ci sono molti modi di fare un pitch; per i pitch
+commerciali esistono schemi che aiutano, ``ma non è questo il punto''. Il gruppo non
+deve ottenere un finanziamento, e i docenti non sono un \emph{publisher}: ``siamo noi
+professori che parliamo con voi gruppi''. La forma rigida di un pitch di publishing
+``si applica molto poco in questa fase'', perché i gruppi sono ancora nel passaggio
+tra il \textbf{brainstorming} e il \textbf{playstorming}, e verso la realizzazione
+concreta dell'idea.
+
+\paragraph{Che cosa bisogna sapere.} Non serve niente di fisicamente preparato. Ma il
+gruppo deve sapere bene, ``per esempio'': se vuole fare un gioco di ruolo, un gioco di
+carte, un ibrido; \textbf{per quante persone}; \textbf{qual è l'esperienza} che vuole
+dare e \textbf{come} intende darla; la \textbf{durata}; ``cose del genere''. Per
+qualsiasi dubbio ci sono le email di tutti i docenti, ``non solo la mia, ma anche
+quella di Daniele, Beatrice, eccetera''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    si/.style={draw, thick, rounded corners, text width=4.6cm, align=left,
+      fill=gray!10, inner sep=6pt},
+    no/.style={draw, dashed, rounded corners, text width=4.6cm, align=left,
+      fill=white, inner sep=6pt}
+  ]
+  \node[si] (a) at (0,0) {\textbf{Che cosa portare il 12}\\[2pt]
+    \textbullet\ il \textbf{tipo} di gioco (GdR, carte, ibrido\ldots)\\
+    \textbullet\ il \textbf{numero} di giocatori\\
+    \textbullet\ l'\textbf{esperienza} da dare e \textbf{come}\\
+    \textbullet\ la \textbf{durata}\\
+    \textbullet\ un \emph{agreement} del gruppo, per iscritto};
+  \node[no] (b) at (6.2,0) {\textbf{Che cosa non serve}\\[2pt]
+    \textbullet\ un prototipo\\
+    \textbullet\ meccaniche di dettaglio e bilanciamento\\
+    \textbullet\ convincere i docenti che il gioco è bello\\
+    \textbullet\ una forma precisa (slide o a voce, è uguale)\\
+    \textbullet\ la struttura di un pitch commerciale};
+\end{tikzpicture}
+\caption{Il ``pitch'' del 12 ottobre come lo descrive Ruggero all'inizio della
+lezione: un accordo sul \emph{che cosa}, non una vendita. Ricostruzione schematica.}
+\label{a8:fig:pitch}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Il programma: le mani nel motore}
+\label{a8:sec:programma}
+
+``Oggi, a livello logistico, vi dico cosa andiamo a fare''. Oggi è la lezione su
+\textbf{Tabletop Simulator}: ``lavorare mani nel motore''. Il software va tenuto
+aperto per tutta la lezione; chi non l'ha ancora installato lo installi subito (``non
+è pesante, dovreste averlo pronto per tra 4 o 5 minuti''). Ci saranno domande e
+momenti in cui chiedere di ``fermarmi a rispiegare una cosa'': ``fatelo, perché sono
+qui apposta''.
+
+\paragraph{Che cosa si dà per scontato.} Il software ``nasce per prototipare e
+giocare'' giochi da tavolo. Ruggero dà per scontato che gli studenti l'abbiano già
+usato \textbf{da giocatori} (\emph{user}, ``proprio di \emph{player}''), magari
+giocando tra loro qualcosa che piace: serve ``il minimo necessario del sapersi
+spostare all'interno del software'', cioè muovere la telecamera, cliccare sui menu,
+sapere che cosa fanno i menu. Sono tutte cose che, come detto nel tutoraggio, ``il
+tutorial di base vi spiega in 10 minuti''. Più complesso è \textbf{creare i moduli},
+ed è quello che si fa oggi.
+
+\paragraph{``Sì, ma con un asterisco''.} Tabletop Simulator è ``un software
+gigantesco'' ed è impossibile coprirlo tutto in una lezione. Ruggero coprirà le
+\textbf{basi} e lascerà l'ultima parte ai bisogni degli studenti: domande come ``si
+può fare questa cosa qua su Tabletop Simulator?''. La risposta, ``come sempre, è quasi
+sempre sì'': ``si può fare, con un asterisco: ma con un compromesso''. Il resto della
+lezione spiegherà che cosa vuol dire.
+
+Ruggero tiene il registro delle presenze in vista (``se per caso entra anche Giordano,
+avvisatemi'') e condivide \textbf{tutto lo schermo}, non solo la finestra, perché
+altrimenti i \emph{pop-up} del software non si vedono. Avverte che il programma, ``se
+non l'avete mai aperto prima, può essere abbastanza ostile all'inizio''; ma alla fine
+sarà chiaro perché è ``usatissimo nel settore'', e che ``non dovete stare 3000 ore per
+saperlo usare bene''.
+
+% ---------------------------------------------------------------------
+\section{Avviare il software e creare una stanza}
+\label{a8:sec:avvio}
+
+Si lancia Tabletop Simulator da \textbf{Steam}. All'avvio il programma può proporre
+un'opzione di lancio: giocare normalmente o avviare in modalità VR. Si sceglie il
+gioco normale: ``è possibile usarlo con i set di realtà virtuale'', ma ``non siamo qua
+per usare Tabletop in modalità VR''.
+
+\paragraph{Il menu iniziale.} Nel menu si sente ``una musichetta fastidiosa'': si
+toglie dall'ingranaggio, alla voce dei suoni, abbassando il volume del menu, ``così
+magari riuscite anche a sentirmi senza impazzire''. L'icona della \textbf{lampadina}
+apre il \textbf{tutorial} di base: ``io spero che voi l'abbiate già fatto. Se non
+l'avete fatto, non ditemelo. Fatelo dopo la lezione senza dirmi niente, e io farò finta
+che voi l'abbiate già fatto''. Poi ci sono le due voci grandi:
+\begin{description}
+  \item[Join] serve a unirsi a una partita che un'altra persona ha aperto; gli
+        studenti dovrebbero già conoscerla, se hanno giocato con persone amiche.
+  \item[Create] è quella che serve oggi: crea una partita \textbf{single player}, una
+        \textbf{multiplayer} o una \textbf{hot seat}. L'\emph{hot seat} si ignora
+        (``non la usa credo nessuno su questo pianeta, mai''). Il
+        \emph{multiplayer} serve a creare partite con altri. Il \emph{single
+        player} crea stanze in cui può entrare solo chi le crea, ed è quello che si
+        usa per \textbf{costruire i moduli}.
+\end{description}
+
+\paragraph{I moduli si costruiscono in single player.} Ruggero è esplicito: ``non
+create i moduli in multiplayer''. In multiplayer, del resto, solo l'\emph{host} può
+crearli; ma soprattutto in single player è più comodo, perché ``la connessione
+internet non vi chiederà costantemente il ping dei vostri compagni di stanza''.
+
+All'apertura della stanza compare un \emph{pop-up} centrale, perché Tabletop
+Simulator ``dà per scontato che noi vogliamo giocare qualcosa, non che vogliamo
+creare un modulo''. Si chiude. Si resta con \textbf{un tavolo vuoto}, un panorama di
+sfondo scelto a caso da un insieme predefinito e svariati menu. ``E a questo punto ci
+dobbiamo chiedere: ok, benissimo. Cosa facciamo adesso?''.
+
+% ---------------------------------------------------------------------
+\section{``Un gioco da tavolo è un gioco su un tavolo''}
+\label{a8:sec:simulatore}
+
+Si parte ``dalle basi, proprio basi, basi''. Ruggero avverte che la lezione sarà
+``piena di banalità'': frasi che suonano banalissime, ma che nell'ottica di Tabletop
+Simulator ``non sono così banali''. E ripete un'informazione che era già stata messa
+lì, ``nascosta, per fare \emph{foreshadowing}'', e che ripeterà ``fino allo
+sfinimento'':
+
+\begin{quote}
+\textbf{Tabletop Simulator non è un software per fare videogiochi.} Non uscirete da qua
+con il videogioco del vostro gioco da tavolo. Non vi serve a quello. Tabletop
+Simulator, come il nome fa intuire, è un simulatore di giochi \emph{tabletop}. Vuol
+dire che tutto quello che vedrete qua è \textbf{simulato fisicamente}: con un peso,
+con una massa, con uno spazio, con delle collisioni.
+\end{quote}
+
+È il principio che regge tutta la lezione, e Ruggero lo riprenderà ogni volta che un
+componente si comporta in modo inatteso: un mazzo che sul bordo del tavolo resta
+inclinato, un cubetto che rotola giù dalla cornice di una plancia, una carta bucata
+che però collide come se fosse intera. ``Questo è un simulatore di spazio fisico.
+Spero che, se c'è una cosa che vi entra da oggi, è questa''. La conseguenza pratica:
+i componenti di un modulo \textbf{vanno trattati come componenti fisici}, con le
+stesse attenzioni che si avrebbero su un tavolo vero.
+
+\paragraph{Approfondimento: il prototipo come simulazione.} La distinzione di Ruggero
+tra \emph{simulatore} e \emph{motore} è la stessa che separa un prototipo di un gioco
+da tavolo dalla sua versione digitale. Un adattamento digitale \emph{applica} le
+regole al posto dei giocatori; un simulatore fisico, invece, lascia le regole ai
+giocatori, come il tavolo vero, e si limita a riprodurre gli oggetti. È proprio questo
+che lo rende adatto al \emph{playtest}: Schell, in \emph{The Art of Game Design},
+insiste che ogni prototipo deve rispondere a una domanda precisa, e che la sua
+fedeltà va scelta in funzione di quella domanda. Un prototipo su TTS risponde bene
+alle domande su regole, spazio e flusso del turno, perché i giocatori devono ancora
+eseguire tutto a mano, come farebbero con la scatola; risponde male, per costruzione,
+alle domande che riguardano la manualità e il tatto. Il divieto degli \emph{script}
+che Ruggero darà a fine lezione (sezione~\ref{a8:sec:script}) nasce dalla stessa
+logica.
+
+% ---------------------------------------------------------------------
+\section{Il tavolo e la table presence}
+\label{a8:sec:tavoli}
+
+Nel menu in alto c'è la voce \textbf{Oggetti}, con quattro sottomenu:
+\textbf{componenti}, \textbf{tavoli}, \textbf{background} e \textbf{oggetti
+salvati}. Si parte dal tavolo.
+
+\paragraph{Non tutti i giochi stanno su tutti i tavoli.} Nella vita reale, ``nella vita
+di tutti i giorni, fisicamente'', alcuni giochi da tavolo su alcuni tavoli non si
+possono giocare. Su un tavolino da caffè ``non ci sta probabilmente tutto
+\emph{Twilight Imperium}''; sui tavolini del treno non ci si gioca un
+\emph{eurogame}, ``perché il tavolo è più piccolo''. Allo stesso modo, quando si pensa
+alla \textbf{table presence} del proprio gioco, cioè allo \textbf{spazio che occupa sul
+tavolo}, la scelta non è casuale: non lo è nel mondo reale e non lo è su Tabletop
+Simulator, perché lo spazio fisico è limitato: ``le cose che non sono sul tavolo
+cadono dal tavolo''.
+
+Il software offre \textbf{dieci tavoli}. Ruggero li mostra uno per uno
+(tabella~\ref{a8:tab:tavoli}), guardando ogni volta due cose: quanti \textbf{posti}
+ha e com'è fatto il \textbf{bordo}.
+
+\paragraph{Le mani sono i posti a sedere.} Per contare i posti si usa, nel menu a
+sinistra, la voce \textbf{Zone}, sottovoce \textbf{Hands}: mostra le \textbf{mani} di
+carte, cioè le persone al tavolo. ``La \emph{hand} è in tutto e per tutto quanti
+posti a sedere ci sono''. Se il tavolo ha quattro mani, ``questo gioco non può tenere
+fisicamente più di quattro persone''; se si progetta un gioco da 6--8 persone, quel
+tavolo ``già non va bene''.
+
+\paragraph{Perché guardare i bordi.} ``So che vi sembra apparentemente inutile questa
+informazione'', ma sopra il tavolo ci saranno dei componenti, e i componenti sono
+oggetti fisici. Un bordo tridimensionale impedisce di tenere a bordo tavolo, ``belle
+piatte, tranquille'', le plance dei giocatori; un rilievo al centro impedisce di
+appoggiarvi piatta una plancia o un tabellone, perché ``questa salita qua è una
+salita fisica che andrà a impattare i vostri componenti''.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.7cm}p{1.2cm}p{8.6cm}@{}}
+\toprule
+\textbf{Tavolo} & \textbf{Posti} & \textbf{Che cosa ne dice Ruggero} \\
+\midrule
+Square & 4 & piccolo, ``piccolino''; quattro persone ``strettine'' \\
+Hexagon & 6 & un posto per lato, forma ``bizzarra''; \textbf{bordi
+tridimensionali}: niente plance piatte a bordo tavolo \\
+Octagon & 8 & come l'esagonale, con otto posti \\
+Round & 8 & bordi molto meno marcati, ma al centro un \textbf{cerchio di vetro in
+rilievo}: niente tabellone piatto al centro \\
+Poker & -- & ``non vi servirà, a meno che non dobbiate fare poker'' \\
+Rectangle & 8 & ``belli larghi''; bordi scanalati, ma superficie ampia: va bene per
+``la maggior parte dei giochi pubblicati oggi'' \\
+Round Glass & 8 & rotondo, grande, di vetro semitrasparente, con le gambe visibili
+sotto, ``in stile Escher'': ``il tavolo peggiore di tutti. Non usatelo mai'' \\
+Custom Rectangle & 8 & accetta un'immagine come superficie; il più grande; non se ne
+sceglie la dimensione; l'immagine viene \textbf{stirata} \\
+Custom Square & 8 & accetta un'immagine; gambe metalliche riflettenti; ``sembra
+piccolo, ma è gigante''; nessun bordo strano \\
+None & -- & nessun tavolo: i componenti ``cadono all'infinito in questo pozzo senza
+fondo''. È l'opzione preferita di Ruggero, per un motivo che spiegherà dopo
+(sezione~\ref{a8:sec:moduli}) \\
+\bottomrule
+\end{tabular}
+\caption{I dieci tavoli di Tabletop Simulator come li presenta Ruggero. I nomi sono
+quelli dell'interfaccia; i posti sono le \emph{hands} visibili nella voce
+\emph{Zone}\protect\footnotemark.}
+\label{a8:tab:tavoli}
+\end{table}
+\footnotetext{Per il tavolo da poker e per quello di vetro la trascrizione non riporta
+il numero di posti (per il secondo dice solo ``per otto persone''). Il nome
+``Round Glass'' per il tavolo di vetro è quello dell'interfaccia, che Ruggero non
+pronuncia: lo descrive soltanto.}
+
+\paragraph{Perché il software è fatto così.} Davanti al tavolo rotondo con il rilievo
+al centro, la domanda viene da sé: perché qualcuno l'ha fatto? La risposta di Ruggero,
+che tornerà molte volte nella lezione, è un misto di esasperazione e di affetto:
+``perché sono pazzi'', ``è un miracolo che esista''. Chi ha creato il software ``non
+sapeva cosa stava facendo''; oggi ci si ritrovano ``delle scelte vestigiali di gente
+fulminata di anni fa che, contro la loro volontà, hanno purtroppo creato il software
+di riferimento del settore, che è quello che tutti usano adesso''. E con queste scelte
+``dobbiamo venire a patti''.
+
+\paragraph{La scelta della lezione.} Per il prototipo dimostrativo Ruggero sceglie il
+\textbf{tavolo quadrato custom} con una texture di legno: ``abbiamo un gioco piccolo,
+magari un \emph{fillerino} per quattro persone, perfetto''. Sul tavolo senza tavolo
+(\emph{None}) promette di tornare: ``ve lo spiego dopo, perché potrebbe essere
+interessante''.
+
+% ---------------------------------------------------------------------
+\section{Caricare un'immagine: file locale e cloud}
+\label{a8:sec:caricare}
+
+Il tavolo \emph{Custom Rectangle}, appena selezionato, apre un \emph{pop-up} che chiede
+un'\textbf{immagine}. È il primo incontro con una procedura che si ripeterà per quasi
+ogni componente custom, e Ruggero ne fissa subito le due regole.
+
+\paragraph{Regola 1: mai un URL, sempre un file.} Su Tabletop Simulator un oggetto
+custom si può creare in due modi: dandogli l'\textbf{URL} di un'immagine online o
+caricando un'immagine dal proprio computer (\textbf{Browse Local Files}). ``Il mio
+consiglio personale è: non dategli mai un URL immagine'', perché se qualcuno, per
+qualunque motivo, toglie quell'immagine dal suo indirizzo, ``il vostro modulo crolla''.
+Se online c'è un'immagine che piace, la si \textbf{scarica} e la si ricarica dalla
+propria cartella.
+
+\paragraph{Regola 2: mai in locale, sempre in cloud.} Quando si carica un file, il
+software chiede se caricarlo \textbf{in cloud} o \textbf{in locale}. ``Non caricate mai
+niente del vostro modulo in locale'': un modulo con immagini locali non si può usare
+in multiplayer, funziona solo sul proprio computer, e questo ``sconfigge un po'
+l'obiettivo'' di farlo vedere, per esempio, a un \emph{publisher} esterno. Si carica
+quindi in cloud, gli si può dare un nome, si aspetta che ``finisca di circolare questo
+cerchiettino'' e si fa \textbf{Import}.
+
+\paragraph{Le proporzioni.} Ruggero carica prima una texture di legno, poi un
+tabellone più elaborato\footnote{La trascrizione descrive l'immagine come ``le
+influenze moderne nella scena del Nord di Clarp'': con ogni probabilità è la
+copertina o una pagina di un lavoro sul LARP nordico, usata a caso come esempio; il
+contenuto dell'immagine non ha importanza.}: sul tavolo si può avere un tabellone,
+uno schema, delle zone, ``già qualcosa di meccanico''. Ma la dimensione del tavolo non
+si può definire: è il tavolo più grande che c'è, e l'immagine vi si adatta. Con una
+texture verticale (una ``A'' arancione), il software ``la streccia come se non ci fosse
+un domani'', e in più crea una luce arancione in faccia ``che sembra uscita da un film
+sci-fi''. Quindi: \textbf{occhio alle proporzioni} delle immagini. Di solito il tavolo
+si usa \textbf{con una texture}, e i tabelloni si mettono \textbf{a parte}, senza
+caricarli direttamente sul tavolo, perché il tavolo li distorce.
+
+% ---------------------------------------------------------------------
+\section{Lo sfondo cambia la luce}
+\label{a8:sec:sfondi}
+
+Scelto il tavolo, Ruggero fa notare che la scena è buia: il suo sfondo è ``sera al
+crepuscolo'', in mezzo a un prato, ``con tutto il problema di illuminazione che ne
+deriva''. Il motivo è che Tabletop Simulator simula la \emph{skybox}, l'ambiente
+attorno al tavolo. Dalla voce \textbf{Background} si sceglie lo sfondo: ``in questo
+momento abbiamo il \emph{sunset}'', poi c'è il \emph{tunnel}, e così via.
+
+Cambiando sfondo, Ruggero chiede di guardare il tavolo: che cosa succede? Uno studente
+risponde: cambia il riflesso. Sì, e cambiano anche il livello di illuminazione e
+l'angolazione. Non solo sulle gambe metalliche, che riflettono, ma anche sulla texture
+di legno, che non è metallica: ingrandita, mostra colori ``più freddi, più caldi in base
+a dove sono''. La luce, in Tabletop Simulator, arriva \textbf{da tre direzioni}:
+\textbf{dall'alto}, \textbf{dall'orizzonte} e come \textbf{riflesso dal basso}. ``Stiamo
+nel tecnico, mi rendo conto''; per ora il prato va benissimo. La questione tornerà con
+il PDF, quando si vedrà che lo sfondo può rendere illeggibile un componente
+(sezione~\ref{a8:sec:luce}).
+
+% ---------------------------------------------------------------------
+\section{I componenti: importare o creare?}
+\label{a8:sec:componenti}
+
+Abbiamo il tavolo, abbiamo lo sfondo, ``fantastico''. Ma mancano i componenti per
+giocare. ``Vi sorprenderà sapere'' che dalla voce \textbf{Oggetti}, sottovoce
+\textbf{Componenti}, si possono mettere dei componenti sul tavolo. I componenti sono
+divisi in \textbf{16 categorie}, alcune più personalizzabili di altre. E l'approccio da
+avere con questo software, per ogni pezzo del proprio gioco, è una domanda in due
+tempi:
+
+\begin{quote}
+Devo importare un componente nel mio gioco? Ho qualcosa che mi può servire
+\textbf{che già esiste}? O devo \textbf{crearlo da zero}?
+\end{quote}
+
+Ruggero passa quindi prima in rassegna i componenti ``più o meno standardizzati'' e il
+modo di adattarli, e solo alla fine i componenti \emph{ad hoc}, i \textbf{custom}.
+
+\subsection{Blocchi e cubetti}
+\label{a8:sec:cubetti}
+
+Nella categoria \textbf{Blocchi} ci sono un quadrato, un rettangolo e un triangolo; si
+trascinano sul tavolo e si nota che sono \textbf{3D}. Rettangoli e triangoli per ora
+non servono: si tengono i \textbf{cubetti}, una risorsa ``usatissima'' nei giochi da
+tavolo. Ruggero chiede un esempio di gioco con i cubetti: gli studenti citano
+\emph{Terraforming Mars} e \emph{Azul}\footnote{``Asol'' e ``terraform in Mars'' (poi
+``terraform in Mark'') nella trascrizione. Ruggero aggiunge che in \emph{Azul} ci sono
+``i cubetti neri per il contafonti'': il dettaglio non è ricostruibile con certezza
+dalla trascrizione.}.
+
+\paragraph{Ricolorare.} Il problema è che il cubetto è rosso, e nei giochi citati i
+cubetti hanno altri colori. ``Ci può andare bene come forma, ma non come colore''. Per
+ricolorarlo: \textbf{tasto destro}, \textbf{Color Tint}, e si sceglie il colore con la
+classica barra di tonalità e saturazione, ``inclusa la semitrasparenza'': la barra in
+fondo regola la trasparenza, e un cubetto blu con la barra abbassata diventa
+semitrasparente. Un cubetto ``di grano'' si fa giallo, e così via.
+
+\paragraph{Copiare.} Mentre si creano i moduli si possono usare \texttt{Ctrl+C} e
+\texttt{Ctrl+V}: ``io posso copiarmi questi cubetti quanti ne voglio''.
+
+\paragraph{Ridimensionare.} Un componente si può ingrandire o rimpicciolire dalla
+tastiera, con i tasti \texttt{+} e \texttt{-}: per esempio un cubo più grande degli
+altri, che valga tre o cinque risorse.
+
+\subsection{Le dimensioni reali}
+\label{a8:sec:misurare}
+
+Il ridimensionamento serve per tutti i componenti, e qui Ruggero chiede di
+``prepararsi psicologicamente'': quando si fanno moduli su Tabletop Simulator,
+\textbf{è buona pratica mantenere le dimensioni e le proporzioni reali dei
+componenti}. Ma come si sa quanto è grande un cubo? ``Può essere 10 cm, come 150, che
+ne sappiamo''.
+
+\paragraph{Lo strumento Linea.} Nel menu a sinistra c'è lo strumento \textbf{Linea}
+(il righello). Nelle sue impostazioni si sceglie l'\textbf{unità}: Ruggero consiglia i
+\textbf{centimetri} e la modalità 2D\footnote{La trascrizione rende le impostazioni
+consigliate come ``2D free edge no log''; Ruggero dice di non volerle spiegare ``per
+limiti di tempo'' e che ``centimetri, 2D'' è quello che serve. La forma esatta delle
+altre voci non è ricostruibile dalla trascrizione.}. Con lo strumento si tira una
+linea e il software scrive la misura sul bordo: il lato del cubo è ``più o meno 8
+cm''.
+
+\paragraph{Misurare dall'alto.} Per misurare con precisione si cambia prospettiva con
+il tasto \texttt{P}, passando alla vista \textbf{dall'alto} (\emph{top-down}): senza
+il problema del 3D si misura ``da un angolo all'altro''. Il lato risulta di 7 cm.
+Se il cubetto dev'essere di 20 mm, lo si ridimensiona con \texttt{+} e \texttt{-}
+finché la misura non è ``più o meno 2 cm''.
+
+\paragraph{Una domanda di chiarimento.} Uno studente non ha capito: il cubo è stato
+ridimensionato con la linea? No: il cubo si ridimensiona \textbf{con i tasti più e
+meno}; la linea \textbf{misura} soltanto. Il tasto \texttt{Tab}, premuto una volta,
+mette le freccette per indicare le cose; \textbf{tenuto premuto}, mostra la linea di
+misura. Un'altra studentessa non ha capito come cambiare prospettiva: tasto \texttt{P},
+``di prospettiva'', che passa tra prima persona, terza persona e vista dall'alto. Sono
+cose che il tutorial dovrebbe aver già insegnato; in ogni caso, con il tasto
+\texttt{Esc} si apre l'\textbf{Help}, con tutte le scorciatoie del software. Anche
+spostare più componenti insieme e interagire con i componenti sono cose del tutorial.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    passo/.style={draw, thick, rounded corners, text width=2.6cm, align=center,
+      minimum height=1.3cm, fill=gray!10},
+    freccia/.style={-{Stealth[length=2.5mm]}, thick}
+  ]
+  \node[passo] (a) at (0,0) {Linea: unità in \textbf{cm}, modalità \textbf{2D}};
+  \node[passo] (b) at (3.3,0) {\texttt{P}: vista \textbf{dall'alto}};
+  \node[passo] (c) at (6.6,0) {\texttt{Tab} tenuto premuto: \textbf{misura}};
+  \node[passo] (d) at (9.9,0) {\texttt{+} / \texttt{-}: \textbf{scala} fino alla misura reale};
+  \draw[freccia] (a) -- (b);
+  \draw[freccia] (b) -- (c);
+  \draw[freccia] (c) -- (d);
+  \draw[freccia, dashed] (d.south) to[bend left=25] node[below, font=\footnotesize]
+    {si rimisura finché non torna} (c.south);
+\end{tikzpicture}
+\caption{Come portare un componente alle sue dimensioni reali, secondo la procedura
+mostrata da Ruggero: nell'esempio, un cubetto da 7 cm ridotto a 2 cm.}
+\label{a8:fig:misurare}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Le plance}
+\label{a8:sec:plance}
+
+La categoria \textbf{Board} contiene le \textbf{plance}: backgammon, scacchi o dama,
+un'altra versione della scacchiera, dama cinese, Go, Reversi. ``La domanda però è:
+perché ci sono?''. Il proprio gioco sarà sicuramente diverso da questi: quello che
+serve, di solito, è la \textbf{Custom Board}, che chiede, ``indovinate un po''',
+un'immagine, come il tavolo custom.
+
+\paragraph{Bloccare la plancia.} La plancia si può spostare; con il tasto \texttt{L},
+di \emph{lock}, la si \textbf{blocca}, in modo che cliccandoci sopra, anche per
+sbaglio, non si sposti più. ``Questa è una buona pratica, perché noi non vogliamo che
+qualcuno sposti il tabellone con tutte le cose sopra''.
+
+\paragraph{La plancia si adatta all'immagine.} Uno studente nota che la plancia ha
+cambiato dimensione da sola. Esatto: \textbf{al contrario del tavolo}, che adatta
+l'immagine alla cornice (stirandola), \textbf{la board adatta la cornice
+all'immagine}. Un'immagine alta dà una plancia stretta e alta; cambiandola (tasto
+destro, \textbf{Custom}) con la texture del tavolo, la plancia si allunga dall'altro
+lato. Ne segue una regola per i tabelloni: importarli \textbf{nelle proporzioni che
+devono avere nella realtà}.
+
+\paragraph{Il problema della cornice.} ``Ma adesso ti faccio vedere un'altra cosa''.
+La plancia custom ha un \textbf{bordo di legno} in rilievo, ``nello stile delle vecchie
+scacchiere''. E siccome i componenti sono 3D, un cubo appoggiato sul bordo
+\textbf{rotola giù}. ``Quanti board game recenti avete visto con le plance che hanno la
+cornice in legno alta due centimetri?''. Nessuno, risponde uno studente; ``forse una
+versione super antica degli scacchi di mio nonno''. ``Esatto, perché è una roba da
+fuori di testa'': nessuno mette una cornice di legno su un tabellone che costa 200
+euro. La cornice non si può togliere. La soluzione arriverà più avanti
+(sezione~\ref{a8:sec:tabellone}); per ora: ``tenetevi in background l'informazione''.
+
+% ---------------------------------------------------------------------
+\section{Le carte standard}
+\label{a8:sec:carte-std}
+
+La categoria \textbf{Carte} contiene: uno \emph{standard deck}, un \emph{custom deck},
+una \emph{custom card}, una carta a caso (``randomicamente ci pesca una carta a
+caso''), un \textbf{Jolly} (perché il mazzo standard è ``il classico deck da poker
+normale di 52 carte'' e non ha i Jolly) e alcuni mazzi creati dagli autori di Tabletop
+Simulator per un loro gioco, ``che non servono a niente di niente'': ``li lanciamo nel
+sole''.
+
+Come si interagisce con un mazzo (spostarlo, pescare, rivelare, pescare nella propria
+mano) lo insegna il tutorial. Quello che importa sapere è che il mazzo \textbf{ha una
+proprietà fisica}: la carta singola è più leggera del resto, il mazzo è
+tridimensionale, e un mazzo appoggiato sul bordo del tavolo resta \textbf{inclinato},
+tanto che si può vedere che cosa c'è sotto. ``Questo è un simulatore di spazio fisico.
+Spero che, se c'è una cosa che vi entra da oggi, è questa''. I componenti ``vanno
+trattati come se fossero componenti fisici''.
+
+E se il gioco usa un mazzo di carte evento personalizzate? ``Ve lo spiego dopo'': prima
+i componenti standard e come adattarli, ``e poi passiamo per ultimo ai componenti
+\emph{ad hoc} vostri'' (sezione~\ref{a8:sec:mazzo}).
+
+% ---------------------------------------------------------------------
+\section{Dama, scacchi, dadi e figurine}
+\label{a8:sec:dadi}
+
+\paragraph{Dama e scacchi.} La quarta categoria sono i pezzi della \textbf{dama}, ``e
+qui davvero abbiamo la follia di Tabletop Simulator'': c'è di nuovo la plancia,
+identica a quella della categoria precedente, presente quindi in due categorie. Negli
+\textbf{scacchi} ci sono pezzi metallici o di legno; ``se volete dei riflessi
+ambientali, quelli di metallo sono perfetti''. Ma la domanda è sempre: servono?
+Trattandosi di prototipi, se serve un pedone, ``nessuno si scandalizza se prendete un
+pedoncino così e magari lo colorate, che so, rosso''.
+
+\paragraph{I dadi.} Nella categoria \textbf{Dadi} ci sono dadi metallici e di plastica,
+già colorati: d4, d6, d8, d10, d12 e d20, più altre versioni (per esempio d6 colorati
+con gli angoli arrotondati). Si possono ricolorare e ingrandire: ``mi servono da 20,
+ma blu''; lo si ricolora, lo si fa più grosso degli altri, e si tira come gli altri.
+Ma attenzione: \textbf{ricolorare un componente non colora tutto}. Un dado bianco
+colorato di giallo mantiene i \textbf{pallini} neri; un dado metallizzato colorato di
+giallo ha i pallini bianchi, ed è \textbf{illeggibile}; un dado colorato di nero ``fa
+schifo'', uno colorato di bianco è ``completamente illeggibile''. Quindi: attenzione a
+quali componenti si scelgono come base.
+
+\paragraph{Le figurine.} Nella categoria \textbf{Figurine} ci sono gli \emph{standee}
+(le sagome in piedi) e le figurine metalliche, ``i classici omini di piombo'', che non
+servono. Serve il \textbf{custom standee}, che chiede un'immagine di \textbf{fronte} e
+una di \textbf{retro}. Ruggero vi mette la sua ``A'' davanti e dietro, ``ed ecco il
+nostro standee''. Può essere un personaggio anche con la trasparenza: un PNG ritagliato
+mantiene lo sfondo trasparente. Per avere un'immagine più grande mantenendo la base
+piccola si usa il fattore di \textbf{scala}: con 2, l'immagine raddoppia e la base
+resta piccola. ``Mi rendo conto che può essere estremamente noioso per ora questo
+software''; tra poco arrivano ``le cose custom per davvero''.
+
+% ---------------------------------------------------------------------
+\section{Go, biglie, miscellanea}
+\label{a8:sec:misc}
+
+Ruggero passa ``velocissimamente'' sul resto.
+
+\paragraph{Le pedine del Go.} Le pietre del Go ``possono essere come risorse'': si
+vogliono risorse che siano sassolini, anziché cubetti? Benissimo. Colorate di azzurro
+e rese semitrasparenti, diventano ``delle gocce d'acqua''.
+
+\paragraph{Le biglie e i giochi di destrezza.} Le \textbf{biglie} sono biglie,
+``letteralmente, con tutta la fisica che ne comporta'': su una superficie piana
+continuano a rotolare. A che cosa servono? Ai \textbf{dexterity game}, i giochi di
+destrezza, che si possono fare anche qui. La dimostrazione: Ruggero prende un
+componente, lo mette sul tavolo e lo blocca; poi usa lo strumento \textbf{Flick} (il
+``colpetto'' con il dito) sulla biglia, che va a sbatterci contro. ``Voilà! È un
+simulatore fisico questo software''.
+
+\paragraph{La miscellanea.} ``Dentro la miscellanea abbiamo tante cose bizzarre''.
+\begin{itemize}
+  \item Una \textbf{ciotola}: come componente non serve, ma bloccata sul tavolo e
+        riempita di cubetti dà ``improvvisamente una \emph{table presence}
+        diversa''.
+  \item Una \textbf{moneta}, che lanciata dice testa o croce.
+  \item Le pedine del \textbf{Reversi}, a due facce, una bianca e una nera: un
+        \emph{token} a due lati già pronto.
+  \item Pezzi del \textbf{domino}, tessere del \textbf{Mahjong}\footnote{``Testa del
+        Maggiog'' nella trascrizione.}, altri dischetti, tutti ricolorabili, da
+        usare come risorse.
+  \item Un insieme di componenti dei designer del software\footnote{La trascrizione
+        lo chiama ``P-Spec''; il nome della categoria non è ricostruibile con
+        certezza.}: ``se vi servono, bene; se no, il mio sospetto è che non vi
+        serviranno mai''.
+  \item I \textbf{Player Pawn}, i classici pedoni di plastica, in \textbf{nove
+        colori}. Perché nove versioni, se si possono ricolorare? ``Perché sono pazzi, i
+        designer: non ci hanno pensato''. Ricolorateli come volete.
+\end{itemize}
+
+\paragraph{I colori dei giocatori.} C'è però una ragione per ricolorare con criterio.
+Nel selettore dei colori, la colonna a destra contiene esattamente i \textbf{colori dei
+giocatori}, cioè i colori delle mani attorno al tavolo\footnote{Ruggero dice prima
+``questi 16 colori'' e poi ``esattamente i 12 colori player''; la trascrizione non
+permette di stabilire quale dei due numeri sia quello inteso.}. Se si vuole un codice
+colore preciso, legato al giocatore, si sceglie da lì: ``fammelo di questo arancione''
+dà esattamente l'arancione del giocatore arancione.
+
+\paragraph{Fiches e kit da GdR.} Poi le \textbf{fiches} da poker, ``classiche fiches
+da casinò''; e il \textbf{RPG Kit}: miniature su miniature da \emph{dungeon crawler},
+maghi, guerrieri, mostri, creature. ``Si muovono da sole queste'' (sono animate), ``un
+po' anni Duemila, ma oh: per un prototipo su TTS, chi se ne frega?''.
+
+\paragraph{Le cose ``fulminate''.} Infine la categoria preferita di Ruggero: ``le cose
+così fulminate che mi fanno chiedere: ma perché, perché, perché hanno messo queste
+cose qua? Non avremo mai una risposta''.
+\begin{itemize}
+  \item Una \textbf{Notecard}: un foglietto su cui si scrive con il tasto destro,
+        compilando \textbf{nome} (il titolo) e \textbf{descrizione}. Si chiamano
+        \textbf{index card}, ``usatissime per i giochi di ruolo in ambito americano,
+        il \emph{tabletop} RPG specialmente''. Una studentessa si è persa: come si
+        scrive? Tasto destro, e in fondo ci sono i due campi, nome e descrizione; si
+        può andare a capo e mettere più righe; il testo ``non è in tempo reale'', si
+        aggiorna solo quando si esce dal menu.
+  \item Un \textbf{lettore MP3}: ``che devo dirvi? C'è un lettore MP3. Se volete
+        giocare con la musica, ce l'abbiamo''. (Ruggero verifica che la classe senta
+        l'audio del suo computer: ``vi voglio far soffrire per davvero''.)
+  \item Un \textbf{contatore}, che si può far salire, scendere, azzerare, o in cui si
+        scrivono direttamente i numeri.
+  \item Un \textbf{tablet}, ``letteralmente un tablet'': ci si può aprire YouTube e
+        guardare video. ``È un tablet, ragà, è un tablet. Non so che dirvi''.
+  \item Una \textbf{sveglia} e una \textbf{calcolatrice}.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{I sacchetti}
+\label{a8:sec:sacchetti}
+
+Nella miscellanea ci sono finalmente ``le due cose che ci servono per davvero'': il
+\textbf{sacchetto infinito} e il \textbf{sacchetto}.
+
+\paragraph{Il sacchetto infinito.} Parte vuoto e rende infinito qualunque cosa gli si
+metta dentro: con un dado blu diventa un sacchetto infinito di dadi blu. Si può
+ricolorare e si può azzerare (tasto destro, \textbf{Reset}) per farne, per esempio, un
+sacchetto di dadi rossi. Ma Ruggero fa una richiesta precisa: \textbf{nei moduli per
+questo corso non si usa il sacchetto infinito}, perché ``a livello produttivo io vi
+chiederò quanti componenti avete, e infiniti non è un numero che è possibile stampare
+nella realtà''. Per comodità è utilissimo, ``ma non è questo il momento''.
+
+\paragraph{Il sacchetto normale.} Parte vuoto (passandoci sopra con il mouse si legge
+zero) e ci si mette dentro qualunque cosa. Ruggero colora tre cubetti di giallo, rosso
+e blu e li mette nel sacchetto; poi, con il tasto destro, decide \textbf{in che ordine}
+il sacchetto restituisce gli oggetti (figura~\ref{a8:fig:sacchetto}):
+\begin{description}
+  \item[LIFO] (\emph{last in, first out}): l'ultimo oggetto messo è il primo a
+        uscire. Messi blu, rosso, giallo, escono giallo, rosso, blu.
+  \item[FIFO] (\emph{first in, first out}): il primo messo è il primo a uscire.
+        Messi blu, rosso, giallo, escono blu, rosso, giallo.
+  \item[Random]: ``è random''.
+\end{description}
+``Chiaramente non siamo persone fulminate'': un sacchetto, nella realtà, si comporta in
+modo casuale, e quindi si mette \textbf{Random}. Nella prova, blu, rosso, giallo escono
+giallo, rosso, blu.
+
+\paragraph{Guardare dentro.} Per vedere che cosa c'è nel sacchetto: tasto destro,
+\textbf{Search}. La stessa funzione si usa sui \textbf{mazzi}, per vedere le carte
+rimaste.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    cubo/.style={draw, minimum size=0.55cm, inner sep=0pt},
+    etich/.style={font=\small\bfseries, anchor=east},
+    freccia/.style={-{Stealth[length=2mm]}, thick}
+  ]
+  % ingresso
+  \node[font=\footnotesize] at (0.9,1.9) {si inserisce};
+  \node[cubo, fill=blue!40] at (0,1.3) {B};
+  \node[cubo, fill=red!40] at (0.9,1.3) {R};
+  \node[cubo, fill=yellow!50] at (1.8,1.3) {G};
+  \draw[freccia] (2.3,1.3) -- (3.3,1.3);
+  \node[draw, thick, rounded corners=6pt, minimum width=1.5cm, minimum height=1.2cm,
+    align=center, font=\footnotesize] at (4.2,1.3) {sacchetto};
+  % uscite
+  \node[etich] at (7.2,2.2) {LIFO};
+  \node[cubo, fill=yellow!50] at (7.7,2.2) {G};
+  \node[cubo, fill=red!40] at (8.4,2.2) {R};
+  \node[cubo, fill=blue!40] at (9.1,2.2) {B};
+  \node[etich] at (7.2,1.3) {FIFO};
+  \node[cubo, fill=blue!40] at (7.7,1.3) {B};
+  \node[cubo, fill=red!40] at (8.4,1.3) {R};
+  \node[cubo, fill=yellow!50] at (9.1,1.3) {G};
+  \node[etich] at (7.2,0.4) {Random};
+  \node[cubo] at (7.7,0.4) {?};
+  \node[cubo] at (8.4,0.4) {?};
+  \node[cubo] at (9.1,0.4) {?};
+  \draw[freccia] (5.1,1.3) -- (5.5,2.2);
+  \draw[freccia] (5.1,1.3) -- (5.5,1.3);
+  \draw[freccia] (5.1,1.3) -- (5.5,0.4);
+  \node[font=\footnotesize] at (8.4,2.8) {ordine di uscita};
+\end{tikzpicture}
+\caption{Le tre modalità del sacchetto, con l'esempio di Ruggero: tre cubetti
+inseriti nell'ordine blu, rosso, giallo (B, R, G). Per un gioco da tavolo si usa
+\emph{Random}, che è il comportamento di un sacchetto reale.}
+\label{a8:fig:sacchetto}
+\end{figure}
+
+\paragraph{Approfondimento: il prototipo e la produzione.} La richiesta di non usare il
+sacchetto infinito anticipa un tema che il corso affronterà con la lezione sulla
+produzione: un gioco analogico è anche una \textbf{distinta dei componenti}, e ogni
+componente ha un costo. Un modulo che usa scorte infinite nasconde al designer la
+domanda ``quanti me ne servono davvero?'', che in un gioco stampato ha sempre una
+risposta. Lo stesso vale per i cubetti copiati a volontà con \texttt{Ctrl+V}: comodi
+per costruire, ma da contare prima di consegnare.
+
+% ---------------------------------------------------------------------
+\section{I componenti custom}
+\label{a8:sec:custom}
+
+``Allora, adesso arriviamo alla parte più incubo di tutte, che è la parte custom''. La
+categoria \textbf{Custom} raduna tutte le opzioni personalizzabili, comprese quelle già
+viste (la plancia, le figurine). Sono dieci (tabella~\ref{a8:tab:custom}).
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.6cm}p{10.0cm}@{}}
+\toprule
+\textbf{Componente} & \textbf{A che cosa serve e che cosa ne dice Ruggero} \\
+\midrule
+Custom Board & una plancia da un'immagine; la cornice si adatta all'immagine, ma ha
+il bordo di legno (sezione~\ref{a8:sec:plance}) \\
+Custom Figurine & lo \emph{standee} con fronte e retro (sezione~\ref{a8:sec:dadi}) \\
+Custom PDF & il \textbf{regolamento} del gioco, consultabile sul tavolo \\
+Custom Token & un gettone con \textbf{forma libera} (gestisce la trasparenza e la
+collisione), colorabile, impilabile; il retro è specchiato \\
+Custom Tile & una tessera di \textbf{forma regolare} (quadrata, esagonale, circolare,
+arrotondata) con fronte e retro corretti \\
+Custom Deck & un \textbf{mazzo} di carte da una griglia di immagini: ``la parte più
+difficile di tutte'' \\
+Custom Card & una carta singola, fronte e retro \\
+Custom Dice & un dado con le facce personalizzate, da un \emph{template} \\
+Custom Model & un modello 3D (mesh, texture, collider): non si vede a lezione \\
+Custom AssetBundle & pacchetti di modelli 3D, per esempio miniature: non si vede a
+lezione \\
+\bottomrule
+\end{tabular}
+\caption{I dieci componenti della categoria \emph{Custom}, come Ruggero li elenca
+(``board, tile, token, figurine, deck, card, dice, model, asset bundle, PDF''). Modelli
+3D e asset bundle in fase di prototipo sono fortemente sconsigliati.}
+\label{a8:tab:custom}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Il PDF del regolamento e la luce}
+\label{a8:sec:luce}
+
+\paragraph{Caricare un PDF.} Il \textbf{Custom PDF} chiede di caricare un PDF. Ruggero
+ne carica uno a caso, ``così a caso'': un PDF sul \emph{framework} DPE\footnote{``DPA
+Framework'' nella trascrizione; con ogni probabilità il materiale sul framework DPE
+(\emph{Design, Play, Experience}) visto nelle lezioni precedenti.}. ``Sempre
+aspettare che finisca questa rondella blu, se no TTS impazzisce''. Il PDF appare sul
+tavolo: è \textbf{molto piccolo} ed è \textbf{molto bianco}, quasi illeggibile, perché
+l'illuminazione dello sfondo ``fa schifo''. Ed ecco il punto chiave sugli sfondi,
+``lasciato in sospeso'' fino ad ora: cambiando lo sfondo cambia tutto. Ma magari non si
+vuole giocare ``con le vibes di un pub di fumatori incalliti''.
+
+\paragraph{Uno sfondo da un pixel.} Nel menu degli sfondi c'è un'opzione che Ruggero
+aveva taciuto apposta: \textbf{Custom}, che permette di scegliere uno sfondo proprio.
+Tabletop Simulator usa per gli sfondi panorami HDRI da $4000\times2000$ pixel, in un
+formato specifico; ``ma non ce ne frega niente, perché in realtà noi possiamo fregare il
+sistema'': come sfondo si può dare un'immagine di \textbf{un pixel per un pixel},
+monocromatica, e si ottiene uno sfondo monocromatico attorno al tavolo. Ruggero ne ha
+già preparati alcuni: dal menu \textbf{Modding}, alla voce \textbf{Cloud Manager}, si
+vede tutto quello che si è caricato in cloud (``utile anche a voi per sapere cosa avete
+caricato''), e lui ha una cartella di immagini utili con, tra l'altro, uno sfondo nero
+da un pixel, ``leggerissimo da caricare''. Copiato e incollato nel \emph{Custom
+Background}, il tavolo si ritrova ``in un nulla cosmico''. Ma la luce non cambia
+ancora: è ancora quella dello sfondo precedente.
+
+\paragraph{Le impostazioni di luce.} Dal menu \textbf{Options} si apre la voce
+\textbf{Lighting}. La prima cosa da fare è \textbf{slegare la luce dallo sfondo}
+(c'è una spunta apposta) e scegliere il \textbf{gradiente}: la visibilità migliora
+subito. Poi Ruggero va ``voce per voce'' (tabella~\ref{a8:tab:luce}): ``so che vi
+sembra complessa questa roba qui, ma non vi servirà sapere tutto''.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.4cm}p{9.2cm}@{}}
+\toprule
+\textbf{Voce} & \textbf{Che cosa fa e come impostarla} \\
+\midrule
+Luce legata allo sfondo & da \textbf{togliere}, scegliendo il gradiente \\
+Light Intensity & la luce \textbf{dall'alto}, verticale: alta ``brucia tutto'', bassa
+``non si vede niente''; di solito verso il fondo della barra, ma non al minimo \\
+Light Color & di default una luce calda, un bianco non puro: ``lasciate questa, è una
+buona luce'' \\
+Ambient Intensity & la luce \textbf{laterale}, dell'ambiente: cambia i bordi degli
+oggetti, non la faccia superiore; va bilanciata con la precedente ``in modo che non vi
+faccia sputare gli occhi'' \\
+Gradient Color (Sky, Equator, Ground) & ``non toccateli'' \\
+Reflection Intensity & quanto riflettono i componenti \textbf{metallici} (tavolo,
+dadi, pezzi): abbassata, il tavolo di metallo ``non riflette più niente'' e un dado
+metallico diventa opaco \\
+LUT e voci successive & ``ignorate queste cose, per carità. Non apriamo questo vaso
+di Pandora'' \\
+\bottomrule
+\end{tabular}
+\caption{Le impostazioni di luce di Tabletop Simulator (menu \emph{Options},
+\emph{Lighting}) con i consigli di Ruggero\protect\footnotemark.}
+\label{a8:tab:luce}
+\end{table}
+\footnotetext{La trascrizione rende l'ultima voce come ``loot loot contribution'' e
+``Gaston, loot''; dovrebbe trattarsi delle impostazioni della LUT (\emph{look-up
+table}), la tabella di correzione del colore. Ruggero aggiunge che chi è appassionato
+di grafica 3D può andare a vederle ``in privato''.}
+
+\paragraph{Come si vede la differenza.} Per mostrare la differenza tra le due
+intensità, Ruggero porta prima al massimo e poi al minimo l'\emph{ambient intensity}:
+``sembrano simili, ma non lo sono''. Il trucco è guardare un cubetto giallo: cambiando
+la \emph{light intensity}, i colori dei \textbf{bordi} restano uguali, perché è la luce
+verticale; cambiando l'\emph{ambient intensity}, che è la luce laterale, la faccia
+\textbf{superiore} resta uguale. Per la \emph{reflection intensity} Ruggero cambia
+tavolo (``lasciamo stare che sono volati via 38 componenti insieme, perché il tavolo
+l'ho rimpicciolito'') e mostra che cambiano solo i componenti metallici, ``dadi inclusi'':
+un dado ``nato metallico'' sembra cambiare colore e diventa ``bello matte''.
+
+\paragraph{Il regolamento sul tavolo.} Tornando al PDF: lo si sfoglia con le
+freccette, lo si ingrandisce, lo si mette a schermo. ``Questo è come importiamo i
+regolamenti dei nostri giochi'': se il gioco ha un regolamento in PDF, si carica con il
+Custom PDF, ``pulito, liscio, limpido, lampante''.
+
+\paragraph{Modelli e asset bundle: no.} \textbf{Custom Model} e \textbf{Custom
+AssetBundle} servono a caricare modelli 3D personalizzati, per esempio miniature. Non
+si vedranno a lezione e non servono in fase di prototipo: ``non solo non vi verrà
+richiesto, ma vi verrà fortemente incentivato a non usarli, a meno che non abbiate
+proprio un obbligo particolare''.
+
+% ---------------------------------------------------------------------
+\section{Token e tile}
+\label{a8:sec:token}
+
+\paragraph{Che cos'è un token.} ``Sapete cos'è un token?''. ``So che sembra una risposta
+banale, ma ci aiuta''. Una studentessa risponde: sono ``tipo quelle monetine che
+c'erano in alcuni giochi''. Sì, per esempio; ma fisicamente che cos'è? Un gettone, sì,
+e di solito è qualcosa che viene \textbf{estratto da una fustella}, una
+\emph{punchboard}: nei giochi da tavolo i token sono pezzi di cartone fustellato. ``Se
+avete comprato un gioco da tavolo nuovo, probabilmente li avete visti: li spingete via
+con le manine ed estraete questi tokenini di cartone''. Su Tabletop Simulator è la
+stessa cosa, solo che non li si estrae da una fustella.
+
+\subsection{Il Custom Token}
+\label{a8:sec:custom-token}
+
+Ruggero crea un token con un'immagine qualunque, il logo di Audacity: ``voilà, abbiamo
+il nostro token''. Le sue proprietà:
+\begin{itemize}
+  \item ha uno \textbf{spessore}, che dalle impostazioni custom si può aumentare (al
+        massimo diventa ``un bel tokenone grosso'');
+  \item si ridimensiona con \texttt{+} e \texttt{-}, come gli altri componenti;
+  \item può stare \textbf{in piedi} anziché coricato (\emph{Stand Up}); ``notate che è
+        molto strano, vedremo dopo perché'';
+  \item può essere \textbf{impilabile} (\emph{Stackable}).
+\end{itemize}
+
+\paragraph{Impilabile o no.} La dimostrazione: due copie dello stesso token, una
+normale e una impilabile. I token non impilabili messi uno sopra l'altro formano una
+pila ``fisicamente'', ma ciascuno si sposta isolatamente. I token impilabili, invece,
+vengono \textbf{impilati e contati} da Tabletop Simulator: passando sopra la pila con
+il mouse, il software dice che è di 14 token.
+
+\paragraph{Le proporzioni.} Il token \textbf{mantiene le proporzioni} dell'immagine: un
+token da un'immagine rettangolare (una ``B'') è rettangolare, non viene stirato.
+
+\paragraph{Il difetto: il retro è specchiato.} Quando si gira il token, la ``B'' è
+\textbf{al contrario}. Con un token che porta delle scritte (Ruggero ne prende uno con
+una scritta) il problema è evidente: girato, la scritta è rovesciata. E nelle opzioni
+di importazione non c'è modo di dire ``non flipparmi il retro al contrario'': con il
+Custom Token \textbf{non si può importare un componente con fronte e retro corretti}.
+
+\subsection{Il Custom Tile}
+\label{a8:sec:tile}
+
+Per avere un retro corretto si usa il \textbf{Custom Tile}, la \textbf{tessera}. Chiede
+cose simili ma non identiche: un'immagine \textbf{top} e un'immagine \textbf{bottom},
+cioè che cosa c'è davanti e che cosa c'è dietro. Ruggero crea un tile con la stessa
+immagine scritta del token e lo porta alla stessa dimensione, così da confrontarli.
+Le differenze:
+\begin{itemize}
+  \item il token ha il bordo del colore del fronte, il tile ha il bordo
+        \textbf{bianco};
+  \item girati, il tile \textbf{mantiene la scritta corretta};
+  \item il tile può avere un \textbf{retro diverso} dal fronte;
+  \item il tile ha opzioni di \textbf{forma}: quadrato, \textbf{esagonale},
+        \textbf{circolare}, \textbf{rounded} (rettangolare con i bordini
+        arrotondati); il token non le ha.
+\end{itemize}
+``E quindi la domanda è: perché mai dovrei usare un token, quando posso usare un tile?''.
+
+\paragraph{Il colore.} La prima risposta è il colore. Colorati entrambi di giallo (poi
+di blu), il \textbf{tile} colora \textbf{solo il bordo}, mentre il \textbf{token} mette
+un \textbf{filtro} colorato su tutta l'immagine. Quindi, se si vogliono tre token con
+la stessa immagine, uno rosso, uno giallo e uno blu, il token permette di colorarli; e
+su un'immagine bianca il colore viene applicato preciso (un rettangolo bianco colorato
+di bianco resta il colore di base).
+
+\paragraph{La trasparenza.} La seconda risposta è la trasparenza. Il token permette di
+creare segnalini con la \textbf{trasparenza}, cioè \textbf{forme personalizzate}; il
+tile la trasparenza non la gestisce, e la stessa immagine darà sempre una tessera con lo
+sfondo bianco. Da cui la regola (tabella~\ref{a8:tab:token-tile}): \textbf{forma
+custom, token; forma regolare (circolare, quadrata, arrotondata), spesso è più comodo
+il tile}. ``Se avete dubbi o domande, vi prego, chiedetele, perché da adesso in poi
+questo software fa solo che complicarsi la vita''.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.6cm}p{4.4cm}p{4.4cm}@{}}
+\toprule
+ & \textbf{Custom Token} & \textbf{Custom Tile} \\
+\midrule
+Forma & libera, dalla trasparenza del PNG & regolare: quadrata, esagonale,
+circolare, arrotondata \\
+Trasparenza & sì & no (sfondo bianco) \\
+Retro & lo stesso del fronte, \textbf{specchiato} & immagine \emph{top} e
+\emph{bottom}, corretta e anche diversa \\
+Colore (Color Tint) & filtro su tutta l'immagine & solo il bordo \\
+Bordo & del colore del fronte & bianco \\
+Altre opzioni & spessore, \emph{Stand Up}, \emph{Stackable} & spessore, forma \\
+Quando usarlo & segnalini sagomati, \emph{meeple}, standee, tabelloni (con
+spessore minimo) & tessere, segnalini con scritte su entrambi i lati, plance \\
+\bottomrule
+\end{tabular}
+\caption{Token e tile a confronto, secondo la dimostrazione di Ruggero.}
+\label{a8:tab:token-tile}
+\end{table}
+
+\paragraph{Le sagome di persone.} Una domanda: le sagome di persone sono immagini
+trasparenti fatte a token? Sì: nel Custom Token c'è l'opzione \textbf{Stand Up}, e con
+un bordo un po' più ampio si ottiene una sagoma in piedi (``dev'essere molto grosso,
+questo però, capiamoci''). Se il bordo è impreciso, è un lavoro ``di finezza'' sulla
+\textbf{Merge Distance}: modificandola, il software ritaglia bordi più o meno accurati
+in base a che cosa vede nell'immagine.
+
+% ---------------------------------------------------------------------
+\section{Il dado custom}
+\label{a8:sec:dado}
+
+``E ora arriviamo al punto che è traumatico. Ma ci siamo''. Mancano due componenti, il
+\textbf{dado custom} e il \textbf{mazzo custom}.
+
+\paragraph{Un'immagine per sei facce?} Il \textbf{Custom Dice} chiede prima che dado
+si vuole (d4, d6, d8, d10, d12, d20), poi \textbf{un'immagine}. Una sola immagine per
+sei facce? Che immagine? Provando con un'immagine a caso, il software la
+\textbf{spalma} su tutto il dado. ``Al che la risposta è: Tabletop Simulator, che cosa
+hai bevuto stasera? Come faccio a sapere che immagine devo caricare su questo dado?''.
+
+\paragraph{I template nascosti.} La risposta sta nei file di installazione. Da
+\textbf{Steam}: tasto destro su Tabletop Simulator nella libreria, \textbf{Proprietà},
+\textbf{File installati}, \textbf{Sfoglia}. Si apre la cartella del software, e qui
+l'avvertenza è perentoria: ``modificare questi file fa esplodere Tabletop Simulator.
+Quindi non cancellate niente, non toccate niente''. Dentro c'è la cartella
+\textbf{Modding}, con \emph{Deck Builder}, \emph{Deck Templates}, \emph{Dice
+Templates} e altro. Nei \textbf{Dice Templates} ci sono le \textbf{UV map} dei dadi
+(``maledetti, infami''\ldots).
+
+\paragraph{Che cos'è una UV map.} Per chi non ha mai fatto modellazione 3D, Ruggero usa
+un'immagine: i cioccolatini a forma di coniglio o di Babbo Natale avvolti nella carta
+metallizzata. Srotolata, la carta è un'immagine piatta, ma avvolge una forma
+tridimensionale. Allo stesso modo, il template è ``la carta che va messa attorno a
+questo dado'': dice dove sono, nell'immagine piatta, le facce che interessano.
+
+\paragraph{La procedura.} Si fa \textbf{una copia} del template del d6 (``non
+modificate direttamente quel file, vi prego''), la si carica così com'è, ``e bum'':
+il dado custom ha le facce di un d6 normale (``a questo punto usa il dado base, che era
+anche meno brutto da vedere''). Ma l'immagine si può modificare, con Photoshop, GIMP,
+``ma anche Paint''. Ruggero la apre con Paint e fa ``un lavoro approssimativo, fatto
+davvero male, giusto per capirci'': i numeri pari rossi, i dispari verdi. Salva,
+ricarica, ``e voilà: abbiamo il nostro bel dado. Bello è un eufemismo, chiaramente.
+Brutto, ma ce l'abbiamo''. Le facce si possono quindi riempire di simboli o di
+qualunque altra cosa.
+
+\paragraph{Dov'è la cartella?} Uno studente si è perso: qual è la cartella? Ruggero
+ripete: libreria di Steam, tasto destro su Tabletop Simulator, Proprietà, File
+installati, Sfoglia; poi \emph{Modding} e \emph{Dice Templates}. ``Lo so, è brutto. È
+così, va così''.
+
+% ---------------------------------------------------------------------
+\section{Il mazzo custom}
+\label{a8:sec:mazzo}
+
+``Ora arriva la parte più difficile di tutte, che purtroppo è quella più usata'': se si
+fa un gioco da tavolo, di solito si fa un mazzo di carte personalizzato. ``Questa
+parte qua è un inferno, ve lo dico per prepararvi psicologicamente''. Ruggero libera
+metà del tavolo (``buttiamo tutto qua in alto, anche la ciotola'') e apre il
+\textbf{Custom Deck}.
+
+\subsection{Le opzioni di importazione}
+\label{a8:sec:mazzo-opzioni}
+
+Il software chiede, nell'ordine:
+\begin{description}
+  \item[La forma delle carte:] rettangolari con i bordi arrotondati, rettangolari
+        senza, esagonali, circolari. Si lascia \emph{Rectangle (Rounded)}, ``le
+        classiche da poker''.
+  \item[La facciata] (\emph{Face}): l'immagine dei fronti.
+  \item[Unique Backs:] se i retri sono \textbf{tutti uguali} (come nelle carte da
+        poker) o se \textbf{ogni carta ha il suo retro}, come in certi giochi in cui
+        ``un evento che puoi girare quando succedono cose ha dietro un evento
+        diverso''. L'opzione più comune è nessun retro unico.
+  \item[Il retro] (\emph{Back}).
+  \item[Larghezza, altezza e numero:] \emph{Width}, \emph{Height} e \emph{Number}.
+\end{description}
+
+\paragraph{La griglia.} Le ultime tre voci non sono centimetri: sono numeri che vanno
+da 2 a 10 (la larghezza), da 2 a 7 (l'altezza) e da 2 a 70 (il numero). Il motivo:
+su Tabletop Simulator \textbf{ogni mazzo è una griglia di carte}, un'unica immagine
+che le contiene tutte, e larghezza e altezza sono le dimensioni della griglia in
+carte. Una griglia $5\times5$ contiene 25 posizioni, e nel numero si scrive
+\textbf{24}.
+
+\paragraph{Perché 24 e non 25.} Per ``motivi vestigiali'', \textbf{l'ultima posizione
+della griglia non è usabile}: un tempo era usata per il retro, prima che venisse
+aggiunta l'opzione del retro separato, e cambiare tutto ``farebbe saltare i vecchi
+moduli''. Usarla dà problemi. Ne segue che il massimo di carte in un mazzo è
+$10\times7-1 = \mathbf{69}$. Serve un mazzo più grande? Lo si importa in \textbf{due
+mazzi separati} e poi li si mescola (figura~\ref{a8:fig:griglia}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize, x=0.62cm, y=0.85cm]
+  % griglia 5x5
+  \foreach \r in {0,...,4} {
+    \foreach \c in {0,...,4} {
+      \pgfmathtruncatemacro{\n}{\r*5+\c+1}
+      \ifnum\n<25
+        \draw[fill=gray!10, rounded corners=1.5pt] (\c,-\r) rectangle ++(0.88,-0.88);
+        \node at (\c+0.44,-\r-0.44) {\n};
+      \else
+        \draw[dashed, fill=white, rounded corners=1.5pt] (\c,-\r)
+          rectangle ++(0.88,-0.88);
+        \draw[thick] (\c+0.1,-\r-0.1) -- (\c+0.78,-\r-0.78);
+        \draw[thick] (\c+0.78,-\r-0.1) -- (\c+0.1,-\r-0.78);
+      \fi
+    }
+  }
+  \node[anchor=north, align=center] at (2.44,-5.1) {\emph{Width} 5, \emph{Height} 5,
+    \emph{Number} 24};
+  % nota a destra
+  \node[anchor=west, text width=6.4cm, align=left, font=\small] at (6.2,-2.2) {
+    \textbf{Ogni mazzo è una griglia.}\\[2pt]
+    \textbullet\ larghezza da 2 a 10, altezza da 2 a 7\\
+    \textbullet\ l'\textbf{ultima cella} non si usa (era il vecchio retro)\\
+    \textbullet\ massimo $10\times7-1 = 69$ carte per mazzo\\
+    \textbullet\ più carte: due mazzi, poi si mescolano\\
+    \textbullet\ immagine della griglia: al massimo 10.000 pixel\\
+    \textbullet\ celle vuote in più: carte nere inutili};
+\end{tikzpicture}
+\caption{La griglia di un mazzo custom nell'esempio di Ruggero: $5\times5$, con 24
+carte e l'ultima cella inutilizzabile. Ricostruzione schematica.}
+\label{a8:fig:griglia}
+\end{figure}
+
+\paragraph{I template dei mazzi.} Nella stessa cartella dei template dei dadi ci sono i
+\textbf{Deck Templates}, con esempi di griglie (anche qui l'ultima carta non è usata).
+Servono a poco: danno carte rettangolari e carte quadrate, ma ``che dimensione sono
+queste carte? Io magari ho carte di dimensione diversa, strette e alte. Come
+faccio?''. La griglia si può comporre a mano con qualunque programma, anche Photoshop,
+mettendo le carte ``a manina una di fianco all'altra'', ``ma impazzite senza se e senza
+ma''.
+
+\subsection{Il Deck Editor}
+\label{a8:sec:deck-editor}
+
+Per questo, nella cartella \emph{Modding}, alla voce \emph{Deck Builder}, Tabletop
+Simulator ha un \textbf{software secondario}: il \textbf{TTS Deck Editor}. Prima
+pessima notizia: \textbf{non esiste per Mac}. ``Spero che abbiate dei compagni di gruppo
+con Windows''. (E Ruggero ricorda che fare un gioco da tavolo non è obbligatorio:
+``potete fare anche giochi pervasivi, LARP, giochi di ruolo''.)
+
+Il Deck Editor ``è questa orripilezza qua, sembra fatto da un ingegnere''. La
+procedura che Ruggero mostra (figura~\ref{a8:fig:mazzo}):
+\begin{enumerate}
+  \item \textbf{Nuovo mazzo}: il programma chiede larghezza e altezza della griglia,
+        ``esattamente quelli che TTS ci chiede''. Ruggero sceglie $5\times5$. La
+        griglia è ``grigia su grigia'', quindi non si vede (``un altro aspetto della
+        brillantezza geniale dei programmatori''): compare solo quando ci si
+        trascinano dentro le carte.
+  \item Si \textbf{trascinano} le immagini delle carte nella griglia e le si copia
+        quante volte serve. Nell'esempio: quattro copie dei numeri dal 2 al 6 e
+        quattro Jack, ``a caso, non è un mazzo reale''.
+  \item \textbf{File, Save Deck As}: si salva nella propria cartella di lavoro un file
+        \texttt{.tsdb} (Ruggero lo chiama ``mazzo''). Ma Tabletop Simulator
+        \textbf{non apre i \texttt{.tsdb}}: quel file serve solo a riaprire il mazzo nel
+        Deck Editor.
+  \item \textbf{File, Export}, con due accorgimenti: \textbf{togliere la spunta da
+        Upload Image} (le immagini si caricano a mano, non online) e impostare
+        \textbf{Max Deck Size a 10.000}. È ``una \emph{safety measure}'': se le carte
+        sono gigantesche, il programma le ridimensiona in modo che la griglia non
+        superi i 10.000 pixel, perché ``Tabletop Simulator crasha con le immagini più
+        grosse di 10.000 pixel''. Si esporta e si ottiene \textbf{l'immagine della
+        griglia}.
+  \item In Tabletop Simulator, nel Custom Deck: l'immagine della griglia come fronte
+        (in cloud), un retro generico (``questo blu mi va bene''), griglia $5\times5$,
+        numero 24.
+  \item \textbf{Sideways}: è un'opzione vestigiale, ``non spuntatela''; serviva ai
+        vecchi mazzi, che non potevano avere carte orizzontali.
+  \item \textbf{Backs is hidden}: \textbf{va spuntata}.
+  \item \textbf{Import}, ``ed eccolo qua: abbiamo il nostro mazzo''.
+\end{enumerate}
+
+\paragraph{Backs is hidden e le mani.} Ruggero mostra a che cosa serve l'ultima spunta.
+Dà delle carte alla propria mano e ad altre mani: le carte esistono, ma lui non vede
+che cosa c'è nelle mani altrui. Cambiando colore e passando al giallo, vede il giallo e
+non vede più l'arancione. \emph{Backs is hidden} significa questo: quando una persona
+ha una carta in mano, quella carta è nascosta, e nelle mani degli altri si vede
+\textbf{il retro} delle carte anziché il fronte.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    passo/.style={draw, thick, rounded corners, text width=3.3cm, align=center,
+      minimum height=1.25cm, fill=gray!10},
+    file/.style={draw, dashed, rounded corners, text width=2.5cm, align=center,
+      minimum height=0.8cm, font=\footnotesize},
+    freccia/.style={-{Stealth[length=2.5mm]}, thick}
+  ]
+  \node[passo] (a) at (0,0) {\textbf{Deck Editor}\\ nuovo mazzo, griglia $W\times H$};
+  \node[passo] (b) at (4.2,0) {trascinare e copiare le \textbf{carte}};
+  \node[passo] (c) at (8.4,0) {\textbf{Export}: niente Upload Image, Max Deck Size
+    10.000};
+  \node[passo] (d) at (8.4,-2.4) {\textbf{TTS}, Custom Deck: fronte (cloud), retro,
+    $W$, $H$, numero};
+  \node[passo] (e) at (4.2,-2.4) {Sideways \textbf{no}, Backs is hidden
+    \textbf{sì}, Unique Backs se serve};
+  \node[passo] (f) at (0,-2.4) {\textbf{Import}: il mazzo è sul tavolo};
+  \node[file] (s) at (4.2,1.6) {\texttt{.tsdb}: si riapre solo nel Deck Editor};
+  \draw[freccia] (a) -- (b);
+  \draw[freccia] (b) -- (c);
+  \draw[freccia] (c) -- (d);
+  \draw[freccia] (d) -- (e);
+  \draw[freccia] (e) -- (f);
+  \draw[freccia, dashed] (b) -- node[right, font=\footnotesize] {Save Deck As} (s);
+\end{tikzpicture}
+\caption{Il flusso di lavoro per creare un mazzo custom, come lo mostra Ruggero. Il
+file \texttt{.tsdb} conserva il mazzo per le modifiche successive; a Tabletop
+Simulator serve l'immagine esportata.}
+\label{a8:fig:mazzo}
+\end{figure}
+
+\subsection{Le domande di Gianmarco}
+\label{a8:sec:mazzo-domande}
+
+\paragraph{Gli angoli arrotondati.} Gianmarco si è perso una cosa: l'arrotondamento
+degli angoli delle carte l'ha fatto Ruggero nelle immagini? Sì e no. Ruggero ha
+scaricato da internet un kit di carte singole, ``ce ne sono mille online'', già con gli
+angoli arrotondati; ma nelle opzioni custom le carte sono impostate come arrotondate.
+Impostandole rettangolari senza arrotondamento, gli angoli diventano neri, perché il
+software riempie con il nero la trasparenza dell'immagine. Quando invece le si imposta
+arrotondate, è il software ad arrotondarle ``a manina'', e infatti l'arrotondamento
+del mazzo è un po' meno accentuato di quello delle immagini.
+
+\paragraph{Più celle che carte.} ``È una domanda veramente stupida'': che cosa succede
+se si mette una griglia $6\times6$ e poi un numero diverso dalle carte reali? Ruggero
+lo mostra sul $5\times5$, impostando 35 carte: ``ti dà carte nere che non servono''.
+
+\subsection{Carte con retri diversi}
+\label{a8:sec:retri}
+
+Finora le carte avevano tutte lo stesso retro. Per un mazzo in cui \textbf{ogni carta
+ha il suo retro}: Ruggero copia il file \texttt{.tsdb} (``lo chiamo mazzo retro, così
+lavoriamo su un mazzo diverso'') e vi compone la versione ``dark'' delle stesse carte,
+nelle stesse posizioni (i numeri dal 2 al 6 neri, e il Jack). Nel Custom Deck, come
+fronte resta la griglia di prima; come retro si carica la \textbf{seconda griglia, che
+dev'essere identica} nella disposizione; si spunta \textbf{Unique Backs}. Importato, il
+mazzo ha ``ognuna il suo retro''. È anche la risposta alla domanda di uno studente sulle
+carte a doppia faccia, come quelle di \emph{Taboo}\footnote{``Tabu'' nella
+trascrizione.}.
+
+\subsection{La carta singola e le carte bucate}
+\label{a8:sec:bucate}
+
+\paragraph{La carta singola.} Il \textbf{Custom Card} chiede semplicemente fronte e
+retro, ``senza tutto il resto''. Ruggero crea una carta con il re bianco davanti e il re
+nero dietro: una carta singola, che si può mettere insieme alle altre.
+
+\paragraph{Si possono bucare le carte?} Una studentessa chiede se le carte possono essere
+forate, ``tipo una sorta di stencil''\footnote{La trascrizione dice ``una sorta di
+stendarda'' e poi ``una sorta di scherzo''; dal seguito si capisce che si parla di
+carte con dei fori, attraverso cui si vede ciò che sta sotto.}. Sì, perché Tabletop
+Simulator gestisce la trasparenza. Ruggero copia il re, lo apre in Photoshop (``per
+bucare le cose sono più comodo'') e ci fa un buco e un taglio scanalato di fianco;
+basta un qualunque PNG con della trasparenza. Ricaricata, la carta \textbf{è bucata}:
+si vede attraverso. ``Attenzione, però'': è bucata \textbf{l'immagine}, ma non è
+bucata la \textbf{collisione}; un oggetto appoggiato sopra il buco non ci passa. E
+il retro può anche non essere bucato: Ruggero ha bucato solo uno dei due lati, ``una
+carta che non può esistere fisicamente''. La carta ha comunque uno spazio fisico che
+non si può cambiare. Se si vogliono carte con uno \textbf{spazio fisico bucato}, si
+usa il \textbf{token}, che gestisce la trasparenza \emph{anche} nella collisione: un
+token ingrandito, appoggiato su un altro oggetto, non collide dove è trasparente.
+
+% ---------------------------------------------------------------------
+\section{Il tabellone senza cornice}
+\label{a8:sec:tabellone}
+
+Resta il problema della plancia con la cornice di legno
+(sezione~\ref{a8:sec:plance}). ``Già lo sapete a questo punto come si fanno i
+tabelloni'': \textbf{non li si importa come plance, li si importa come token}. Si crea
+un token con una \textbf{profondità molto bassa}, gli si dà l'immagine del tabellone,
+lo si ingrandisce in formato tabellone e lo si \textbf{blocca} sul tavolo. ``Anche se
+tecnicamente, per TTS, è un token, questa per noi è una plancia''.
+
+\paragraph{La prima pausa.} ``Ora vi darei forse dei minuti di pausa prima di passare
+alla prossima fase, se vi va''. ``Se non è già troppo tardi, forse vi ho già consumato
+troppo''. Pausa di sette minuti: si riprende alle \textbf{18:40}.
+
+% ---------------------------------------------------------------------
+\section{Penna, testo e fogli di carta}
+\label{a8:sec:penna}
+
+Al rientro Tiziana saluta (``nessun problema, Tiziana, va benissimo'') e, a quanto
+si capisce, lascia la lezione. Ruggero riapre alle domande su quanto visto finora:
+caricare componenti, aggiungerli al tavolo.
+
+\paragraph{Esistono delle penne?} Una studentessa chiede se esistono delle penne, per i
+giochi in cui bisogna appuntare dei punti o scrivere delle cose. Sì: c'è lo strumento
+\textbf{Draw}, la penna, in alto a sinistra, di cui si può cambiare il colore e con cui
+si disegna e si scrive sui componenti. (Ruggero si accorge di non aver ancora
+ricondiviso lo schermo dopo la pausa: ``giustamente, se no non vedete''.) Ma la penna
+non è un componente che si aggiunge: è uno degli \textbf{strumenti base} di TTS, come
+il \emph{Grab} e lo strumento \textbf{Testo}. Sono strumenti usati solo nei giochi che
+li richiedono, per esempio i \emph{party game} in cui si disegna.
+
+\paragraph{Il foglio di carta.} Quello che manca è il foglio. Ma il foglio può essere
+un \textbf{tile} o un \textbf{token bianco} su cui si disegna con la penna nera; oppure
+si può usare una texture di carta. O, ancora, si apre un \textbf{tavolo custom} con una
+texture bianca: allora ``tutto il tavolo è il nostro tabellone''.
+
+% ---------------------------------------------------------------------
+\section{Salvare e pubblicare il modulo}
+\label{a8:sec:workshop}
+
+Il modulo ha luce, tavolo, sfondo e componenti. Come lo si salva?
+
+\paragraph{Save \& Load: solo in locale.} La prima opzione è nel menu \textbf{Games},
+alla voce \textbf{Save \& Load}. Ruggero salva il modulo come ``Prototipo''; il
+salvataggio compare nell'elenco e, cliccandoci, ricarica il modulo così com'era, anche
+dopo aver cambiato stanza: ``si ricorda tutto quello che c'era''. Ma un salvataggio è
+\textbf{usabile solo in locale}: non lo si può mandare a un \emph{publisher} perché lo
+valuti. Per questo bisogna caricarlo come modulo sul \textbf{Workshop} di Steam, ``e
+fare questa cosa è un po' più complesso''.
+
+\subsection{Upload e Update}
+\label{a8:sec:upload}
+
+Dal menu \textbf{Modding}, la voce \textbf{Workshop Upload} apre una finestra con due
+schede:
+\begin{description}
+  \item[Upload Workshop] si usa \textbf{solo la prima volta} che si carica il
+        modulo;
+  \item[Update Workshop] si usa per \textbf{tutti gli aggiornamenti} successivi, ``ed
+        è più semplice''.
+\end{description}
+
+\paragraph{Le informazioni del modulo.} Prima di caricare conviene compilare le
+\textbf{Info} del modulo (dal menu del gioco): nome, tipologia, complessità, tempo di
+gioco, numero di giocatori, \emph{tag} del Workshop. ``Queste sono informazioni
+meccaniche del Workshop''. Ruggero imposta: tipo \emph{game}, complessità bassa,
+30--60 minuti, da 2 a 4 giocatori, nome ``prototipo brutto''. (Nel farlo, si accorge di
+aver aggiunto per sbaglio un modulo: ``è un inferno, adesso''.)
+
+\paragraph{Il caricamento.} Nell'Upload si scrivono il \textbf{titolo} (``prototipo
+brutto''), una \textbf{descrizione} (``quello che volete, lasciamola uguale al
+titolo'') e un'\textbf{immagine di anteprima}: ``mi sembra \emph{fitting} metterci la
+texture del legno''. Si fa Upload; dopo qualche secondo compare in alto una scritta
+verde: il modulo è caricato. Un \emph{pop-up} mostra un numero, l'identificativo del
+Workshop, e raccomanda di conservarlo. ``Non ce ne frega niente'': si recupera quando
+si vuole, ``non dobbiamo salvarlo o esplodere il mondo''.
+
+\paragraph{La pagina del Workshop.} Nella libreria di Steam, su Tabletop Simulator, c'è
+la voce \textbf{Workshop}; da lì, \textbf{i tuoi oggetti}, \textbf{oggetti
+pubblicati}. C'è ``prototipo brutto'', con la sua pagina, ``esattamente come le
+altre, solo che più brutta'', con il tasto \textbf{Iscriviti} come gli altri moduli.
+In alto, però, c'è scritto che la visibilità attuale è \textbf{nascosta}: solo l'autore
+può vederlo.
+
+\subsection{La visibilità: unlisted}
+\label{a8:sec:visibilita}
+
+Dalla pagina si cambia la visibilità: \textbf{pubblico}, \textbf{solo amici},
+\textbf{non in elenco} (\emph{unlisted}), \textbf{nascosto}. Le opzioni che servono sono
+due; ``le altre sono delle mezze vie che non servono a nessuno''.
+\begin{description}
+  \item[Pubblico:] chiunque può entrare nel modulo, guardarlo, copiare le cose,
+        prendere i componenti, salvarsi oggetti e immagini.
+  \item[Unlisted:] lo vede solo chi riceve il \textbf{link diretto}. L'URL del modulo
+        è in alto nella pagina; oppure, tasto destro sullo sfondo, \emph{Copia URL
+        della pagina}.
+\end{description}
+\textbf{Per questo corso, i moduli si pubblicano unlisted}, ``se dovete farlo''. La
+pagina del Workshop si può modificare come quelle degli altri giochi (Ruggero ne apre
+una come esempio): descrizione, titolo, altre immagini, screenshot, ``paro paro''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    passo/.style={draw, thick, rounded corners, text width=2.7cm, align=center,
+      minimum height=1.3cm, fill=gray!10},
+    locale/.style={draw, dashed, rounded corners, text width=2.7cm, align=center,
+      minimum height=1.3cm},
+    freccia/.style={-{Stealth[length=2.5mm]}, thick}
+  ]
+  \node[locale] (s) at (0,1.8) {\textbf{Save \& Load}\\ \footnotesize solo sul proprio
+    computer};
+  \node[passo] (i) at (0,0) {\textbf{Info}: nome, tipo, complessità, tempo,
+    giocatori};
+  \node[passo] (u) at (3.5,0) {\textbf{Workshop Upload}: titolo, descrizione,
+    anteprima};
+  \node[passo] (p) at (7.0,0) {Steam: \textbf{pagina} del modulo (nascosto)};
+  \node[passo] (v) at (10.5,0) {visibilità \textbf{unlisted}: si condivide il
+    link};
+  \node[locale] (up) at (3.5,-2.0) {\textbf{Workshop Update}\\ \footnotesize per ogni
+    modifica successiva};
+  \draw[freccia] (i) -- (u);
+  \draw[freccia] (u) -- (p);
+  \draw[freccia] (p) -- (v);
+  \draw[freccia, dashed] (up) -- (u);
+\end{tikzpicture}
+\caption{Dal salvataggio locale al modulo condivisibile, secondo la procedura di
+Ruggero. La prima pubblicazione si fa con l'Upload, tutte le successive con l'Update.}
+\label{a8:fig:workshop}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Prendere i componenti degli altri}
+\label{a8:sec:riuso}
+
+\paragraph{Save Object.} Una studentessa chiede: quindi chiunque potrebbe prendere i
+componenti di altri giochi, se li si fa pubblici? ``Ah, sì, certo. Anzi, adesso arrivo
+a parlarvi di questo''. Se serve un componente particolare trovato in un altro modulo,
+lo si può salvare. Ruggero apre un modulo pubblico\footnote{``Farm Race'' nella
+trascrizione: il titolo del modulo non è verificabile.} che ha dei token a forma di
+animale e prende una \textbf{gallina}: tasto destro, \textbf{Save Object}, e la si
+chiama ``gallina''. Tornati nel proprio modulo, dal menu Oggetti c'è l'ultima voce che
+non aveva ancora nominato, \textbf{Oggetti salvati}: la gallina è lì. ``Così come io
+ho salvato un granchio col coltello, per esempio. Può sempre essere utile''. ``Ho anche
+un granchio senza coltello''.
+
+\paragraph{Dove finiscono gli oggetti salvati.} Una studentessa ha salvato un mazzo di
+carte, con immagini caricate da lei, ma non lo trova più. Se ha fatto un \emph{Save
+Object}, dovrebbe trovarlo negli oggetti salvati; caricare le immagini da qualche parte,
+da sola, non salva l'oggetto. In ogni caso, \textbf{tutto quello che si è caricato} è
+nel menu \textbf{Modding}, alla voce \textbf{Cloud Manager}. È anche buona pratica
+farci un po' di pulizia.
+
+\subsection{Quando la sorgente sparisce}
+\label{a8:sec:sorgente}
+
+Gli oggetti salvati restano utilizzabili \textbf{finché chi ha caricato l'immagine la
+tiene online}. Ruggero ha appena cancellato dal cloud un'immagine (una carta,
+``lanciata nel sole'') e vuole mostrare che cosa succede: ricaricando il modulo
+dovrebbero comparire degli errori. Ma sul suo computer non succede, perché le immagini
+sono ancora nella \emph{cache}, e per svuotarla dovrebbe chiudere e riaprire il software
+(``non ho voglia''). Allora condivide il link del Workshop perché qualcuno lo provi.
+
+\paragraph{Discord, non la chat.} Prova a scrivere il link nella chat della lezione;
+``No, su Discord, Ruggero, altrimenti non possiamo copiarlo e incollarlo''. Ha ragione:
+gli anni scorsi non era così, ma la piattaforma ha cambiato le impostazioni di
+sicurezza (``con la questione delle IA hanno aumentato le difese, ma verso cosa?
+Comunque, questi sono i miei rant''). Uno studente vorrebbe provare a condividere lo
+schermo, ma è collegato dal computer aziendale, che non gli permette di installare
+Steam. Ruggero allora descrive l'effetto: chi carica un modulo a cui manca la sorgente
+di un'immagine vede un \textbf{messaggio di errore rosso} in alto, ripetuto nella chat
+del gioco, e il componente può non caricarsi affatto.
+
+\paragraph{La gallina era un modello 3D.} Il caso della gallina è istruttivo. Aprendo
+il suo menu custom, si scopre che non è un token: è un \textbf{modello 3D custom}, a cui
+qualcuno ha dato una \textbf{mesh}, un'immagine \textbf{diffuse} e un \textbf{collider}.
+Per non perderla, bisognerebbe salvare sul proprio computer queste tre cose
+separatamente: ``roba da uscirci impazziti''. Quindi: \textbf{attenzione a che cosa si
+salva}, e da dove viene.
+
+\paragraph{I moduli di meeple.} Esistono però moduli che fanno ``il lavoro sporco'' per
+gli altri. Ruggero ne usava uno ``che era una bomba atomica'', in cui qualcuno aveva
+caricato più di cento modelli 3D di \emph{meeple} di forme diverse; lo riapre, il
+software va in crash, e quando lo riapre davvero ne è sopravvissuta circa la metà:
+``RIP''. Ma cercando ``meeples'' nel Workshop di Tabletop Simulator si trovano vari
+moduli che hanno l'unico scopo di fornire segnalini di varie forme\footnote{La
+trascrizione cita un modulo che rende con ``Wooden Talker'' e un altro, ``Mipolorama'',
+probabilmente un gioco di parole su \emph{meeple}; i titoli esatti non sono
+ricostruibili.}: un riccio, un omino col cappello, barche, camion, stivali, ``tutti
+ricolorabili''. ``Avete l'imbarazzo della scelta''.
+
+% ---------------------------------------------------------------------
+\section{I moduli di Ruggero}
+\label{a8:sec:moduli}
+
+``Ora vi faccio vedere cosa si può fare su Tabletop Simulator quando si lavora per fare
+dei moduli'': i moduli che Ruggero ha fatto in passato, ``dai più \emph{easy} ai più
+complessi''.
+
+\subsection{Un gioco di carte}
+\label{a8:sec:mod-carte}
+
+Il primo è un gioco ``molto \emph{card based}'' fatto per un lavoro\footnote{La
+trascrizione dice ``quando lavoravo per Camon''; il nome del committente non è
+ricostruibile.}. C'è il \textbf{regolamento} in alto, che si apre a doppia pagina;
+\textbf{nove mazzi} di carte; un \textbf{tabellone} con i segnalini che segnano le
+risorse e che \textbf{scattano in posizione} (``non stanno a metà via''); sacchetti con
+i dadi; plance con i tracciati e i segnalini delle risorse. ``Liscio, regolare: tutte
+cose che in teoria dovreste già saper fare anche voi''.
+
+Ruggero ne approfitta per interrogare la classe:
+\begin{itemize}
+  \item La \textbf{bandiera}, che componente è? Un \textbf{token}, perché ha una forma
+        non regolare; e infatti, girata, è specchiata dietro. Lo stesso vale per un
+        segnalino col numero 5, specchiato sul retro.
+  \item Questi segnalini rotondi? Sono \textbf{tile} rotondi: il retro non è
+        specchiato.
+  \item La \textbf{plancia}? È una tessera.
+  \item Le carte sono mazzi custom. Un mazzo è di \textbf{18 carte}: che griglia ha
+        usato? Uno studente propone $7\times3$, ``e poi ne butti via due''; un altro
+        $10\times2$. È un $10\times2$. Con $7\times3$ si sprecherebbero tre celle
+        (21 meno 18), e una comunque non si può usare; $9\times2$ non basta, perché
+        l'ultima cella non è usabile; con 18 carte le celle sprecate sono almeno due.
+        ``Potevo fare anche un $5\times4$''.
+\end{itemize}
+
+\subsection{La demo di un gioco grande}
+\label{a8:sec:mod-cyberpunk}
+
+Il secondo è il modulo completo della \textbf{demo} di un gioco da tavolo grande,
+legato a \emph{Cyberpunk}\footnote{La trascrizione dice ``il modulo completo della demo
+di Cyberpunk. Destiny 7''; più avanti Ruggero cita il suo lavoro su ``Marvel United e
+Cyberpunk'' e una cartella ``Cyberpunk'' nel suo Cloud Manager. Il titolo esatto del
+gioco non è ricostruibile dalla trascrizione.}, che ci mette un po' a caricare perché
+``ha tonnellate di roba'': un tabellone gigantesco con segnalini ovunque, pile di token
+di forma custom, miniature su miniature, carte di diversi mazzi. Il \emph{publisher}
+voleva anche la \textbf{scatola}, ``perché volevano far vedere quanto bella è la
+scatola''; il regolamento è sospeso in aria, ``perché la gente sta male. Richieste del
+publisher, ma va bene''. Ci sono token, carte custom con fronte e retro separati: cose
+più complesse per forme e quantità, ma che gli studenti sanno ormai fare. Le
+\textbf{miniature} invece sono \emph{asset bundle}: quelle no.
+
+\paragraph{Che cosa c'è di strano?} ``Chi la nota?''. Uno studente: non c'è il tavolo.
+Esatto: Ruggero usa il \textbf{non-tavolo}, l'opzione \emph{None}. È il motivo
+promesso all'inizio (sezione~\ref{a8:sec:tavoli}). Le mani dei giocatori si possono
+spostare dove si vuole; e siccome il software è un simulatore fisico, il tavolo lo crea
+lui: un \textbf{token gigantesco}, molto piatto e sottile, con una texture, reso
+\textbf{non interagibile} e \textbf{bloccato}. La texture sfuma verso il nero, e con lo
+sfondo monocromatico nero il bordo del tavolo si confonde con lo sfondo e non si nota.
+In streaming si vede poco; cambiando lo sfondo, si vede subito.
+
+\subsection{Gli ancoraggi}
+\label{a8:sec:ancoraggi}
+
+Una cosa che Ruggero non ha spiegato, ``perché non vi servirà per questo prototipo'',
+sono gli \textbf{snap point}, i \textbf{punti di ancoraggio}. In certe celle, un
+segnalino o una carta appoggiati si posizionano da soli nel punto giusto: ``questo
+token, quando va avanti, si ferma lì''. Attivando lo strumento degli ancoraggi (un
+puntino verde in fondo al menu), si vede che tutti i tracciati del modulo e delle plance
+sono ancorati.
+
+\paragraph{Come si fanno.} ``A mano'', spiega Ruggero: si copia l'oggetto più volte, lo
+si allinea con lo strumento \textbf{Gizmo}, che dà una precisione maggiore, e quando
+una copia è nel punto giusto ci si clicca sopra con lo strumento degli ancoraggi, che
+crea un ancoraggio lì: ``questo componente scatterà esattamente qua''. Poi si cancellano
+le copie in più, e gli ancoraggi restano. ``Uno sbatti infinito. Però si può fare''.
+Gli ancoraggi valgono per un solo tipo di componente? No: li si può dedicare a vari
+componenti, anche con dei \textbf{tag}. Ruggero mostra un gioco ``devastante'', in cui
+ogni casellina è un ancoraggio per delle piccole buste, e le teste di certi pezzi vanno
+ad agganciarsi al loro posto.
+
+\paragraph{Che cosa si chiede al corso.} ``Noi non vi chiediamo questo livello di
+pulizia del prototipo''. Ruggero mostra allora un prototipo su cui sta lavorando in
+quel periodo: è ancora grezzo, le icone e le grafiche non sono definitive, alcune carte
+non hanno ancora l'illustrazione (``dovrebbe avere una grafica, ok? È un prototipo'').
+``Non è neanche questo quello che ci aspettiamo da voi''.
+
+\subsection{Un gioco di ruolo con lo scripting}
+\label{a8:sec:mod-gdr}
+
+Tabletop Simulator non è solo per i \emph{board game}: si possono fare anche giochi di
+ruolo. Ruggero mostra un modulo fatto per un gioco di ruolo\footnote{La trascrizione
+lo chiama ``Magic of the Inventory''; il titolo non è verificabile.}, in cui si è dovuto
+usare lo \textbf{scripting}: per esempio, bisognava poter scrivere la descrizione degli
+oggetti, quindi le carte sono \textbf{scrivibili}, e certi componenti permettono di
+cambiare i numeri.
+
+\paragraph{Non è obbligatorio.} Tornando al ``prototipo brutto'', Ruggero ripete che
+Tabletop Simulator probabilmente non servirà a tutti i gruppi: servirà a chi fa giochi
+da tavolo, magari un po' ibridi. \textbf{Non è obbligatorio} per il corso; ma per chi è
+interessato ai \emph{board game}, è il software usato nel settore.
+
+% ---------------------------------------------------------------------
+\section{Perché proprio Tabletop Simulator}
+\label{a8:sec:alternative}
+
+Una domanda ``molto laterale'': quanto è legato il settore a Tabletop Simulator? Se
+uscisse un simulatore molto migliore, lo si adotterebbe? Ne sono già usciti altri,
+risponde Ruggero, per esempio \textbf{Tabletopia}, ma ``sono tutti peggiori in termini
+di usabilità''. Tabletopia è gratuito, ``ma fa schifo'', e infatti lo usano in
+pochissimi, perché non ha la metà delle funzioni di Tabletop Simulator\footnote{La
+trascrizione dice ``non ha la metà delle funzioni che Tabletopia ha'': dal contesto è
+evidente che il confronto è con Tabletop Simulator.}.
+
+\paragraph{Le funzioni che non ha mostrato.} E Ruggero, ``per semplicità e per non
+farvi impazzire'', ha taciuto cose molto più tecniche:
+\begin{itemize}
+  \item si possono \textbf{creare nuove mani}, o ridimensionarle: una mano rossa
+        molto più grande (``di boh, 30''), per un gioco in cui si tengono in mano
+        tantissime carte;
+  \item si possono \textbf{incollare} i componenti tra loro con lo strumento della
+        \textbf{catenella} (i \emph{joint}): un dado ingrandito incollato sopra un
+        cubetto diventa un oggetto solo;
+  \item si possono fare \textbf{plance con alloggiamenti}, ancorati, in cui inserire
+        altri componenti: Ruggero ne mostra un vecchio prototipo (``è brutto,
+        ignoratelo'');
+  \item si possono giocare anche i \textbf{legacy}, grazie allo strumento degli
+        \textbf{adesivi}: Ruggero crea un adesivo con la sua ``A'' e lo attacca a una
+        carta (prima, per sbaglio, sul mazzo intero: ``sono scemo''); la carta,
+        mescolata con le altre, conserva l'adesivo.
+\end{itemize}
+``È che abbiamo una quantità di strumenti qua dentro che è delirante. Non ve ne ho fatti
+vedere neanche la metà, vi giuro'': l'angolo di rotazione, l'altezza a cui si
+sollevano gli oggetti, ``tutte cose tecniche che non vi servono adesso, ma in cui, se
+imparate questo software, c'è un \emph{rabbit hole}''. Non è possibile comprimerlo in
+tre ore. L'obiettivo di oggi è dare ``il minimo necessario per riuscire a fare un gioco
+che abbia dei componenti, dei dadi, delle carte, un tabellone, una plancia''; per le
+idee strambe, si scrive a Ruggero.
+
+\paragraph{Cancellare il modulo.} Ultima procedura: come si cancella un modulo? ``Il
+prototipo è troppo brutto per tenerlo''. Dalla pagina del Workshop, in fondo,
+\textbf{Elimina}: il modulo viene cancellato dal Workshop, ma non del tutto, perché
+resta il \textbf{salvataggio} locale. Cancellato anche quello, ``se ne va via tutto''.
+
+% ---------------------------------------------------------------------
+\section{Prototipi in scala}
+\label{a8:sec:scala}
+
+Ruggero apre alle domande: ``questa ultima parte della lezione è per rispondere a voi''.
+Uno studente, ``per curiosità'': quanto sono verosimili i prototipi che Ruggero
+prepara per i \emph{publisher}? Lo scopo è arrivare a una prova realistica?
+
+\paragraph{Estremamente accurati.} ``Quelli che faccio io sono estremamente
+accurati'': i componenti sono davvero \textbf{in scala}. Quelle carte sono in formato
+poker, 88 mm; quelle altre nel formato delle carte di \emph{Dixit}\footnote{``Le carte
+formato di exit'' nella trascrizione: con ogni probabilità \emph{Dixit}, le cui carte
+grandi sono un formato standard del settore.}; le miniature hanno la base delle
+dimensioni delle miniature reali. Il motivo è il \emph{playtest}: i componenti devono
+essere ``il più simulati possibile'' per avere un playtest vicino a quello reale,
+perché il playtest verifica anche \textbf{gli spazi}. ``Mettiamo che io ho un distretto,
+e devo sapere se ci stanno otto miniature in questo distretto. Come faccio a saperlo,
+se io non le muovo?''. Un playtest deve poter dire: ``un po' strettine, ma ci stanno''.
+E se gli spazi del tabellone devono contenere le carte, le carte devono essere in scala
+con il tabellone, e così i token e le miniature: ``per forza di cose si va a creare
+tutto in dimensioni reali''.
+
+\paragraph{Si parte dal tabellone.} Anche prima, nei primi prototipi, il passaggio non
+è diverso. Ruggero parte di solito \textbf{dal tabellone}, perché è la cosa più grande
+e quindi la più facile da mettere in scala. Tabletop Simulator misura in griglia, in
+pollici o in centimetri, \textbf{non in millimetri}: si lavora con i decimali dei
+centimetri, e su una carta che misura ``8 virgola qualcosa'' è difficile capire se sia
+88, 89, 85 o 86 mm. Su un tabellone di 350 mm l'errore pesa molto meno. Quindi: prima
+il tabellone, poi tutto il resto in scala rispetto al tabellone.
+
+\paragraph{Approfondimento: la fedeltà del prototipo.} La risposta di Ruggero mostra
+che ``prototipo grezzo'' e ``prototipo in scala'' non sono in contraddizione. Il
+prototipo che ha mostrato poco prima ha grafiche provvisorie e carte senza
+illustrazione, ma le misure sono già quelle vere: la fedeltà \emph{grafica} è bassa,
+quella \emph{spaziale} è alta, perché è lo spazio che il playtest deve verificare.
+È lo stesso principio per cui Schell raccomanda di decidere, prima di costruire un
+prototipo, quali domande deve aiutare a risolvere: quello che non serve a rispondere
+può restare grezzo.
+
+% ---------------------------------------------------------------------
+\section{Aggiornare un mazzo e tenere in ordine il cloud}
+\label{a8:sec:aggiornare}
+
+\paragraph{Correggere una carta.} L'ultima domanda dello stesso studente è ``più
+tecnica'': nei prototipi capita di dover correggere una carta. ``Ottima domanda, ottima
+domanda''. Ruggero riprende il mazzo fatto prima e finge un errore di bilanciamento:
+invece di due Jack servono, ``che so, due Jack e due regine''. Aggiorna il mazzo nel
+Deck Editor, lo salva, lo \textbf{riesporta}, e nel menu custom del mazzo ricarica
+\textbf{solo il fronte}, perché il retro non cambia. Con \emph{Search} si vedono le due
+regine.
+
+\paragraph{Correggere una sola immagine.} Poi un caso più fine. Ruggero modifica in Paint
+una sola carta (la regina di quadri), salvando il file con lo stesso nome. Riaprendo il
+\texttt{.tsdb}, il Deck Editor riprende le carte dalla cartella e mostra già la carta
+aggiornata. Quindi: \textbf{se si mantengono uguali i nomi dei file}, si aggiorna la
+singola immagine, si riesporta nella stessa cartella da cui il \texttt{.tsdb} prende le
+carte, e il mazzo è aggiornato senza ricomporlo. ``Anche perché questi moduli si
+aggiornano tante volte'': il modulo del gioco che Ruggero sta per pubblicare\footnote{La
+trascrizione lo chiama ``Astronega'' e poi ``Astronica''; il titolo non è
+ricostruibile con certezza.} è stato aggiornato \textbf{79 volte}. È quello con la
+carta senza illustrazione: ``appena l'illustratore me la finisce, io riaggiorno
+semplicemente quel file lì, e siamo a posto''.
+
+\paragraph{Le cartelle nel Cloud Manager.} Una buona pratica: caricare le immagini in
+cloud \textbf{dentro delle cartelle}. Nel suo Cloud Manager Ruggero ha una cartella per
+ogni progetto: tutti i componenti del gioco di \emph{Cyberpunk} in una, quelli
+dell'altro gioco in un'altra. ``Dividervi in cartelle vi serve anche per sanità
+mentale'', altrimenti ci si ritrova con ``una sfilza di tutte le immagini che avete
+usato, caricate a caso''.
+
+\paragraph{Il limite dei 9.999 file.} Ed è buona pratica \textbf{cancellare} ciò che
+non si userà. Non è un problema di oggi, ma Tabletop Simulator ha un \textbf{limite
+fisso di 9.999 file} caricati. ``Sembrano tanti, e sono tanti se fate pochi giochi. Ma
+vi giuro che il limite lo si raggiunge. Io l'ho già raggiunto più volte''. E i file si
+cancellano \textbf{uno alla volta}, a mano: non c'è un'opzione per cancellarne di più.
+``Lo so: sono pazzi''.
+
+% ---------------------------------------------------------------------
+\section{Un software di settore suo malgrado}
+\label{a8:sec:storia}
+
+\paragraph{Lo stupore di Rita.} Rita è colpita: per un software di questa portata, è
+incredibile che manchino cose così elementari. Lei è abituata ai software Adobe, ``a un
+altro tipo di possibilità''; ``però è molto interessante. La lezione di oggi mi ha
+stimolato un sacco. Credo che starò tutta la notte a provare''. ``È un software
+incredibile, Rita'', risponde Ruggero, ma ``fatto da tre appassionati che non hanno
+ragionato per diventare un software di settore. Sono diventati un software di settore
+contro la loro volontà''.
+
+\paragraph{Le cose stanno cambiando.} Oggi ne guadagnano, e qualcosa si muove: dalla
+pagina della comunità su Steam, nelle notizie, Ruggero mostra la \textbf{roadmap} che gli
+sviluppatori hanno deciso di pubblicare dall'inizio dell'anno, ``finalmente, dopo dieci
+anni e passa di software''. Stanno aggiornando il motore, ``dopo anni che glielo si
+chiedeva''. E gli studenti hanno già visto una versione migliorata. Il Custom PDF,
+quando Ruggero ha cominciato, \textbf{non esisteva}: si metteva sul tavolo il
+\textbf{tablet} e ci si apriva un link al PDF. E se i file erano esportati in
+\textbf{CMYK} anziché in \textbf{RGB}, il software andava in crash ``secco''; ora si
+limita a dire che non accetta quel tipo di file. ``Per farti capire quanto fuori di
+testa era questa gente''.
+
+\paragraph{Studiare i moduli degli altri.} Un consiglio: ora che si sa come sono fatti i
+componenti, si può aprire un modulo qualunque e studiarlo. Con tasto destro,
+\textbf{Custom}, su un componente, si vede \textbf{che cosa è}: ``questi bellissimi
+tokenoni qua cosa sono? Sono dei modelli o sono dei token? Sono dei token, fantastico.
+Questi posso rifarli anch'io, so come farli''. Su un modulo aperto come
+esempio\footnote{``Sputacular'' nella trascrizione: il titolo non è ricostruibile.} si
+vede che certi segnalini sagomati sono token, perché il retro è specchiato.
+
+\paragraph{Il token fronte-retro.} Esiste però un modo per fare token di forma
+particolare con il retro \emph{dritto}: \textbf{incollarne due} con la catenella. ``È un
+bello sbatti'', e Ruggero non ricorda più in quale modulo l'aveva fatto. Uno studente
+chiede di rispiegarlo, e Ruggero lo rifà da zero: si crea un token con una forma
+particolare (un \emph{meeple} giallo) e un secondo token con la stessa forma e il retro
+voluto (rosso); dal menu \textbf{Options} si attiva la \textbf{griglia}, che allinea i
+pezzi con precisione, così che siano nella stessa identica posizione, uno sopra l'altro;
+con la \textbf{catenella} li si aggancia; si toglie la griglia. Il risultato è un token
+custom con due facce diverse e il retro non specchiato.
+
+% ---------------------------------------------------------------------
+\section{Niente script}
+\label{a8:sec:script}
+
+Si possono fare ``cose fuori di testa'': \textbf{perni mobili} (\emph{joint}) per
+attaccare gli oggetti, e soprattutto \textbf{script} che automatizzino delle cose. Ed è
+qui che Ruggero mette l'unico divieto tecnico della lezione: \textbf{in questo corso
+gli script non si fanno}. Il motivo si capirà nella lezione sul playtest: ``gli script
+vi rendono più complesso testare cose particolari, e quindi remano contro la vostra
+procedura di playtest''. E siccome si vuole un playtest utile e strutturato bene,
+``quando arriveranno i playtest vi sarà chiaro perché gli script sono un problema''.
+
+\paragraph{Approfondimento: perché l'automazione disturba il playtest.} La lezione sul
+playtest è ancora lontana, ma il senso del divieto si può già intuire dalla
+sezione~\ref{a8:sec:simulatore}. In un prototipo analogico i giocatori eseguono le
+regole a mano, e proprio eseguendole le capiscono, sbagliano, le contestano: sono i
+dati che un playtest raccoglie. Uno script che sposta i segnalini o calcola i punteggi
+toglie questi momenti dal tavolo e nasconde il carico di gestione che il gioco stampato
+avrà davvero. In più, ogni modifica alle regole tra un playtest e l'altro richiederebbe
+di riscrivere il codice: il prototipo diventerebbe più lento da cambiare proprio nella
+fase in cui deve cambiare più spesso.
+
+\paragraph{La seconda pausa.} ``Abbiamo ancora mezz'ora di domande''. Silenzio: ``Tutto
+chiaro? Non è possibile, non posso essermi spiegato così bene''. Uno studente prevede
+che la prima volta che darà un modulo a qualcuno ``gli esploderà il computer''.
+Ruggero propone un'altra pausa, fino alle \textbf{19:35}: ``liberatevi un attimo il
+cervello, mi rendo conto che oggi è stata molto intensa''. Al ritorno risponderà a
+domande e curiosità ``anche generali, non solo sul software, a tutto tondo''. Gianmarco
+dice che non gli vengono domande; ``ma le domande verranno tra una settimana, tra un
+mese. È normale''. Ogni anno qualcuno gli scrive giorni o settimane dopo: si può fare
+questa cosa? La risposta è ``sì'', perché Tabletop Simulator ``è magia nera, è un patto
+col diavolo'': sì, ma magari bisogna impazzire tre giorni su un modello 3D; oppure sì,
+ma bisogna programmare, ``e piuttosto ti tagli le mani''.
+
+% ---------------------------------------------------------------------
+\section{Dopo la pausa: scorciatoie, fisica e destrezza}
+\label{a8:sec:fisica}
+
+``Rieccoci qua. Allora, come va? Come state? Io, stanco, venerdì pomeriggio, dopo tre
+ore di Tabletop''. Se agli studenti ``si spacca tutto in testa'', è normale: ``è
+traumatico''. Quando Ruggero ha cominciato a usarlo, ``odiarlo'' era un eufemismo: non
+c'era la metà delle funzioni di oggi ed era molto più complesso. Ma ha ``tante cose
+molto funzionali''.
+
+\paragraph{Ingrandire.} Alcune cose da tutorial, che non ha mostrato: con il tasto
+\texttt{Alt} si \textbf{ingrandiscono a schermo} le carte e gli oggetti; con il tasto
+\texttt{M} si attiva la \textbf{lente} (\emph{Magnify}). (Uno studente gli fa notare
+che non sta condividendo lo schermo: ``giusto, hai ragione. In effetti sono pazzo''.)
+Dal menu di \texttt{Esc} ci sono tutte le scorciatoie.
+
+\paragraph{La fisica dei componenti.} Ruggero non è entrato nel dettaglio del
+\textbf{peso} delle cose: si può cambiare la fisica dei componenti, la \textbf{massa},
+l'\textbf{attrito} con l'aria, l'attrito angolare\footnote{``La tritangolare'' nella
+trascrizione; si intende con ogni probabilità l'attrito (o la resistenza) angolare,
+che regola quanto un oggetto continua a ruotare.}, e perfino la \textbf{gravità} del
+modulo. Lo mostra tirando dei dadi con la gravità bassissima e poi altissima. Serve,
+per esempio, a fare dei \emph{dexterity game}.
+
+\paragraph{Il minigolf.} La gente usa il software ``per fare le cose più folli''.
+C'era un modulo di \textbf{minigolf}: si prendono le palline, si usa lo strumento
+\emph{flick}, ``e ok''. ``La gente sta male. In positivo, chiaramente, in questo caso''.
+Su Tabletop Simulator si possono fare giochi da tavolo ``nel senso più tradizionale del
+termine'', \emph{wargame}, giochi di miniature, giochi di destrezza: ``ha un potenziale
+gigantesco'', che però, con la sua interfaccia ``un po' \emph{cranky}, un po' \emph{old
+school}'' e i suoi aspetti vestigiali, spesso non arriva.
+
+% ---------------------------------------------------------------------
+\section{Un consiglio: giocate The Box}
+\label{a8:sec:thebox}
+
+``Uno dei consigli che do sempre, se volete imparare a usare bene questo software e
+volete farlo giocando'': giocare \textbf{\emph{The Box}}. È un gioco che \textbf{esiste
+solo su Tabletop Simulator}, che ``non può esistere nella realtà per mille motivi che
+vedrete se lo giocherete''. Ruggero lo apre, lo linka su Discord, e lo consiglia ``a
+prescindere dal corso''.
+
+\paragraph{Perché giocarlo.} ``Come paradigma di game design, questo gioco vi dà una
+mano''. È un gioco ``che sulla carta non dovrebbe funzionare'', con un game design che
+Ruggero trova ``anche brutto'', ma con ``un'esperienza incredibile da giocare''. E
+ragionare sul perché un gioco fatto male dia un'esperienza che può essere molto
+positiva ``è molto utile, lato game design''.
+
+\paragraph{Come giocarlo.} ``Non leggetevi niente''. Si organizza una serata (tiene
+fino a otto persone, ``se non ricordo male''), si apre un tavolo su TTS e si legge il
+regolamento lì: è ``una manciata di pagine'', scritto ``in font gigantesco'', ``non è
+bello da vedere''. Il gioco è ``bizzarro, strano'': tre scatole, una delle quali ne
+contiene altre \textbf{80}, e un'altra altre \textbf{121}, con nomi bizzarri come
+``B126'' o ``diametro infinito''. E fa interagire con moltissimi dei componenti visti a
+lezione: è l'opzione consigliata per ``prendere confidenza con la varietà più disparata
+di componenti''. (``Adesso che ve l'ho nominato, devo organizzare per giocarlo con
+qualcuno, perché è bellissimo''.)
+
+\paragraph{Approfondimento: imparare da un gioco ``brutto''.} Il consiglio di Ruggero
+riprende un'idea che attraversa tutto il corso: l'esperienza del giocatore non coincide
+con la qualità ``sulla carta'' delle regole. Nel lessico dei framework visti nelle
+lezioni precedenti, un insieme di meccaniche discutibile può comunque produrre
+dinamiche e un'esperienza memorabili, e capire \emph{perché} succede è un esercizio di
+analisi più istruttivo che studiare un gioco ben fatto. Schell lo formula come
+un'abitudine del designer: guardare all'esperienza prima che alle regole, e chiedersi
+quali elementi la producono davvero.
+
+% ---------------------------------------------------------------------
+\section{Saturi}
+\label{a8:sec:saturi}
+
+``Oltre a TTS, come state?''. Una studentessa è ``saturatissima'' di cose apprese: deve
+``fare un attimo ordine fra i pensieri'' per capire che cosa provare per prima e che
+cosa chiedere. ``Certamente''; e di nuovo, a Ruggero si può scrivere per mail o su
+Telegram. Un'altra è ``satura di nozioni, non riesco più ad apprendere''. Rita
+ringrazia: ``è la lezione più bella finora per me''.
+
+Ruggero è contento: questa lezione, per molti, è ``una mattonata''. Le classi sono
+molto diverse, e capitano studenti che non hanno mai avuto confidenza con software
+tecnici, per cui questa lezione ``è un po' una mazzata''; ``sono contento, Rita, che ti
+sia piaciuta, anche perché abbiamo davvero sorvolato la punta dell'iceberg di Tabletop
+Simulator, questo ve lo assicuro''.
+
+% ---------------------------------------------------------------------
+\section{Il playtest e il calendario del corso}
+\label{a8:sec:calendario}
+
+Una studentessa (``sempre le mie domande\ldots''): quanto è rilevante usare Tabletop
+Simulator nel \emph{playtest}, e quanto invece è importante farlo \textbf{fisico}? ``Ti
+sorprenderà sapere'' che c'è una lezione sul playtest. ``Immaginavo'', risponde lei, ``ma
+lo faccio apposta: tu mi anticipi ogni volta le cose''; e, come ha visto, nelle lezioni
+successive le cose vengono riprese.
+
+Ruggero controlla quando, e già che c'è ripassa il resto del calendario
+(tabella~\ref{a8:tab:calendario}).
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.0cm}p{9.6cm}@{}}
+\toprule
+\textbf{Quando} & \textbf{Che cosa} \\
+\midrule
+lunedì (5 ottobre) & lezione con Beatrice, la seconda sulle \textbf{esperienze
+ludiche} \\
+venerdì (9 ottobre) & lezione sul \textbf{paragame}\protect\footnotemark, ``una delle
+mie preferite''; si parlerà anche di TTS, ``ma a tangente'' \\
+12 ottobre & il \textbf{pitch}: niente lezione, il \emph{check} dei progetti \\
+fino a novembre & periodo di lavoro senza lezioni \\
+6 novembre & lezione con \textbf{Diego} sull'\textbf{RNG} (la casualità) \\
+9 novembre & \textbf{playtest} con Ruggero: ``playtest e metodi etnografici di raccolta
+feedback'' \\
+dopo & \textbf{gioco di ruolo da tavolo} con Daniele \\
+dopo & ``l'ondata lunga'' di \textbf{sviluppo 1} e \textbf{sviluppo 2} con
+\textbf{Marta}: \emph{development}, modelli matematici, bilanciamento e altri aspetti
+dello sviluppo \\
+dopo & \textbf{produzione} con \textbf{Flavio} \\
+dopo & altro periodo di lavoro \\
+11 dicembre & \textbf{final review} \\
+dopo la review & \textbf{tavola rotonda} con editori e persone del settore \\
+\bottomrule
+\end{tabular}
+\caption{Il calendario del resto del corso come lo ripassa Ruggero. Le date tra
+parentesi sono ricostruite dal contesto; le altre sono dette a voce.}
+\label{a8:tab:calendario}
+\end{table}
+\footnotetext{La trascrizione dice ``quella sul paragame''; il termine non è spiegato
+nella lezione.}
+
+\paragraph{La tavola rotonda.} Dopo la \emph{final review}, nella lezione di
+\textbf{tavola rotonda} i docenti portano \textbf{editori} e altre persone del settore
+a dare un feedback sui progetti: un punto di vista che non sia solo quello degli
+insegnanti, ma di chi lavora nel settore. Gli ospiti si scelgono \textbf{in base ai
+giochi dei gruppi}. L'anno scorso, ``per varie cose'', non è uscito neanche un
+\emph{board game}: giochi di ruolo, LARP, giochi pervasivi, ma nessun gioco da tavolo; e
+quindi non sono stati chiamati editori di giochi da tavolo, perché ``non aveva senso
+dare feedback da qualcuno che lavora nel board game a un gioco di ruolo''. Anche
+quest'anno la tavola rotonda sarà calibrata su quello che i gruppi faranno. La
+studentessa aggiunge che finora non ha mai strutturato i prototipi su TTS, li ha sempre
+fatti fisici; ``non è un problema''.
+
+% ---------------------------------------------------------------------
+\section{Domande e risposte, alla rovescia}
+\label{a8:sec:rovescia}
+
+``Avete altre domande, dubbi? Avete risposte? Mi date le risposte, io vi credo''. Uno
+studente sta al gioco: ``È blu, è blu, è blu''. E poi: ``come faccio un componente a
+goccia?''. Ruggero ricorda un \emph{trend} su Reddit: dare prima le risposte e poi
+inventare le domande, in modo che chi ha risposto sembri la persona peggiore possibile
+(``la mattina ne mangio due'' --- ``quanti bambini mangi al mattino?''). ``Va bene, non
+volevo neanche andarci. Dove stiamo andando?''. La domanda sulla goccia resta senza
+risposta (ma si è visto prima come ottenere ``gocce d'acqua'' dalle pietre del Go,
+sezione~\ref{a8:sec:misc}, e come fare un token di forma libera,
+sezione~\ref{a8:sec:custom-token}).
+
+Mancano 14 minuti. La battuta sui bambini ha inquietato una studentessa, che ha appena
+finito di ascoltare \emph{Veleno}\footnote{Il podcast d'inchiesta italiano di Pablo
+Trincia; la trascrizione lo rende ``Veleno agli atti''.}: ``è stato un attimo di
+infarto''. Sono podcast italiani intensi, ``tostarelli''.
+
+% ---------------------------------------------------------------------
+\section{Le risorse da seguire}
+\label{a8:sec:risorse}
+
+A proposito di podcast e risorse: Ruggero aveva suggerito delle risorse nelle slide di
+una lezione precedente, ma lo studente si è un po' confuso; quali sono i
+\emph{must} da seguire su YouTube? Ruggero ne segue diverse, ``ma per motivi molto
+diversi'': alcune per i \emph{game studies}, alcune per il game design, alcune per la
+grafica.
+\begin{description}
+  \item[Daniel Solis] è ``molto bravo sulla parte di \emph{graphic design} per i
+        board game'': il suo canale è molto tecnico su come progettare una grafica
+        \textbf{funzionale} al proprio gioco.
+  \item[Amabel Holland] ha ``un buon mix'': fa molta ``quasi archeologia ludica'',
+        ricerca storica sui giochi, ma anche video di game design ``molto sul
+        pezzo''\footnote{Ruggero cita anche altri ``approcci'' che la trascrizione
+        rende in modo incomprensibile (``approcci cosmodiali''): un altro canale tra i
+        suoi preferiti, il cui nome non è ricostruibile.}.
+  \item[Action Button] è il suo canale preferito in assoluto. Ruggero ha una
+        preferenza, ``mi rendo conto mia'', per i video-saggio molto lunghi (``se apro il
+        mio YouTube, vedete video da quattro ore e passa''): Action Button analizza
+        \textbf{singoli giochi} in video dalle tre alle dieci ore, andando molto a
+        fondo non solo sul game design ma sulla \textbf{game culture} e sul
+        \textbf{contesto}: in quale epoca il gioco è stato creato, che cosa nel mondo
+        reale ha influenzato chi l'ha fatto, perché il gioco è uscito in quella forma.
+\end{description}
+
+\paragraph{Il video preferito.} Il suo video preferito in assoluto è quello su
+\emph{Tokimeki Memorial}\footnote{``Took Me Me Me Me Me, Key Memorial'' e ``Toki Maki
+Memorial'' nella trascrizione.}: ``5 ore e 56 minuti, e lo so a memoria perché è il
+video che ho riguardato di più nella vita''. ``Mi rendo conto che è una nicchia di una
+nicchia di una nicchia'', e potrebbe non essere per nessuno oltre a lui. È ``un
+\emph{roller coaster} emotivo'': se ne esce tristi, arrabbiati, ma anche fiduciosi
+nell'umanità, soddisfatti; ``molte cose provi''. Lo studente vede anche un video su
+\emph{Final Fantasy VII Remake}, che ha odiato: ``allora amerai quel video!''. Poi lo
+studente deve andare e saluta.
+
+\paragraph{Il podcast che non si nomina.} Ruggero aggiunge, imbarazzato, che ha anche
+lui un podcast, ``ma fate come se non avessi detto niente''; non lo ha messo nelle slide
+perché ``ho sempre imbarazzo sulle cose che faccio''. Una studentessa ha già trovato il
+suo canale; lui insiste che non vuole fare ``il prof che consiglia i propri libri'' e
+che non parla quasi mai neanche dei suoi giochi. Sul suo sito c'è tutto. Ma il podcast
+non ha pubblicità né sponsor, volutamente: ``non mi deve rompere nessuno. È una roba che
+faccio per pace mentale mia''. La studentessa (``ho 30 anni, ho già studiato in tanti
+campi'') dice di stimarlo proprio per questa scelta: ``tutti invece vogliono fare i
+professori per vendere le loro cose'', e questo modo di fare l'ha spinta ancora di più
+ad andare a vedere il suo lavoro.
+
+% ---------------------------------------------------------------------
+\section{Giochi invendibili e l'economia del gioco}
+\label{a8:sec:mercato}
+
+``Io sono l'ultima persona che vi deve dire come comunicare questi giochi'', dice
+Ruggero: comunicazione e vendita ``mi fanno schifo'' (lui, ``come anche Daniele e
+Beatrice'', non è lì per quello). I giochi che fa nel tempo libero ``sono cose
+invendibili''.
+
+\paragraph{``Se volete perdere soldi''.} L'ultimo incontro commerciale in cui ha
+proposto a un \emph{publisher} uno dei suoi giochi migliori, gli ha detto: ``se volete
+perdere soldi, è l'ideale''. ``È terribile, non si fa''; ma è stato onesto. Ha fatto
+quell'incontro con un solo editore, l'unico di cui si fida al punto da proporglielo,
+sapendo che gli avrebbe fatto perdere soldi: ``quindi devo essere molto onesto''. Una
+studentessa chiede, senza voler sapere i dettagli, se il gioco è stato provato con delle
+persone: è ``il mio \emph{magnum opus}'', ed è ``talmente intenso che in un playtest
+una persona ha vomitato''. Ma se alle persone piace, obietta lei, ci sarà un pubblico a
+cui venderlo.
+
+\paragraph{I numeri del mercato italiano.} La risposta è nella scala economica del
+settore, ``molto bizzarra''. In Italia, un gioco da tavolo che vende ``regolarmente''
+vende \textbf{tra le mille e le duemila copie}; un editore è già contento se ne vende
+\textbf{più di mille}. Il gioco di ruolo è su una scala ancora più bassa: un manuale che
+vende \textbf{500 copie} in Italia è già un buon risultato. La fetta maggiore del mercato
+va a giochi come \emph{Dungeons \& Dragons}, che lasciano poco spazio al resto. Ruggero
+ha lì il suo gioco, perché deve portarlo a un evento il giorno dopo: una scatola
+bianca, anonima, senza niente sopra, ``solo io so che gioco è''. ``Se ne vende 50 copie,
+sono 49 persone in più di quelle che pensavo potessero prenderlo''.
+
+\paragraph{Sapere perché si fa un gioco.} È il tema della prima lezione, ricorda la
+studentessa: bisogna avere chiaro \textbf{perché} si fa un gioco. Quando Ruggero ha
+lavorato a \emph{Marvel United} e a \emph{Cyberpunk}, giochi su IP gigantesche, il gioco
+doveva essere per il \emph{mass market}, accessibile. Ma con un gioco suo, per scopi
+suoi, non commerciali, su cui non deve guadagnare, può fare ``quello che voglio''. ``E
+non è un gioco peggiore o meno degno di esistere''. Come nel cinema ci sono i film della
+Marvel, i documentari di nicchia e l'horror indipendente che va ai festival. La
+studentessa è d'accordo: è un'opera di creatività. Si scusa per averlo messo in
+imbarazzo; ``no, sei tu, non sono io che sono inadeguato'', scherza lui.
+
+\paragraph{Approfondimento: obiettivi diversi, giochi diversi.} Lo scambio riprende, dal
+punto di vista di un professionista, la distinzione tra l'obiettivo del gioco e
+l'obiettivo personale di chi lo fa, che il corso ha affrontato parlando del perché si
+fa game design. Un gioco su licenza per il grande pubblico e un gioco personale
+``invendibile'' rispondono a obiettivi diversi, e si giudicano con metri diversi: il
+primo dall'accessibilità e dalle vendite, il secondo dall'esperienza che riesce a dare
+al suo pubblico, per quanto piccolo.
+
+% ---------------------------------------------------------------------
+\section{I giochi lunghi}
+\label{a8:sec:lunghi}
+
+``Siamo rimasti solo noi tre''. Cinque minuti alla fine. Uno studente non ha una domanda
+ma una confessione: vedendolo nello scaffale alle spalle di Ruggero, ha comprato
+d'impulso un gioco lungo\footnote{La trascrizione lo rende ``Spichisi'' e ``Speak
+easy''; il titolo non è ricostruibile con certezza.} che sa che non giocherà mai,
+``perché intavolare questi giochi è sempre un casino''. Neanche Ruggero l'ha ancora
+giocato: dura molto, e alle persone non si può mentire: ``guarda, secondo me almeno 4--5
+ore siamo qui fissi''.
+
+\paragraph{Un evento per i giochi lunghi.} Lo studente racconta che cosa ha fatto
+tornando in Puglia: ha contattato le associazioni del Sud Barese, dove vive, e insieme
+hanno creato un \textbf{evento a invito, a porte chiuse}, conosciuto solo dalle
+associazioni e riservato ai giocatori, per giocare proprio questi giochi molto lunghi.
+La maggior parte delle associazioni lavora con eventi aperti, in cui si fa da
+dimostratori dei giochi e non si può giocare davvero: un gioco così non lo si può
+portare quando arriva una persona che vede un gioco da tavolo per la prima volta. Il
+loro evento dura tutta la giornata, e hanno fatto ``cose abbastanza grosse''; il
+prossimo piano era \emph{Here I Stand}\footnote{``Il re stand'' nella trascrizione:
+con ogni probabilità \emph{Here I Stand}, gioco storico molto lungo della GMT.}, poi
+saltato. Sullo scaffale ci sono diversi titoli della \textbf{GMT}: \emph{Cuba Libre},
+\emph{A Distant Plain}, \emph{Fire in the Lake}; e ancora da giocare un titolo
+strategico ambientato a Taiwan\footnote{La trascrizione lo chiama ``il 2045, quello
+strategico taiwanese''; il titolo non è ricostruibile con certezza.}.
+
+\paragraph{``Si gioca poco''.} ``Il tempo per giocare è poco, c'è poco da fare''. Lo
+studente immagina che, facendolo per lavoro, a un certo punto venga la nausea. ``Ma non
+esiste''. Ruggero gioca \textbf{400 giochi all'anno} e ne giocherebbe 800, se la gente
+venisse a giocare; ``invece, purtroppo, le persone hanno una vita''. La registrazione
+si interrompe qui.
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Il \textbf{pitch} del 12 ottobre non è commerciale: 40--50 minuti per gruppo
+        per fissare un \emph{agreement} su che cosa si farà (tipo di gioco, numero di
+        giocatori, esperienza e come darla, durata). Forma libera; nessuna scaletta,
+        volutamente.
+  \item \textbf{Tabletop Simulator non è un motore per videogiochi}: è un
+        \textbf{simulatore fisico} di un tavolo. Ogni oggetto ha massa, spazio,
+        collisioni; i componenti vanno trattati come componenti fisici. È il software
+        di riferimento del settore, pieno di scelte vestigiali.
+  \item I moduli si costruiscono in \textbf{single player}. Le immagini si caricano
+        \textbf{da file} (mai da URL) e \textbf{in cloud} (mai in locale).
+  \item Il \textbf{tavolo} decide quanti giocatori ci stanno (le \emph{hands}) e come
+        si comportano i componenti sui bordi: è una questione di \emph{table presence}.
+        Il tavolo custom stira l'immagine; la plancia custom si adatta all'immagine,
+        ma ha la cornice di legno.
+  \item Lo \textbf{sfondo} cambia la luce: conviene uno sfondo monocromatico da un
+        pixel e la luce slegata dallo sfondo, regolando \emph{light}, \emph{ambient}
+        e \emph{reflection intensity}.
+  \item Per ogni componente: \textbf{esiste già o va creato?} Ricolorare
+        (\emph{Color Tint}) non ricolora tutto (i pallini dei dadi). Si lavora
+        \textbf{in scala reale}: righello in cm, vista dall'alto, \texttt{+} e
+        \texttt{-}. Niente \textbf{sacchetto infinito}: i componenti si devono poter
+        contare; il sacchetto normale va in \emph{Random}.
+  \item \textbf{Token}: forma libera, trasparenza e collisione, colorabile, impilabile,
+        ma retro specchiato. \textbf{Tile}: forme regolari, fronte e retro corretti,
+        niente trasparenza. I \textbf{tabelloni} si fanno con un token sottile e
+        bloccato.
+  \item Il \textbf{dado custom} si fa dai template (UV map) nella cartella
+        \emph{Modding} dei file installati, lavorando su una copia.
+  \item Il \textbf{mazzo custom} è una \textbf{griglia}: massimo $10\times7$, ultima
+        cella inutilizzabile, quindi 69 carte. Si compone con il \textbf{Deck Editor}
+        (solo Windows), si esporta senza upload e con \emph{Max Deck Size} 10.000; in
+        TTS, \emph{Sideways} no, \emph{Backs is hidden} sì, \emph{Unique Backs} per i
+        retri diversi. Mantenendo i nomi dei file si aggiorna una carta sola.
+  \item Il salvataggio locale non si condivide: si pubblica sul \textbf{Workshop}
+        (Upload la prima volta, poi Update), in \textbf{unlisted} per il corso. I
+        componenti altrui si salvano con \emph{Save Object}, ma dipendono da chi li ha
+        caricati; il Cloud Manager va tenuto in cartelle (limite di 9.999 file).
+  \item I moduli professionali usano il non-tavolo, ancoraggi, componenti in scala
+        (si parte dal tabellone); al corso non si chiede quel livello. \textbf{Niente
+        script}: remano contro il playtest.
+  \item Dalle domande finali: giocare \emph{The Box} per capire il software e per
+        riflettere su un gioco ``brutto'' che dà un'esperienza bellissima; seguire
+        Daniel Solis, Amabel Holland, Action Button; in Italia un gioco da tavolo che
+        vende ne vende mille--duemila copie, un GdR 500: sapere \textbf{perché} si fa
+        un gioco cambia il metro con cui lo si giudica.
+\end{itemize}

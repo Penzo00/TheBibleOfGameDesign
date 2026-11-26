@@ -1,0 +1,2482 @@
+% =====================================================================
+%  Capitolo 11 — Il vocabolario del level designer: blockout e i suoi
+%  cinque strumenti, coordinate, gerarchie, snapping, pivot, mesh e
+%  collisioni, luci, e il primo livello costruito da zero in Unreal
+%  Engine (primo anno)
+%  Fonte: trascrizione della lezione GD11, che è la seconda lezione del
+%  corso di Level Design del primo anno (docente: Stefano Zocchi, lo
+%  stesso del capitolo 8), di cui la lezione è la diretta prosecuzione.
+%  Contenuti, nell'ordine della lezione: la struttura delle lezioni del
+%  primo anno; la revisione dei blockout della propria stanza (Francesca,
+%  Antonino, Federica, Mattia, Francesco, Alberto, Valerio), con le
+%  digressioni su Win+Shift+S, il "pizzico di caos" e il verosimile; lo
+%  Starter Content assente in Unreal 5.8; lavoro artistico e lavoro di
+%  gameplay; il blockout (Call of Duty 2019, Uncharted, il gameplay che
+%  regna sovrano); i cinque strumenti del blockout (primitivi, kit
+%  modulari, brush e modellazione, sculpting del terreno, spline); che
+%  cosa si farà nel primo anno; asset e actor; coordinate globali e
+%  locali (alla lavagna); la pausa; lo spazio delle coordinate
+%  nell'editor; genitori, figli e gruppi; Ctrl+Z e la selezione; lo
+%  snapping (griglia, rotazione, campi numerici); gli assi di rotazione;
+%  il Content Browser e la lingua dell'editor; il pivot; mesh e
+%  collisioni; le luci (point, spot, rect, directional); l'importazione
+%  manuale dello Starter Content; il livello da zero (piano, luce
+%  direzionale, Lumen, luce ambientale e cielo, la cartella Lighting);
+%  materiali e texture; le modalità di visualizzazione; il post process
+%  volume; il task (una stanza creativa); le domande e le presenze.
+%  Integrazioni dal libro "An Architectural Approach to Level Design"
+%  (Christopher W. Totten), segnalate come approfondimenti.
+%
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{amsmath},
+%  \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Tutte le etichette di questo capitolo hanno il prefisso "gd11:"
+%  (gd11:sec:..., gd11:fig:..., gd11:tab:...) e tutti gli stili TikZ il
+%  prefisso "gd11", per non collidere con gli altri capitoli.
+%
+%  Nota sulla fonte: la trascrizione automatica è buona nella parte
+%  teorica, ma molto rovinata altrove. L'inizio della registrazione, le
+%  due pause e i momenti di lavoro individuale sono stati trascritti
+%  come frasi senza senso o ripetute in loop ("Il numero di persone è
+%  molto più basso dopo il raggio di persone", "ti sanno, ti sanno",
+%  "vado a rio", "e questo no"), con brani captati da una fonte esterna
+%  (frasi sul "mercato interno dell'Unione Europea", sulla "patente",
+%  sugli "alzheimeri"): sono artefatti, omessi. Durante la pausa la
+%  registrazione cattura anche conversazioni private (sulla musica, su
+%  Jimi Hendrix e sulla chitarra suonata al contrario) e, a fine
+%  lezione, un breve scambio privato del docente con uno studente di un
+%  altro anno su una consegna: non fanno parte della lezione e non sono
+%  riportati. Molti nomi propri (di giochi, persone, strumenti) sono
+%  storpiati ("Arial", "il Real", "Ruben", "Elder Ring", "AlphaFlash"):
+%  dove il riferimento è ricostruibile con certezza lo si riporta nella
+%  forma corretta; dove non lo è, lo si segnala in nota invece di
+%  indovinare. Le figure e le tabelle sono ricostruzioni schematiche di
+%  ciò che il docente mostra e descrive (anche alla lavagna), non le
+%  slide originali.
+% =====================================================================
+
+\chapter[Blockout, coordinate e luci]{Il vocabolario del level designer:
+blockout, coordinate, pivot, mesh e luci}
+\label{gd11:cap:blockout-luci}
+
+Il capitolo~\ref{gd8:cap:leveldesign} ha aperto il corso di \textbf{Level
+Design} del primo anno: chi è il level designer, perché ``level design'' è un
+termine ombrello, e i primissimi passi nell'editor di Unreal Engine, con il
+task di ricostruire \textbf{la propria stanza} usando solo forme di base. Questa
+lezione, tenuta dallo stesso docente (Stefano Zocchi), ne è la diretta
+prosecuzione: è la ``\textbf{seconda parte del ciclo di lezioni
+introduttive}''. Le lezioni introduttive, spiega il docente, servono a vedere
+``un po' di concetti, un po' di altra roba di base'', con momenti di
+spiegazione e momenti di pratica.
+
+Il docente lo dice subito con franchezza: questa è ``una delle lezioni più
+frontali'' dell'anno, ``una lunga lista di termini che è necessario che
+sappiate se vogliamo iniziare a parlare con cognizione di causa degli
+argomenti del nostro corso''. Sono concetti legati all'uso di Unreal, ma anche
+\textbf{concetti di base del mondo dello sviluppo di videogiochi e del level
+design}: molti studenti, almeno in parte, li conoscono già, ma il docente
+sceglie di vederli ``in una sezione formale all'interno del corso'' per
+assicurarsi che tutti sappiano esattamente che cosa sono. ``La lezione di oggi
+sarà un po' noiosa, o magari queste cose vi appassionano, non lo so.''
+
+La lezione è anche segnata da un imprevisto tecnico: il computer dell'aula è
+\textbf{nuovo}, il docente non aveva ancora usato \textbf{Unreal Engine 5.8}
+(per lavoro usa Unity o altre versioni di Unreal), e nella 5.8 Epic ha cambiato
+diverse cose, tra cui il fatto che lo \textbf{Starter Content} non è più
+incluso. Una parte della lezione è quindi spesa a risolvere il problema, e il
+capitolo riporta anche la procedura trovata, perché è quella che gli studenti
+devono seguire.
+
+La struttura della lezione, e quindi del capitolo, è questa:
+\begin{enumerate}
+  \item la \textbf{struttura delle lezioni} del primo anno e la
+        \textbf{revisione dei blockout} della propria stanza, con le
+        digressioni sugli screenshot, sul ``pizzico di caos'' e sul
+        \textbf{verosimile} (sezioni~\ref{gd11:sec:struttura}
+        e~\ref{gd11:sec:revisione});
+  \item l'introduzione alla lezione e lo Starter Content mancante
+        (sezione~\ref{gd11:sec:intro});
+  \item la distinzione fondamentale tra \textbf{lavoro artistico} e
+        \textbf{lavoro di gameplay} nel level design
+        (sezione~\ref{gd11:sec:arte-gameplay});
+  \item il \textbf{blockout}: che cos'è, perché si fa, gli esempi di
+        \emph{Call of Duty} e \emph{Uncharted}, e il gameplay che ``regna
+        sovrano'' (sezioni~\ref{gd11:sec:blockout}
+        e~\ref{gd11:sec:esempi-blockout});
+  \item i \textbf{cinque strumenti} del blockout: primitivi, kit modulari,
+        brush e modellazione, scultura del terreno, spline
+        (sezioni~\ref{gd11:sec:strumenti}--\ref{gd11:sec:spline}), e che
+        cosa si farà nel primo anno (sezione~\ref{gd11:sec:primo-anno});
+  \item la terminologia dell'editor: \textbf{asset e actor},
+        \textbf{coordinate globali e locali}, \textbf{genitori e figli},
+        \textbf{gruppi}, Ctrl+Z, \textbf{snapping}, assi di rotazione,
+        Content Browser, \textbf{pivot}
+        (sezioni~\ref{gd11:sec:asset}--\ref{gd11:sec:pivot});
+  \item \textbf{mesh e collisioni} (sezione~\ref{gd11:sec:mesh});
+  \item le \textbf{luci}: point light, spot light, rect light e
+        directional light (sezione~\ref{gd11:sec:luci});
+  \item l'importazione manuale dello \textbf{Starter Content}
+        (sezione~\ref{gd11:sec:starter});
+  \item il \textbf{livello costruito da zero}: piano, sole, luce ambientale,
+        cielo, la cartella \emph{Lighting}
+        (sezione~\ref{gd11:sec:da-zero});
+  \item \textbf{materiali e texture}, le \textbf{modalità di
+        visualizzazione} e il \textbf{post process volume}
+        (sezioni~\ref{gd11:sec:materiali}--\ref{gd11:sec:postprocess});
+  \item il \textbf{task} per la lezione successiva, le domande e la chiusura
+        (sezioni~\ref{gd11:sec:task} e~\ref{gd11:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{La struttura delle lezioni del primo anno}
+\label{gd11:sec:struttura}
+
+\subsection{Cinque minuti per chi arriva}
+
+Come fa sempre, il docente lascia qualche minuto ``per dare il tempo a un
+pochino di gente di arrivare''. La lezione è ibrida: la maggior parte della
+classe è in aula, mentre \textbf{Mattia} segue da casa (e combatterà a lungo con
+l'audio di Teams). Il docente sa che una persona gli ha scritto per dire che
+sarebbe stata assente; l'appello vero e proprio verrà fatto ``da lezione'',
+cioè alla fine, per essere sicuri che ci siano tutti quelli che ci devono
+essere (sezione~\ref{gd11:sec:chiusura}).
+
+\subsection{Prima i task, tutti insieme}
+
+Il docente spiega come sono organizzate le sue lezioni, ``soprattutto il primo
+anno'': \textbf{la prima parte della lezione è dedicata a guardare in classe,
+tutti insieme, i task} che gli studenti hanno fatto.
+\begin{itemize}
+  \item Questa abitudine \textbf{svanisce progressivamente} nel corso
+        dell'anno, e dipende anche da \textbf{quante persone ci sono in
+        classe}: con quattro o cinque persone c'è il tempo di vedere tutto
+        insieme, con dieci o quindici molto meno.
+  \item Il primo anno, però, il docente ci tiene a cominciare le lezioni
+        \textbf{correggendo} o, come in questo caso, \textbf{dando
+        un'occhiata}: le prime lezioni sono di pratica, e non è troppo
+        rigido nel correggere.
+  \item Lo scopo è doppio: tutti possono guardare i lavori degli altri e
+        \textbf{rendersi conto del livello generale}; e, dato che ci saranno
+        molti casi in cui tutti fanno \textbf{lo stesso errore}, il docente
+        non deve ripeterlo più volte: ``posso parlarne di uno e lo vedete
+        tutti''.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{La revisione dei blockout della stanza}
+\label{gd11:sec:revisione}
+
+``Per oggi c'era un task. Il task era?'' La classe risponde subito (``ottimo,
+dieci su dieci''): il \textbf{blockout della propria stanza}, il primo task di
+level design (sezione~\ref{gd8:sec:task}). Si procede \textbf{in ordine
+alfabetico}, proiettando gli screenshot caricati nella cartella dei task.
+
+\subsection{Francesca: cubi, piani e un CD sotto la sedia}
+
+La prima è Francesca (il docente si fa correggere la pronuncia del cognome).
+``Bella stanza.'' Ci sono delle \textbf{decorazioni}: la studentessa spiega che
+sono stilizzate, e il docente approva (``ci può stare''). Fa notare un
+elemento storto, ma il giudizio complessivo è ``bel lavoro''. Alla domanda se
+abbia usato solo cubi, Francesca risponde di aver usato \textbf{cubi e piani}
+(i piani per i poster), e c'è persino un dettaglio sotto la sedia (``dovrebbe
+essere un CD'').
+
+\paragraph{Lo scopo dell'esercizio.} ``Per questo task di solito non ho niente
+da dire'': il docente lo guarda soprattutto per assicurarsi che tutti
+l'abbiano fatto. Il lavoro è ``molto preciso'', ``decisamente molto
+dettagliato''; ma lo scopo dell'esercizio, ricorda, è \textbf{prendere la mano
+con gli strumenti}: passare dallo spostamento alla rotazione alla scala e così
+via, in modo che diventi \textbf{istintivo}, ``non ci dovete più pensare una
+volta che l'avete imparato''. Per questo va benissimo; e non si perde troppo
+tempo su ogni lavoro.
+
+\subsection{Antonino: una PlayStation 5, e la cartella condivisa}
+
+La stanza di Antonino è ``molto più ristretta''. Il docente si diverte a
+riconoscere gli oggetti: ``fammi indovinare, questa è una PlayStation 5''; e
+poi il case del computer.
+
+\paragraph{Un account condiviso.} Nel frattempo, il docente spiega perché
+sullo schermo compare il nome di un altro docente (Mattia Podini): sta usando
+l'\textbf{account generale} che è stato lasciato sul computer dell'aula.
+
+\paragraph{Non si cancella nella cartella dei task.} Nella cartella compare
+anche una ``bozza''. Regola pratica: gli studenti \textbf{non possono
+cancellare} i file caricati nella cartella condivisa. Se serve eliminare
+qualcosa, bisogna \textbf{scrivere ``da cancellare''} (nel nome del file): il
+docente lo cancellerà appena lo vede.
+
+\subsection{Federica: abbiamo appena traslocato}
+
+Federica mostra ``solo la versione migliore'', e ha già usato anche i
+\textbf{materiali}: ``siamo già più avanti''. La stanza è ``un po' spoglia,
+forse''; ma c'è una ragione narrativa: ``abbiamo appena traslocato, quindi la
+stanza è vuota''. ``Questo è un nuovo modo per imbrogliare un task'', scherza
+il docente; ma il lavoro è buono, e soprattutto contiene un dettaglio che vale
+per tutti.
+
+\paragraph{Un pizzico di caos.} Le \textbf{scatole} del trasloco sono messe
+\textbf{sghembe}, di traverso, e questo crea una visuale più interessante.
+Stessa cosa per il \textbf{libro sul comodino}: ``se l'avessi messo
+rigidamente regolare, sarebbe stato molto strano, tra virgolette, da vedere''.
+\begin{quote}
+Mettere un pizzico di caos in quello che facciamo rende gli ambienti più
+interessanti, rende gli ambienti più \textbf{vissuti}.
+\end{quote}
+``Anche queste sono cose a cui arriveremo'': è un primo assaggio del lavoro di
+\emph{set dressing} (sezione~\ref{gd8:sec:cosa-fa}).
+
+\subsection{Mattia: le foto allo schermo, e uno spadone}
+
+Mattia Maestri è il primo, nell'esperienza del docente, a consegnare
+\textbf{fotografie dello schermo} invece che screenshot. Segue da casa, ma
+all'inizio non lo si sente: il microfono è disattivato, poi l'audio della
+televisione dell'aula non funziona (``questo computer è nuovo, tra l'altro, e
+questo potrebbe crearci un paio di problemi dopo''), finché Mattia non si
+collega anche dal telefono, scoprendo nel frattempo di avere le cuffie rotte.
+La spiegazione delle foto: ha dovuto formattare da poco il PC fisso e non ha
+ancora reinstallato gli strumenti per fare e mandare gli screenshot.
+
+\paragraph{Un trucco su Windows.} Il docente ne approfitta per insegnare a tutti
+una cosa ``abbastanza utile'':
+\begin{itemize}
+  \item \textbf{Win+Shift+S} è la scorciatoia di Windows per fare uno
+        \textbf{screenshot}: si seleziona una parte dello schermo, e
+        l'immagine viene salvata \textbf{negli appunti}; con \textbf{Ctrl+V}
+        la si incolla dove serve. Funziona ovunque in Windows.
+  \item Esiste anche una funzione \textbf{interna a Unreal} che permette di
+        prendere uno screenshot direttamente dall'immagine renderizzata
+        dall'engine: ``una cosa alla volta, ci arriveremo anche a
+        quello''.\footnote{Il docente non la nomina; si tratta con ogni
+        probabilità della funzione \emph{High Resolution Screenshot}
+        dell'editor, accessibile dal menu della viewport.}
+\end{itemize}
+
+\paragraph{Lo spadone.} Il lavoro è ``un po' meno dettagliato'', ma Mattia ha
+avuto parecchi problemi con il computer. Nella stanza c'è uno spadone: ``questa
+è la spada di Cloud?'' No: è uno spadone che Mattia ha davvero in camera, uno
+spadone d'osso di \emph{Monster Hunter}\footnote{Nella trascrizione ``lo
+spadone d'osso dimostrante''; ``dimostrante'' è quasi certamente una
+storpiatura di ``di \emph{Monster Hunter}'', serie di cui Mattia aveva parlato
+nel giro di presentazioni (sezione~\ref{gd8:sec:presentazioni}), e che ha
+effettivamente ``tantissimi'' spadoni.} (``ottimo, fantastico''; ``ce ne sono
+tantissimi, sinceramente'').
+
+\paragraph{Daniele.} Daniele oggi non c'è: è lui che aveva avvisato. Il docente
+dà comunque un'occhiata al suo lavoro: ``ottimo lavoro''.
+
+\subsection{Francesco: la stanza senza soffitto, e il verosimile}
+
+``Ci sono un sacco di Franceschi.'' La stanza di Francesco Muratore è ``molto
+innovativa nell'avere una stanza senza soffitto'', e ``molto, molto
+orizzontale''. Lo scopo dell'esercizio era fare pratica, quindi va bene; ma il
+docente dà un consiglio per il futuro: fare \textbf{ambienti un po' più
+credibili}. ``Il tuo letto non è così stretto'': così com'è, ``sembra più una
+panchina che un letto''. Per il resto ci sono le forme, le sedie, uno zaino.
+
+\paragraph{Non realistico: verosimile.} Serve ``un po' più di attenzione per
+quanto riguarda gli spazi'', e un approccio\ldots{} ``realistico non è il
+termine corretto''. Il termine che il docente userà spesso durante l'anno è
+\textbf{verosimile}:
+\begin{quote}
+I videogiochi puntano non al realismo, ma alla \textbf{verosimiglianza}.
+\end{quote}
+Si torna così all'\textbf{organizzazione degli spazi}: un letto deve avere le
+proporzioni di un letto perché il giocatore lo legga come tale, anche se lo
+stile del gioco non è affatto realistico.
+
+\subsection{Alberto: lo showroom dell'IKEA}
+
+Anche Alberto ha lavorato con i \textbf{materiali}, per la maggior parte degli
+oggetti (il docente si scusa: ``ci metterò un bel po' a ricordarmi i nomi di
+tutti''). C'è il condizionatore. Ma la stanza è ``il vuoto totale'': nessun
+poster, niente sugli scaffali vuoti. Va bene, ma la battuta è inevitabile:
+``Alberto vive in uno showroom dell'IKEA''. È il rovescio del ``pizzico di
+caos'' di Federica: uno spazio senza segni di vita non sembra abitato.
+
+\subsection{Valerio: super preciso, e il problema della scala}
+
+``Valerio invece è andato super preciso.'' Valerio racconta di essersi accorto,
+provando a ``entrare'' nella stanza con il personaggio, che \textbf{era tutto
+enorme}: aveva capito che i valori erano in centimetri, ma inserendo, per
+esempio, 5 nel campo della scala, l'oggetto diventava di cinque metri.
+Ricordiamo infatti (sezione~\ref{gd8:sec:transform}) che la \emph{posizione} è
+in centimetri, ma la \emph{scala} è un \textbf{moltiplicatore} della dimensione
+originale dell'oggetto: un cubo di base è largo un metro, e con scala 5 diventa
+largo cinque metri (si veda anche la sezione~\ref{gd11:sec:snapping}).
+
+``Quello non è un problema'': lo scopo era metterci mano, non preoccuparsi
+troppo delle dimensioni. Il lavoro è ``un gran bel lavoro'': super dettagliato,
+super preciso, con le sedie, il cestino, la \emph{tower} del computer, e una
+lampada come ``tocco di classe''.\footnote{Dopo il lavoro di Valerio la
+trascrizione riporta ancora un ``congratulazioni, anche tu super dettagliata'',
+senza nome: potrebbe riferirsi allo stesso lavoro o all'ultimo in ordine
+alfabetico. Le presenze a fine lezione confermano comunque che tutti i presenti
+avevano consegnato.}
+
+\paragraph{Finché avete energia e tempo.} ``Ci sono state un paio di persone
+che hanno preso questo esercizio molto sul serio. Mi fa piacere.'' Il
+consiglio: finché si hanno l'energia e il tempo per farlo, \textbf{fatelo}.
+``Più andremo avanti nell'anno, meno tempo avrete. Ma è inevitabile.''
+Il commento finale sulla revisione: ``ottimo, ottimo, ottimo. Soddisfazione.''
+
+% ---------------------------------------------------------------------
+\section{La lezione di oggi, e lo Starter Content che non c'è}
+\label{gd11:sec:intro}
+
+\paragraph{Teoria formale, e un po' di pratica.} Oggi si coprono concetti che
+sono legati all'uso di Unreal, ma che sono anche concetti di base dello
+sviluppo di videogiochi e del level design. Ci sarà anche un momento in cui si
+comincia a lavorare in Unreal con lo \textbf{Starter Content}.
+
+\paragraph{Unreal 5.8 e lo Starter Content.} Qui il docente ``incrocia le
+dita'': il computer dell'aula è appena stato cambiato, e lui non ha ancora
+usato la versione 5.8, perché i progetti a cui lavora usano Unity o versioni
+diverse di Unreal. E nella 5.8 sono cambiate un po' di cose, tra cui una che ha
+verificato proprio quella settimana: \textbf{lo Starter Content non è più
+incluso con Unreal}.\footnote{Nel capitolo~\ref{gd8:cap:leveldesign}
+(sezione~\ref{gd8:sec:content}) lo si poteva ancora aggiungere dal Content
+Browser con \emph{Add Feature or Content Pack}. In questa lezione il docente
+constata che nella 5.8 quella via non c'è più (``una volta bastava fare tasto
+destro, importa starter content, hai finito. Hanno tolto sta roba, rottura
+gigantesca'').} Con l'altro insegnante di level design è stato organizzato un
+\textbf{pacchetto da scaricare e importare}; la procedura si vedrà più avanti
+(sezione~\ref{gd11:sec:starter}).
+
+\paragraph{Le slide sono nella cartella condivisa.} Chi preferisce seguire
+sulle slide invece che sullo stream può farlo: il docente cerca di
+\textbf{caricare sempre le slide in contemporanea}, quando le usa, nella
+cartella condivisa. Conviene, anche perché nelle slide ci sono dei
+\textbf{link} che serviranno.
+
+% ---------------------------------------------------------------------
+\section{Lavoro artistico e lavoro di gameplay}
+\label{gd11:sec:arte-gameplay}
+
+Prima della terminologia, una ``piccola introduzione'' a ``uno dei concetti più
+importanti di questa disciplina'': la distinzione fra \textbf{lavoro
+artistico} e \textbf{lavoro di gameplay}.
+
+\subsection{Il termine ombrello, di nuovo}
+
+``Cosa copre il termine level design? Quando dico level design, cosa intendo?''
+Qualcuno risponde con la parola magica, ``dipende'' (``è la risposta a
+praticamente ogni domanda che faccio, ma non sempre'');
+la risposta giusta, vista la lezione precedente, è che level design è un
+\textbf{termine ombrello} (figura~\ref{gd8:fig:ombrello}): si usa per riferirsi a
+un sacco di cose diverse. Ma queste cose, ``a livello di massima'', si possono
+sintetizzare in \textbf{due campi}: il campo \textbf{artistico} e il campo
+\textbf{di design} (figura~\ref{gd11:fig:due-campi}).
+
+\begin{description}
+  \item[Il campo artistico.] Un level designer può trovarsi a fare
+        \textbf{illuminazione}; \textbf{enrichment}, che si vedrà durante
+        l'anno, cioè \textbf{arricchire gli spazi}: mettere cose sugli
+        scaffali, piante e così via; in certi casi il
+        \textbf{post-processing}; in certi casi gli \textbf{effetti visivi}, a
+        seconda di ciò che serve: mettere fumo, fuochi in giro per una stanza.
+        Sono tutte cose legate al settore artistico.
+  \item[Il campo del design.] Dove metto i \textbf{nemici}? L'\textbf{encounter
+        design}.\footnote{Nella trascrizione ``il counter design'': dal
+        contesto (``dove metto i nemici?'') si tratta quasi certamente
+        dell'\emph{encounter design}, la progettazione degli scontri.} Dove
+        metto i \textbf{blocchi} che serviranno a guidare gli artisti su come
+        devono essere fatte le pareti: i \textbf{blockout}, eccetera. Sono
+        cose di design perché si occupano, ``non necessariamente puramente, ma
+        principalmente'', dell'\textbf{esperienza del giocare al gioco}.
+\end{description}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  gd11core/.style={draw, very thick, ellipse, align=center, fill=blue!10,
+                   inner sep=4pt},
+  gd11art/.style={draw, thick, rounded corners=4pt, align=left,
+                  text width=4.6cm, inner sep=5pt, fill=orange!12},
+  gd11des/.style={draw, thick, rounded corners=4pt, align=left,
+                  text width=4.6cm, inner sep=5pt, fill=green!10},
+  gd11arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  \node[gd11core] (ld) {\textbf{Level design}\\{\footnotesize termine ombrello}};
+  \node[gd11art, below left=1.0cm and 0.3cm of ld] (art)
+    {\textbf{Campo artistico}\\[2pt]
+     {\footnotesize $\bullet$ illuminazione\\
+      $\bullet$ \emph{enrichment}: arricchire gli spazi\\
+      \phantom{$\bullet$} (scaffali, piante\ldots)\\
+      $\bullet$ post-processing\\
+      $\bullet$ effetti visivi (fumo, fuochi)}};
+  \node[gd11des, below right=1.0cm and 0.3cm of ld] (des)
+    {\textbf{Campo del design}\\[2pt]
+     {\footnotesize $\bullet$ dove metto i nemici (\emph{encounter design})\\
+      $\bullet$ i blockout che guidano gli artisti\\
+      $\bullet$ forme e funzioni degli spazi\\
+      $\bullet$ l'esperienza del giocare}};
+  \draw[gd11arr] (ld) -- (art.north);
+  \draw[gd11arr] (ld) -- (des.north);
+  \node[font=\footnotesize\itshape, align=center, below=0.25cm of art]
+    {primo anno del corso};
+  \node[font=\footnotesize\itshape, align=center, below=0.25cm of des]
+    {da fine primo anno;\\specialità del docente};
+\end{tikzpicture}
+\caption{I due macro-campi del level design. Negli studi grandi tendono a
+essere coperti da persone diverse; negli studi piccoli lo stesso level
+designer fa entrambe le cose.}
+\label{gd11:fig:due-campi}
+\end{figure}
+
+\subsection{La specializzazione}
+
+Ecco perché il docente fa questa precisazione: nel mondo del lavoro \textbf{i
+level designer tendono a specializzarsi} in uno dei due campi.
+\begin{itemize}
+  \item ``Dipende, ovviamente'': in uno \textbf{studio molto piccolo} bisogna
+        fare entrambe le cose, ``e a me capita di dover fare entrambi perché
+        c'è poco da fare''.
+  \item In uno \textbf{studio più grosso} c'è una certa specializzazione, e
+        certi ambiti del lato artistico (e del level design in generale) sono
+        spesso coperti \textbf{direttamente dagli artisti}, soprattutto cose
+        come l'\textbf{illuminazione}: se lo studio è abbastanza grande, c'è una
+        persona esperta di illuminazione che si occupa solo di quello, perché
+        ad alti livelli è una cosa piuttosto complessa.
+\end{itemize}
+
+\paragraph{Il test di assunzione.} La conseguenza pratica: se un giorno si
+risponde a un annuncio per \textbf{level designer} e viene chiesto di fare un
+\textbf{test}, spesso si può \textbf{scegliere} se fare un \textbf{test
+artistico} o un \textbf{test di gameplay}, a seconda di ciò in cui si è
+specializzati.
+
+\paragraph{Il docente, e il collega di Roma.} Il docente è specializzato nel
+\textbf{design}, nel lato gameplay del level design: ``che non vuol dire che non
+so niente del lato artistico, al contrario''. Il suo collega di Roma, Andrea,
+proviene invece dal \textbf{lato artistico}, ed è esperto nel rendere gli spazi
+e le stanze.\footnote{Nella trascrizione ``esperto nella redditività,
+stanze''; il senso è quello di un esperto del lato visivo degli ambienti (la
+resa, il \emph{rendering} delle stanze), ma la parola esatta non è
+ricostruibile.}
+
+\paragraph{Che cosa vuol dire per il corso.} Il \textbf{primo anno} è più
+incentrato sul \textbf{lato artistico}: comporre cose in engine, imparare come
+funziona l'engine, che cosa sono i materiali, l'illuminazione, eccetera. Verso
+la \textbf{fine del primo anno} si comincerà a toccare il \textbf{lato del
+design}. Del lato artistico il docente dice ``non è il mio punto di forza, ma
+sono comunque cose che so fare''; del lato design, ``questo è il mio punto di
+forza'': ``non vedo l'ora di arrivarci'', perché è ciò di cui può parlare con
+più fiducia, confidenza e aneddoti. Ma intanto, ``voglio che vi ricordiate
+questa distinzione principale''.
+
+% ---------------------------------------------------------------------
+\section{Il blockout}
+\label{gd11:sec:blockout}
+
+``Si parte dai termini.'' Il primo è uno che gli studenti hanno già usato per il
+task: il \textbf{blockout}.
+
+\subsection{Un concetto, molti nomi}
+
+A livello tassonomico, si possono incontrare molti nomi per la stessa cosa:
+\textbf{block out}, \textbf{grey boxing}, \textbf{block mesh}, \textbf{white
+boxing}. ``Questo termine ha un nome diverso praticamente in quasi ogni
+studio.'' Nell'ambiente in cui lavora il docente si tende a dire
+\emph{blockout}; in studi in cui ha lavorato si diceva \emph{white boxing}, in
+altri \emph{grey boxing}.
+
+\paragraph{Sono sinonimi.} Il docente torna sul punto più avanti, a proposito
+di \emph{Skyrim} (sezione~\ref{gd11:sec:modulari}): capiterà di incontrare
+qualcuno che dice ``no, in realtà il grey boxing è una fase del blockout che
+implica questa cosa, il white boxing indica un'altra fase''. ``Io vi posso
+assicurare per esperienza personale che sono usati in maniera
+\textbf{completamente interscambiabile}'': \emph{white box}, \emph{white
+blocking}, \emph{grey blocking}, \emph{grey box}, \emph{blockout} sono ``sempre
+la stessa cosa, a livello di massima''. Saperlo evita di confondersi.
+
+\subsection{Perché non partire dall'arte finale?}
+
+Sulla slide c'è uno screenshot di un livello di \emph{God of War} durante lo
+sviluppo:\footnote{Il docente lo indica come ``quello del 2024''. Non esiste
+un \emph{God of War} uscito nel 2024: si tratta probabilmente di \emph{God of
+War Ragnarök} (2022, arrivato su PC nel 2024) o del \emph{God of War} del
+2018; dalla trascrizione non è possibile stabilirlo.} tutto forme semplici e
+grigie. ``Perché si fanno così i livelli? Perché non partire direttamente con
+la capanna e tutto quanto? Con il molo fatto bene, con la gru, con tutte le
+cose pronte degli artisti?'' La risposta della classe: \textbf{prima si parte
+con una bozza}.
+
+\paragraph{La matita prima dell'inchiostro.} Il docente chiede chi sia
+appassionato di fumetti e disegno, e qual è il suo fumettista preferito. Il
+punto: quando si fa un disegno, di solito non si prendono subito gli
+inchiostri, perché se si sbaglia qualcosa ``è tutto da buttare via''. Si parte
+con la \textbf{matita}: uno sketch, si cancella, si riprova, si ricancella, si
+riprova, e solo quando le matite sono finite si passa all'inchiostro. ``Il level
+design funziona in una maniera molto simile.''
+
+Quando si comincia un livello, non si fa praticamente mai così: prendere gli
+asset (le case, le strade, tutto), metterli nel livello, testarlo e, se qualcosa
+non funziona, dover cambiare un sacco di roba. ``No. Il livello di base è un
+blockout'': \textbf{forme semplici pensate per buttare giù l'idea del livello il
+prima possibile}.
+
+\paragraph{Arrivare presto a qualcosa di giocabile.} Il motivo principale, come
+suggerisce uno studente (Alessandro), è che uno degli scopi dello sviluppo di un
+videogioco è \textbf{arrivare il prima possibile a qualcosa di giocabile}. Se si
+aspetta che gli artisti finiscano tutto (l'erba dappertutto, le case, il cielo,
+le rocce piazzate in giro) e solo a quel punto si fa il primo test, e ci si
+accorge che qualcosa non funziona, per esempio che gli spazi sono troppo stretti
+per il giocatore, bisogna \textbf{rifare tutto da capo}. Invece: prima si
+definiscono le forme generali più ampie, e poi si gioca. ``Fondamentalmente si
+fa quasi tutto il gioco così.''
+
+\paragraph{Le realtà di produzione.} Ovviamente le realtà di produzione sono
+più complesse: una \textbf{demo} o un \textbf{trailer} vanno fatti, e non si
+possono fare con un blockout. ``Che cosa facciamo vedere alla gente del gioco
+che stiamo sviluppando, mentre lo sviluppiamo?'' è un problema classico. Ma lo
+scopo principale resta arrivare a qualcosa di giocabile il più velocemente
+possibile. La questione dei blockout verrà ripresa più avanti; questa è
+un'introduzione a ``una delle parti più importanti dello sviluppo di un
+livello''.
+
+\subsection{Testare idee e rispondere a domande}
+
+Lo scopo del blockout è \textbf{testare idee e rispondere a domande}. L'esempio
+del docente:
+\begin{quote}
+Da questo punto riesco a vedere la torre in cui devo andare? Ci metto un blocco
+che ha più o meno le dimensioni di una casa. No, non si vede bene, è un po'
+coperta da questa casa. Ok, la sposto più a sinistra. Perfetto, così si vede
+benissimo. Andiamo avanti, e poi la sostituiremo con i lavori degli artisti,
+dei modellatori 3D.
+\end{quote}
+``Il blockout è il vostro sketch.'' Tutti gli studenti, con il task, hanno fatto
+lo sketch della propria cameretta. Lo scopo è rispondere alle possibili domande
+sui problemi che vengono fuori durante la creazione di un livello, e tirare giù
+idee. Ci sono anche altre fasi nella creazione di un livello, ma per ora è
+questa che interessa.
+
+\paragraph{Approfondimento: il blockout secondo Totten.} In \emph{An
+Architectural Approach to Level Design}, Christopher Totten indica come errore
+comune proprio quello di \textbf{presumere che il gameplay non si possa testare
+finché non c'è l'arte} nell'engine: è molto più efficiente progettare gli spazi
+del livello (e gli script necessari) mentre l'arte viene sviluppata, per
+verificare se il progetto su carta produce davvero l'esperienza voluta. I
+prototipi si costruiscono con i \textbf{primitivi dell'engine}, e in assenza di
+primitivi (come in molti engine 2D) con \emph{placeholder art}, la cosiddetta
+\emph{programmer art}: quadrati, cerchi, triangoli. Nel libro, l'art director
+Greg Grimsby (\emph{Warhammer Online}) descrive il proprio processo in sette
+passi: obiettivi di gameplay, tema visivo, punti di interesse, flusso, mappa,
+\textbf{prototipo in whitebox} (``l'obiettivo è avere il guscio di base per
+testare: il flusso, le visuali, i tempi di percorrenza, le linee di vista''),
+e solo alla fine, una volta validato il layout con i test, l'arte finale
+(``renderlo carino''). Ed è Grimsby stesso a ricordare il limite del whitebox:
+un livello può funzionare anche così, ma \emph{Dead Space} ``non fa altrettanta
+paura senza le luci e l'atmosfera'' dell'arte: il blockout risponde alle
+domande di gameplay, non a quelle di atmosfera.
+
+% ---------------------------------------------------------------------
+\section{Due esempi: Call of Duty e Uncharted}
+\label{gd11:sec:esempi-blockout}
+
+``A me piace cercare di portare esempi pratici, quando riesco a scovarli fra
+archivi, dichiarazioni, o chiedendo ad amici o persone che hanno conoscenze.''
+
+\subsection{Una mappa multiplayer di Call of Duty}
+
+Il primo esempio è una mappa multiplayer di \emph{Call of Duty} (``quello del
+2019'', cioè \emph{Call of Duty: Modern Warfare}), realizzata da un level
+designer di cui il docente mostra il lavoro.\footnote{Nella trascrizione la
+mappa è chiamata ``DOCS'' e il level designer ``Brian Baker''; né l'una né
+l'altro sono verificabili dalla trascrizione, e li si riporta solo come
+indicazione. Il docente aggiunge: ``non chiedetemi quale studio, perché a
+\emph{Call of Duty} ci lavorano tipo trenta studi diversi''.} In alto c'è la
+versione in blockout, in basso la versione finale (figura~\ref{gd11:fig:cod}).
+``Che cosa notate?''
+
+\paragraph{Materiali, griglia, colori.} Anzitutto, nel blockout c'è una
+\textbf{scelta di materiali precisa}:
+\begin{itemize}
+  \item una \textbf{griglia}, che aiuta a tenere presenti le distanze, la
+        \textbf{metratura} di ciò che si sta facendo;
+  \item dei \textbf{colori} pensati per \textbf{segnalare} qualcosa in
+        particolare.
+\end{itemize}
+A che cosa servano esattamente quei colori ``bisognerebbe chiederlo
+direttamente al level designer che li ha scelti''. Secondo il docente, lo scopo
+principale è aiutare a notare, in un ambiente in cui tutto ha la stessa
+texture, che lì c'è qualcosa: per esempio \textbf{una finestra}. E la cosa è
+stata rispettata: la finestra del blockout e quella della versione finale sono
+lo stesso edificio. Nel blockout interessano solo le forme; il lato estetico
+``assolutamente zero''.
+
+\paragraph{Perché segnalare una finestra?} L'orlo \textbf{rosso} intorno
+all'apertura serve a dire al giocatore: \emph{occhio, lì c'è una finestra}. Ma
+perché un level designer vorrebbe farlo notare? La finestra è al primo piano di
+un edificio, e in \emph{Call of Duty} del 2019 il giocatore non ci può
+arrivare.\footnote{Uno studente obietta che in un altro capitolo della serie il
+personaggio ha il doppio salto (la trascrizione dice ``Wolverine Warfare'',
+probabilmente uno dei capitoli con movimento avanzato, come \emph{Advanced
+Warfare} o \emph{Infinite Warfare}); il docente risponde che ``è un discorso a
+parte''.} Lo scopo, in realtà, è segnalare: \textbf{da lì potrebbe spararti
+qualcuno}. ``Tieni presente che lì magari c'è qualcuno appostato che ti sta
+puntando col fucile.'' E questa cosa è stata \textbf{mantenuta nella versione
+finale}, perché una delle cose che fa un blockout è \textbf{segnalare
+l'intento} delle varie parti.
+
+\paragraph{La luce come segnale.} Nella versione finale, guardando
+l'\textbf{illuminazione}, si nota un'attenzione particolare: il giocatore che
+arriva correndo e svolta l'angolo deve notare che lì c'è un colore diverso
+rispetto alla parete. L'hanno ottenuto inserendo una \textbf{luce}
+(probabilmente dentro c'è una lampadina) che fa notare: ehi, lì c'è
+un'apertura nel muro, potrebbe esserci qualcuno che ti aspetta dietro l'angolo
+per spararti. ``Questo è il lavoro del level design: fare attenzione a questo
+tipo di dettagli.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  gd11wall/.style={draw, thick, fill=gray!25},
+  gd11win/.style={draw=red!80!black, line width=1.6pt, fill=black!70},
+  gd11winc/.style={draw, thick, fill=blue!15},
+  gd11lab/.style={font=\footnotesize, align=left},
+  gd11arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  % Blockout
+  \node[font=\small\bfseries] at (1.6,3.3) {Blockout};
+  \draw[gd11wall] (0,0) rectangle (3.2,2.8);
+  \foreach \x in {0.4,0.8,...,2.8} \draw[gray!55, thin] (\x,0) -- (\x,2.8);
+  \foreach \y in {0.4,0.8,...,2.4} \draw[gray!55, thin] (0,\y) -- (3.2,\y);
+  \draw[gd11win] (1.2,1.6) rectangle (2.0,2.3);
+  \node[gd11lab, anchor=north] at (1.6,-0.15)
+    {un solo \textbf{buco}: la funzione\\(``da qui ti tengono d'occhio'')};
+  % Freccia
+  \draw[gd11arr] (3.6,1.4) -- node[above, font=\footnotesize]{test,}
+                              node[below, font=\footnotesize]{arte} (5.0,1.4);
+  % Finale
+  \node[font=\small\bfseries] at (6.9,3.3) {Versione finale};
+  \draw[thick, fill=brown!20] (5.3,0) rectangle (8.5,2.8);
+  \draw[gd11winc] (5.6,1.6) rectangle (6.3,2.3);
+  \draw[gd11win, draw=black, line width=0.8pt, fill=black!75] (6.55,1.6) rectangle (7.25,2.3);
+  \draw[gd11winc] (7.5,1.6) rectangle (8.2,2.3);
+  \fill[yellow!80!orange, opacity=0.55] (6.9,1.95) circle (0.22);
+  \node[gd11lab, anchor=north] at (6.9,-0.15)
+    {la stessa apertura, tra due finestre\\\textbf{chiuse} e non sfondabili; una\\\textbf{luce} interna la fa notare};
+\end{tikzpicture}
+\caption{Ricostruzione schematica dell'esempio di \emph{Call of Duty}
+(2019): nel blockout l'apertura è solo un buco segnalato in rosso, che dice
+``da lì potrebbero spararti''; nella versione finale l'intento è mantenuto,
+l'apertura diventa una finestra resa verosimile da altre finestre chiuse, e una
+luce la rende leggibile a chi svolta l'angolo.}
+\label{gd11:fig:cod}
+\end{figure}
+
+\paragraph{Funzione prima, estetica poi.} C'è anche una differenza tra
+blockout e versione finale: nel blockout c'è \textbf{una sola finestra aperta},
+mentre nella versione finale ci sono più finestre. Il docente si spinge oltre:
+quando si faceva questo livello, nella fase delle forme, probabilmente non
+c'era neanche l'idea di una finestra. L'idea era: \textbf{questo è il buco da
+cui puoi tenere d'occhio il cortile}. ``Quello è puro gameplay, quella è pura
+considerazione di gameplay.'' Successivamente si sarà deciso che quel buco era
+una finestra, e per radicarlo in un mondo \textbf{verosimile} sono state
+aggiunte altre due finestre, chiuse, che però non si possono sfondare. A
+livello funzionale è un buco; a livello estetico, una serie di finestre.
+
+\paragraph{Perché il blockout costa meno.} ``Il blockout ha uno scopo
+puramente funzionale.'' Lo si fa, lo si testa, si gioca la mappa un paio d'ore
+con altre persone (``ovviamente tutto quello che sto dicendo è
+ipersemplificato: a \emph{Call of Duty} avranno procedure molto più complesse'').
+L'apertura in quel punto non va bene? La si sposta un po' più a destra, si
+sistemano altre cose nel blockout, si va avanti. Se invece si fosse partiti
+dall'\textbf{edificio finito}, spostare quella finestra un po' più a destra
+``sarebbe stato un enorme casino'', perché tutto il resto del modello andrebbe
+cambiato. Prima il blockout; poi, in base a ciò che viene fuori dai test e dai
+\emph{playthrough}, si dice ``ok, questo è il livello, non tocchiamo quasi più
+niente''. Solo a quel punto si fanno i \textbf{modelli}: in base allo spazio da
+rispettare, alle forme stabilite, alle \textbf{funzioni legate al gameplay}
+date dal blockout iniziale del level designer.
+
+\subsection{Il level designer dà ordini agli artisti?}
+
+``Una domanda sorge spontanea, vi leggo nel cervello: ma Stefano, questo vuol
+dire che un level designer dà gli ordini agli artisti? Si metteranno a fare la
+casa in base a quello che decido io col livello?'' La risposta è: \textbf{dipende}.
+Dalla struttura del team, dalle funzioni, dal fatto che la casa sia un
+\textbf{modello unico} o un insieme creato con \textbf{unità modulari} che si
+possono riarrangiare ``tipo Lego'' (sezione~\ref{gd11:sec:modulari}). Ci sono
+varie procedure. Ma il messaggio è un altro:
+\begin{quote}
+Prima di tutto si decide il \textbf{gameplay}; prima di tutto si decide la
+\textbf{funzione} degli spazi; prima di tutto si decidono le \textbf{forme}
+degli spazi. Dopodiché questi spazi vengono \textbf{estetizzati}.
+\end{quote}
+
+\paragraph{Il gameplay regna sovrano.} Chi si è mai chiesto come sia possibile
+che ci siano videogiochi in cui \textbf{la trama viene scritta pochi mesi prima
+della fine} dello sviluppo, invece di essere decisa dall'inizio, ha qui la
+risposta: in questo tipo di processo \textbf{il gameplay regna sovrano}. Prima
+ci si assicura di fare un gioco funzionale, efficace, entusiasmante; poi si
+decide la veste da dargli.
+
+\paragraph{Ma non a cascata.} Con una precisazione importante: la \textbf{veste
+artistica} è ovviamente decisa \textbf{in precedenza}. ``Non è che prima si
+fanno tutti i blockout e poi si decide: ah, questo è fantascientifico o
+medievale?'' E molto spesso, per questioni di produzione, \textbf{non si lavora
+quasi mai a cascata} (si fa una cosa, poi l'altra, poi l'altra): quante più
+cose possibile procedono \textbf{in parallelo}, ``perché il tempo è denaro''.
+
+\subsection{Uncharted: dichiaro che è una cascata}
+
+Il secondo esempio è l'aspetto che aveva \emph{Uncharted} durante lo sviluppo.
+Il level designer dice: ``qui ci voglio mettere una piccola cascata. Questa è
+una cascata. \textbf{Dichiaro che è una cascata}.'' E poi sta agli artisti, al
+level designer che si occupa del lato artistico o allo stesso level designer
+andare a prendere gli asset, piazzarli lì e fare in modo che siano fatti bene.
+
+``Voglio che vi fissiate in testa che \textbf{questo è l'aspetto che hanno tutti
+i videogiochi nel corso del loro sviluppo}.'' L'argomento tornerà, con lezioni
+dedicate.
+
+% ---------------------------------------------------------------------
+\section{I cinque strumenti del blockout}
+\label{gd11:sec:strumenti}
+
+``Restando in argomento blockout, come si creano i blockout?'' Esistono
+\textbf{cinque strumenti principali} (tabella~\ref{gd11:tab:strumenti}). Prima
+di vederli uno per uno, il messaggio che il docente vuole far passare:
+\begin{quote}
+Questi strumenti \textbf{non sono mutualmente esclusivi}. Possono essere usati
+tutti insieme, a seconda di quello che dobbiamo fare. Il trucco è prendere
+\textbf{lo strumento più veloce per lo scopo}.
+\end{quote}
+E non servono solo al blockout: molti di questi strumenti vengono usati anche
+nelle \textbf{fasi finali}, per costruire i livelli veri e propri e
+posizionare gli oggetti.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.4cm}p{3.6cm}p{3.6cm}p{3.6cm}@{}}
+\toprule
+\textbf{Strumento} & \textbf{Che cos'è} & \textbf{Vantaggi} & \textbf{Svantaggi} \\
+\midrule
+Primitivi & forme di base dell'engine (cubo, cilindro, sfera, cono, piano, scale\ldots) &
+  semplicissimi da usare, veloci & limitati alle forme disponibili (una catena curva richiede una vita) \\
+\addlinespace
+Kit modulari & set di pezzi a misura (pareti, porte, finestre, angoli, pilastri) che si incastrano &
+  velocissimi; spazi già a misura del gioco; spesso già i pezzi finali &
+  rigidi: difficile uscire dagli schemi (una stanza circolare è quasi impossibile) \\
+\addlinespace
+Brush e modellazione & modifica diretta della geometria (vertici, facce, estrusioni), nell'engine o in Blender &
+  qualunque forma; con la pratica, velocità fenomenale &
+  più lenti, richiedono precisione; curva di apprendimento \\
+\addlinespace
+Scultura (terreno) & editor di terreno: alzare, abbassare, allargare, lisciare una superficie &
+  l'unico modo sensato per colline e terreni naturali &
+  non lavora su facce e vertici singoli; adatto solo al terreno \\
+\addlinespace
+Spline & curva definita da punti, lungo cui l'engine dispone e piega una o più mesh &
+  strade, cavi, recinzioni curve senza modellarli a mano; modificabili in un attimo &
+  più tecniche; se la mesh si allunga troppo si vedono stiramenti \\
+\bottomrule
+\end{tabular}
+\caption{I cinque strumenti principali per costruire un blockout (e, in buona
+parte, anche i livelli finali).}
+\label{gd11:tab:strumenti}
+\end{table}
+
+\subsection{I primitivi}
+\label{gd11:sec:primitivi}
+
+I primi sono quelli già usati nel task: i \textbf{primitivi}. ``Come dice il
+termine, un primitivo è una forma base.'' Le forme di base di Unreal, che ``sono
+comuni in praticamente tutti gli engine'', sono forme che \textbf{non possono
+essere create da altre forme}: sono gli \textbf{elementi di base}. Il cubo, il
+cilindro, la sfera, il cono, il piano (``semplicemente piatto, per pavimenti,
+pareti e cose del genere''); Unreal offre anche le scale e altre
+forme.\footnote{Il docente distingue di passaggio le \emph{forme} di base dalle
+\emph{geometrie} (``le geometrie sono una cosa diversa, anche quelle prima o
+poi le vedremo''): si riferisce ai \emph{brush} di geometria, visti nella
+sezione~\ref{gd11:sec:brush}.}
+
+È il modo più basilare di fare un blockout: ``hai il tuo cubo, lo stretchi;
+vuoi fare la colonna, prendi sei cilindri, pam pam pam, colonne fatte, e in
+cinque minuti ho fatto la prima versione del tempio in cui voglio ambientare la
+mia boss fight''.
+
+\paragraph{Vantaggi e svantaggi.} I primitivi sono \textbf{molto semplici da
+usare} e da sfruttare: si va relativamente veloci. Lo svantaggio è che
+\textbf{si è limitati alle forme che si hanno}. Se si sta facendo un livello
+``alla \emph{Dark Souls}'', ``alla \emph{Elden Ring}'', dove c'è un punto con
+delle \textbf{catene gigantesche} su cui si deve correre, fare una catena curva
+con i primitivi ``ci metto una vita''. Per questo ci sono altri strumenti.
+
+\paragraph{Approfondimento: primitivi e griglie secondo Totten.} Totten osserva
+che i primitivi di un engine tipico comprendono cubi (o parallelepipedi),
+sfere, cilindri e piani, a volte anche scale e coni, e che con essi si può
+costruire ``una varietà sorprendente'' di geometria: in molti engine quasi
+tutta la geometria spaziale più grande di un livello può essere fatta solo con
+primitivi. Un vantaggio ulteriore è che i primitivi \textbf{seguono un sistema
+di misure standard} dettato dall'engine. Il caso estremo è l'editor
+\textbf{Hammer} di Valve (lo stesso citato dal docente nella
+sezione~\ref{gd11:sec:brush}), che impone di lavorare su una griglia con lo
+snapping sempre attivo, per evitare buchi nel livello che ne impedirebbero la
+compilazione: gli oggetti scattano a misure in \textbf{potenze di due} (16, 32,
+64, 128 unità\ldots).
+
+\subsection{I kit modulari}
+\label{gd11:sec:modulari}
+
+Per strutture più complesse, più particolari, il secondo strumento sono i
+\textbf{kit modulari}. Sulla slide c'è una serie di pezzi: ``che cosa sono?''
+Pareti, e i buchi al loro interno sono \textbf{porte} e \textbf{finestre}. Con
+\textbf{dodici elementi} si può costruire l'interno di un intero palazzo, cioè
+un insieme di stanze, perché quei pezzi coprono \textbf{tutte le possibili
+connessioni} tra una stanza e l'altra, più il pavimento: angoli, porte,
+pilastri per gli angoli che si incontrano sul lato esterno, perfino spazi di
+dimensioni diverse a seconda di come si vuole organizzare. Si vogliono delle
+colonne al centro delle stanze? Si piazzano i pezzi giusti.
+
+\paragraph{Lego e tasselli.} ``Se i primitivi sono Lego, i kit modulari sono le
+caselle con cui si costruisce uno spazio.''
+
+\paragraph{Vantaggi.} Sono \textbf{molto più veloci}: si costruiscono spazi in
+pochissimo tempo. In più, essendo kit già sistemati (in teoria) con
+\textbf{dimensioni utili per il gioco}, non ci si deve neanche preoccupare degli
+spazi: automaticamente si sa che funzionano. Di kit modulari ce ne sono molti
+tipi diversi; e non contengono solo forme basiche, ma anche scale e forme più
+complesse, componibili velocemente. Danno una \textbf{visione del livello molto
+vicina a quella finale}, perché manca davvero solo il lato estetico. E in un
+gioco come \emph{Skyrim}, il kit modulare \textbf{è già ciò che si usa nella
+versione finale}.
+
+\paragraph{Svantaggi.} ``Fatemi una stanza circolare con questo kit.'' È
+sostanzialmente \textbf{impossibile}: non si hanno gli strumenti. I kit modulari
+permettono di fare un sacco di cose molto velocemente, ma rendono \textbf{molto
+più difficile uscire dagli schemi}: ``tendono a peccare di creatività'', perché
+con quegli strumenti non si può fare più di tanto. Ma, di nuovo, si combinano
+gli strumenti: se c'è uno spiazzo e poi si entra in un palazzo con delle stanze,
+le stanze le si fa velocemente con il kit, lo spiazzo con altri metodi.
+L'importante è fare tutto il prima possibile, per poter subito testare le
+meccaniche, vedere se il livello funziona, buttarci dentro i nemici e provare.
+
+\paragraph{Sistemi e contenuti.} Per capire dove i kit modulari brillano, il
+docente richiama una distinzione: i \textbf{sistemi} sono le meccaniche di
+gameplay; i \textbf{contenuti} sono ``le cose a cui effettivamente giochi'': i
+livelli, le armi, tutto ciò che ``fa parte, lo dice il termine, del contenuto
+del gioco stesso''. Giochi come \emph{Skyrim} o \emph{Elden Ring} richiedono una
+\textbf{quantità enorme di contenuti}, ``veramente vastissima'', e ci sono punti
+in cui bisogna essere intelligenti nello sfruttare ciò che si ha a disposizione.
+
+\paragraph{I dungeon di Elden Ring.} ``Chi ha giocato a \emph{Elden Ring}? Qual
+è la parte più ripetitiva?'' Uno studente cita una zona della capitale; il
+docente punta su altro: i \textbf{dungeon segreti} (catacombe, grotte), ``tutti
+quasi uguali''. ``Posso quasi garantire che sono stati fatti tutti con i kit
+modulari.''
+
+\paragraph{I roguelike.} Un passaggio ulteriore: i \textbf{roguelike} che
+costruiscono le stanze in maniera casuale usano proprio questo approccio:
+\textbf{pezzi di stanza riorganizzati} da un \textbf{algoritmo} che li genera
+ogni volta.
+
+\paragraph{Il kit di Skyrim.} Sulla slide c'è il kit modulare dei dungeon di
+\emph{Skyrim}: contiene sia parti \textbf{decorative} sia parti più
+\textbf{pratiche}, tutte le pareti usate per costruire i dungeon. Per chi vuole
+approfondire, nella slide c'è il link alla \textbf{trascrizione di un talk}
+tenuto nel 2013 da uno dei level designer di \emph{Skyrim}, che spiega come sono
+stati realizzati i dungeon con queste metodologie (dimensioni, studi, eccetera)
+e come è stato creato il kit.\footnote{Il docente non dice il nome. Si tratta
+quasi certamente del talk ``\emph{Skyrim's Modular Approach to Level Design}''
+tenuto alla GDC 2013 da Joel Burgess (Bethesda), la cui trascrizione è
+pubblicata sul blog dell'autore.} Loro lo chiamano \emph{grey box}: ``giusto per
+tornare all'argomento che ognuno chiama il blockout con il termine che
+preferisce''.
+
+\paragraph{Approfondimento: la modularità secondo Totten.} Totten ricorda che la
+modularità viene dall'architettura: dalla Rivoluzione industriale gli edifici si
+costruiscono con \textbf{elementi prefabbricati}, assemblati in cantiere; Mies
+van der Rohe e Philip Johnson progettavano con componenti prefabbricati di
+acciaio e vetro, e Le Corbusier ha progettato l'Unité d'Habitation con
+appartamenti come unità modulari impilate. Totten usa proprio la metafora del
+Lego: con un set di pezzi modulari, i livelli si assemblano ``come set di Lego
+invece che come opere d'arte su misura difficili da cambiare''. La modularità
+aiuta anche le \textbf{metriche}: nel gioco \emph{SWARM!} le piastrelle modulari
+larghe due unità erano la misura minima su cui il giocatore poteva restare in
+equilibrio senza che il gioco risultasse ingiusto. E, come gli architetti
+tengono traccia dei pezzi prefabbricati con i \emph{building schedule} (tabelle
+che indicano tipo, misure e posizione di porte, finestre, impianti), il level
+designer può documentare i propri pezzi modulari allo stesso modo.
+
+\subsection{Brush e modellazione}
+\label{gd11:sec:brush}
+
+``Ok, questa è dove le cose si fanno interessanti.'' Il terzo strumento sono i
+\textbf{brush}, o la \textbf{modellazione}. La domanda che potrebbe sorgere:
+se si sta facendo una cosa da zero, e l'unica cosa che interessa è la forma
+generale del livello per ``trovare la quadra iniziale'', \textbf{perché non
+usare direttamente uno strumento di modellazione 3D}, invece di giocare con le
+forme o con i kit modulari?
+
+La risposta è che \textbf{si può fare}. Alcuni engine permettono di
+\textbf{modificare direttamente la geometria}, come se si lavorasse in ``una
+versione ipersemplificata di Blender o Maya''. Per fare un letto, per esempio,
+si ritaglia una sezione di un blocco, la si prende e la si tira su: ``e ho fatto
+il mio letto''. Si fa un \textbf{editing diretto} di ciò che si sta costruendo
+nel livello.
+
+\paragraph{Blender e Unity.} Una delle pipeline più comuni quando si lavora in
+\textbf{Unity} (``che non ci interessa, perché noi lavoreremo in Unreal, ma è
+importante saperlo nel caso vi capiti'') è lavorare direttamente in
+\textbf{Blender}: molto spesso i level designer costruiscono il livello in
+Blender, che salva direttamente nel progetto Unity, e fanno così l'intero
+blockout del livello molto velocemente.
+
+\paragraph{Vantaggi e svantaggi.} Il vantaggio: \textbf{si può fare quello che
+si vuole}, letteralmente qualunque forma. Non c'è il problema ``non ho il
+primitivo giusto'': la forma la si crea, la si modifica, la si gira come si
+vuole. Lo svantaggio (``non è una questione di peso, in realtà''): è \textbf{un
+po' più lungo}, bisogna essere più \textbf{precisi}, bisogna \textbf{saper usare
+questi strumenti}. Ma c'è un ``ma'' importantissimo: se si è disposti a
+impararli, questi strumenti permettono di andare a \textbf{una velocità
+fenomenale}, soprattutto per i blockout. Il problema è la \textbf{curva di
+apprendimento}: Blender richiede un po' di tempo per essere imparato (nel corso
+lo si toccherà); ma si vedrà soprattutto come fare questo lavoro dentro Unreal,
+con i \textbf{brush di geometria}.
+
+\paragraph{Valve e Hammer.} Chi ha giocato a un gioco di \textbf{Valve}
+(\emph{Half-Life}, \emph{Half-Life 2}, \emph{Half-Life: Alyx},
+\emph{Deadlock}: ``ve li consiglio tutti'')\footnote{Nella trascrizione
+``AlphaFlash, AlphaFlash, AlphaFlash, Alix, Deadlock'': i primi tre sono
+evidentemente i titoli della serie \emph{Half-Life}.} ha visto il risultato di
+questo approccio. ``C'è un motivo se Valve fa un gioco ogni dieci anni: se lo
+fa, vuol dire che sono riusciti a fare il proprio lavoro, dato che hanno soldi
+infiniti.'' Valve lavora con \textbf{Hammer}, un editor proprietario per il
+proprio engine (\textbf{Source}): in Hammer è \textbf{tutto editing diretto}
+delle mesh e delle forme nel livello, da parte del level designer.
+
+\paragraph{Brush e modello 3D.} Qual è la differenza tra un \textbf{brush} e un
+\textbf{modello 3D}? ``Lo vedremo'': sono due sistemi diversi. Per ora basta
+sapere che \textbf{è possibile creare forme direttamente nell'engine}, ed è un
+altro dei modi di fare il blockout.
+
+\subsection{La scultura del terreno}
+\label{gd11:sec:scultura}
+
+Così come si può modificare la geometria tirando punti, vertici, facce,
+estrudendo e suddividendo, \textbf{si può anche scolpire}. Il quarto strumento è
+l'\textbf{editor di terreno} di Unreal (il \emph{Landscape}), che si vedrà
+durante l'anno.
+
+Se si sta facendo un livello ambientato su una \textbf{collina}, la collina non
+la si può fare con dei cubi: non si riesce a fare un terreno scosceso con i
+primitivi. Per i paesini sulla collina di \emph{Elden Ring} si mettono cubi
+dappertutto? ``Perdo un sacco di tempo e il risultato è orrendo.'' No: si usa un
+editor che permette di \textbf{alzare, modificare, allargare, scolpire} una
+superficie.
+
+\paragraph{Scolpire non è modellare.} Scolpire significa che non si stanno
+tirando facce o vertici individuali, come con i brush o la modellazione: ``passo
+col mouse, dove passo col mouse si alza un pochino, poi lo liscio un po'
+dall'altra parte''. È così che si fanno gli \textbf{ambienti naturali}.
+
+\subsection{Le spline}
+\label{gd11:sec:spline}
+
+``Ultimo ma non ultimo, e molto importante'': le \textbf{spline}. È uno
+strumento un po' più tecnico, ma è il quinto dei cinque, e serve sia alla
+concezione iniziale del livello sia al \textbf{posizionamento degli oggetti}
+nelle fasi finali.
+
+\paragraph{Il problema della strada.} Sulla slide c'è una strada. Se la strada è
+dritta è facile: un pezzo di strada, poi un altro pezzo. Ma se fa una curva?
+Si chiede agli artisti di modellare a mano ogni possibile strada del gioco? ``A
+livello pratico magari è fattibile.'' Ma se poi un'area viene cancellata, o la
+strada deve curvare a sinistra invece che a destra, bisogna rifare tutto da
+capo. ``La risposta, ovviamente, è no.'' E la risposta ``è nell'intrinseco della
+domanda'': come si gestiscono le cose che devono essere \textbf{piegate} dentro
+un videogioco?
+
+\paragraph{Che cos'è una spline.} Attenzione: ``la spline qui non è la strada,
+\textbf{la spline è la linea}''. Una spline è \textbf{una curva definita da dei
+punti}, che curva in base ai dati contenuti in quei punti: la
+\textbf{rotazione}, le dimensioni dei \textbf{vettori di ingresso e di uscita}
+(le tangenti), e altro. A questa curva vengono poi assegnate \textbf{una o più
+mesh}, e l'engine fa in modo che la mesh \textbf{segua la curva}
+(figura~\ref{gd11:fig:spline}). Che cosa sia esattamente una mesh si vedrà tra
+poco (sezione~\ref{gd11:sec:mesh}); per ora, ``pensate a un modello 3D''.
+
+\paragraph{Un pattern?} Uno studente chiede se si tratti di un
+\textbf{pattern}, cioè sempre lo stesso elemento copiato. ``Molto spesso sì'', e
+il docente ringrazia, perché stava per arrivarci: molto spesso la spline usa
+\textbf{più oggetti ripetuti}, attaccati ai bordi uno dell'altro e modificati in
+modo da piegarsi.
+
+\paragraph{Il problema dello stretch.} Il perché lo spiega alla lavagna. Si
+prenda una superficie divisa in poligoni. Se la si \textbf{allunga} (la si
+``stretcha''), i dati del modello 3D non cambiano: si sta solo dicendo
+``allungalo''. Quindi gli spazi interni dei poligoni vengono stirati anch'essi:
+\textbf{non si aggiungono dettagli}. Se una spline avesse un solo modello da
+deformare, si noterebbe che è ``superstretchato'': le texture stirate, i
+poligoni sempre più grandi. Per questo la spline \textbf{attacca tra loro più
+copie} del modello, e in curva le \textbf{comprime leggermente}. Le facce
+restano le stesse, ma se i modelli sono fatti bene e con cognizione di causa
+(abbastanza densi di poligoni) e la modifica è minima, ``il giocatore non lo
+nota''. Poi, certo, guardando con attenzione in qualunque videogioco si notano
+le giunture da qualche parte.
+
+\paragraph{I cavi.} Lo stesso vale per i \textbf{cavi}: non esiste che, per ogni
+possibile modo di posare un cavo nel gioco, il modellatore 3D faccia un cavo
+diverso. Oltre al lavoro, questo approccio farebbe diventare le
+\textbf{dimensioni del gioco} enormi. Si fa \textbf{un cavo dritto}, e poi con
+metodi come le spline (``non per forza le spline, ma la spline è il metodo di
+base più utilizzato'') se ne dispongono e piegano varie copie.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  gd11pt/.style={circle, fill=blue!70!black, inner sep=1.8pt},
+  gd11tan/.style={-{Stealth[length=2mm]}, thick, blue!50},
+  gd11lab/.style={font=\footnotesize, align=center}
+]
+  % (a) un solo modello stirato
+  \node[font=\small\bfseries] at (2.2,2.4) {(a) un solo modello, allungato};
+  \foreach \i in {0,...,3} {
+    \draw[thick, fill=gray!20] ({\i*1.1},0.9) rectangle ({\i*1.1+1.1},1.7);
+  }
+  \node[gd11lab] at (2.2,0.45) {i poligoni si stirano,\\la texture si deforma};
+  \draw[thick, fill=gray!20] (0.9,1.9) rectangle (1.3,2.05);
+  % (b) spline con piu copie
+  \node[font=\small\bfseries] at (8.6,2.4) {(b) spline con più copie};
+  \draw[very thick, blue!70!black] plot[smooth, tension=0.8]
+       coordinates {(6.0,0.6) (7.3,1.6) (8.8,1.7) (10.2,0.9) (11.2,0.4)};
+  \foreach \p/\a in {(6.0,0.6)/40, (8.8,1.7)/0, (11.2,0.4)/-25} {
+    \node[gd11pt] at \p {};
+  }
+  \draw[gd11tan] (6.0,0.6) -- ++(40:0.9);
+  \draw[gd11tan] (8.8,1.7) -- ++(0:0.9);
+  \draw[gd11tan] (8.8,1.7) -- ++(180:0.9);
+  \foreach \x/\y/\r in {6.35/0.95/38, 6.95/1.38/30, 7.6/1.68/10, 8.25/1.76/2,
+                         8.9/1.7/-6, 9.55/1.45/-22, 10.15/1.0/-30, 10.75/0.62/-26} {
+    \draw[thick, fill=gray!25, rotate around={\r:(\x,\y)}] (\x-0.3,\y-0.12) rectangle (\x+0.3,\y+0.12);
+  }
+  \node[gd11lab] at (8.6,-0.3) {punti di controllo con rotazione e tangenti\\(vettori di ingresso e uscita); copie della mesh\\attaccate tra loro e leggermente compresse in curva};
+\end{tikzpicture}
+\caption{Perché le spline usano più copie di una mesh: allungare un solo modello
+(a) stira poligoni e texture senza aggiungere dettaglio; la spline (b)
+dispone lungo la curva più copie di un pezzo dritto, deformandole quel poco che
+basta perché il giocatore non lo noti.}
+\label{gd11:fig:spline}
+\end{figure}
+
+\paragraph{Una lezione frontale.} ``Queste sono le cinque metodologie, per darvi
+un'infarinatura iniziale. Tutto chiaro fino ad adesso?'' Il docente si rende
+conto che è una delle lezioni più frontali che deve fare, ``ma vi devo insegnare
+tutta una serie di termini e c'è poco da fare''.
+
+% ---------------------------------------------------------------------
+\section{Che cosa si farà nel primo anno}
+\label{gd11:sec:primo-anno}
+
+\paragraph{Kit modulari e primitivi.} Nel primo anno si lavorerà
+\textbf{principalmente con kit modulari e primitivi}. Lo scopo è imparare il più
+possibile a usare gli strumenti. Si è deciso di partire dal \textbf{lato
+artistico} perché l'obiettivo è sviluppare una \textbf{conoscenza istintiva} di
+ciò che si usa: ``in modo che se ti dici `voglio fare un livello così', non devi
+perdere tempo a cercare come si fa: sai già come si fa, e vai''.
+
+\paragraph{L'allenamento dell'occhio.} Quest'anno, quindi, si terrà d'occhio la
+\textbf{costruzione} e l'\textbf{estetica} dei lavori. Ci sarà una forte
+concentrazione su:
+\begin{itemize}
+  \item attenzione a \textbf{ciò che si mette insieme};
+  \item attenzione alla \textbf{coerenza} del lavoro;
+  \item attenzione agli \textbf{spazi}: ``parleremo tanto di suddivisione degli
+        spazi'';
+  \item attenzione all'\textbf{occhio}: ``questo sarà l'anno
+        dell'occhio''.\footnote{Nella trascrizione ``questo sarà l'armo
+        dell'occhio''; la lettura più plausibile è ``l'anno dell'occhio'',
+        cioè dell'allenamento dello sguardo.}
+\end{itemize}
+Prima si impara a usare gli strumenti, poi li si applicherà più precisamente ai
+videogiochi.
+
+% ---------------------------------------------------------------------
+\section{Asset e actor, di nuovo}
+\label{gd11:sec:asset}
+
+Si passa alla terminologia dell'editor, partendo da un termine già visto:
+\textbf{asset} (sezione~\ref{gd8:sec:content}). Uno studente risponde
+correttamente, e il docente precisa:
+\begin{description}
+  \item[Asset] un \textbf{file salvato nel progetto}, su disco;
+  \item[Actor] un'\textbf{istanza} di quell'asset \textbf{creata all'interno
+        del gioco}, nel livello.
+\end{description}
+
+Mentre Unreal si apre sul computer nuovo (``è totalmente vuoto'', nessun
+progetto già pronto, e serve l'accesso a internet), il docente ricorda la
+disposizione dell'editor vista la volta precedente:
+\begin{itemize}
+  \item in basso c'è il \textbf{Content Browser}: gli asset \textbf{del
+        progetto}, interni al progetto;
+  \item a sinistra (\emph{Place Actors}) ci sono gli \textbf{asset di sistema
+        di Unreal}: sono sempre asset, ma sono quelli \textbf{dell'engine}. Le
+        luci, le forme di base e così via sono già presenti in Unreal, e non c'è
+        bisogno di rifarle ogni volta che si crea un progetto nuovo.
+\end{itemize}
+Una conseguenza, emersa da una domanda durante la pausa: gli asset
+dell'engine, quelli presi dal pannello a sinistra, \textbf{non si possono
+modificare a livello di asset}, ``perché sono di Unreal''; quelli modificabili
+sono quelli del Content Browser.
+
+% ---------------------------------------------------------------------
+\section{Coordinate globali e coordinate locali}
+\label{gd11:sec:coordinate}
+
+Nell'attesa, il docente passa alla lavagna (Mattia conferma che da casa la si
+vede) per una distinzione che ``tende a creare confusione all'inizio'': quella
+tra \textbf{world coordinates} (coordinate globali) e \textbf{local
+coordinates} (coordinate locali). ``So che probabilmente molti di voi già lo
+sanno, ma questa lezione mi serve principalmente per assicurarmi che sulla
+carta, in teoria, sappiate tutti di cosa sto parlando.''
+
+\subsection{L'origine del mondo}
+
+Si disegna un mondo di gioco, con un giocatore. ``Questo è il punto
+$(0,0,0)$. Che cos'è il punto zero?'' Qualcuno propone il punto di spawn: no.
+Il \textbf{punto di spawn} è il punto in cui il giocatore viene messo in gioco,
+e non c'entra niente. Il punto $(0,0,0)$ è l'\textbf{origine delle coordinate}
+del mondo di gioco: il punto da cui partono tutte le coordinate.
+
+\paragraph{Quale asse è l'alto?} Le coordinate sono $x, y, z$, ma l'ordine e il
+significato degli assi \textbf{cambiano a seconda dell'engine} (e a volte del
+progetto): in Unreal \textbf{$z$ è l'altezza}; in altri engine $z$ è la
+\textbf{profondità} e l'altezza è $y$. ``Lungo dibattito su quale sarebbe la
+soluzione migliore; non esiste un modo condiviso.'' Bisogna farci attenzione
+quando si lavora con engine diversi: ciò che conta è sapere quale asse è
+altezza, quale larghezza e quale profondità.
+
+\paragraph{Coordinate globali.} Un giocatore che si trova, ``a naso'', a
+cinque unità dall'origine lungo un asse avrà coordinate $(5,0,0)$ (``pessima
+visualizzazione, perché è in 2D''). In 3D, un oggetto che svolazza nell'aria
+avrà coordinate come $(-3,-2,5)$. Queste sono \textbf{coordinate globali}
+(\emph{world coordinates}), perché sono basate sul \textbf{punto di origine del
+mondo} di gioco.
+
+\subsection{Coordinate locali: la spada e la cassa}
+
+Una \textbf{coordinata locale} è una coordinata \textbf{in base al genitore
+dell'oggetto}. L'esempio della lavagna: il giocatore ha in mano una
+\textbf{spada} (figura~\ref{gd11:fig:coordinate}).
+\begin{itemize}
+  \item La coordinata \textbf{globale} della spada è la distanza tra
+        l'origine del mondo e la spada.
+  \item La coordinata \textbf{locale} della spada è la distanza tra la spada
+        e l'\textbf{origine del giocatore}, che di solito si trova
+        \textbf{ai piedi}, a rappresentare lo zero.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  gd11ax/.style={-{Stealth[length=2.5mm]}, thick},
+  gd11w/.style={-{Stealth[length=2.5mm]}, very thick, red!70!black},
+  gd11l/.style={-{Stealth[length=2.5mm]}, very thick, blue!70!black, dashed}
+]
+  % assi mondo
+  \draw[gd11ax] (0,0) -- (8.2,0) node[right] {$x$};
+  \draw[gd11ax] (0,0) -- (0,4.2) node[above] {$z$ (alto, in Unreal)};
+  \fill (0,0) circle (2.2pt);
+  \node[below left, font=\footnotesize] at (0,0) {$(0,0,0)_W$};
+  % giocatore
+  \draw[thick] (5,0) -- (5,1.6);           % corpo
+  \draw[thick] (5,1.85) circle (0.25);      % testa
+  \draw[thick] (5,0) -- (4.7,-0.0);
+  \draw[thick] (5,1.2) -- (5.5,1.0);        % braccio
+  \draw[very thick, gray!60!black] (5.5,1.0) -- (6.4,1.6); % spada
+  \fill[blue!70!black] (5,0) circle (2.2pt);
+  \node[below, font=\footnotesize, blue!70!black] at (5,0) {origine locale (piedi)};
+  % frecce
+  \draw[gd11w] (0,0) to[bend left=22] (6.0,1.35);
+  \node[font=\footnotesize, red!70!black, anchor=south] at (2.6,1.75)
+       {coordinata \textbf{globale} della spada};
+  \draw[gd11l] (5,0) -- node[right, font=\footnotesize, pos=0.6]
+       {\textbf{locale}} (6.0,1.35);
+  % cassa
+  \draw[thick, fill=brown!20] (1.0,2.6) rectangle (2.6,3.6);
+  \fill[orange] (1.4,2.85) circle (0.12);
+  \fill[green!50!black] (2.1,3.1) circle (0.12);
+  \node[font=\footnotesize, align=left, anchor=west] at (2.8,3.1)
+       {la cassa ruota: gli oggetti figli ruotano con lei,\\ma le loro coordinate \textbf{locali} non cambiano};
+\end{tikzpicture}
+\caption{Coordinate globali e locali, come alla lavagna. La posizione globale
+si misura dall'origine del mondo; quella locale dall'origine del genitore (qui il
+giocatore, con l'origine ai piedi). Se il genitore si sposta o ruota, cambia la
+posizione globale dei figli, non quella locale.}
+\label{gd11:fig:coordinate}
+\end{figure}
+
+\paragraph{Perché è importante.} Quando si lavora in un livello, ma anche in
+qualsiasi cosa di programmazione, bisogna \textbf{rendersi conto se le
+coordinate che si stanno usando sono globali o locali}. Il motivo è che gli
+oggetti possono essere assegnati come \textbf{figli} di un altro oggetto. La
+spada è una cosa diversa dal giocatore, ma si sposta con il giocatore perché
+segue le \textbf{trasformazioni} applicate al giocatore. Una
+\textbf{trasformazione} (\emph{transform}) è uno \textbf{spostamento}, un
+\textbf{cambio di dimensioni} o una \textbf{rotazione}. Se il giocatore si
+sposta o si gira, la spada si sposta o si gira; ma \textbf{le sue coordinate
+locali non cambiano}: all'interno del sistema di coordinate del giocatore, la
+spada è sempre nello stesso punto.
+
+\paragraph{L'esempio della cassa.} Quello della spada ``non è il massimo come
+esempio'', perché la spada si muove anche per conto suo, attaccata alla mano. Più
+pulito: una \textbf{cassa} con dentro degli oggetti. Se si gira la cassa, ci si
+aspetta che si girino anche gli oggetti. Se sono \textbf{figli} della cassa,
+si girano con lei; ma all'interno delle coordinate locali gli oggetti \textbf{non
+si sono spostati}, ``perché il genitore, il mondo locale, si è spostato''. Lo
+zero locale si muove con il genitore; rispetto a quello zero, i figli restano
+sempre uguali.
+
+\subsection{La pausa}
+
+Il progetto nuovo deve compilare gli shader da zero (``la speranza è l'ultima a
+morire''), quindi il docente anticipa leggermente la \textbf{pausa}: una ventina
+di minuti, ``potete chiacchierare, ve lo concedo''. Durante la pausa risponde ad
+alcune domande individuali:
+\begin{itemize}
+  \item \emph{Si possono unire più oggetti in un unico oggetto?} Risposta
+        breve: non si può. Risposta lunga: ci saranno lezioni dedicate alla
+        \textbf{modellazione 3D}, perché fondere più cose in uno stesso oggetto
+        si può fare, ma è più complesso. Per ora: \textbf{raggrupparli}
+        (Ctrl+G, sezione~\ref{gd11:sec:gerarchie}).
+  \item Gli asset dell'engine non si modificano (sezione~\ref{gd11:sec:asset}).
+  \item Per far seguire un oggetto a un altro, nello spazio locale, lo si può
+        \textbf{parentare}: lo si trascina sull'altro nell'Outliner, e ``vedete
+        che adesso sono uno sotto l'altro''; se lo si sposta, si sposta anche
+        l'altro. Rifacendo il trascinamento, li si separa. ``Adesso lo faccio
+        vedere a tutti.''
+\end{itemize}
+Prima di riprendere, l'invito a tenere Unreal aperto, con un progetto
+qualsiasi (anche quello del task), per vedere i concetti direttamente
+nell'interfaccia.
+
+% ---------------------------------------------------------------------
+\section{Lo spazio delle coordinate nell'editor}
+\label{gd11:sec:spazio}
+
+Ripresa la lezione (Mattia, da casa, sta finendo di installare la 5.8 sul
+portatile), il docente mostra in pratica i concetti spiegati alla lavagna.
+
+\paragraph{Non serve un genitore.} Prima una precisazione: la distinzione tra
+coordinate globali e locali vista alla lavagna serviva a dare un'idea di come si
+ragiona. In realtà, \textbf{non è necessario che ci sia un genitore} per parlare
+di coordinate locali: \textbf{ogni oggetto ha le proprie}.
+
+\paragraph{Il pulsante con il mondo.} Cliccando su un qualsiasi oggetto, in
+alto nella viewport c'è un pulsantino con l'icona di un \textbf{mondo}: indica
+\textbf{in quale spazio di coordinate} si sta lavorando. Nella traduzione
+italiana si chiama \textbf{Spazio del mondo} (``non chiedetemi come sono state
+fatte le scelte di traduzione di Epic: sospetto, vista la loro passione per
+l'intelligenza artificiale, che c'entri qualcosa''). Cliccandoci sopra si passa
+in rassegna:
+\begin{description}
+  \item[Spazio del mondo] (\emph{World}): le frecce del gizmo indicano gli assi
+        $x, y, z$ \textbf{dell'intero mondo di gioco}, ``il punto di
+        riferimento più alto che si può avere''. Ruotando un oggetto, le frecce
+        restano uguali.
+  \item[Spazio locale] (\emph{Local}): le frecce \textbf{seguono gli assi
+        dell'oggetto stesso}, e ruotano con lui.
+  \item[Spazio genitore] (\emph{Parent}): le frecce seguono gli assi del
+        \textbf{genitore} dell'oggetto. Se l'oggetto non è figlio di niente, il
+        suo genitore è il mondo, e lo spazio genitore coincide con quello
+        globale.
+\end{description}
+``Ricordatevi: globali, locali, parentali.''
+
+\paragraph{La trave in diagonale.} L'applicazione è chiara. Si prenda un
+oggetto allungato e ruotato in diagonale (una \textbf{trave}, un ponte). Se lo
+si deve spostare lungo la sua direzione lavorando in coordinate globali, è
+``un po' antipatico essere precisi'': si può trascinare il centro del gizmo, ma
+ci si sposta leggermente a destra e a sinistra, senza garanzia di precisione.
+Passando alle \textbf{coordinate locali}, invece, la trave la si trascina
+\textbf{perfettamente nel suo ``avanti''}, lungo il suo asse $X$ locale
+(figura~\ref{gd11:fig:trave}). ``È parecchio importante.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  gd11ax/.style={-{Stealth[length=2.5mm]}, line width=1.4pt},
+  gd11beam/.style={draw, thick, fill=brown!25}
+]
+  % mondo
+  \node[font=\small\bfseries] at (1.6,2.8) {Spazio del mondo};
+  \begin{scope}[rotate around={30:(1.6,1.0)}]
+    \draw[gd11beam] (0.0,0.8) rectangle (3.2,1.2);
+  \end{scope}
+  \draw[gd11ax, red!80!black] (1.6,1.0) -- ++(2.1,0) node[right] {$X$};
+  \draw[gd11ax, green!50!black] (1.6,1.0) -- ++(0,1.3) node[above] {$Y$};
+  \node[font=\footnotesize, align=center] at (1.6,-0.6)
+    {le frecce restano allineate al mondo:\\spostare lungo la trave è impreciso};
+  % locale
+  \node[font=\small\bfseries] at (7.0,2.8) {Spazio locale};
+  \begin{scope}[rotate around={30:(7.0,1.0)}]
+    \draw[gd11beam] (5.4,0.8) rectangle (8.6,1.2);
+    \draw[gd11ax, red!80!black] (7.0,1.0) -- ++(2.1,0) node[right] {$X$};
+    \draw[gd11ax, green!50!black] (7.0,1.0) -- ++(0,1.3) node[above] {$Y$};
+  \end{scope}
+  \node[font=\footnotesize, align=center] at (7.0,-0.6)
+    {le frecce ruotano con l'oggetto:\\la trave scorre nel suo ``avanti''};
+\end{tikzpicture}
+\caption{Lo stesso oggetto ruotato, con il gizmo in spazio del mondo e in spazio
+locale (vista dall'alto). La \emph{scala}, invece, lavora sempre in spazio
+locale.}
+\label{gd11:fig:trave}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Genitori, figli e gruppi}
+\label{gd11:sec:gerarchie}
+
+\subsection{Parent e child}
+
+Lo spazio genitore introduce il concetto di \textbf{genitorialità}: il rapporto
+\textbf{parent} e \textbf{child}, genitore e figlio. Sullo schermo, due cubi:
+quello a sinistra è il genitore, quello a destra il figlio.
+
+\paragraph{Come si crea.} Nell'\textbf{Outliner}, a destra
+(sezione~\ref{gd8:sec:outliner}), si afferra un oggetto e lo si \textbf{trascina
+su un altro}: lo si sta assegnando come suo figlio. I figli compaiono sotto il
+genitore, e si possono \textbf{racchiudere e riaprire} con la freccina accanto
+al nome (il docente rinomina il figlio \emph{Cube Child}).
+
+\paragraph{L'asterisco.} Una piccola parentesi: l'\textbf{asterisco} accanto al
+nome di un livello o di un asset significa che \textbf{c'è qualcosa che non è
+stato salvato}. Spostando un cubo, l'asterisco compare: il livello è stato
+modificato. ``Se chiudete senza salvare, tutte le robe con gli asterischi sono
+perse.'' \textbf{Ctrl+S} salva; \textbf{Ctrl+Shift+S} salva tutto
+(sezione~\ref{gd8:sec:livelli}).
+
+\paragraph{Che cosa eredita un figlio.} ``Che cos'è un child? Un child è
+qualcosa che \textbf{eredita tutte le trasformazioni del genitore}.'' Il docente
+chiede a una volontaria (``mi sembra una faccia da volontaria'') che cosa
+succede se si sposta il genitore: ``si sposta anche l'altro''. Esatto: il figlio
+eredita, ``da qui il termine'', tutte le trasformazioni applicate al genitore,
+\textbf{incluse quelle di grandezza}. E qui c'è un dettaglio da notare: quando
+si \textbf{scala} il genitore, non si allarga solo l'oggetto, ma anche la
+\textbf{distanza del figlio dallo zero locale}, cioè dall'origine del genitore.
+Se si stretcha il genitore, si stretcha \textbf{l'intero insieme}, non i singoli
+oggetti ciascuno per conto proprio. Lo stesso per la rotazione e lo spostamento
+(e Ctrl+Z, Ctrl+Z, Ctrl+Z per tornare indietro).
+
+\paragraph{Le gerarchie a più livelli.} Con Ctrl+C e Ctrl+V (o Ctrl+D) si
+duplica il figlio, e si assegna il nuovo cubo (\emph{Cube Child 2}) come figlio
+di \emph{Cube Child}: ora c'è una \textbf{discendenza}
+(figura~\ref{gd11:fig:gerarchia}). Se le cose sono ereditate a livello di
+gerarchia, \textbf{quello più in alto influenza tutti quelli che gli stanno
+sotto}; ma modificando il secondo si influenza solo il suo figlio.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  gd11node/.style={draw, thick, rounded corners=3pt, fill=blue!8,
+                   minimum width=2.6cm, align=center, inner sep=4pt},
+  gd11grp/.style={draw, thick, rounded corners=3pt, fill=orange!12,
+                  minimum width=2.6cm, align=center, inner sep=4pt},
+  gd11arr/.style={-{Stealth[length=2.3mm]}, thick}
+]
+  \node[font=\small\bfseries] at (1.5,0.9) {Gerarchia (parent/child)};
+  \node[gd11node] (c0) at (1.5,0) {\emph{Cube}};
+  \node[gd11node] (c1) at (2.3,-1.2) {\emph{Cube Child}};
+  \node[gd11node] (c2) at (3.1,-2.4) {\emph{Cube Child 2}};
+  \draw[gd11arr] (c0.south west) ++(0.3,0) |- (c1.west);
+  \draw[gd11arr] (c1.south west) ++(0.3,0) |- (c2.west);
+  \node[font=\footnotesize, align=left, anchor=north west] at (0.2,-3.0)
+    {muovo \emph{Cube}: si muovono tutti\\muovo \emph{Cube Child}: si muove anche \emph{Child 2}\\muovo \emph{Child 2}: si muove solo lui};
+  \node[font=\small\bfseries] at (8.6,0.9) {Gruppo (Ctrl+G)};
+  \node[gd11grp] (g) at (8.6,0) {\emph{GroupActor}};
+  \node[gd11node, minimum width=1.4cm] (a) at (7.2,-1.4) {A};
+  \node[gd11node, minimum width=1.4cm] (b) at (8.6,-1.4) {B};
+  \node[gd11node, minimum width=1.4cm] (c) at (10.0,-1.4) {C};
+  \foreach \n in {a,b,c} \draw[thick, dashed] (g) -- (\n);
+  \node[font=\footnotesize, align=left, anchor=north west] at (6.6,-2.2)
+    {asset separati, trattati come un'unità:\\cliccandone uno si selezionano tutti;\\ideale per spostare e ruotare\\(es. i libri di una libreria)};
+\end{tikzpicture}
+\caption{Gerarchia e gruppo. Nella gerarchia ogni livello eredita le
+trasformazioni di quello sopra; nel gruppo gli oggetti restano indipendenti ma
+vengono selezionati e trasformati insieme.}
+\label{gd11:fig:gerarchia}
+\end{figure}
+
+\subsection{I gruppi}
+
+``La differenza, che potrebbe essere una domanda, tra questo e un
+\textbf{gruppo}.'' Selezionando più oggetti e premendo \textbf{Ctrl+G}, Unreal
+li raggruppa e crea un \textbf{Group Actor}, che segnala che tutti quegli
+oggetti formano un \textbf{gruppo unico}. Sono asset separati, ma l'editor dice:
+``queste cose qua sono un unico gruppo, considerale insieme''.
+\begin{itemize}
+  \item Spostando il gruppo, \textbf{si spostano tutti insieme}.
+  \item Selezionando \textbf{uno} degli oggetti, il Group Actor li fa
+        selezionare \textbf{tutti}, anche nell'Outliner.
+  \item Si possono anche \textbf{scalare} insieme, come se fossero figli, anche
+        se non lo sono; ma ``se stretchate una roba raggruppata, possono
+        succedere cose strane''. Idealmente, i gruppi servono a
+        \textbf{spostare e ruotare} cose insieme.
+\end{itemize}
+Il caso classico che capiterà di vedere nelle mappe fatte da altri è la
+\textbf{libreria}: i libri sono raggruppati, perché così è comodo spostarli e
+piazzarli in giro.
+
+\paragraph{Stretchare: quasi solo nel blockout.} Una nota a margine: lo
+\textbf{stretch} (la scala non uniforme) è qualcosa che capiterà quasi solo in
+fase di \textbf{blockout}. Una spada stretchata si vede che è stretchata, un
+mobile stretchato si vede che è stretchato: ``è difficile che vi capiterà di
+stretchare le cose nella versione finale di un ambiente'' (si ricordi il
+problema dello stretch nella sezione~\ref{gd11:sec:spline}).
+
+\paragraph{Una domanda dal fondo dell'aula.} ``Ci siete? Sto giocando a
+\emph{Geometry Dash} là dietro: che state facendo?'' Va bene, si riprende.
+
+% ---------------------------------------------------------------------
+\section{Ctrl+Z: anche cliccare è un'azione}
+\label{gd11:sec:ctrlz}
+
+``Piccola nota importante, che probabilmente avete già notato, ma è meglio
+dirlo in maniera esplicita.'' \textbf{Ctrl+Z} annulla l'ultima azione. Ma in
+Unreal, e in molti altri editor 3D, \textbf{cliccare su qualcosa nella viewport
+è considerato un'azione}. Se si clicca un oggetto, poi un altro, poi un altro, e
+si preme Ctrl+Z, si torna alla \textbf{selezione precedente}: non si annulla
+l'ultima modifica.
+
+È utile, perché permette di tornare indietro anche nelle selezioni; ma
+all'inizio è \textbf{controintuitivo}, perché ci si aspetta che Ctrl+Z annulli
+l'ultima cosa \emph{fatta}, non l'ultima cosa \emph{selezionata}. Il rischio
+concreto: si fanno tre modifiche, si pensa ``no, meglio di no'', si preme Ctrl+Z
+tre volte; ma anche i clic tra una modifica e l'altra contano come azioni da
+annullare, e le modifiche non sono state annullate tutte. ``Ricordate questa
+cosa: \textbf{cliccare su un oggetto è un'azione}.''
+
+% ---------------------------------------------------------------------
+\section{Lo snapping}
+\label{gd11:sec:snapping}
+
+\subsection{Che cos'è}
+
+``Che cos'è lo snapping? È molto semplice.'' Se si ha una \textbf{griglia} e si
+stanno posizionando degli oggetti (per esempio una serie di piattaforme), la
+griglia fa sì che ogni oggetto \textbf{si incastri automaticamente} in una
+posizione precisa. Dall'inglese \emph{to snap}: qualcosa che \textbf{scatta} in
+una posizione. Afferrando un oggetto e trascinandolo, l'editor lo piazza
+automaticamente nel punto giusto della griglia. È molto utile con i
+\textbf{kit modulari} (sezione~\ref{gd11:sec:modulari}), ma ``per un sacco di
+altra roba''.
+
+\subsection{La barra degli strumenti della viewport}
+
+In alto a destra nella viewport ci sono i controlli già visti
+(sezione~\ref{gd8:sec:transform}): la \textbf{selezione} (che ``non usa mai
+nessuno da sola'', tanto vale trascinare direttamente), lo spostamento, la
+\textbf{rotazione}, la \textbf{scala} (W, E, R), e lo \textbf{spazio delle
+coordinate} (sezione~\ref{gd11:sec:spazio}). Precisazione: la \textbf{scala è
+sempre locale}.
+
+\paragraph{La griglia di posizione.} Poi c'è il simbolino della
+\textbf{griglia}, ``presente in tutti gli editor 3D''. Spostando un cubo, si nota
+che non si muove di un pixel alla volta, ma a \textbf{incrementi di 10}: 10
+unità di Unreal, cioè \textbf{10 centimetri} (``le unità di Unreal sono uno a
+uno con i centimetri''), perché la griglia è impostata a 10.
+
+\paragraph{Il cubo da un metro.} Il \textbf{cubo di base} di Unreal è largo
+\textbf{un metro}: un metro per un metro per un metro, con il pivot al centro
+(sezione~\ref{gd11:sec:pivot}). ``Un metro, quanti centimetri sono?'' (``Due
+tentativi, ma ce l'abbiamo fatta'': cento.) Impostando la griglia a
+\textbf{100}, il cubo si sposta esattamente della propria larghezza. Con
+Ctrl+C e Ctrl+V si possono affiancare copie perfettamente allineate e costruire
+figure molto velocemente.
+
+\paragraph{I valori disponibili.} I valori della griglia sono \textbf{limitati}
+a quelli proposti nel menu (``un po' antipatico''): da qualche parte c'è un modo
+per impostarli a piacere, ma se si mantengono buone dimensioni quelli presenti
+bastano.
+
+\paragraph{Quando spegnerla.} Se invece si stanno mettendo, per esempio, delle
+\textbf{rocce} o degli \textbf{oggetti su un tavolo}, e gli scatti della griglia
+danno un risultato ``molto falso'', poco naturale, si clicca sull'icona per
+\textbf{disattivarla} e si sposta l'oggetto liberamente. Il consiglio:
+\begin{quote}
+Usate la griglia quando serve. Abituatevi a pensare: questa cosa è più comoda se
+la faccio con una griglia che scatta, o no? Vi velocizza tanto il lavoro,
+rispetto a stare lì manualmente a spostare le cose un centimetro alla volta.
+\end{quote}
+
+\subsection{Lo snapping della rotazione}
+
+Lo stesso vale per la \textbf{rotazione}: di default procede a scatti di
+\textbf{10 gradi}. Disattivando lo snap si ruota liberamente. Per ruotare
+qualcosa esattamente di \textbf{90 gradi} si imposta 90, ``tac'' (``è un cubo,
+non si vede la differenza, però fidatevi''); per 45 gradi, 45.
+
+\paragraph{I valori a mano, e le operazioni.} Per un valore preciso che non è
+tra quelli proposti, lo si scrive nel campo della rotazione nei
+\emph{Details}: ruotare di 12 gradi sull'asse $z$? Si scrive 12. Ruotarlo tre
+volte tanto? Si scrive \texttt{12*3}, Invio, e il risultato è 36 (il trucco dei
+campi numerici, sezione~\ref{gd8:sec:transform}). ``La matematica, purtroppo,
+sarà estremamente importante in questo tipo di mestiere.''
+
+\subsection{Ruotare attorno a un asse}
+
+``Qualcuno si è chiesto: perché l'ha ruotato sull'asse $z$?'' L'asse $z$ è
+quello \textbf{verticale}. Quando si ruota \textbf{su un asse}, bisogna
+immaginare che si ruoti \textbf{attorno} a quell'asse: l'asse fa da
+\textbf{perno}. La rotazione sull'asse $z$ (che infatti è blu, come la freccia
+di $z$) fa girare l'oggetto \textbf{orizzontalmente}, come una trottola.
+
+Anche questo all'inizio può essere controintuitivo: si pensa che per farlo
+ruotare orizzontalmente si debba usare l'asse $x$, ma ruotando sull'asse $x$ lo
+si fa girare \textbf{attorno all'asse orizzontale}, non sul piano orizzontale
+(tabella~\ref{gd11:tab:assi}).
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Asse (Unreal)} & \textbf{Colore} & \textbf{Direzione} & \textbf{Ruotando attorno ad esso\ldots} \\
+\midrule
+$X$ & rosso & avanti/indietro & l'oggetto si inclina di lato (\emph{roll}) \\
+$Y$ & verde & destra/sinistra & l'oggetto si inclina avanti/indietro (\emph{pitch}) \\
+$Z$ & blu & alto/basso & l'oggetto gira sul piano orizzontale (\emph{yaw}) \\
+\bottomrule
+\end{tabular}
+\caption{Gli assi di Unreal e l'effetto della rotazione attorno a ciascuno. I
+nomi \emph{roll}, \emph{pitch} e \emph{yaw} sono quelli usati nei campi di
+rotazione dell'editor; a lezione il docente insiste soprattutto sull'asse $z$
+come perno verticale.}
+\label{gd11:tab:assi}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Il Content Browser e la lingua dell'editor}
+\label{gd11:sec:browser}
+
+\paragraph{Il cassetto dei contenuti.} ``Piccola altra cosa'': il
+\textbf{Content Browser}, che nella versione italiana si chiama
+\textbf{Cassetto dei contenuti}. Il docente usa Unreal in inglese e si scusa se
+non usa sempre la terminologia italiana. Il Content Browser si può
+\textbf{chiudere}: premendo \textbf{Ctrl+Spazio} lo si fa apparire, premendolo
+di nuovo lo si nasconde. Così si ha più spazio per vedere il mondo di gioco.
+
+\paragraph{Cambiare la lingua.} Uno studente chiede come cambiare la lingua
+dell'editor. Il docente non è sicuro che il percorso non sia cambiato nella 5.8,
+ma dovrebbe essere: \textbf{Modifica} $\rightarrow$ \textbf{Impostazioni
+dell'editor} (\emph{Edit} $\rightarrow$ \emph{Editor Preferences}), e cercare
+``lingua'': lì la si sceglie. Da non confondere con l'\textbf{anteprima della
+lingua del gioco}, che serve, nei giochi localizzati in più lingue, a scegliere
+in quale lingua giocarli quando li si fa partire. Il docente, come si è visto,
+preferisce l'inglese: è più comodo, tra l'altro, per fare \textbf{ricerche}
+(sezione~\ref{gd11:sec:viewmode}).
+
+% ---------------------------------------------------------------------
+\section{Il pivot}
+\label{gd11:sec:pivot}
+
+Si torna alle slide (``non chiudete Unreal, ci servirà''). \textbf{Pivot} (``a
+seconda che scegliate di pronunciarlo alla francese o all'inglese''): il pivot è
+\textbf{il punto che un actor considera l'origine delle sue coordinate}. Il cubo
+di base di Unreal ha il pivot \textbf{esattamente al centro}. Quindi, se lo si
+ruota, ruota \textbf{attorno al suo centro}. (Si era già visto, nella lezione
+precedente, che non tutti gli oggetti hanno il pivot al centro: lo decide chi
+crea la mesh, sezione~\ref{gd8:sec:editor} e figura~\ref{gd8:fig:gizmo}.)
+
+\paragraph{Il tasto G.} Parentesi utile, anch'essa nella slide con le
+scorciatoie: premendo \textbf{G} si \textbf{nascondono i gizmo} e tutti gli
+strumenti interni dell'editor (frecce, righe, icone), per vedere la scena com'è
+davvero. Premendolo di nuovo, tornano.
+
+\paragraph{Ruotare attorno a un angolo.} ``Molto figo, ma se questo cubo lo
+volessi ruotare attorno a un angolo?'' Il caso classico: si sta posizionando un
+\textbf{ponte}, si sa dov'è il suo punto di partenza, ma il pivot del ponte è al
+centro, e ruotarlo per farlo combaciare è ``una rottura'': ruotare, spostare,
+non va bene, ruotare, spostare. Sarebbe comodo prendere il pivot e spostarlo
+all'inizio del ponte, così da ruotarlo attorno al punto di partenza.
+
+\paragraph{Alt + tasto centrale.} Si può fare: tenendo premuto \textbf{Alt} e
+cliccando con il \textbf{tasto centrale del mouse}, si sposta il pivot
+dell'oggetto \textbf{nel punto in cui si clicca}. Il docente clicca su un angolo
+del cubo, e ora il cubo ruota attorno a quell'angolo. Il punto può anche essere
+\textbf{esterno} all'oggetto: con Alt e clic centrale fuori dal cubo, il pivot
+finisce nel vuoto, e il cubo ruota (o si trascina) a partire da quel punto
+(figura~\ref{gd11:fig:pivot}). Può tornare utile per certi tipi di
+spostamenti.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  gd11cube/.style={draw, thick, fill=gray!20},
+  gd11ghost/.style={draw, thick, dashed, gray},
+  gd11piv/.style={circle, fill=red!75!black, inner sep=2pt},
+  gd11rot/.style={-{Stealth[length=2.2mm]}, thick, blue!70!black}
+]
+  \foreach \cx/\title/\px/\py in {1.2/{pivot al centro}/1.2/1.0,
+                                   5.4/{pivot su un angolo}/4.9/0.5,
+                                   9.8/{pivot esterno}/10.9/1.0} {
+    \node[font=\small\bfseries] at (\cx,2.6) {\title};
+    \draw[gd11ghost] (\cx-0.5,0.5) rectangle (\cx+0.5,1.5);
+    \begin{scope}[rotate around={35:(\px,\py)}]
+      \draw[gd11cube] (\cx-0.5,0.5) rectangle (\cx+0.5,1.5);
+    \end{scope}
+    \node[gd11piv] at (\px,\py) {};
+    \draw[gd11rot] (\px,\py) ++(0:0.55) arc (0:120:0.55);
+  }
+  \node[font=\footnotesize, align=center] at (5.4,-1.3)
+    {Alt + clic centrale sposta il pivot \textbf{temporaneamente}\\(anche fuori dall'oggetto); deselezionando torna quello del modellatore};
+\end{tikzpicture}
+\caption{Lo stesso cubo ruotato di 35 gradi attorno a tre pivot diversi (in
+rosso). Il tratteggio indica la posizione di partenza.}
+\label{gd11:fig:pivot}
+\end{figure}
+
+\paragraph{Uno spostamento temporaneo.} Questo spostamento è
+\textbf{temporaneo}. Se non ci si ricorda la scorciatoia, lo si può fare anche
+dal \textbf{tasto destro} del mouse sull'oggetto, dove c'è una voce dedicata al
+pivot (per esempio \emph{Imposta come offset del pivot}: in aula non funziona al
+primo colpo, ma le opzioni ci sono). Ci sono modi per \textbf{bloccare} il pivot
+e per impostare un pivot alternativo \textbf{che non viene resettato}; ma per
+adesso è meglio tenere a mente che \textbf{si resetta ogni volta}, ``così non
+rischiate di fare casini'': si sa sempre che il pivot è nel punto in cui l'ha
+impostato il \textbf{modellatore} che ha creato l'oggetto, e lo si cambia
+temporaneamente con Alt + tasto centrale solo quando serve.
+
+% ---------------------------------------------------------------------
+\section{Mesh e collisioni}
+\label{gd11:sec:mesh}
+
+\subsection{Che cos'è una mesh}
+
+``Una nota importante: le mesh.'' Detto ``terra terra, nella maniera più
+brutale possibile'', una \textbf{mesh} è \textbf{un insieme di punti e di
+segmenti} che connettono questi punti. (Il docente la disegna alla lavagna:
+``i modellatori di Tadic che vedono che disegno una roba del genere mi
+sparano''\footnote{Il nome è riportato così nella trascrizione; non è chiaro a
+chi o a quale studio si riferisca.}, ``ma è illustrativo''.)
+
+\paragraph{Tutto è fatto di triangoli.} Chiunque abbia giocato a un videogioco
+avrà notato che, guardando le cose da vicino, sono composte di
+\textbf{poligoni}. ``Non stiamo a parlare di quad e tutto il resto: stiamo
+semplici sulla teoria della modellazione 3D. Si parla di \textbf{triangoli}.''
+Perché il triangolo? Perché è \textbf{la figura geometrica che si può costruire
+con il minor numero di punti}: un punto non è una figura, una linea non ha
+superficie. Tre punti collegati formano la \textbf{superficie più semplice}
+possibile: il triangolo è \textbf{l'unità di base} della grafica 3D. ``In
+maniera molto semplificata, perché non è esattamente vero, ma per i nostri
+scopi'': tutto ciò che si vede in un engine 3D è fatto di piccolissimi
+triangoli.
+
+\paragraph{Una rete.} \emph{Mesh}, in inglese, vuol dire \textbf{rete},
+``retina'', come nei vestiti a rete. Una mesh è un \textbf{file} che specifica
+\textbf{l'insieme dei punti} (vertici) e \textbf{in che modo sono collegati tra
+loro} (le linee); le superfici delimitate da queste linee sono i
+\textbf{poligoni}, su cui vengono poi proiettati i \textbf{materiali} e le
+\textbf{texture} (sezione~\ref{gd11:sec:materiali}).
+
+\paragraph{La testa in wireframe.} Sulla slide c'è la mesh di un corpo: la
+testa è formata da poligoni. Quelli visualizzati non sono tutti triangoli (molti
+sono quadrilateri), ma ``non stiamo entrando nel discorso di come funziona la
+modellazione 3D'': edge, raggruppamenti e così via. Lo si potrà vedere in
+Unreal con la modalità \emph{wireframe} (sezione~\ref{gd11:sec:viewmode}).
+
+\subsection{Le collisioni sono un'altra cosa}
+
+``Nota importantissima, nota estremamente importante'':
+\begin{quote}
+\textbf{Mesh e collisioni sono due cose diverse.} Se vedete qualcosa in 3D, non
+è detto che sia fisico: qualcos'altro deve dire all'engine che quella cosa è
+solida.
+\end{quote}
+Le mesh sono solo una \textbf{rappresentazione tridimensionale virtuale}. La
+\textbf{collisione} è una cosa completamente separata, e \textbf{non è
+automatica}. Unreal e molti altri engine possono usare la mesh stessa come
+modello di collisione, ma non è automatico e \textbf{non è consigliato}, perché
+la mesh è super dettagliata e il calcolo diventa molto pesante (di solito si usa
+una forma di collisione più semplice).
+
+\paragraph{Lo studente che sprofonda.} Quello che deve restare in testa:
+mettendo in gioco un modello 3D, \textbf{non è automatico che abbia una
+collisione}. Bisogna \textbf{controllarlo}, perché ``è una cosa che succede
+spesso agli studenti'': ``che bello questo livello''; il personaggio cammina,
+salta sulla roccia e \textbf{sprofonda nel terreno}, perché la roccia non ha la
+collisione.
+
+% ---------------------------------------------------------------------
+\section{Le luci}
+\label{gd11:sec:luci}
+
+``Altra cosa importante da vedere sono le luci. Per questo mi farebbe comodo un
+po' di buio.'' Ogni nuovo livello creato da un template di Unreal ha una
+cartella \textbf{Lighting}, che si vedrà tra poco
+(sezione~\ref{gd11:sec:da-zero}); per ora il docente abbassa l'intensità della
+\emph{directional light} per avere una scena più scura. Nel pannello a sinistra
+(\emph{Place Actors}) c'è la categoria \textbf{Luci}: sono tutte le luci che si
+possono inserire (tabella~\ref{gd11:tab:luci}). Il dettaglio di ciascuna verrà
+in lezioni dedicate: ``questo è per farvi vedere cosa sono'' e mettervi in mano
+la possibilità di fare cose velocemente.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.6cm}p{4.2cm}p{5.6cm}@{}}
+\toprule
+\textbf{Luce} & \textbf{Come emette} & \textbf{Note dalla lezione} \\
+\midrule
+Point light (punto luce) & in ogni direzione, a sfera &
+  raggio di attenuazione; \emph{source radius}: se maggiore di zero la luce non
+  è più un punto e le ombre si sfumano; colore, intensità \\
+\addlinespace
+Spot light (faretto) & a cono, in una direzione &
+  come un faro, una torcia; intensità in candele (cd), il cursore si ferma a
+  un massimo ma a mano si può andare oltre \\
+\addlinespace
+Rect light (luce rettangolare) & da una superficie, a semisfera &
+  poco usata; utile per una finestra illuminata che proietta luce verso
+  l'esterno \\
+\addlinespace
+Directional light (luce direzionale) & raggi paralleli e infiniti su tutto il mondo &
+  è il sole: conta solo la rotazione, non la posizione; legata al cielo
+  (tramonto); \textbf{una sola per livello} \\
+\bottomrule
+\end{tabular}
+\caption{Le luci di Unreal viste a lezione.}
+\label{gd11:tab:luci}
+\end{table}
+
+\subsection{La point light}
+
+Si comincia dal \textbf{punto luce} (\emph{point light}). Trascinandolo nel
+livello (il docente sposta alcuni oggetti sul terreno, per avere qualcosa su cui
+proiettare), si vede che \textbf{all'interno di una sfera}, il gizmo della luce,
+viene proiettata luce.
+
+\paragraph{La luce non è un'entità.} Per selezionarla si clicca
+sull'\textbf{iconcina}: una luce non è un oggetto, ``è un punto di diramazione di
+raggi di luce''. Le iconcine servono a due cose: \textbf{segnalare} che lì c'è
+qualcosa, e permettere di \textbf{cliccarci sopra}. Premendo G (sezione
+precedente), infatti, lì non si vede niente.
+
+\paragraph{Il modello della lampadina non fa luce.} Ed ecco un'altra cosa
+importante: \textbf{la fonte di luce visibile} (il modello 3D di una lampadina,
+di un fuoco) \textbf{non emette luce} se non le si mette accanto una luce.
+``Poi in realtà un pochino ne emette, perché ci sono riflessi di colori
+ambientali, ma quella è un'altra cosa.'' Le luci dell'engine sono solo la
+\emph{sorgente}; il modello è solo l'aspetto.
+
+\paragraph{Il raggio.} La luce si può selezionare e spostare, e spostandola si
+spostano anche le \textbf{ombre} che proietta. Ma le luci \textbf{non hanno
+influenza all'infinito} (``altrimenti buona fortuna a far funzionare tutto''):
+sono limitate al \textbf{raggio} visualizzato. Gli oggetti fuori dal raggio non
+vengono toccati dalla luce.
+
+\paragraph{Le proprietà.} Nei \emph{Details} ci sono tutte le funzioni per
+modificarla:
+\begin{itemize}
+  \item il \textbf{colore}, con il selettore;
+  \item il \textbf{raggio di attenuazione} (\emph{attenuation radius}): la
+        distanza oltre la quale l'influenza della luce su un oggetto diventa
+        zero;
+  \item la \textbf{dimensione della sorgente} (\emph{source radius}): se è
+        zero, la sorgente è un \textbf{punto}; se è più larga di zero, è la
+        dimensione della sfera da cui viene proiettata la luce. Allargandola, le
+        \textbf{ombre diventano più sfumate}, perché la luce non è più un punto
+        ma una sfera.
+\end{itemize}
+
+\subsection{La spot light}
+
+La point light proietta luce \textbf{in ogni direzione}, a sfera. La
+\textbf{spot light}, invece, è una proiezione \textbf{a cono}: ``lo dice il
+termine'', è come un proiettore, ``un faro''. Serve quando invece di mandare la
+luce in tutte le direzioni la si vuole lanciare solo in una: ``immaginatela come
+una \textbf{torcia}''. Con G si vede il cono di luce proiettato sulla scena;
+anche qui la si seleziona cliccando sull'iconcina, e se ne regola tutto,
+compresa l'\textbf{intensità}: ``volete spaccare gli occhi alla gente? Mettetela
+al massimo''.
+
+\paragraph{I campi non sono sempre bloccati.} Una nota di usabilità.
+Trascinando il cursore dell'intensità, si nota che è \textbf{bloccato} a un
+massimo (nell'esempio, 160 candele: \textbf{cd}, perché Unreal usa unità di
+misura del mondo reale), e tornando indietro si ferma a zero. Ma questi campi
+\textbf{non sono sempre limitati brutalmente} ai valori del cursore:
+cliccandoci sopra e scrivendo il valore a mano, \textbf{in certi campi si può
+andare oltre il limite}. ``Volete una luce da 2000 candele? Sì, però tenete
+presente che accecate chiunque.''
+
+\subsection{La rect light}
+
+La \textbf{luce rettangolare} (\emph{rect light}) è una \textbf{superficie} che
+proietta luce, non un punto: ruotandola si vede che la luce si interrompe,
+perché non proviene da un punto, ma da una superficie che illumina ``a
+semisfera''. Non è usata molto spesso, ma ha i suoi scopi: per esempio una
+\textbf{finestra illuminata} che proietta luce verso l'esterno di un palazzo,
+lungo tutta la sua larghezza.
+
+\subsection{La directional light: il sole}
+
+``Directional light: \textbf{non trascinatela} nel vostro progetto.'' Quando si
+apre un livello da un template di Unreal c'è già, nella cartella
+\textbf{Lighting} (``ignoriamo la fog per ora, che è la nebbia''). Il docente
+la riaccende e la rimette a \textbf{2 lux}.
+
+\paragraph{Che cos'è.} La \textbf{directional light} è \textbf{la luce del
+sole}: ``è il vostro sole''. Si chiama \emph{direzionale} perché \textbf{tutti i
+raggi di luce sono paralleli}, nella stessa direzione. E se sono tutti paralleli
+e infiniti, perché coprono tutto il mondo di gioco, \textbf{il punto di origine
+non cambia assolutamente niente}: la si può mettere dove si vuole. Di solito,
+una volta trovato un posto in cui non dà fastidio, non la si tocca quasi più.
+
+\paragraph{Il tasto F.} Per ritrovarla, un'altra scorciatoia ``importantissima''
+della slide: il tasto \textbf{F} porta la telecamera sull'\textbf{oggetto
+selezionato}. Si seleziona qualcosa nell'Outliner, F, e la viewport lo inquadra;
+si seleziona un'altra cosa, F, e così via.
+
+\paragraph{Ruotare il sole.} Per cambiare la posizione del sole \textbf{la si
+ruota}: ruotandola si spostano anche le ombre. (Il docente passa alle coordinate
+locali, ``così ce l'ho più comodo''; e ripete: se un oggetto non è figlio di
+niente, il genitore è il mondo, e lo spazio genitore coincide con quello
+globale.)
+
+\paragraph{Il sole e il cielo.} Unreal \textbf{lega automaticamente} la
+directional light al \textbf{sole} del cielo (si veda la \emph{sky atmosphere},
+sezione~\ref{gd11:sec:da-zero}): ruotando la luce si sposta il sole, con tutti
+i calcoli che ne derivano, incluso l'aspetto del gioco al \textbf{tramonto},
+quando la luce diventa più rossa. ``In questo modo potete giocare a essere Dio e
+spostare il sole, le stelle, eccetera.'' Le stelle sono un discorso diverso,
+perché quando la luce direzionale è sotto l'orizzonte non c'è niente che
+illumina il resto. E una curiosità: \textbf{nei videogiochi la luna, in realtà,
+è un sole con una texture diversa}.
+
+\paragraph{Una sola.} ``Non mettetene mai due.'' \textbf{Ogni livello deve avere
+una sola directional light}: con due, si costringe l'engine a fare il doppio dei
+calcoli, senza senso.
+
+% ---------------------------------------------------------------------
+\section{Lo Starter Content, a mano}
+\label{gd11:sec:starter}
+
+\subsection{Un nuovo progetto, e un engine cambiato}
+
+``Ora costruiamo un livello da zero.'' Le slide erano state scritte basandosi
+sulla versione 5.6, quindi ``ci sono un paio di cose che ignorate pure''. Le
+istruzioni erano: creare un \textbf{nuovo progetto} con il \textbf{Third Person
+template}. Ma nella 5.8 la schermata di creazione del progetto è cambiata
+``totalmente'': il docente crea un progetto vuoto e scopre che non ha più i
+preset di base che c'erano una volta (``fantastico''), mentre sui computer degli
+studenti i moduli necessari risultano già installati. È solo il computer nuovo a
+non averli.
+
+\paragraph{Lo Starter Content non si importa più con un clic.} Il problema
+principale è un altro, e il docente l'ha verificato il giorno prima: una volta
+bastava fare tasto destro, \emph{importa Starter Content}, e si era finito.
+``Hanno tolto sta roba, rottura gigantesca.'' Per questo nella cartella
+condivisa c'è un \textbf{link a un pacchetto} con tutto lo Starter Content
+(texture, materiali, particelle, prop, eccetera) da importare manualmente.
+
+\paragraph{L'accesso alla cartella.} Gli studenti cominciano a scaricarlo. Il
+docente rende il link accessibile a chiunque lo abbia, chiedendo di \textbf{non
+richiedere l'accesso}: ogni richiesta di accesso a una cartella manda una mail a
+tutti quelli che fanno parte dell'organizzazione, e ``ogni giorno ricevo un
+sacco di mail di gente che chiede accesso a roba che non ho mai neanche saputo
+che esistesse''. (E il Wi-Fi dell'aula è un po' lento.)
+
+\paragraph{La documentazione.} Intanto, uno sguardo alla pagina da cui si è
+scaricato il pacchetto: il link sopra è alla \textbf{documentazione di Unreal}
+(nella versione 5.9: a sinistra si può scegliere la versione dell'engine,
+``perché un po' di robe cambiano, come avete visto''), che spiega come si
+importano le varie cose. Si ricordi l'invito della lezione precedente a leggere
+la documentazione (sezione~\ref{gd8:sec:documentazione}).
+
+\subsection{Perché l'importazione normale non funziona}
+
+Il docente prova a importare il pacchetto con \emph{Importa nella cartella
+corrente}, ma Unreal non lo prende. Chiede aiuto a uno studente (``Alessandro,
+vuoi fare da assistente? Ricordami come si importano gli asset da un progetto
+all'altro, che non lo faccio da una vita''), contatta il collega che gli ha
+passato il file, e si prende una ``piccola seconda pausa'' per risolvere.
+
+La causa: i file del pacchetto sono \textbf{\texttt{.uasset}}, cioè
+\textbf{asset già importati} in Unreal. L'importazione normale serve a
+trasformare file esterni (immagini, modelli) in asset; questi asset lo sono già,
+e non vanno importati, ma \textbf{messi direttamente nella cartella del
+progetto}. (La slide con la procedura di importazione standard era sbagliata,
+perché il docente aveva frainteso che tipo di file gli venisse passato: ``ignorate
+questa slide''. La documentazione resta utile, ma per importare asset
+\emph{non} pre-importati.)
+
+\subsection{La procedura}
+
+La procedura corretta, che gli studenti eseguono in aula:
+\begin{enumerate}
+  \item \textbf{scaricare} il pacchetto e \textbf{decomprimerlo};
+  \item in Unreal, nel Content Browser, \textbf{tasto destro} sulla cartella
+        \textbf{Contenuto} (\emph{Content}) e scegliere \textbf{Mostra in
+        Esplora risorse} (\emph{Show in Explorer}); in alternativa, aprire a
+        mano la cartella \texttt{Content} del progetto;
+  \item \textbf{trascinare} la cartella decompressa \textbf{dentro} quella
+        cartella, in Windows (non nel Content Browser: ``non così, perché così
+        vedete che non importa'');
+  \item \textbf{chiudere e riaprire} Unreal.
+\end{enumerate}
+``Che cosa sta succedendo? State mettendo dei nuovi file di Unreal dentro
+Unreal.'' Quando si avvia, Unreal \textbf{scansiona tutti i contenuti del
+progetto}, nota che ci sono dei file nuovi e li aggiunge. ``Lo so, era molto più
+comodo quando lo si poteva selezionare con un clic.''
+
+\paragraph{Un cuscinetto di minuti.} Il docente si scusa per il caos (``tra il
+computer nuovo e il fatto che io non uso la 5.8 per lavoro, incidenti di
+percorso'') e spiega che, quando prepara una lezione, si lascia sempre
+\textbf{qualche minuto di cuscinetto} per imprevisti come questo, soprattutto
+con un engine aggiornato che ha cambiato un bel po' di cose, anche
+nell'interfaccia. Di conseguenza può capitare di finire la lezione un po' prima;
+in quei casi, se ci sono domande o argomenti di cui parlare, ``chiedetelo voi''.
+Mattia, da casa, avvisa che probabilmente riuscirà solo a seguire; ``va
+benissimo''.
+
+\subsection{Che cosa c'è dentro}
+
+Intanto si esplora il pacchetto. Lo Starter Content è suddiviso in
+\textbf{sottocartelle}:
+\begin{itemize}
+  \item una cartella che ripete varie \textbf{forme di base} di Unreal (``ci
+        interessa poco'');
+  \item \textbf{Architecture}: forme di base pensate per fare il blockout di
+        architetture varie; ``volete creare velocemente un edificio? Pam pam
+        pam, e l'avete fatto'';
+  \item \textbf{Props}: oggetti di arredamento, sedie, lampade, lampade da
+        parete, e altro;
+  \item elementi \textbf{naturali}: una roccia, un cespuglio, cose che fanno
+        sembrare tutto ``un po' più naturale'';
+  \item una \textbf{statuetta di vetro}, trasparente: il vetro
+        \textbf{deforma} ciò che c'è dietro, perché ha un materiale (uno
+        \emph{shader}) che deforma lo sfondo;
+  \item e soprattutto i \textbf{materiali} (sezione~\ref{gd11:sec:materiali}).
+\end{itemize}
+\paragraph{Le anteprime mancanti.} A volte, nel Content Browser, alcune
+anteprime non sono renderizzate (la roccia ``non c'è''): Unreal ha avuto
+problemi a scattare l'istantanea. Trascinando l'oggetto nel livello, l'engine lo
+compila e poi mostra l'anteprima correttamente.
+
+\paragraph{Troppe parentesi.} Durante la dimostrazione si nota anche un difetto
+grafico (lo \emph{z-fighting}: due superfici sovrapposte che ``combattono'' per
+essere visualizzate), ma il docente si trattiene: ``purtroppo sono una persona
+che fa un sacco di parentesi''. Spiegare una cosa gli fa pensare ad altre tre
+da spiegare, e cerca di tenere limitato il numero enorme di parentesi che
+potrebbe aprire.
+
+% ---------------------------------------------------------------------
+\section{Un livello da zero}
+\label{gd11:sec:da-zero}
+
+\subsection{Il livello vuoto}
+
+Ora si crea un livello ``proprio partendo da zero, senza usare un template''.
+\begin{enumerate}
+  \item Nel Content Browser, tornare su \textbf{Contenuto} e lavorare
+        \textbf{fuori} dalla cartella dello Starter Content: ``cercate di
+        tenere le cose ordinate''.
+  \item \textbf{Tasto destro} $\rightarrow$ \textbf{Livello} (\emph{Level}).
+        Unreal chiede il nome (il docente lo chiama \emph{NewLevel}).
+  \item Aprirlo con un doppio clic.
+\end{enumerate}
+
+\paragraph{Il salvataggio.} Aprendo il nuovo livello, Unreal chiede di salvare
+ciò che non è stato salvato finora: il livello con cui si è aperto l'engine
+risulta \emph{Senza titolo}, cioè non era salvato da nessuna parte. Prima di
+cambiare livello, l'editor chiede conferma: ``sicuro che non ti sei dimenticato
+qualcosa?''. Va ricordato che \textbf{un nuovo livello non è salvato finché non
+lo si salva manualmente} (sezione~\ref{gd8:sec:livelli}).
+
+\paragraph{Il nulla.} ``E abbiamo creato il nostro bellissimo nuovo livello.
+Siamo tutti d'accordo che questo è un livello? Siamo tutti appassionati di
+domande retoriche?'' L'Outliner è vuoto: a parte le cose tecniche che Unreal
+genera per gestirsi, \textbf{nel livello non c'è assolutamente nulla}. Premendo
+Play, il vuoto.
+
+\subsection{Un piano, una luce, un cubo}
+
+Bisogna cominciare a metterci qualcosa:
+\begin{enumerate}
+  \item un \textbf{piano} (dalle forme di base), messo in posizione
+        $(0,0,0)$, e poi F per inquadrarlo; lo si allarga, perché il piano di
+        partenza è sempre di un metro quadro;
+  \item ``che cosa manca? Deselezionando il piano, qual è il problema?''
+        \textbf{Manca la luce}. Uno studente propone la luce del cielo
+        (\emph{Sky Light}, ``luce atmosferica'' in italiano): inserita da sola,
+        non succede niente. Si parte invece dalla \textbf{luce direzionale}:
+        quando la si inserisce, Unreal la orienta automaticamente (a circa 46
+        gradi) ``e ce l'abbiamo fatta'';
+  \item un \textbf{cubo}, ``giusto per avere un punto di riferimento chiaro''.
+\end{enumerate}
+``Tutto qua?'' No: manca ancora qualcosa.
+
+\subsection{Una parentesi su Lumen}
+
+``Qui devo aprire una parentesi, legata a una roba che ha implementato Unreal.''
+Sull'immagine si vede uno \textbf{sfarfallio}, un rumore. Quello è
+\textbf{Lumen}.\footnote{Nella trascrizione ``Ruben''.} Chi ha giocato a giochi
+come \emph{Clair Obscur: Expedition 33} lo avrà notato in certi angoli: la luce
+fa quell'effetto. Lumen è il sistema di \textbf{illuminazione globale dinamica}
+di Unreal, ``una imitazione del \emph{ray tracing}'': una luce aggiornata in
+tempo reale che considera i \textbf{riflessi delle luci} sulle superfici
+circostanti. ``È una finta luce, perché non è una vera luce: è una finzione dei
+riflessi della luce su una superficie.'' Infatti, quando la superficie esce
+dallo schermo, quegli effetti scompaiono, perché l'engine non sta più calcolando
+quei finti riflessi.
+
+\subsection{Perché il lato in ombra è nero}
+
+Guardando il \textbf{lato opposto} del cubo, è \textbf{completamente nero}.
+``Se io guardo sotto la mia mano, non è completamente nero. Che cosa sta
+succedendo, secondo voi, nel vuoto cosmico?'' Uno studente: la luce si perde nel
+vuoto, non si riflette su nessuna superficie.
+
+\paragraph{La luce ambientale.} Esatto: in una situazione di vuoto totale, se
+non c'è una superficie che riflette la luce diretta del sole, il lato opposto a
+quello illuminato è totalmente nero (``è il motivo per cui la Terra ha la
+notte''). Nel mondo reale, invece, ci sono altre fonti di luce oltre al sole. La
+prima è l'\textbf{illuminazione ambientale}: la luce che \textbf{si riflette su
+qualunque cosa ci circonda}. È il motivo per cui, se si spegnessero le luci e
+ogni singolo computer dell'aula, ci sarebbe comunque un po' di luce: è la luce
+del sole che rimbalza su tutto ciò che sta fuori ed entra nella stanza.
+
+\paragraph{Il cielo è una fonte di luce.} Seconda cosa: il sole non è l'unica
+sorgente; \textbf{anche il cielo è una fonte di luce}. La luce del sole che si
+riflette sulla Terra e viene rispedita verso l'alto viene riflessa di nuovo verso
+il basso dall'\textbf{atmosfera}. È il motivo per cui il cielo è blu invece di
+essere nero (``se vi capiterà mai di andare nello spazio, non lo so cosa
+succederà nel 2050--2070'': lo spazio è nero, il cielo della Terra è blu).
+L'atmosfera riflette la luce, ed essendo una luce che ci circonda totalmente,
+\textbf{contribuisce all'illuminazione ambientale}.
+
+\paragraph{Il cielo, in Unreal.} Ecco perché, trascinando solo una directional
+light, Unreal ``dice: bene, vi ho fatto una luce direzionale; e voi guardate e
+dite: sì, ok, ma che cos'è questa roba?''. Manca tutto il resto. Bisogna
+aggiungere anche la \textbf{Sky Light} (luce atmosferica) e una
+\textbf{simulazione del cielo}: la \textbf{Sky Atmosphere} (\emph{atmosfera
+cielo}). Inserita quella, il cielo c'è, e c'è il sole.
+
+\subsection{La cartella Lighting: il modo pratico}
+
+Tutto questo si può fare \textbf{a mano}, un elemento alla volta, e nelle slide
+c'è il procedimento passo per passo. ``Il vantaggio è che vi posso dare i
+consigli pratici da persona che con queste cose ci lavora'': dopo averlo
+insegnato un po' di volte, il docente si è reso conto che \textbf{tutti i level
+designer}, invece di farlo a mano, \textbf{copiano la cartella}.
+\begin{enumerate}
+  \item Aprire un livello che ha già la cartella \textbf{Lighting} (per esempio
+        quello creato da un template).
+  \item Copiarne i \textbf{contenuti}. Attenzione: in Unreal, copiando la
+        \emph{cartella} dell'Outliner si copia solo la cartella, non ciò che
+        contiene (``questa è la differenza tra lavorare con engine diversi'').
+        Bisogna selezionare tutti gli elementi al suo interno.
+  \item Tornare al nuovo livello: per cambiare livello velocemente,
+        \textbf{File} $\rightarrow$ \textbf{Livelli recenti}.
+  \item Assicurarsi che non ci siano già luci direzionali o atmosferiche
+        (per non duplicarle) e \textbf{incollare}.
+\end{enumerate}
+``La cartella è lì apposta per questo.''
+
+\paragraph{Che cosa c'è nella cartella.} Ma bisogna \textbf{sapere che cosa c'è
+dentro}, perché regolando quegli elementi si cambia la luce atmosferica del
+gioco (tabella~\ref{gd11:tab:lighting}).
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{4.0cm}p{8.6cm}@{}}
+\toprule
+\textbf{Elemento} & \textbf{A che cosa serve} \\
+\midrule
+Directional Light & il sole (sezione~\ref{gd11:sec:luci}) \\
+Exponential Height Fog & simula il \textbf{vapore acqueo} nell'atmosfera, che fa
+  diventare le cose sempre più sbiadite con la distanza; ``esponenziale''
+  perché dipende dalla distanza dal terreno (l'altezza) \\
+Volumetric Cloud & le \textbf{nuvole} volumetriche \\
+Sky Atmosphere & la simulazione dell'atmosfera: il colore del cielo, il sole,
+  il tramonto \\
+Sky Light & l'illuminazione ambientale derivata dal cielo \\
+Sky Sphere & lo \textbf{sfondo}: di base è bianco (deriva tutto dagli altri
+  calcoli), ma ci si può mettere un materiale con un'immagine, come altri
+  pianeti o le stelle; è ciò che nei videogiochi si chiama anche
+  \textbf{skybox} \\
+\bottomrule
+\end{tabular}
+\caption{Il contenuto della cartella \emph{Lighting} di un livello creato da
+template, come descritto a lezione.}
+\label{gd11:tab:lighting}
+\end{table}
+
+\paragraph{Lo skybox.} Sulla \textbf{sky sphere} il docente si sofferma: è il
+vostro sfondo. Nascondendola (con l'icona dell'occhio nell'Outliner) non si nota
+niente, perché è totalmente bianca: lo sfondo deriva solo dagli altri calcoli. Ma
+se si vogliono altri pianeti sullo sfondo, o le stelle, le si applica un
+materiale con un'immagine. Tutto ciò che è \textbf{così lontano dal mondo di
+gioco} da poter essere tranquillamente una cosa in 2D, ``tanto non si nota la
+differenza''.
+
+\paragraph{Il pavimento.} Fatto tutto questo lavoro (``tutto obbligatorio''), si
+prende un \textbf{piano} e lo si allarga in modo che faccia da base del mondo di
+gioco. ``Mi state seguendo? Vedo gente che guarda lo schermo senza far nulla.''
+
+% ---------------------------------------------------------------------
+\section{Materiali e texture}
+\label{gd11:sec:materiali}
+
+\subsection{Assegnare un materiale}
+
+Selezionando il piano, in basso a destra nei \emph{Details} c'è una casella
+\textbf{Materiali}: da lì si sceglie il materiale da applicare. Il docente vuole
+un pavimento di pietre: sceglie \textbf{Cobblestone} (ciottolato), poi prova
+altro.
+\begin{itemize}
+  \item Si può \textbf{scorrere} l'elenco, oppure \textbf{cercare} per nome:
+        ``voglio che la mia base sia erba'': si scrive \emph{grass}, e si trova
+        l'erba.
+  \item Oppure si apre lo Starter Content, cartella \textbf{Materials}, si
+        prende il materiale e lo si \textbf{trascina} sull'oggetto: lo applica
+        automaticamente (per esempio i mattoni).
+  \item Selezionando più oggetti insieme, si può cambiare il materiale a
+        tutti in contemporanea.
+\end{itemize}
+
+\subsection{Il tiling e lo stretch}
+
+``Tenete presente che questo è tarato per essere un metro per un metro.'' È il
+discorso visto con le spline (sezione~\ref{gd11:sec:spline}): allargando o
+riducendo un oggetto, \textbf{le dimensioni della texture rispetto all'oggetto
+non cambiano}, perché le dimensioni locali sono sempre le stesse. Quindi, se lo
+si allunga, \textbf{la texture si stira}.
+
+\paragraph{Il pavimento a piastrelle.} Per fare un pavimento senza che sia
+``tutto stretchato e brutto da vedere'', per ora:
+\begin{enumerate}
+  \item scegliere una \textbf{scala di base} per il piano: 1, oppure 2 se va
+        bene che sia leggermente stirata;
+  \item impostare la \textbf{griglia a 100} (un metro per un metro,
+        sezione~\ref{gd11:sec:snapping});
+  \item fare un po' di \textbf{copia e incolla}, e affiancare i pezzi.
+\end{enumerate}
+È un metodo da principianti, ma è voluto: ``per il momento in cui siamo noi,
+lavoriamo in questo modo, invece di guardare quindici strumenti diversi in una
+volta sola''.
+
+\paragraph{Le giunture.} Queste texture sono pensate per essere
+\textbf{ripetibili}, ma non tutte alla perfezione: tra un pezzo e l'altro si
+possono vedere i segni. Se dà fastidio, si cerca un materiale con un
+\textbf{tiling} migliore. Ma dalla distanza ``non si nota tanto'', e in questa
+fase va bene: ``siamo agli inizi, non preoccupiamoci di UV e di tutte le altre
+cose''.\footnote{Durante la dimostrazione due piani che dovrebbero avere lo
+stesso materiale risultano avere materiali diversi (``che roba strana''), e il
+computer si blocca per qualche secondo; il docente non approfondisce.}
+
+\subsection{Texture e materiale non sono la stessa cosa}
+
+``Una nota importante: \textbf{materiali e texture sono due cose diverse}.''
+\begin{description}
+  \item[Texture] è \textbf{un componente} di un materiale: il \textbf{file 2D},
+        l'immagine (per esempio un PNG).
+  \item[Materiale] è \textbf{un insieme di texture più un sacco di altri
+        calcoli}, inclusi quelli che fanno sì che la texture \textbf{finga di
+        essere in rilievo}.
+\end{description}
+Sui mattoni si vede che i mattoni ``sporgono''; in realtà non sporgono affatto,
+la superficie è completamente piatta: è Unreal che, calcolandoli, finge che
+sporgano nel calcolare l'immagine da mostrare a schermo.\footnote{Il docente
+accenna, più avanti, alle \emph{normali} (``quella roba di profondità che vi ho
+fatto vedere prima, che sono le normali''): l'effetto di rilievo si ottiene con
+una \emph{normal map}, una texture che indica all'engine come la luce deve
+comportarsi su ogni punto della superficie. Se ne parlerà in un'altra
+lezione.} I materiali si trovano nella casella vista prima; e nelle slide c'è la
+spiegazione, un passaggio alla volta, di tutti gli elementi visti
+(\emph{Exponential Height Fog} compresa).
+
+% ---------------------------------------------------------------------
+\section{Le modalità di visualizzazione}
+\label{gd11:sec:viewmode}
+
+``Quanto tempo abbiamo? Ok, ce l'abbiamo.'' In alto nella viewport c'è una
+casella con scritto \textbf{Illuminato}, in inglese \textbf{Lit} (``io odio come
+è tradotto in italiano: è molto più comodo fare ricerche se l'avete in inglese,
+ma scegliete voi''). È la \textbf{modalità di visualizzazione}, o \emph{View
+Mode}. Si sceglie a seconda di ciò che serve vedere (tabella~\ref{gd11:tab:view}).
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.6cm}p{9.0cm}@{}}
+\toprule
+\textbf{Modalità} & \textbf{Che cosa mostra, e quando usarla} \\
+\midrule
+Illuminato (\emph{Lit}) & \textbf{tutti i calcoli} che danno l'immagine finale:
+  ombre, luci, post-processing. È la modalità ``totale''. \\
+\addlinespace
+Wireframe & i \textbf{poligoni} di cui è composto ogni oggetto: si vedono i
+  triangoli (alcuni poligoni ne raggruppano più d'uno). Utile per capire com'è
+  fatta una mesh. \\
+\addlinespace
+Non illuminato (\emph{Unlit}) & praticamente \textbf{solo le texture}, ``come
+  facevano i vecchi videogiochi, tipo \emph{Quake}, \emph{Doom}'': nessun calcolo
+  di illuminazione, nemmeno l'effetto di rilievo delle normali. Utile per
+  lavorare quando si piazzano pareti e oggetti, o se Unreal è pesante sul
+  proprio computer. \\
+\bottomrule
+\end{tabular}
+\caption{Le tre modalità di visualizzazione su cui fermarsi per ora.}
+\label{gd11:tab:view}
+\end{table}
+
+\paragraph{Wireframe.} Su una scena con pochi oggetti, il wireframe non mostra
+molto; trascinando qualcosa di più complesso dallo Starter Content (una sedia
+tra i \emph{Props}) si vedono i \textbf{triangoli}, come la testa della slide
+sulle mesh (sezione~\ref{gd11:sec:mesh}).
+
+\paragraph{Lavorare in non illuminato.} Se si stanno solo mettendo pareti e
+oggetti in una stanza, \textbf{non serve che il computer calcoli sempre tutte le
+ombre}: si può lavorare tranquillamente in \emph{Unlit} e passare a \emph{Lit}
+solo quando si lavora sulle luci o si vuole vedere il risultato. Se Unreal fa
+fatica sul proprio computer, è un modo per semplificarsi la vita. Ci sono poi
+anche le \textbf{impostazioni di scalabilità}, che si vedranno in un altro
+momento.
+
+\paragraph{Molte altre.} Ci sono tantissime altre modalità di visualizzazione,
+che servono per esempio a vedere se c'è qualche problema; per ora si resta su
+illuminato, non illuminato e wireframe, ``se volete dare un'occhiata e vedere
+cosa succede dietro le quinte''.
+
+% ---------------------------------------------------------------------
+\section{Il post process volume}
+\label{gd11:sec:postprocess}
+
+``Un'ultima cosa che voglio dire, e questa è per voi, se volete divertirvi'',
+``se volete proprio esagerare''. Tra gli elementi da aggiungere al livello c'è il
+\textbf{Post Process Volume} (in italiano \emph{volume di post processing}): un
+cubo che permette di aggiungere tutte le opzioni di \textbf{post-processing}.
+
+\paragraph{Che cos'è il post-processing.} Sono tutte le impostazioni dei
+\textbf{calcoli che vengono fatti sull'immagine una volta che è stata
+renderizzata}. ``Detto così è molto tecnico.'' In pratica:
+\begin{itemize}
+  \item il \textbf{motion blur};
+  \item il \textbf{bloom}: le cose particolarmente illuminate espandono la
+        loro luce oltre i propri confini;
+  \item la \textbf{profondità di campo} (\emph{depth of field}): se una cosa in
+        primo piano è a fuoco, lo sfondo non lo è;
+  \item la \textbf{grana della pellicola} (\emph{film grain}), la
+        \textbf{correzione del colore}, il \textbf{lens flare},
+        l'\textbf{aberrazione cromatica}, e così via.
+\end{itemize}
+Tutto è calcolato dopo che la scena è stata renderizzata. Sono effetti
+abbastanza complessi da usare, perché ci sono tanti valori da valutare; non è
+``che clicchi e lo fai'', richiede un po' di studio. Ma se si vuole ``l'effetto
+videogioco super figo'', il post process volume è lo strumento. Ci sarà una
+lezione dedicata; per ora il docente lo lascia esplorare da soli, ``perché c'è
+sempre qualcuno che vuole strafare e si prende tantissimo bene''.
+
+\paragraph{Che cos'è un volume.} Il post process volume è un
+\textbf{volume}, un altro elemento di Unreal: un oggetto nel gioco che
+\textbf{fa succedere qualcosa solo se altre cose sono al suo interno}. Il cubo
+delimita un'area: le impostazioni di post-processing si applicano solo se
+\textbf{la telecamera è dentro il volume}. Serve, per esempio, a cambiare il
+post-processing da una zona all'altra del livello.
+
+\paragraph{Infinite Extent.} L'unica cosa da ricordare (anche questa segnata
+sulla slide) è la casella \textbf{Infinite Extent (Unbound)}: se la si attiva,
+il volume si applica \textbf{a tutto il livello}, ovunque sia la telecamera. Il
+motivo per cui all'inizio della dimostrazione non si vedeva niente era proprio
+che non era attiva. Una volta attivata, alzando l'intensità del \textbf{bloom},
+la luce diventa sempre più forte, soprattutto quella riflessa; scrivendo a mano
+un valore oltre il limite (50), ``tutto si spara, flasha'', perché il bloom è al
+massimo.
+
+\paragraph{Una svista.} Il docente prova anche la profondità di campo, che è più
+complessa da impostare perché vanno regolati tutti i parametri, e apre per
+sbaglio la sezione per il \emph{mobile}: ``scusate, ho detto una cavolata. La
+mobile non funziona in questo, perché non stiamo facendo un gioco per
+cellulare''. Rimandato alla lezione dedicata.
+
+% ---------------------------------------------------------------------
+\section{Il task: una stanza, qualunque stanza}
+\label{gd11:sec:task}
+
+``Abbiamo coperto un sacco di roba oggi. E queste sono tutte lezioni di pratica
+iniziale.'' Quindi il task per la lezione successiva è, nella forma, lo stesso
+della volta precedente, ma con una differenza importante: non si ricopia più la
+propria stanza.
+
+\begin{quote}
+\textbf{Creare una stanza}, ``qualcosa, qualunque cosa, che sia una stanza''.
+Possono essere anche più di una, ma \textbf{minimo una}. Usare \textbf{gli asset
+e i primitivi} a disposizione: le forme di base usate finora, i
+\textbf{materiali} visti oggi e le varie cose disponibili nello
+\textbf{Starter Content} (prop e così via). Consegna: \textbf{almeno tre
+screenshot}, nella cartella dei task, per la settimana successiva.
+\end{quote}
+
+\paragraph{Un task creativo.} ``Questa è una task creativa, quindi divertitevi:
+potete scegliere voi che cosa fate.'' L'unico vincolo è che siano
+\textbf{stanze}: quest'anno si è deciso di concentrarsi sugli \textbf{interni},
+per evitare troppa dispersione. Dentro le stanze, però, ``potete farci quel che
+volete, non vi do nessuna limitazione''. Lo Starter Content non ha molti prop: è
+più utile per i \textbf{materiali} (erba, legno, pietra, mattoni, ``tutte quelle
+robe che possono coprire le vostre cose di base'').
+
+\paragraph{Tre screenshot: un minimo.} Uno studente chiede se le tre foto siano
+un obbligo o un minimo. ``Per me è un minimo'': con una sola foto si vede solo
+una parete. Si può mandarne di più (``diciamo minimo tre''). Altri docenti sono
+più rigidi, ma lui non vuole limitare chi ha idee particolari, chi vuole
+mostrare angoli specifici della stanza o preferisce mostrare di più. Un'altra
+domanda riguarda se ogni oggetto debba avere necessariamente un materiale: si
+può anche lasciare un oggetto senza, se ha senso.
+
+\paragraph{Guardate gli altri videogiochi.} ``Una nota importante. Io sono uno
+che ci tiene a dire: guardate gli altri videogiochi come \textbf{punto di
+riferimento}, cercate di capire che cosa fanno gli altri.'' Nel mondo dei
+videogiochi professionali non si guarda solo il proprio lavoro: ci si guarda
+attorno.
+
+\paragraph{Ma siete all'inizio.} Allo stesso tempo, ``è chiaro che, se vi do
+questo task, la settimana prossima non mi aspetto che mi portiate una camera da
+letto al livello di \emph{GTA 6}'', anche perché si hanno a disposizione solo
+lo Starter Content e le forme di base. Non si può fare roba iperrealistica.
+``Metteteci un pochino di impegno, fate un po' quello che volete, ma non
+impazzite a fare cambiamenti super minuscoli'': si è studenti appena
+all'inizio. Il principio:
+\begin{quote}
+Usate gli strumenti che avete \textbf{nello scopo degli strumenti che avete}.
+Poi, piano piano, man mano che avremo sempre più strumenti a disposizione,
+porteremo sempre più in alto il livello del nostro lavoro.
+\end{quote}
+Tutti questi primi esercizi servono a \textbf{prendere la mano con Unreal}: ``mi
+interessa molto di più che vedere una roba artisticamente perfetta; voglio vedere
+che ci mettete l'impegno''.
+
+\paragraph{Approfondimento: dalla stanza copiata alla stanza inventata.} Il
+passaggio dal primo al secondo task non è casuale. Ricopiare la propria stanza
+(sezione~\ref{gd8:sec:task}) allena la mano e il senso della scala; inventare una
+stanza obbliga a fare le scelte che finora erano già date: che funzione ha lo
+spazio, chi ci vive, come lo si \emph{legge}. È lì che entrano in gioco le
+osservazioni della revisione: il \textbf{pizzico di caos} che rende uno spazio
+vissuto (le scatole sghembe di Federica), il rischio dello \textbf{showroom}
+(la stanza di Alberto), il criterio del \textbf{verosimile} (il letto di
+Francesco). Totten insiste su un'idea simile quando parla di \emph{storytelling
+con asset modulari}: anche pochi pezzi standard, scelti e disposti con
+intenzione, possono raccontare chi abita uno spazio.
+
+% ---------------------------------------------------------------------
+\section{Le domande e la chiusura}
+\label{gd11:sec:chiusura}
+
+\paragraph{Le ultime domande.} Come sempre, gli ultimi minuti sono per domande e
+curiosità, e per chi vuole cominciare il task in classe. Uno studente non riesce a far comparire lo Starter Content: il docente gli
+rispiega che la
+cartella va trascinata \textbf{dentro la cartella del progetto aperta in
+Windows}, non nel Content Browser, perché ``non state importando nuovi file: mi
+sono stati passati dei file che sono già stati importati''. Poi si chiude e si
+riapre Unreal, che li trova da solo (sezione~\ref{gd11:sec:starter}). ``Lo so,
+era molto più comodo quando lo potevi selezionare con un clic.'' Il docente
+promette di studiare meglio la questione dopo la lezione: ``veramente antipatico,
+ma lo dovrò studiare''.
+
+\paragraph{Le slide.} ``Come continuo a ripetere, le slide sono dentro la
+cartella.''
+
+\paragraph{Le presenze.} Ci sono ancora due o tre minuti, ma ``possiamo anche
+chiudere qui''. Mattia, da casa, conferma che ha avuto problemi solo con il
+computer. E poi l'ultima cosa, che il docente stava per dimenticare ``con tutto
+quello che è successo'': le \textbf{presenze}. Attadia, Etiopia, Ferrara, Maestri
+(da casa), Muratore, Ronchi, Rossaro e Vergata ci sono; Maracino è assente.
+``Alla settimana prossima. Buon lavoro, arrivederci.''
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Il primo anno, ogni lezione di level design comincia con la
+        \textbf{revisione dei task} in classe: per vedere il livello generale
+        e correggere una volta sola gli errori comuni. Nella cartella dei task
+        non si cancella: si scrive ``da cancellare''. Screenshot con
+        \textbf{Win+Shift+S}.
+  \item Dalla revisione: \textbf{un pizzico di caos} (oggetti sghembi) rende
+        gli ambienti vissuti; una stanza vuota sembra uno showroom; i
+        videogiochi puntano al \textbf{verosimile}, non al realistico. La scala
+        è un moltiplicatore: scala 5 su un cubo da un metro fa cinque metri.
+  \item Il level design ha due macro-campi: \textbf{artistico} (luci,
+        \emph{enrichment}, post-processing, VFX) e \textbf{di design}
+        (\emph{encounter design}, blockout, funzione degli spazi). Negli studi
+        grandi ci si specializza, e nei test di assunzione spesso si sceglie
+        tra test artistico e test di gameplay. Il primo anno è sul lato
+        artistico.
+  \item Il \textbf{blockout} (\emph{grey box}, \emph{white box}, \emph{block
+        mesh}: sinonimi) è lo sketch a matita del livello: forme semplici per
+        arrivare \textbf{il prima possibile a qualcosa di giocabile}, testare
+        idee e rispondere a domande. Segnala l'\textbf{intento} (la finestra
+        rossa di \emph{Call of Duty}: ``da lì possono spararti'').
+  \item Prima il gameplay, la funzione e la forma degli spazi, poi
+        l'estetizzazione: \textbf{il gameplay regna sovrano}. Ma la veste
+        artistica è decisa prima, e si lavora in parallelo, non a cascata.
+  \item Cinque strumenti, non esclusivi: \textbf{primitivi} (semplici ma
+        limitati), \textbf{kit modulari} (velocissimi ma rigidi; dungeon di
+        \emph{Skyrim} ed \emph{Elden Ring}, roguelike), \textbf{brush e
+        modellazione} (qualunque forma, curva di apprendimento; Hammer di
+        Valve, Blender per Unity), \textbf{scultura del terreno} (colline),
+        \textbf{spline} (strade e cavi: copie di una mesh lungo una curva,
+        per evitare lo stretch). Si sceglie lo strumento più veloce per lo
+        scopo.
+  \item \textbf{Asset} = file nel progetto; \textbf{actor} = istanza nel
+        livello. Gli asset dell'engine non si modificano.
+  \item \textbf{Coordinate globali}: dall'origine $(0,0,0)$ del mondo (non è lo
+        spawn); in Unreal $z$ è l'alto. \textbf{Coordinate locali}: dall'origine
+        dell'oggetto o del genitore. Nell'editor: spazio del mondo, locale,
+        genitore; la scala è sempre locale.
+  \item Un \textbf{figlio} eredita tutte le trasformazioni del genitore
+        (anche la scala, distanze comprese); le gerarchie si propagano verso il
+        basso. Un \textbf{gruppo} (Ctrl+G) seleziona e muove insieme oggetti
+        indipendenti. L'asterisco segnala modifiche non salvate.
+  \item \textbf{Ctrl+Z annulla anche le selezioni}: cliccare è un'azione.
+  \item \textbf{Snapping}: griglia in centimetri (10 di default; 100 per il
+        cubo da un metro), rotazione a 10 gradi; spegnerlo per oggetti
+        naturali. Valori a mano e operazioni nei campi. Ruotare
+        \emph{sull'asse} $z$ significa ruotare \emph{attorno} alla verticale.
+  \item Content Browser: Ctrl+Spazio. Lingua: Impostazioni dell'editor. Il
+        \textbf{pivot} è l'origine delle coordinate di un actor: Alt + tasto
+        centrale lo sposta temporaneamente (anche fuori dall'oggetto). G
+        nasconde i gizmo, F inquadra l'oggetto selezionato.
+  \item Una \textbf{mesh} è un insieme di punti e segmenti che formano
+        triangoli; \textbf{mesh e collisioni sono cose diverse}: la collisione
+        non è automatica, va controllata.
+  \item Luci: \textbf{point} (sfera, raggio di attenuazione, source radius),
+        \textbf{spot} (cono), \textbf{rect} (superficie),
+        \textbf{directional} (il sole: conta la rotazione, una sola per
+        livello). Il modello della lampadina non emette luce. Alcuni campi
+        accettano valori oltre il limite del cursore.
+  \item Lo \textbf{Starter Content} nella 5.8 va aggiunto a mano: decomprimere,
+        trascinare la cartella nella cartella \texttt{Content} del progetto,
+        riaprire Unreal.
+  \item Un livello da zero ha bisogno di sole, \textbf{luce ambientale} e
+        \textbf{cielo} (Sky Light, Sky Atmosphere, fog, nuvole, sky sphere): in
+        pratica si copiano i contenuti della cartella \emph{Lighting}. Lumen
+        simula i riflessi della luce in tempo reale.
+  \item \textbf{Texture} = immagine 2D; \textbf{materiale} = texture + calcoli
+        (anche il finto rilievo). Scalare un oggetto stira la texture: per ora,
+        piastrelle con griglia a 100.
+  \item View mode: \textbf{Lit}, \textbf{Unlit} (più leggero), \textbf{Wireframe}.
+        Il \textbf{Post Process Volume} agisce solo dentro il volume, a meno
+        di \textbf{Infinite Extent}.
+  \item Task: \textbf{una stanza inventata} (almeno una), con primitivi,
+        Starter Content e materiali; almeno tre screenshot. Guardate gli altri
+        giochi, ma usate gli strumenti nello scopo degli strumenti che avete.
+\end{itemize}

@@ -1,0 +1,70 @@
+\section{Le zone}
+
+Tutte le zone del C++ derivano da \texttt{APlatformerZone}: un \nodo{Box Collision}, un piano colorato per vederla e una scritta. In Blueprint fate lo stesso: un \var{BP\_Zona} padre con l'overlap che filtra solo il giocatore e chiama due eventi vuoti, \var{Entra(Eroe)} ed \var{Esce(Eroe)}. Le zone figlie (\emph{Create Child Blueprint Class}) riempiono solo quei due eventi.
+
+\begin{bpgraph}
+\bpnode{ov}{(0,0)}{bpev}{On Component Begin Overlap (Box)}{-}{exec/,obj/Other Actor}
+\bpnode{c}{\dx{ov}{0.6}{0}}{bpcast}{Cast To Character}{exec/,obj/Object}{exec/,exec/Cast Failed,obj/As Character}
+\bpnode{p}{\dx{c}{0.6}{0}}{bppure}{Is Player Controlled}{obj/Target}{bool/}
+\bpnode[2.4]{br}{\dxy{p}{ov}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{e}{\dx{br}{0.6}{0}}{bpcustom}{Entra}{exec/,obj/Eroe}{exec/}
+\bpexec{ov-out1}{c-in1}\bpwire{obj}{ov-out2}{c-in2}\bpwire{obj}{c-out3}{p-in1}\bpexec{c-out1}{br-in1}\bpwire{bool}{p-out1}{br-in2}\bpexec{br-out1}{e-in1}
+\bpbox{BP\_Zona (padre): filtra il giocatore. Uguale per End Overlap $\rightarrow$ Esce}{(ov-nw) (e-se) (c-se)}
+\end{bpgraph}
+
+Nel figlio, tasto destro su \var{Entra} $\rightarrow$ \emph{Add call to parent function} se volete anche il comportamento del padre.
+
+\subsection{Zona che modifica il movimento (ghiaccio, fango, bassa gravità)}
+
+All'ingresso si salvano i valori originali, si moltiplicano, e all'uscita (dopo 3\,s, \var{DurataDopoUscita}) si rimettono. Variabili: i moltiplicatori (\var{Velocita}, \var{Salto}, \var{Gravita}, \var{Attrito}, \var{Frenata}) e i salvati.
+
+\begin{bpgraph}
+\bpnode{e}{(0,0)}{bpev}{Event Entra}{-}{exec/,obj/Eroe}
+\bpnode{mv}{\sotto{e}{0}{-0.4}}{bppure}{Get Character Movement}{obj/Eroe}{obj/Move}
+\maxx{m1}{e,mv}
+\bpnode{s1}{\dxy{m1}{e}{0.6}{0}}{bpvarh}{Set SalvataVel}{exec/,float/Move.Max Walk Speed}{exec/}
+\bpnode{s2}{\dx{s1}{0.6}{0}}{bpvarh}{Set SalvatoAttrito}{exec/,float/Move.Ground Friction}{exec/}
+\bpnode{m1}{\dx{s2}{0.6}{0}}{bpvarh}{Set Max Walk Speed}{exec/,obj/Move,float/SalvataVel $\cdot$ Velocita}{exec/}
+\bpnode{m2}{\dx{m1}{0.6}{0}}{bpvarh}{Set Ground Friction}{exec/,obj/Move,float/SalvatoAttrito $\cdot$ Attrito}{exec/}
+\bpexec{e-out1}{s1-in1}\bpexec{s1-out1}{s2-in1}\bpexec{s2-out1}{m1-in1}\bpexec{m1-out1}{m2-in1}\bpwire{obj}{e-out2}{mv-in1}
+\end{bpgraph}
+
+(Lo stesso per Jump Z Velocity, Gravity Scale e Braking Deceleration Walking.) Il ghiaccio è \var{Attrito} 0,05 e \var{Frenata} 0,1; il fango \var{Velocita} 0,5 e \var{Salto} 0,7; la luna \var{Gravita} 0,3.
+
+\ninja{Salvate i valori \emph{all'ingresso}, non nel BeginPlay della zona: se due zone si sovrappongono, o un'abilità ha cambiato i valori, ripristinate quello che c'era davvero.}
+
+\subsection{Teletrasporto}
+
+\var{Entra} $\rightarrow$ \nodo{Teleport} (Target: Eroe, Dest Location: \var{Destinazione}, Dest Rotation: rotazione dell'eroe) $\rightarrow$ se \var{FermaVelocita}, \nodo{Set Velocity} (0,0,0) sul Movement. \var{Destinazione} è un Vector con \emph{Show 3D Widget} acceso: nel livello compare un rombo da trascinare (attenzione, è relativo all'actor: convertitelo con \nodo{Transform Location}).
+
+\subsection{Il negozio: spendere monete}
+
+\begin{bpgraph}
+\bpnode{e}{(0,0)}{bpev}{Event Entra}{-}{exec/,obj/Eroe}
+\bpnode{c}{\sotto{e}{0}{-0.4}}{bppure}{GI.Monete $>=$ Costo AND NOT GI.HaAbilita(Premio)}{-}{bool/}
+\maxx{m1}{e,c}
+\bpnode[2.4]{br}{\dxy{m1}{e}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{pay}{\dx{br}{0.6}{0}}{bpvarh}{Set GI.Monete}{exec/,int/Monete $-$ Costo}{exec/}
+\bpnode{ab}{\dx{pay}{0.6}{0}}{bpfn}{SbloccaAbilita}{exec/,obj/GI,enum/Premio}{exec/}
+\bpnode{no}{\sotto{pay}{0}{-0.4}}{bpfn}{Mostra Messaggio}{exec/,str/"Servono 5 monete"}{exec/}
+\bpexec{e-out1}{br-in1}\bpwire{bool}{c-out1}{br-in2}\bpexec{br-out1}{pay-in1}\bpexec{pay-out1}{ab-in1}\bpexec{br-out2}{no-in1}
+\end{bpgraph}
+
+\subsection{Traguardo e timer del livello}
+
+\textbf{Traguardo} (\var{BP\_Traguardo}): \var{Entra} $\rightarrow$ \nodo{Do Once} $\rightarrow$ messaggio ``Livello completato!'' $\rightarrow$ salva il record (\nodo{Find} nella Map \var{Record} con il nome del livello; se il tempo è minore, \nodo{Add} lo sostituisce) $\rightarrow$ \nodo{Delay} 1\,s $\rightarrow$ \var{VaiAlLivello(ProssimoLivello)}.
+
+\textbf{Timer} (\var{BP\_TimerLivello}, livello 3: 150\,s). Un \nodo{Text Render} grande sospeso nel livello, e un timer da un decimo di secondo:
+
+\begin{bpgraph}
+\bpnode{bp}{(0,0)}{bpev}{Event BeginPlay}{-}{exec/}
+\bpnode{s}{\dx{bp}{0.6}{0}}{bpvarh}{Set TempoRimasto}{exec/,float/TempoLimite (150)}{exec/}
+\bpnode{tm}{\dx{s}{0.6}{0}}{bpfn}{Set Timer by Event}{exec/,del/Event,float/Time 0.1,bool/Looping true}{exec/}
+\bpnode{ev}{\sotto{bp}{0}{-1.6}}{bpcustom}{Custom Event: Scorri}{-}{exec/,del/}
+\bpnode{dec}{\dx{ev}{0.6}{0}}{bpvarh}{Set TempoRimasto}{exec/,float/TempoRimasto $-$ 0.1}{exec/,float/}
+\bpnode{txt}{\dx{dec}{0.6}{0}}{bpfn}{Set Text (Text Render)}{exec/,text/Format: "\{0\} s" (1 decimale)}{exec/}
+\bpnode{col}{\dx{txt}{0.6}{0}}{bpfn}{Set Text Render Color}{exec/,struct/Select: rosso se $<$ 10 s}{exec/}
+\bpexec{bp-out1}{s-in1}\bpexec{s-out1}{tm-in1}\bpdraw[bpdataw, draw=bpc-del] (ev-out2) .. controls +(2,0.5) and +(-1,0) .. (tm-in2);
+\bpexec{ev-out1}{dec-in1}\bpexec{dec-out1}{txt-in1}\bpexec{txt-out1}{col-in1}
+\end{bpgraph}
+Dopo il colore, un \nodo{Branch} su \var{TempoRimasto} $<=$ 0: \nodo{Clear Timer}, messaggio ``Tempo scaduto'' e \var{UccidiERiavvia}. Il \nodo{Format Text} con \{0\} si collega a un \nodo{To Text (Float)} con \emph{Maximum Fractional Digits} = 1.

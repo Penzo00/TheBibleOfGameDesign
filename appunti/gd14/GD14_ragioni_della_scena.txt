@@ -1,0 +1,367 @@
+GD14 - LA BAITA AL TRAMONTO
+Perché ogni luce e ogni elemento sta dove sta
+==========================================================================
+
+Livello: Content/Maps/L_GD14_Baita (creato da Content/Python/gd14_stanza_luci.py)
+Coordinate in cm. La stanza va da x=0 (muro ovest: finestra e porta) a x=800
+(muro est: camino), da y=0 (falda sud: cucina) a y=600 (falda nord: letto e
+libreria). Muretti alti 180, colmo del tetto a 450.
+
+
+--------------------------------------------------------------------------
+0. IL METODO (prima di piazzare qualunque cosa)
+--------------------------------------------------------------------------
+
+Prima di tutto ho deciso tre cose. Le luci vengono dopo e ne sono la
+conseguenza.
+
+1) UNA STORIA. "Qualcuno è appena rientrato in baita al tramonto e ha acceso
+   il fuoco." Ogni oggetto deve confermarla: la porta ancora socchiusa, le
+   scarpe bagnate con le orme, la legna accatastata, due bicchieri, un libro
+   lasciato aperto. Lo spettatore non legge un testo: la storia la ricostruisce
+   dagli indizi.
+
+2) UN PUNTO FOCALE. Il camino. È la cosa più luminosa, più calda e più
+   contrastata della stanza, ed è al fondo dell'asse lungo (8 m). Tutto il
+   resto (poltrone, tappeto tondo, travi, perfino il letto) "guarda" lì.
+
+3) UN'IDEA DI LUCE. Il contrasto tra la luce di DENTRO (il fuoco, le lampade:
+   2000-2700 K, arancio) e la luce di FUORI (il sole del tramonto e il cielo,
+   che entrano solo dalla finestra e dalla porta). Il colore dice allo
+   spettatore da dove viene ogni luce senza bisogno di vederne la sorgente.
+
+Poi, per ogni luce, mi sono chiesto sempre le stesse cose:
+  - È MOTIVATA? Cioè: nel mondo del gioco c'è qualcosa che la giustifica
+    (una fiamma, una lampada, una finestra)? Una luce senza motivo si nota e
+    rompe la credibilità. Le uniche luci "non motivate" sono quelle di
+    riempimento, e infatti sono deboli e senza ombre, così non si vedono.
+  - CHE RUOLO HA? Chiave (la luce principale, che decide le ombre), di
+    riempimento (schiarisce le ombre della chiave), di contorno/controluce
+    (stacca le forme dallo sfondo), pratica (una luce che si vede in scena),
+    d'accento (sottolinea un dettaglio).
+  - CHE FORMA HA LA SORGENTE? Da questo dipende il TIPO di luce in Unreal:
+      * Point light: emette in tutte le direzioni da un punto (o da una
+        piccola sfera: il "source radius" ammorbidisce le ombre). Giusta per
+        fiamme, lampadine nude, candele.
+      * Spot light: un cono. Giusta quando la luce deve andare in una
+        direzione sola (un faretto, o un riempimento mirato).
+      * Rect light: una superficie rettangolare che emette da un lato solo,
+        con le "barn doors" (alette) che ne limitano l'apertura. Giusta per
+        la luce che entra da un'apertura (porta, finestra) o da un pannello.
+      * Directional light: raggi paralleli da una sorgente infinitamente
+        lontana. Giusta per sole e luna: ombre parallele e nette, quindi la
+        sagoma della finestra sul pavimento resta precisa.
+      * Sky Light: la luce del cielo che arriva da tutte le direzioni. Non ha
+        una posizione che conti: decide il colore delle zone in ombra.
+  - OMBRE SÌ O NO? Ogni luce con ombre aggiunge una serie di ombre. Due luci
+    vicine con le ombre fanno "ombre doppie", che sembrano finte. Quindi le
+    ombre le fanno solo le luci importanti; le altre sono senza ombre.
+  - DI CHE COLORE? Temperatura in Kelvin, non un colore a caso: è fisica e
+    tiene coerente tutta la scena (più basso = più arancio, più alto = più blu).
+
+Tutte le luci sono Movable perché il progetto usa Lumen (illuminazione
+globale in tempo reale, niente lightmap). Lumen calcola da solo il rimbalzo
+della luce sulle superfici: per questo le luci sono poche.
+
+
+--------------------------------------------------------------------------
+1. LE LUCI
+--------------------------------------------------------------------------
+
+[1] Luce_Fuoco_Chiave
+    Tipo:      Point light, classe C++ AFlickeringLight del progetto
+    Dove:      nella bocca del camino, (735, 300, 55): tra i ciocchi, appena
+               sopra le braci
+    Valori:    130 cd, 1850 K, raggio di attenuazione 15 m, source radius 18,
+               OMBRE SÌ
+    Ruolo:     LUCE CHIAVE e PUNTO FOCALE
+    Perché point: una fiamma emette in tutte le direzioni. Il source radius
+               di 18 cm è la "grandezza" del fuoco: ombre morbide, come quelle
+               di una sorgente larga, non di una lampadina.
+    Perché lì: è dove sta la fiamma, quindi la luce è motivata. Essendo bassa
+               (55 cm), proietta le ombre di poltrone, pouf e tavolino lunghe
+               all'indietro sul pavimento e verso il letto: le ombre lunghe
+               "puntano" al camino e dicono da dove viene la luce.
+    Perché tremola: un rumore di Perlin varia intensità e, di pochi cm, la
+               posizione. Le ombre si muovono piano, come con un fuoco vero:
+               la scena è "viva" anche se nessuno si muove. Lo stesso valore
+               fa pulsare il materiale emissivo delle braci, così luce e fuoco
+               visibile sono sincronizzati.
+    Cosa dà allo spettatore: dove guardare per primo, il calore, la
+               sensazione di rifugio.
+
+[2] Fuoco_Rimbalzo_SenzaOmbre
+    Tipo:      Point light
+    Dove:      (630, 300, 40), cioè 1 m davanti alla bocca, basso, sopra il
+               focolare
+    Valori:    circa 23 cd (18% del fuoco), 2050 K, source radius 60, raggio
+               6,5 m, OMBRE NO
+    Ruolo:     RIEMPIMENTO caldo
+    Perché:    la luce chiave, essendo dentro la bocca, viene in parte
+               coperta dall'arco di mattoni: il tappeto e il fronte delle
+               poltrone resterebbero troppo scuri. Questa luce simula il
+               chiarore che "esce" dal focolare e si stende sul pavimento.
+    Perché senza ombre e con source radius grande: è un riempimento, non
+               deve disegnare una seconda serie di ombre (sarebbero ombre
+               doppie). Così non si nota come luce a sé: si nota solo che la
+               zona davanti al fuoco è accogliente.
+
+[3] Sole (o Luna)
+    Tipo:      Directional light (c'è UNA sola directional nel livello)
+    Dove:      la posizione non conta, conta la rotazione: entra dalla
+               finestra del muro ovest e va verso +X, cioè verso il camino.
+               Al tramonto è radente, pitch -9 gradi.
+    Valori:    tramonto 12 lux, 2400 K; pomeriggio 40 lux, 4300 K; ora blu
+               (luna) 2,5 lux, 8500 K. Ombre sì.
+    Ruolo:     LUCE DI FUORI, controluce/rim e "lama" di luce
+    Perché directional: il sole è lontanissimo, i raggi sono paralleli.
+               Le ombre sono nette e la finestra, con la croce del telaio, si
+               disegna precisa sulle assi del pavimento: una forma
+               riconoscibile che dice "là c'è una finestra e fuori c'è il sole".
+    Perché radente: entra in profondità nella stanza e allunga la "lama"
+               verso il centro. Con la nebbia volumetrica i raggi diventano
+               visibili nell'aria (la polvere che danza nella luce): è uno dei
+               segni più forti di "interno abitato".
+    Cosa dà allo spettatore: il momento della giornata, il mondo fuori, e una
+               seconda direzione di luce che stacca i contorni degli oggetti
+               (controluce) rispetto al fuoco che li prende di fronte.
+
+[4] Cielo
+    Tipo:      Sky Light, real time capture
+    Valori:    0,45 al tramonto (1,0 pomeriggio, 0,35 ora blu)
+    Ruolo:     IL COLORE DELLE OMBRE (riempimento ambientale)
+    Perché:    senza Sky Light le zone dove fuoco e sole non arrivano
+               diventano nere. Con la Sky Light diventano del colore del cielo
+               (più freddo): il caldo/freddo c'è anche dentro l'ombra, gratis.
+               È bassa perché la baita è in penombra (come nelle foto di
+               riferimento): l'ombra deve restare ombra.
+
+[5] Porta_LuceEsterna
+    Tipo:      Rect light, 90 x 200 cm (la misura della porta)
+    Dove:      FUORI dalla porta socchiusa, (-90, 475, 110), rivolta verso
+               l'interno (+X); barn doors a 40 gradi
+    Valori:    28 cd, 3200 K al tramonto (5500 K pomeriggio, 9500 K ora blu),
+               raggio 8 m, ombre sì
+    Ruolo:     GUIDA dello sguardo e del giocatore + racconto
+    Perché rect: la luce che entra da una porta non viene da un punto ma
+               dall'apertura intera: un rettangolo luminoso grande come la
+               porta. Le barn doors la tengono stretta, così passa SOLO dallo
+               spiraglio e disegna sul pavimento una lama a forma di cuneo
+               (la porta è aperta di 32 gradi).
+    Perché lì: in level design la luce sulle soglie dice "di qui si passa"
+               (si vede in tantissimi giochi e nei testi di Totten). Inoltre
+               la porta socchiusa illuminata, con le scarpe bagnate e le orme
+               lì accanto, racconta che qualcuno è appena entrato.
+
+[6] Luce_Lampada_Terra
+    Tipo:      Point light
+    Dove:      dentro il paralume della lampada da terra (650, 560), 22 cm
+               sotto la cima della mesh. La posizione è calcolata dallo
+               script dal bounding box della lampada.
+    Valori:    22 cd, 2700 K (lampadina a incandescenza), source radius 8,
+               raggio 5,5 m, ombre sì
+    Ruolo:     LUCE PRATICA dell'angolo lettura (poltrona nord, tavolino con
+               libro e bicchiere)
+    Perché point: è una lampadina.
+    Il trucco: la MESH della lampada ha le ombre spente. Se la lampada facesse
+               ombra alla propria luce, sul muro comparirebbe una grande ombra
+               scura del paralume, brutta e innaturale. Nei giochi si fa
+               sempre così: la luce si vede, la lampada no (dal punto di vista
+               delle ombre).
+    Cosa dà allo spettatore: un secondo polo caldo, più piccolo del camino,
+               che dice "qui ci si siede a leggere". Divide la stanza in zone.
+
+[7] Luce_Sospensione
+    Tipo:      Point light
+    Dove:      8 cm sotto la lampada a sospensione, sopra il tavolo da pranzo
+               (200, 330)
+    Valori:    28 cd, 2700 K, ombre sì
+    Ruolo:     LUCE PRATICA, crea la zona pranzo
+    Perché lì: un cerchio di luce sul tavolo separa la zona pranzo dal
+               soggiorno senza muri. Le ombre di frutta e calici cadono sul
+               piano e li rendono "pesanti", appoggiati. È il secondo punto
+               d'interesse dopo il camino.
+
+[8] Luce_Candela_S e Luce_Candela_N
+    Tipo:      Point light
+    Dove:      sopra le fiammelle delle due candele sul gradino del camino,
+               ai lati del quadro (707, 200 e 400, 216)
+    Valori:    2,5 cd, 2000 K, source radius 1, raggio 2,6 m, OMBRE NO
+    Ruolo:     ACCENTI
+    Perché senza ombre: sono minuscole, vicinissime al muro e alla luce
+               chiave: le loro ombre si sommerebbero a quelle del fuoco
+               creando ombre doppie. Servono solo a far brillare un po' il
+               quadro e i mattoni in alto, dove il fuoco (che sta in basso)
+               non arriva bene.
+
+[9] Libreria_Riempimento_SenzaOmbre
+    Tipo:      Spot light, cono 45/25 gradi
+    Dove:      in alto (370, 370, 330), puntata in basso verso la libreria
+               sotto la falda nord
+    Valori:    5 cd, 3200 K, source radius 40, OMBRE NO
+    Ruolo:     RIEMPIMENTO mirato (l'unica luce non motivata)
+    Perché spot: deve illuminare SOLO la libreria, non tutta la stanza.
+    Perché:    il fuoco prende la libreria di taglio, quasi parallelo ai
+               dorsi: i libri sarebbero un'ombra unica e illeggibile. Questa
+               luce debolissima li rende leggibili. Non ha ombre e ha una
+               sorgente larga: non disegna niente, quindi lo spettatore non la
+               "vede" come luce.
+
+[-] PostProcess_Stanza (Post Process Volume infinito)
+    - Esposizione automatica con limiti stretti (0,8-2,5): senza limiti,
+      l'occhio virtuale "rincorre" il tremolio del fuoco e la stanza pulsa
+      tutta. Bias +0,2 al tramonto.
+    - Bloom 0,7: fiamme e candele "bruciano" un poco, come in una foto.
+    - Vignetta 0,45: scurisce i bordi e spinge lo sguardo al centro, cioè
+      verso il camino.
+    - Grana 0,15: toglie l'aspetto troppo pulito da render.
+    - Bilanciamento del bianco 6300 K: la "macchina fotografica" è tarata un
+      po' fredda, quindi le luci calde sembrano ancora più calde.
+
+[-] Nebbia (Exponential Height Fog volumetrica)
+    Non si vede come nebbia: serve a dare un corpo alla luce. Rende visibili
+    i raggi del sole nella finestra, la lama della porta e l'alone del fuoco.
+
+Gerarchia finale (dalla più forte): fuoco > sole nella finestra > lampade >
+porta > candele > riempimenti. Ombre solo da: fuoco, sole, porta, lampade.
+
+
+--------------------------------------------------------------------------
+2. LA STANZA: FORMA E PIANTA
+--------------------------------------------------------------------------
+
+Soffitta con tetto a due falde e travi a vista
+    Il tetto spiovente abbassa la stanza ai lati (muretti di 1,8 m) e la alza
+    al centro (4,5 m): lo spazio "abbraccia" chi sta in mezzo. È la forma
+    classica del rifugio, e fa da cornice: le falde convergono e puntano al
+    camino. Le travi ripetute ogni metro (puntoni) danno ritmo e profondità
+    (si contano e si capisce quanto è lunga la stanza) e prendono la luce del
+    fuoco sulle facce in basso.
+
+L'asse finestra -> camino
+    La stanza è lunga 8 m da ovest a est. Chi entra dalla porta (ovest) ha il
+    camino davanti, in fondo: è la "vista d'ingresso" che deve far capire
+    subito dove andare. Il freddo (fuori) è alle spalle, il caldo davanti.
+
+Le zone
+    - SOGGIORNO davanti al camino: tappeto tondo, pouf, due poltrone.
+    - PRANZO a sud-ovest: tavolo con panca e lampada a sospensione.
+    - CUCINA lungo la falda sud: mobili bassi, alzatina, mensola, pentole.
+    - NOTTE e LETTURA lungo la falda nord: letto, libreria, poltrona con
+      lampada e tavolino.
+    Le zone sono separate dalla luce (i cerchi delle lampade) e dai tappeti,
+    non da muri: la stanza resta un unico spazio leggibile.
+    I mobili alti stanno sotto le parti alte del tetto; sotto le falde basse
+    ci sono solo mobili bassi (letto, libreria, credenze), come in una vera
+    soffitta.
+
+
+--------------------------------------------------------------------------
+3. GLI ELEMENTI, UNO PER UNO
+--------------------------------------------------------------------------
+
+Camino di mattoni ad arco (muro est)
+    Il protagonista. La bocca semicircolare incornicia il fuoco; i conci
+    disposti a raggiera rendono l'arco credibile (un arco si regge così). Il
+    corpo si restringe a gradoni salendo verso il tetto: la sagoma a
+    "piramide" guida lo sguardo dal fuoco in su, fino al quadro. Il fondo è di
+    mattoni scuri e c'è la fuliggine (decal) sopra la bocca: dice che il
+    camino si usa davvero. Il focolare tondo con il cordolo sporge nella
+    stanza e "dialoga" con il tappeto tondo.
+
+Mattoni procedurali (M_AIV_Mattoni)
+    Il progetto non ha una texture di mattoni: il disegno è calcolato dalla
+    posizione nel mondo, quindi i mattoni hanno la stessa misura su ogni pezzo
+    del camino, senza stiramenti. Ogni mattone ha un colore un po' diverso:
+    l'irregolarità è ciò che lo rende credibile.
+
+Tappeto tondo verde e giallo, pouf
+    Il cerchio è la forma che "raccoglie": mette al centro il gruppo di sedute
+    e ripete la curva dell'arco e del focolare. Il verde è il complementare
+    dell'arancio: è la macchia di colore che fa risaltare tutto il resto
+    caldo, e prende benissimo la luce del fuoco.
+
+Due poltrone girate verso il fuoco
+    Lo script calcola la rotazione perché guardino il camino. Mobili girati
+    verso un punto sono una freccia per lo sguardo: lo spettatore guarda dove
+    guardano i mobili.
+
+Lampada da terra e tavolino con libro aperto e bicchiere
+    L'angolo lettura. Il libro aperto e il bicchiere sono "interrotti": qualcuno
+    si è appena alzato. È lo storytelling ambientale più semplice.
+
+Letto con colonnine e pomi, comò
+    Danno scala umana (si sa quanto è grande un letto) e rendono la baita
+    una casa, non un set. Il letto è sotto la falda nord, in penombra, lontano
+    dal fuoco: la zona notte è la più buia, come deve essere. Il comò, sul
+    lato sud, porta il vaso di fiori e una boccia di vetro che prendono la
+    luce radente del sole.
+
+Credenze viola con pomelli d'ottone, alzatina di mattoni, pentole appese
+    Il viola è freddo: in una stanza tutta arancio fa da contrappunto, come il
+    verde del tappeto. L'ottone e il ferro delle pentole sono gli unici
+    metalli: riflettono piccoli punti luce del fuoco (highlights) e rendono la
+    scena più ricca senza aggiungere luci.
+
+Tavolo da pranzo, panca, frutta, calici
+    Sotto la lampada a sospensione. La frutta è il colore saturo (secondo
+    punto d'interesse). I due calici ripetono la coppia di bicchieri del
+    tavolino: in casa sono in due.
+
+Libreria bassa, statuetta, scatola
+    Riempie la falda nord con tanti piccoli oggetti: dettaglio da scoprire
+    quando ci si avvicina (densità crescente avvicinandosi).
+
+Mensole ai lati del camino, cariche di oggetti, e quadri
+    Incorniciano il camino e lo rendono simmetrico ma non identico (gli
+    oggetti sono diversi): la simmetria dà ordine, le differenze danno vita.
+
+Carta da parati arancio a rombi (M_AIV_CartaParati)
+    Un fondo caldo che rimanda la luce del fuoco (con Lumen i muri arancio
+    tingono di arancio anche il rimbalzo). Il motivo ripetuto dà la scala e
+    fa capire la profondità; le travi scure e i montanti la dividono in
+    riquadri.
+
+Finestra con croce, tende rosse, castagno e bosco fuori
+    La croce del telaio serve a disegnare un'ombra riconoscibile sul
+    pavimento. Le tende incorniciano la luce. Fuori c'è qualcosa (albero,
+    bosco, prato): una finestra che dà sul vuoto rompe l'illusione.
+
+Porta socchiusa, zerbino, scarpe bagnate, orme (decal)
+    La storia: qualcuno è appena rientrato. E la guida: la luce della porta
+    indica l'uscita.
+
+Legna accatastata vicino al camino
+    Racconta che il fuoco è stato acceso adesso e che si resterà a lungo.
+
+
+--------------------------------------------------------------------------
+4. LE INQUADRATURE (cartella Camere)
+--------------------------------------------------------------------------
+
+Cam_1_Insieme              dall'angolo della cucina verso il camino: tutta
+                           la stanza, la lettura d'insieme.
+Cam_2_Camino               il protagonista: arco, candele, mensole, poltrone
+                           ai lati.
+Cam_3_Controcampo_Finestra dal camino verso finestra e porta: il fuoco in
+                           primo piano, la luce di fuori in fondo. Mostra il
+                           contrasto in un'immagine sola.
+Cam_4_AngoloLettura        poltrona, lampada, libro aperto: il dettaglio
+                           e la storia.
+Cam_5_DaiPiediDelLetto     dalla zona notte verso il camino, il tappeto tondo
+                           in mezzo: l'inquadratura delle foto di riferimento.
+
+Per gli screenshot: tasto destro sulla camera -> Pilot, G per togliere le
+icone, poi nella console "HighResShot 2" (file in Saved/Screenshots).
+
+
+--------------------------------------------------------------------------
+5. IN UNA FRASE (per la consegna)
+--------------------------------------------------------------------------
+
+Ho costruito una baita al tramonto in cui il fuoco del camino è insieme luce
+chiave e punto focale; la luce di fuori (sole radente dalla finestra, lama
+dalla porta socchiusa, cielo nelle ombre) fa da contrappunto e da guida; le
+luci pratiche dividono la stanza in zone; le poche luci di riempimento sono
+deboli e senza ombre perché non si notino; e ogni oggetto racconta che
+qualcuno è appena rientrato.

@@ -1,0 +1,2244 @@
+% =====================================================================
+%  Analog Game Design, lezione 14 — Gli strumenti dello sviluppo:
+%  regolamento, revisioni e bilanciamento (lo sviluppo, seconda parte).
+%  La seconda delle due lezioni di Marta, docente ospite, sviluppatrice
+%  di giochi da tavolo. In apertura, la coda della lezione precedente:
+%  il regolamento dello sviluppo (dal macro al micro, chiarezza,
+%  integrità, consistenza strutturale, sintattica e terminologica,
+%  prossimità) con la domanda di Rita sul linguaggio; i materiali
+%  promozionali (USP, foto di metà partita, promo, tutorial per le
+%  fiere); le revisioni (versionare, dividersi i compiti, la copia
+%  zero). Poi la "cassetta degli attrezzi" dello sviluppo: principi
+%  generali, analisi SWOT, personas, i sei cappelli per pensare. Dopo
+%  la prima pausa, il bilanciamento: l'articolo di Richard Garfield
+%  ("The Balancing Act"), lo spazio di gioco, costi e benefici, house
+%  rules, per chi si bilancia (il "dio della simmetria", il gioco, il
+%  target, esperti e principianti), perché non bilanciare in modo
+%  matematico (e con l'IA), il bilanciamento esperienziale, i giochi a
+%  scarsa interazione, il budget di complessità, le strategie ad alto
+%  e basso rischio, l'ancoraggio (Stone Age). Dopo la seconda pausa:
+%  il bilanciamento di durata, raddoppiare o dividere la risorsa, due
+%  problemi e una soluzione, gli elementi ricorrenti (progressioni,
+%  moltiplicazioni, set, esclusività, crescita, alea, probabilità),
+%  smussare la stella, i "difetti" (player elimination, runaway e bash
+%  the leader, feedback loop, kingmaking, convergenza, ordine di turno),
+%  la domanda sulle sinergie, gli esempi (Carcassonne a tre tessere,
+%  Bonsai, Magical Athlete, Party House).
+%  Fonte: trascrizione della quattordicesima lezione (AGD14) del corso
+%  breve di Analog Game Design, seconda edizione: una lezione online di
+%  circa tre ore, con ogni probabilità venerdì 20 novembre 2026, tenuta
+%  da Marta.
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Analog Game Design", quattordicesimo
+%  capitolo (numerazione propria 2.14). Nel file principale del libro,
+%  subito dopo il capitolo 2.13:
+%
+%    \input{AGD/AGD13_lo_sviluppo_del_gioco}
+%    \input{AGD/AGD14_gli_strumenti_dello_sviluppo}
+%
+%  Tutte le etichette di questo capitolo hanno il prefisso "a14:"
+%  (a14:cap:..., a14:sec:..., a14:fig:..., a14:tab:...). Il capitolo è
+%  autonomo: non contiene \ref verso altri capitoli.
+%  Le figure e le tabelle sono ricostruzioni schematiche di quanto
+%  detto a voce e mostrato nelle slide (che non sono nella
+%  trascrizione), non copie delle slide. Dove la trascrizione è troppo
+%  rovinata per ricostruire un dettaglio (un nome, un titolo, chi sta
+%  parlando), il capitolo lo dice invece di inventarlo.
+% =====================================================================
+
+\chapter[Gli strumenti dello sviluppo]{Gli strumenti dello sviluppo: regolamento,
+revisioni, cassetta degli attrezzi e bilanciamento}
+\label{a14:cap:strumenti}
+
+Questa è la \textbf{quattordicesima lezione} del corso di \textbf{Analog Game Design}, e la
+seconda delle due lezioni dedicate allo \textbf{sviluppo} (\emph{development}) del gioco
+analogico, tenute da \textbf{Marta}, docente ospite e sviluppatrice di giochi da tavolo per
+case editrici. La lezione precedente era stata, nelle sue parole, ``un'infarinatura un po'
+più generale'': che cos'è lo sviluppo, da dove viene il ruolo, quali sono le otto fasi del
+lavoro. Questa è la lezione \textbf{``più pratica''} che aveva promesso: l'anno prima gli
+studenti le avevano chiesto di approfondire proprio la parte pratica, ``e quindi eccoci
+qua''. Si parte dalle ultime cose rimaste in sospeso (il \textbf{regolamento}, i
+\textbf{materiali promozionali}, le \textbf{revisioni}), si passa alla \textbf{cassetta
+degli attrezzi} di chi sviluppa (l'analisi SWOT, le \emph{personas}, i sei cappelli per
+pensare) e si arriva al cuore della lezione, il \textbf{bilanciamento}: che cosa è, per chi
+si fa, perché di solito non si fa ``in modo matematico'', e quali tecniche concrete si usano
+(il budget di complessità, l'ancoraggio, il bilanciamento di durata, il raddoppia o dividi,
+le progressioni di punteggio, il controllo dell'alea\ldots). La lezione si chiude con una
+rassegna dei cosiddetti ``difetti'' dei giochi da tavolo e con alcuni esempi di scelte di
+sviluppo in giochi pubblicati, fra cui due su cui Marta ha lavorato in prima persona.
+
+Il filo che lega tutto è lo stesso della lezione precedente, detto qui con una metafora
+nuova: chi sviluppa ha una \textbf{cassetta degli attrezzi} (o una \textbf{tavolozza}), e il
+suo lavoro è \textbf{esaltare i punti di forza del gioco} scegliendo, di volta in volta, lo
+strumento giusto. Nessuno strumento vale in assoluto; ognuno ha costi e benefici; e la
+bussola resta sempre \textbf{la visione del progetto}. Il bilanciamento non fa eccezione:
+``il bilanciamento perfetto è un mito'', e bilanciare non vuol dire rendere tutto uguale, ma
+\textbf{far emergere l'esperienza che il gioco promette}.
+
+\paragraph{Data, formato, persone.} La lezione è \textbf{online}, su Zoom, e dura circa tre
+ore, con \textbf{due pause} di una decina di minuti, entrambe causate da problemi tecnici
+della docente. Si tiene con ogni probabilità \textbf{venerdì 20 novembre
+2026}\footnote{La data non è mai detta. Alla fine della lezione precedente Marta aveva
+salutato con ``ci vediamo venerdì'', e il calendario ricostruito in quel capitolo poneva la
+sua seconda lezione al 20 novembre. In apertura Marta scherza che forse gli assenti ``sono
+tutti a giocare a GTA'': se il riferimento è all'uscita di \emph{Grand Theft Auto VI},
+annunciata per il 19 novembre 2026, la battuta torna con il giorno successivo. Va detto però
+che durante la lezione Marta dice tre volte ``ieri'' per riferirsi alla lezione precedente
+(``quelli che facevamo riferimento ieri'', ``ieri dicevo''): o è un modo di dire, o la
+lezione precedente era il giorno prima. Il capitolo adotta la data più probabile e lo
+segnala.}. Marta si collega \textbf{in ritardo}, per problemi di accesso (``scusate il
+ritardo, purtroppo ho avuto dei problemi all'accesso''), e chiede di far sapere a
+\textbf{Daniele} che è riuscita a entrare\footnote{La trascrizione dice ``fatemi avvisare,
+Daniele, che sono riuscito ad entrare'': il maschile è con ogni probabilità un errore della
+trascrizione automatica, che in questa lezione oscilla spesso tra maschile e femminile per
+la docente (``non sono sicurissimo'', subito corretto in ``non sono sicurissima''). Daniele,
+il docente titolare, non interviene.}. All'appello ``mancano tre persone'': Marta spera che
+nessuno se ne sia andato ``pensando allo sciopero''. Uno studente dice che vorrebbe
+partecipare ma è in viaggio\footnote{La frase nella trascrizione è ``io vorrei giocare
+Gittia, ma sono in viaggio, mi spiace molto'': il senso esatto non è ricostruibile.}.
+Intervengono a voce \textbf{Rita}\footnote{Si presenta così: ``buonasera, sono Rita''. Il
+nome non compare nei capitoli precedenti; dal contesto fa parte del gruppo che lavora a un
+gioco con elementi di \emph{roguelike}, e la trascrizione storpia la sua descrizione del
+progetto (``un libro personal, più o meno un roguelike''): potrebbe trattarsi di un
+libro-gioco, ma non è verificabile.}, una studentessa che ha visto l'analisi SWOT ``a scuola,
+con economia'', uno studente che fa una domanda sulla durata riportata sulle scatole e uno
+studente che, \textbf{mentre guida} (``scusa, sto guidando, quindi sono un po' in
+difficoltà''), chiede come bilanciare le sinergie in un \emph{engine building}; nessuno di
+questi tre viene chiamato per nome. Gli altri rispondono in coro (``sì'', ``sì, sì'') alle
+domande di Marta.
+
+\paragraph{Avvertenze di lettura.} Le stesse dei capitoli precedenti. La trascrizione è
+automatica e storpia molti nomi e termini: i \emph{meeple} sono ``mee-paul'' e ``people'',
+itch.io è ``Witch'', la copia zero è ``la coppia zero'', il \emph{Game Concept Document} è ``il
+GCD'', \emph{bash the leader} è ``Base the Leader'', \emph{Route} sta per \emph{Root},
+``Colonie di Katan'' per \emph{I Coloni di Catan}, ``WAPI SABI'' per \emph{Wabi Sabi}. Dove la
+ricostruzione è sicura, o molto probabile, il capitolo usa la forma corretta e lo segnala in
+nota la prima volta; dove non lo è, riporta la forma della trascrizione e lo dice. Come nelle
+due lezioni precedenti, la trascrizione contiene lunghi tratti di \textbf{frasi senza senso
+ripetute in ciclo} (``qual è la risposta che ci può essere?'', ``il numero dei funzionari
+della società è cambiato'', ``tanto per cambiare le cose''), che coprono per intero le due
+pause; e in tre punti della lezione alcune frasi incomprensibili (``la versione editoriale
+deve essere messa in essere pubblica'', ``io come gesu'', ``la nostra nuova generazione, che va
+a produrre nella pagina web'') si sovrappongono alla voce di Marta. Il capitolo le ignora e,
+dove è andato perso un contenuto, lo segnala.
+
+\paragraph{Come leggere questo capitolo.} Il capitolo segue l'ordine della lezione, anche
+dove Marta stessa ammette che alcune slide ``sono un po' fuori posto'' (l'ancoraggio,
+dice, starebbe meglio prima). Le figure ricostruiscono gli schemi che emergono dal discorso
+(la catena delle revisioni, la SWOT, i sei cappelli, le scelte indifferenti, il budget di
+complessità, le curve dei dadi, le progressioni, la convergenza); le tabelle riassumono i
+principi del regolamento, l'ancoraggio di \emph{Stone Age}, le tecniche di bilanciamento e i
+``difetti''. Qua e là, dei paragrafi di \textbf{approfondimento} collegano la lezione ai
+libri di game design di riferimento (soprattutto \emph{The Art of Game Design} di Jesse
+Schell, \emph{21st Century Game Design} di Chris Bateman e Richard Boon e
+\emph{Challenges for Game Designers} di Brenda Brathwaite e Ian Schreiber); sono segnalati
+come tali e non fanno parte della lezione.
+
+Il percorso del capitolo:
+\begin{enumerate}
+  \item la ripresa della lezione precedente: il regolamento dello sviluppo, i materiali
+        promozionali, le revisioni e la copia zero (sezioni
+        \ref{a14:sec:ripresa}--\ref{a14:sec:revisioni});
+  \item la cassetta degli attrezzi: principi, analisi SWOT, \emph{personas}, sei cappelli
+        (sezioni \ref{a14:sec:cassetta}--\ref{a14:sec:cappelli});
+  \item il bilanciamento: Garfield, per chi si bilancia, perché non in modo matematico,
+        come cominciare (sezioni \ref{a14:sec:garfield}--\ref{a14:sec:cominciare});
+  \item le tecniche: budget di complessità, rischio, ancoraggio, durata, raddoppia o
+        dividi, due problemi una soluzione, gli elementi ricorrenti (sezioni
+        \ref{a14:sec:budget}--\ref{a14:sec:elementi});
+  \item smussare la stella e i ``difetti'' dei giochi da tavolo (sezioni
+        \ref{a14:sec:stella} e~\ref{a14:sec:difetti});
+  \item la domanda sulle sinergie e gli esempi finali (sezioni \ref{a14:sec:sinergie}
+        e~\ref{a14:sec:esempi});
+  \item la chiusura (sezione~\ref{a14:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{La ripresa: dove eravamo rimasti}
+\label{a14:sec:ripresa}
+
+Marta condivide le slide (``evidentemente Zoom si è aggiornato'': il pulsante per
+condividere, che l'altra volta non trovava, ``oggi ce l'ho proprio in primo piano'') e
+chiede subito se ci sono domande, ``perché ricordo che l'altra volta due persone ne
+avevano''. In chat non ce ne sono, ``quindi immagino che siano un po' passate'': se tornano
+in mente, si possono fare in qualsiasi momento, ``tanto ci sarà anche la slide che lo
+ricorda''.
+
+Si riparte dalle \textbf{fasi dello sviluppo} viste la volta precedente: selezione, ricerca,
+concettualizzazione, presentazione, \emph{testing}, implementazione. Ci si era fermati
+``dalle parti della preparazione degli \emph{asset}'' e delle \textbf{revisioni}, e Marta
+vuole spendere qualche minuto in più su alcuni concetti che stanno ``un po' a cavallo'' con
+l'argomento di oggi. Ripassa velocemente la slide degli \textbf{elementi di produzione}
+(scatola, tabelloni, plance, fustelle, carte, regolamento: ``mi sembra che ne avevamo
+parlato'') e passa al regolamento.
+
+% ---------------------------------------------------------------------
+\section{Il regolamento dello sviluppo}
+\label{a14:sec:regolamento}
+
+Gli studenti hanno già fatto una lezione sul regolamento, ``quindi probabilmente alcune di
+queste informazioni già le avete recepite''. Marta aggiunge il punto di vista di chi
+sviluppa.
+
+\paragraph{Anche il regolamento ha un \emph{target}.} La cosa ``molto spesso utile da
+sapere'' è che \textbf{anche il regolamento ha un \emph{target}}: anche il regolamento
+``parla delle persone''. E il regolamento che si scrive in fase di \textbf{sviluppo} è
+diverso da quello che viene fornito con il \textbf{\emph{design}}. Nel \emph{design} si può
+essere ``un po' più generici'': non è importante concepire tutti i singoli casi e tutte le
+minuzie. Il regolamento dello sviluppo, invece, passerà probabilmente per le mani di
+\textbf{persone che non giocano, o giocano poco}, e passerà per le mani della
+\textbf{produzione per la stampa}. È, in sostanza, tutto ciò che conduce dal regolamento
+fornito da chi ha creato il gioco \textbf{fino alla stampa vera e propria}.
+
+Ci sono alcuni appunti da tenere a mente in questo processo (tabella~\ref{a14:tab:regole}).
+
+\begin{description}
+  \item[Dal macro al micro.] Si prendono i concetti in modo generale, si parla in modo
+        generale, e poi si scende nel dettaglio. All'inizio è bene partire dallo
+        \textbf{scopo del gioco}, dall'obiettivo, e poi vedere come effettivamente si arriva
+        alla conclusione. Si può partire da un \textbf{elenco delle fasi del turno} e poi
+        descriverle una per una.
+  \item[Chiarezza e concisione.] La struttura deve essere chiara e concisa: ``credo sia
+        chiaro, se avete letto dei regolamenti'', è importante che passi il messaggio
+        \textbf{usando meno termini possibile}, perché dilungarsi a volte rischia di
+        confondere. Con le dovute eccezioni: alcuni regolamenti, soprattutto quelli
+        corposi, è bene che si prendano qualche spazio in più; ``tuttavia, non è la
+        condizione di tutti i giochi''.
+  \item[Integrità.] È il concetto di \textbf{evitare di ripetere le regole}. È facile
+        sbagliarsi, cioè scrivere una regola due volte in modo che dica \textbf{due cose
+        diverse}: ``anche delle virgole a volte cambiano il senso della frase''. Meglio
+        scriverla \textbf{una volta, in modo molto preciso}, e piuttosto fare dei
+        \textbf{rimandi} (``vedi sezione\ldots'')\footnote{Subito dopo, per qualche frase, la
+        trascrizione diventa incomprensibile (``la versione editoriale deve essere messa in
+        essere una valutazione del prodotto [\ldots]; quindi, quando uno è concesso, non è
+        concesso''). Il discorso riprende sulla struttura del regolamento: il contenuto
+        perso è probabilmente l'introduzione al principio successivo, la consistenza.}.
+  \item[Consistenza strutturale.] Mantenere la stessa struttura: se fino a un certo punto
+        il regolamento è impaginato \textbf{su due colonne}, passare improvvisamente a una
+        sezione \textbf{su tre colonne} crea confusione.
+  \item[Consistenza sintattica.] Usare sempre \textbf{lo stesso tipo di linguaggio}: se si
+        scrive in \textbf{seconda persona}, si continua in seconda persona, senza passare
+        improvvisamente alla terza.
+  \item[Consistenza terminologica.] Ogni volta che ci si riferisce a una cosa, la si chiama
+        \textbf{sempre allo stesso modo}. Se si sono chiamati \textbf{turni} di gioco, a un
+        certo punto non si possono chiamare \textbf{round}: ``i turni sono una cosa, il round
+        è un altro''. Se si è fatto riferimento alle \textbf{risorse}, poi non le si può
+        chiamare \textbf{segnalini}: ``queste cose confondono''.
+  \item[Prossimità.] ``Una cosa molto semplice'': una volta impaginato il foglio, \textbf{le
+        cose che si riferiscono l'una all'altra devono stare vicine}. Se si fa un esempio,
+        lo si mette accanto alla sezione in cui si parla di quella regola. Se si impagina
+        \textbf{con due pagine affiancate}, si può sfruttare anche una parte della pagina
+        accanto. Pensare a dove andranno messi i blocchi e a come verranno disposti aiuta.
+\end{description}
+
+L'impaginazione non è un lavoro che spetta soltanto allo sviluppo: generalmente si fa
+\textbf{in concerto con la grafica}. Tuttavia avere un'idea, e soprattutto \textbf{dare dei
+consigli di impostazione alla grafica}, ``molto spesso è utile''.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.1cm}p{5.4cm}p{5.0cm}@{}}
+\toprule
+\textbf{Principio} & \textbf{Che cosa chiede} & \textbf{Che cosa evita} \\
+\midrule
+Dal macro al micro & prima lo scopo e l'elenco delle fasi, poi il dettaglio di ognuna &
+  il lettore che non sa dove sta andando \\
+\addlinespace
+Chiarezza e concisione & il messaggio con meno termini possibile (salvo i regolamenti
+  corposi) & il dilungarsi che confonde \\
+\addlinespace
+Integrità & ogni regola scritta una volta sola, con rimandi (``vedi sezione'') & due
+  versioni della stessa regola che dicono cose diverse \\
+\addlinespace
+Consistenza strutturale & la stessa impaginazione dall'inizio alla fine & passare di colpo
+  da due a tre colonne \\
+\addlinespace
+Consistenza sintattica & lo stesso registro (per esempio la seconda persona) & il salto
+  dalla seconda alla terza persona \\
+\addlinespace
+Consistenza terminologica & un nome per ogni concetto & ``turni'' che diventano ``round'',
+  ``risorse'' che diventano ``segnalini'' \\
+\addlinespace
+Prossimità & esempi e schemi accanto alla regola a cui si riferiscono, anche sulla pagina
+  affiancata & l'esempio da cercare tre pagine più avanti \\
+\bottomrule
+\end{tabular}
+\caption{Gli appunti di Marta per il regolamento dello sviluppo, cioè quello che arriva in
+stampa e che leggeranno anche persone che giocano poco.}
+\label{a14:tab:regole}
+\end{table}
+
+\subsection{La domanda di Rita: quale linguaggio?}
+
+Prima che Marta passi oltre, alza la mano \textbf{Rita}. Il linguaggio da utilizzare
+dipende ovviamente dal \emph{target} del gioco, ``giusto?''; ma ci sono \textbf{indicazioni
+di base}, valide per ogni regolamento indipendentemente dal \emph{target}? Ci sono elementi
+che vanno espressi per forza con un certo linguaggio, perché risultano più chiari, e altri su
+cui si può ``giocare sulla narrazione'' e aprire a un linguaggio più semplice?
+
+``È una domanda che si presta a tante risposte'', dice Marta, e ne dà due, ``quelle più
+importanti''.
+
+\paragraph{1. È una scelta di stile.} Ogni persona, e \textbf{ogni casa editrice}, ha le sue
+preferenze su come scrivere i propri regolamenti. Marta preferisce \textbf{la brevità}:
+scrive sempre \textbf{in seconda persona}, ``perché generalmente aiuta'', e usa
+\textbf{frasi il più possibile brevi e succinte}, cercando di non perdere i concetti per
+strada. C'è un altro editore che invece scrive \textbf{tutto in terza persona}: per lei è
+``un po' più difficile stare dietro al linguaggio'', perché il testo assume ogni volta la
+posizione di un giocatore \textbf{senza mai esplicitare quale} dei giocatori stia agendo. È
+più chiaro se il regolamento \textbf{``parla a te''}, perché sei tu che lo stai leggendo; e
+in più, a livello di \textbf{numero di caratteri}, la seconda persona ne usa meno, e le frasi
+restano più concentrate, anche \textbf{sulla singola riga}. Sono concetti che si possono
+affinare, ``però, per dire, saltare da una riga all'altra a volte crea qualche difficoltà''
+su alcuni passaggi e alcune spiegazioni.
+
+\paragraph{2. La narrativa nel regolamento.} È ``un concetto molto interessante'', ma Marta
+consiglia di usarla \textbf{solo nei giochi ad alta coerenza}, cioè quelli che sfruttano
+tantissimo le sinergie, per i quali a volte è difficile comprendere il funzionamento del gioco
+se non è chiaro il funzionamento della narrativa.
+
+Rita spiega che la domanda era mirata al progetto del suo gruppo, ``più o meno un
+\emph{roguelike}'': la narrativa è importante, ma conta di più come la gestisce il
+giocatore. ``Nella mia più pura ignoranza'' stava già usando la seconda persona: ``almeno
+questo è un punto che mi hai chiarito, e sono felice di esserci arrivata''.
+
+Marta aggiunge un esempio, visto che Rita ha parlato di un libro: \textbf{se devi spiegare
+di voltare pagina, scrivi ``volta la pagina''}. Non ``vai nel futuro'', o un'altra
+formula narrativa per dire ``gira la pagina'': ``queste cose sono complicatissime e creano
+tantissimo \textbf{rumore} quando stai apprendendo''. Se però servono concetti di gioco
+\textbf{non standard}, che deviano dai canoni del genere, allora forse dei riferimenti
+narrativi possono far comodo; ``possibilmente è meglio evitarli'', perché possono essere
+più confusionari che utili.
+
+Per chiudere, un controesempio: \textbf{\emph{Munchkin}}. Se non avesse il regolamento
+scritto \emph{in quel modo} (ironico, pieno di battute), ``probabilmente perderebbe tanti
+punti''. Dipende anche dall'obiettivo che si vuole: in un gioco che vive di umorismo, il tono
+del regolamento fa parte dell'esperienza.
+
+\paragraph{Approfondimento: il regolamento come interfaccia.} Brathwaite e Schreiber, in
+\emph{Challenges for Game Designers}, consigliano un esercizio che si sposa con il ``dal
+macro al micro'' di Marta: mentre si gioca il proprio prototipo, prendere nota di ogni
+\emph{chiarimento} di regola che si è costretti a dare, perché ognuno è un punto in cui il
+testo non basta. È anche il motivo per cui il regolamento dello sviluppo deve reggere senza
+chi l'ha scritto: in stampa, il designer non sarà al tavolo a rispondere.
+
+% ---------------------------------------------------------------------
+\section{I materiali promozionali}
+\label{a14:sec:promo}
+
+Molto spesso, quando si fa un gioco, segue ``tutta una sfilza di cose'' che si fanno per
+\textbf{promuoverlo}. Ha molto più senso in un'ottica commerciale, ma Marta invita a non
+sottovalutarlo \textbf{anche quando ci si deve autopromuovere}: può diventare importante
+sponsorizzare in qualche modo il proprio gioco, e cercare di attirare un po' di più il
+proprio \emph{target}.
+
+\paragraph{I punti di forza da comunicare.} Bisogna riflettere sui \textbf{\emph{key selling
+point}}, gli \textbf{\emph{unique selling point}} del gioco, perché sono quelli che catturano
+l'essenza del gioco e che bisogna cercare di trasporre. E, se c'è, bisogna comunicarli al
+\textbf{reparto marketing}: potrebbero non essere evidenti a chi non ha la stessa competenza
+tecnica nel ``leggere'' un gioco.
+
+\paragraph{Il supporto tecnico: storyboard, video, foto.} Lo sviluppo dà supporto tecnico per
+\textbf{storyboard}, \textbf{video} e \textbf{foto}. Un caso che capita spesso è dover
+preparare \textbf{un \emph{setup} per le foto}. Il \emph{setup} deve rispettare una
+\textbf{situazione reale di gioco}; anzi, molto spesso non si fotografa l'inizio della
+partita, ma si crea \textbf{una situazione di metà partita}, e quindi bisogna simulare
+quello che il gioco è in quel momento. Serve anche un po' di \textbf{furbizia}: mettere in
+mostra gli elementi che secondo noi sono migliori. La cosa più banale è metterci \textbf{le
+carte con le illustrazioni che ci piacciono di più}, quelle che pensiamo possano funzionare
+meglio. A volte è semplice; altre volte, per rispettare i processi di una vera partita,
+bisogna simulare la partita sul serio.
+
+\paragraph{Il \emph{design} dei materiali promo.} Carte aggiuntive, plance aggiuntive,
+\textbf{varianti di gioco}: tutto quello che può incentivare. È un aspetto che può toccare
+sia il designer sia lo sviluppo; generalmente, ``per una questione di velocità e di
+rapidità'', si fa in sviluppo, ma a volte si riesce a coinvolgere anche il designer
+originale.
+
+\paragraph{I \emph{tutorial} e i \emph{setup} controllati.} A volte bisogna creare dei
+\textbf{\emph{tutorial}}, cioè situazioni di gioco un po' \textbf{guidate}, utili quando si va
+\textbf{in fiera} o quando servono \emph{setup} controllati. Si immagini un gioco che
+\textbf{dura un'ora e mezza} e va fatto provare in fiera. I giochi fanno spesso leva sulla
+\textbf{casualità} degli eventi, del mazzo, eccetera: può capitare che una partita sia meno
+interessante. A casa è accettabile, ``magari se ne rifà una il giorno dopo''; in fiera, dove
+c'è poco tempo e poca attenzione, è importante riuscire a controllarlo. Una cosa che si fa
+tipicamente è \textbf{togliere alcune carte più complesse}, che aggiungerebbero una
+dimensione di gioco difficile da trasmettere nel poco tempo a disposizione. Non si fa su
+tutti i giochi, ``però a volte può tornare utile'': anche qui sta tutto alla sensibilità di
+chi ci lavora, ``non è che c'è una regola fissa''.
+
+% ---------------------------------------------------------------------
+\section{Le revisioni e la copia zero}
+\label{a14:sec:revisioni}
+
+E infine la \textbf{revisione del materiale}: ``una delle parti più dolenti del lavoro'',
+sempre in fondo ed ``è una delle più difficili''. Si riguarda tutto il materiale, perché nello
+sviluppo è il momento \textbf{immediatamente precedente alla stampa}, o comunque a quando il
+gioco sarà considerato completo e non potrà più essere toccato. Marta dà tre consigli.
+
+\paragraph{1. Versionare.} Ogni revisione deve avere \textbf{un riferimento che faccia capire
+quando è stata fatta}. Generalmente le revisioni si fanno su documenti \textbf{PDF}: in fondo
+al nome si può mettere \textbf{la data corrente partendo dall'anno}, così che, con anno, mese
+e giorno, si ottiene \textbf{un numero che cresce} con le revisioni successive e ricorda quando
+ognuna è stata fatta (per esempio \texttt{regolamento\_20261120.pdf}). È uno dei metodi; si
+possono usare anche 1.0, 2.0, ``quello che vi pare''. L'importante è \textbf{tenere traccia},
+perché a volte torna utile andare a vedere \textbf{quando un errore si è propagato}, o quando
+qualcosa è sfuggito: sapere il punto preciso in cui è successo è molto utile, soprattutto per
+i progetti successivi.
+
+\paragraph{2. Dividersi i compiti.} Quando si revisiona, per esempio, il regolamento,
+rileggerlo tutto ogni volta per ogni singolo aspetto può diventare ``molto provante''. Ci sono
+revisioni in cui il regolamento si guarda \textbf{15--20 volte}: ``è veramente stancante, e
+chiaramente alla ventesima volta gli occhi non funzionano bene come alla prima''. Il consiglio
+è di \textbf{dividersi i compiti}: una persona guarda il regolamento dal punto di vista
+\textbf{tecnico}\footnote{Nella trascrizione ``dal punto di vista della DIT in tech.
+Tecnico'': il senso, dal seguito, è ``tecnico'', cioè delle regole e del loro funzionamento.},
+un'altra dal punto di vista \textbf{sintattico}, altre persone fanno il \textbf{\emph{proofreading}},
+cercando gli errori grammaticali. Così nessuno deve tenere l'attenzione su tutto, cosa che
+diventa pesantissima.
+
+\paragraph{3. La copia zero.} Il vero ultimo passaggio è la \textbf{verifica della copia
+zero}\footnote{Nella trascrizione ``la superficie della coppia zero'', due volte: ``coppia'' è
+con certezza ``copia''; ``superficie'' è forse ``verifica''.}. A un certo punto il gioco è
+stato mandato in stampa e \textbf{la fabbrica è pronta alla produzione di massa}:
+generalmente quello che arriva è la \textbf{copia zero}, prodotta \textbf{con gli stessi
+macchinari della produzione di massa}. In alcuni casi possono arrivare le cosiddette
+\textbf{\emph{proof}}, che sono semplicemente fogli di stampa; ``però, se non siamo di super
+fretta, generalmente una copia zero ci arriva''. Lì si vede se tutto è coerente, se le cose
+funzionano, e da lì bisogna \textbf{dare il via libera}. ``E generalmente poi ci si arrabbia
+tanto'', perché nonostante le venti revisioni spesso c'è \textbf{una piccolezza che è
+sfuggita}: ``e mannaggia, succede molto spesso''. La figura~\ref{a14:fig:revisioni} riassume
+la catena.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a14b/.style={draw, thick, rounded corners=3pt, text width=2.4cm, align=center,
+               minimum height=1.25cm, fill=white},
+  a14arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  \node[a14b] (r1) at (0,0) {regolamento del \emph{design}\\[-1pt]{\footnotesize generico}};
+  \node[a14b] (r2) at (3.3,0) {regolamento dello sviluppo\\[-1pt]{\footnotesize per chi
+    gioca poco}};
+  \node[a14b] (r3) at (6.6,0) {revisioni\\[-1pt]{\footnotesize\texttt{\_AAAAMMGG}, 15--20
+    letture}};
+  \node[a14b, fill=gray!12] (r4) at (9.9,0) {copia zero\\[-1pt]{\footnotesize o
+    \emph{proof}}};
+  \node[a14b] (r5) at (13.0,0) {via libera alla produzione};
+  \draw[a14arr] (r1) -- (r2);
+  \draw[a14arr] (r2) -- (r3);
+  \draw[a14arr] (r3) -- (r4);
+  \draw[a14arr] (r4) -- (r5);
+  \draw[a14arr, dashed] (r4.south) to[bend left=35] node[below, font=\footnotesize]
+    {``una piccolezza è sfuggita''} (r3.south);
+  \node[font=\footnotesize, text width=6.4cm, align=center] at (6.6,1.55) {chi revisiona si
+    divide i compiti: tecnico, sintattico, \emph{proofreading}};
+\end{tikzpicture}
+\caption{Dal regolamento del designer al via libera, come lo descrive Marta. Ogni revisione
+porta un riferimento che cresce nel tempo (per esempio la data da anno a giorno), per poter
+ritrovare il punto in cui un errore si è propagato.}
+\label{a14:fig:revisioni}
+\end{figure}
+
+\paragraph{Approfondimento: le versioni e la regola del ciclo.} Schell chiama \emph{regola
+del ciclo} (\emph{Rule of the Loop}) il principio per cui più volte si itera, migliore è il
+gioco, e insiste sul documentare ogni passaggio: ``scrivi il tuo modello'', annota che cosa
+hai cambiato e che cosa ti aspettavi. Il consiglio di Marta di datare ogni revisione è la
+versione editoriale dello stesso principio: un archivio delle versioni serve non solo a
+correggere il gioco di oggi, ma a capire, nel progetto successivo, \emph{dove} di solito gli
+errori si infilano.
+
+% ---------------------------------------------------------------------
+\section{La cassetta degli attrezzi}
+\label{a14:sec:cassetta}
+
+``Direi che siamo alla lezione di oggi'': le tecniche che si usano nello sviluppo. Quelle
+appena viste, nota Marta, erano già tecniche, ``solo magari trattate un po' più nel
+generico''. E insiste sulle domande, perché ``questo è un lavoro che giorno per giorno cambia
+tantissimo'', il progetto su cui si lavora cambia tantissimo, e non è mai facile passare tutte
+le informazioni: vuole dare quante più risorse possibile, e chiede di dirle se qualcosa
+sembra spiegato troppo genericamente. ``Io sto cercando anche di assestarmi'': l'anno prima
+le avevano chiesto di approfondire la parte pratica, ``e quindi eccoci qua''.
+
+\paragraph{Una cassetta degli attrezzi, o una tavolozza.} Per sviluppare, ``prendete la
+metafora della \textbf{cassetta degli attrezzi}, o \textbf{tavolozza}''. A Marta l'hanno
+insegnata come cassetta degli attrezzi, ``ma la tavolozza mi piace un po' di più''. L'idea è
+che si ha \textbf{una serie di strumenti} da usare in base ai problemi che ci si trova di
+fronte. Il lavoro dello sviluppo, come detto la volta prima, è \textbf{esaltare i punti di
+forza di un gioco}, e gli strumenti aiutano ad arrivare a questo risultato. Alcuni punti:
+\begin{itemize}
+  \item \textbf{Non tutti hanno gli stessi strumenti}: come in qualsiasi lavoro, ognuno se li
+        sceglie e se li crea.
+  \item Gli strumenti servono perché \textbf{molti problemi sono ricorrenti}: si ha la
+        fortuna di poter usare qualcosa che già si conosce.
+  \item Bisogna conoscere \textbf{che cosa funziona e che cosa no} di ogni tecnica.
+  \item Bisogna ricordare \textbf{la visione di fondo del progetto}: ``se vogliamo appendere
+        un quadro, avere una sega in mano serve a poco''.
+  \item L'invito è a \textbf{esplorare}. Marta presenterà alcuni degli strumenti che usa
+        lei: ``non mi arrogo di dire che sono i migliori, sono quelli che io ho trovato più
+        funzionali''. Gli studenti cerchino i propri.
+  \item Cercare sempre di \textbf{riportare le situazioni a cose che già si conoscono}: se si
+        è risolto un problema con uno strumento, provare a \textbf{generalizzarlo} e capire
+        come riutilizzarlo in futuro.
+\end{itemize}
+
+\paragraph{L'iterazione.} A questo punto la trascrizione si copre per qualche frase (``io
+come gesu, io non lo so, però diciamo che la versione editoriale si deve fare in modo che
+[\ldots] si riduca proprio a livello di grado'')\footnote{Il contenuto perso è
+probabilmente l'inizio della slide sui principi generali. Il discorso riprende a metà frase:
+``\ldots del design e dello sviluppo è qualcosa che sfugge alla gran parte delle persone''.
+Dal seguito, il soggetto della frase è l'\textbf{iterazione}.}. Quando il discorso riprende,
+Marta sta dicendo che la natura iterativa \textbf{del \emph{design} e dello sviluppo} è
+qualcosa che \textbf{sfugge alla gran parte delle persone} con cui si lavorerà, perché non è
+tipica di molti progetti; ma nell'ambito del gioco è fondamentale. \textbf{L'iterazione},
+``il tornare spesso su delle cose per migliorarle'', è \textbf{vitale} per il gioco.
+
+\paragraph{Spazialità, iconografia, flussi.} Usare \textbf{la spazialità e gli ingombri del
+prototipo}, e quindi anche del prodotto finale, per \textbf{veicolare gli intenti} del
+progetto: Marta richiama l'esempio delle carte grandi fatto la volta precedente. E
+\textbf{affinare via via l'iconografia e i flussi di gioco}. Per esempio: praticamente per
+tutto l'Occidente, se su un tabellone le informazioni vanno \textbf{da sinistra a destra},
+è molto chiaro quale sia la progressione naturale del turno e degli eventi, molto più che se
+andassero da destra a sinistra. Con una platea internazionale la cosa non si traduce sempre
+benissimo: è il caso di alcuni \textbf{giochi giapponesi} localizzati in Europa, che hanno
+strutture diverse dalle nostre e che ``facciamo un po' più fatica a comprendere''.
+
+\paragraph{Materiali intuitivi: la stella blu.} I materiali devono essere
+\textbf{intuitivi}. Un esempio ``proprio di oggi'': al lavoro hanno testato un prototipo in
+cui sulle carte si ottenevano delle \textbf{stelle gialle}; e c'era un \emph{token} molto
+bello \textbf{a forma di stella, di plastica, ma blu}. ``Voi magari dite: vabbè, è facile, è
+l'unico \emph{token} a stella''. Ma il prototipo aveva \textbf{una trentina di componenti
+diversi}, e un attimo di incertezza su che cosa usare per segnare le stelline viste sulle
+carte c'è stato. Non è un esempio grave, ``però chiaramente si può fare molto di peggio''.
+Il consiglio è sempre che i materiali siano \textbf{coerenti e intuitivi}.
+
+% ---------------------------------------------------------------------
+\section{L'analisi SWOT}
+\label{a14:sec:swot}
+
+``L'analisi SWOT la conoscete?'' Qualcuno risponde di sì; una studentessa l'ha vista ``a
+scuola, con economia''. ``Perfetto.'' È uno \textbf{strumento di analisi} che si usa sia per
+i \textbf{progetti} sia per le \textbf{strutture aziendali}, ``in molte forme''; qui la si
+vede applicata all'analisi dei progetti.
+
+È molto semplice da descrivere, perché si divide in \textbf{due righe}, due categorie: ci
+sono gli elementi \textbf{interni} e quelli \textbf{esterni}\footnote{Qui la trascrizione si
+sovrappone per qualche frase a un'altra voce (``della nostra nuova generazione, che va a
+produrre nella pagina web. Io personalmente devo andare a vedere anche i risultati della
+pagina web'', ripetuto tre volte). Il seguito chiarisce la struttura: due righe, interno ed
+esterno, e quattro categorie da compilare.}. Si compila la tabella mettendo, per ciascuna
+delle quattro categorie, quello che secondo noi le appartiene (figura~\ref{a14:fig:swot}).
+
+\paragraph{Gli elementi interni: forze e debolezze.} Nella parte interna si mettono le
+\textbf{forze} (\emph{Strengths}), cioè quello che si ha a disposizione e che è forte nel
+progetto, e le \textbf{debolezze} (\emph{Weaknesses}). Marta usa come esempio ``un
+\emph{roguelike} da tavolo, l'esempio che avevo sentito'' (il progetto di Rita):
+\begin{itemize}
+  \item una \textbf{forza} potrebbe essere che il gruppo ha giocato tantissimi
+        \emph{roguelike}, li conosce benissimo e sa come codificarli in un gioco fisico;
+  \item una \textbf{debolezza} potrebbe essere che è complicato \textbf{ricominciare}:
+        rimettere tutti i componenti all'inizio, rifare il \emph{setup} ogni volta che si
+        muore per ripetere l'esperienza del \emph{roguelike}.
+\end{itemize}
+
+\paragraph{Gli elementi esterni: opportunità e rischi.} Opportunità (\emph{Opportunities}) e
+rischi (\emph{Threats}) sono invece qualcosa che influenza il progetto \textbf{da fuori}. Una
+cosa che si fa spesso è pensare alla parte esterna come \textbf{il mercato di riferimento}.
+E per ``mercato'' non si deve immaginare solo una parte commerciale, ``come dico sempre'', ma
+il \emph{target} più ampio: se si pubblica il gioco su \textbf{itch.io}\footnote{Nella
+trascrizione ``Witch''.}, il mercato sono le persone che consultano itch.io. Per il
+\emph{roguelike}:
+\begin{itemize}
+  \item un'\textbf{opportunità} potrebbe essere che è un gioco abbastanza
+        \textbf{innovativo}, che non ha davvero concorrenza;
+  \item un \textbf{rischio} potrebbe essere che, \textbf{proprio perché è innovativo}, le
+        persone si sentano \textbf{estraniate} trovando un gioco di questo tipo; mentre chi
+        cerca un piazzamento lavoratori lo trova facilmente, perché ne ha giocati
+        centinaia. C'è, ``se vogliamo, un rischio di visibilità''.
+\end{itemize}
+
+``Chiaramente è un'analisi che ho fatto in 30 secondi'', ma dedicandoci un po' di tempo
+possono venire fuori considerazioni interessanti, soprattutto \textbf{mettendo in relazione
+le lettere}. Generalmente si lavora \textbf{a coppie}: forze e opportunità insieme, per
+un'analisi dei \textbf{punti di forza} del gioco; opportunità e rischi insieme, per
+un'analisi dei \textbf{rischi} e delle possibilità esterne nel mercato di riferimento.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a14q/.style={draw, thick, text width=5.2cm, minimum height=2.5cm, align=left,
+               inner sep=6pt, anchor=north west}
+]
+  \node[a14q, fill=gray!8] (S) at (0,0) {\textbf{S -- forze}\\[2pt]\footnotesize abbiamo
+    giocato tantissimi \emph{roguelike}, li conosciamo e sappiamo codificarli in un gioco
+    fisico};
+  \node[a14q] (W) at (5.9,0) {\textbf{W -- debolezze}\\[2pt]\footnotesize ricominciare è
+    complicato: rimettere i componenti e rifare il \emph{setup} a ogni morte};
+  \node[a14q] (O) at (0,-2.75) {\textbf{O -- opportunità}\\[2pt]\footnotesize un gioco
+    innovativo, senza vera concorrenza};
+  \node[a14q, fill=gray!8] (T) at (5.9,-2.75) {\textbf{T -- rischi}\\[2pt]\footnotesize
+    proprio perché innovativo, può estraniare: chi cerca un piazzamento lavoratori lo
+    trova subito (rischio di visibilità)};
+  \node[rotate=90, font=\footnotesize\bfseries] at (-0.45,-1.25) {interno};
+  \node[rotate=90, font=\footnotesize\bfseries] at (-0.45,-4.0) {esterno};
+\end{tikzpicture}
+\caption{L'analisi SWOT ``fatta in 30 secondi'' da Marta sull'esempio di un
+\emph{roguelike} da tavolo. La riga in alto riguarda il progetto, quella in basso il mercato
+di riferimento, inteso in senso largo (anche le persone che consultano itch.io). Le
+categorie si leggono poi a coppie.}
+\label{a14:fig:swot}
+\end{figure}
+
+\paragraph{Uno strumento si impara usandolo.} Ogni strumento visto oggi diventa più utile
+\textbf{quanto più spesso lo si usa}. ``Non so se vi dilettate in cucina'', ma ci sono
+tantissimi strumenti per cucinare, e più si usa uno strumento, più se ne conoscono limiti e
+forze. Vale anche per la SWOT: ``la prima volta che la farete sarà una roba un po'
+posticcia''; poi, man mano che la si sfrutta, si scoprono le sue utilità, soprattutto nel
+\textbf{riassumere in breve} questi quattro punti.
+
+% ---------------------------------------------------------------------
+\section{Le \emph{personas}}
+\label{a14:sec:personas}
+
+Un altro strumento ``molto utile, sempre un po' mutuato da altri campi'', sono le
+\textbf{\emph{personas}}, già accennate parlando di \emph{target}. ``Queste le conoscete?''
+``Di nome, ma meno.''
+
+\paragraph{Dal \emph{target} a una persona.} Quando si fa un gioco si ha in mente un
+\emph{target}, ma i \emph{target} sono \textbf{misure astratte}: si può dire che un gioco è
+``per gli appassionati'', ma ``se io dico appassionati, non ho in mente una persona''. Aiuta
+invece avere \textbf{riferimenti molto specifici}. Siccome è difficile pensare in concreto a
+una persona precisa che vuole il nostro gioco, si può ricorrere alle \emph{personas}, che
+sono ``niente di più che'' \textbf{profili creati da noi}, popolati il più possibile.
+Generalmente si costruiscono partendo da \textbf{dati molto generici} e poi
+\textbf{scendendo nei dettagli}, stabilendo sempre di più i tratti di questa persona virtuale.
+
+\paragraph{L'esempio della slide.} Nell'esempio della slide non c'è niente che non sia
+definito in modo certo: la persona ha un \textbf{nome}\footnote{Nella trascrizione il nome è
+prima ``Tian'' e poi ``Diane''; l'occupazione è ``e share consultant'', forse \emph{HR
+consultant}. La slide non è nella trascrizione e il capitolo non può verificarlo.},
+un'\textbf{età} (48 anni), un'\textbf{occupazione} (una consulente) e una \textbf{biografia},
+una \emph{backstory} che racconta le cose che fa ogni giorno. Che cosa c'entrano con un gioco
+da tavolo? ``Tendenzialmente, di base, niente.'' Ma anche per una persona reale le cose che fa
+nella vita c'entrano poco con i suoi hobby; eppure ci aiutano a immaginare \textbf{che cosa
+farebbe quella persona seduta a un tavolo da gioco}. Costruire una \emph{persona} dà una
+dimensione e permette di \textbf{rispondere a delle domande}, del tipo: ``Diane giocherebbe
+a \emph{I Coloni di Catan}?''\footnote{Nella trascrizione ``colonie di Katan''.} Più la
+\emph{persona} è definita, più è probabile riuscire a rispondere.
+
+\paragraph{Il rischio dei \emph{bias}.} Per la SWOT come per le \emph{personas}, il rischio è
+che \textbf{i propri \emph{bias} condizionino il lavoro}. ``È un rischio che c'è sempre.''
+L'invito è a essere persone \textbf{aperte} il più possibile, \textbf{curiose}, e a
+\textbf{conoscere più persone possibile}: dà un vantaggio, e aiuta a calarsi negli altri con
+più facilità.
+
+\paragraph{\emph{Personas} costruite sui dati.} A seconda dell'entità del progetto, si possono
+\textbf{raccogliere dei dati} e costruire le \emph{personas} su quei dati: fare dei campioni
+quantitativi, per esempio con \textbf{un sondaggio}, per capire abitudini diffuse e interessi
+condivisi di un certo \emph{target}. ``Magari a volte vi è capitato di fare un sondaggio'' che
+chiedeva ``sei appassionata di giochi da tavolo?'' e poi ``quali libri leggi?'': ``e tu dici:
+ok, ma che c'entra?''. A volte serve proprio a costruire questi profili.
+
+\paragraph{Riusarle o no?} Uno degli inviti che si leggono spesso è a \textbf{non usare le
+stesse \emph{personas} per più di un progetto}. Marta non la trova una regola necessariamente
+funzionale: le è capitato di riusare le stesse \emph{personas} per più progetti, ``e
+sinceramente non capisco bene il perché di no''. Riporta comunque quello che ha letto quando
+ha imparato la tecnica: ognuno veda se gli torna utile.
+
+\paragraph{Approfondimento: \emph{personas} e modelli di pubblico.} Bateman e Boon partono da
+un modello di pubblico ancora più grezzo di quello che Marta chiama ``gli appassionati'': la
+divisione tra giocatori \emph{hardcore} e \emph{casual}, che definiscono una ``ipotesi
+consensuale'', accettata da quasi tutti nell'industria ma senza una definizione formale. Il
+loro esempio è \emph{Resident Evil} per GameCube, che all'inizio chiedeva al giocatore se
+preferisse ``scalare la montagna'' (oltre le fatiche c'è il risultato) o ``fare
+un'escursione'' (la meta si raggiunge comodamente), per regolare la difficoltà. Le
+\emph{personas} fanno il passo successivo: invece di due etichette, una persona con un nome,
+un'età e una giornata, a cui fare domande concrete.
+
+% ---------------------------------------------------------------------
+\section{I sei cappelli per pensare}
+\label{a14:sec:cappelli}
+
+``I sei cappelli per pensare. Questa forse la conoscete anche dal \emph{design}''. Qualcuno
+l'ha sentita nominare; una voce, probabilmente di una studentessa, ricorda che nei suoi studi di \emph{design} se ne
+parlava, ``ma non tramite i cappelli colorati'': il processo creativo analizzato da altri
+punti di vista, ``però è molto interessante anche così''.
+
+\paragraph{La prima pausa.} A questo punto Marta resta bloccata fuori dalle slide: ha aperto
+la chat di Zoom e non riesce più a tornare alla presentazione (``vi giuro che non sono mai
+stata così in difficoltà'', ``ho anche una laurea in informatica''; ``e ho fatto l'errore di
+aprire la chat, non lo farò mai più''). Gli studenti continuano a vedere le slide, ma lei non
+riesce a farle avanzare, e propone \textbf{dieci minuti di pausa} per risolvere. La pausa,
+nella trascrizione, è coperta da frasi ripetute senza senso. Al ritorno: ``nel frattempo ho
+trovato il modo di aprire la chat senza distruggere mezzo computer''.
+
+\paragraph{A che cosa servono.} I sei cappelli sono un altro dei processi per
+\textbf{calarsi in panni che non sono i propri}, utili soprattutto per figurarsi prospettive
+che non sono quelle che vengono ``di primo acchito'' quando si lavora a un progetto. I
+cappelli guardano a problemi simili \textbf{da punti di vista diversi}, e alcuni sono
+volutamente \textbf{opposti}. Si possono usare in molti modi; Marta, per esempio, ha
+\textbf{un mazzetto di sei carte}: le mescola, ne estrae una e si mette figurativamente quel
+cappello. Si possono usare anche \textbf{in \emph{team}}: ognuno indossa un cappello, e poi
+i cappelli \textbf{ruotano} per cambiare punto di vista. La tabella~\ref{a14:tab:cappelli}
+li riassume.
+
+\begin{description}
+  \item[Il bianco: i fatti.] Guarda le cose \textbf{da un punto di vista neutrale}: asserisce
+        i fatti nel modo più oggettivo possibile, si astiene dai giudizi e dà informazioni
+        ``il più possibile dritte''. Per esempio: ``durante il \emph{playtest} è successa
+        questa cosa'', senza dire se è positiva o negativa; ``si è verificato un paio di
+        volte questo avvenimento''. Prende i dati in modo \textbf{distaccato}.
+  \item[Il nero: i rischi.] Fa leva su \textbf{difficoltà, insicurezze, pericoli}: tutto
+        quello che potrebbe non essere andato o potrebbe non andare. È uno dei cappelli
+        \textbf{più facili da indossare}, perché è facile vedere le parti negative di un
+        progetto. Proprio per questo invita a essere \textbf{più descrittivi}: non limitarsi
+        a dire qual è la difficoltà, ma esplorarla e analizzarla nel dettaglio.
+  \item[Il rosso: le emozioni.] Fa riferimento alle \textbf{emozioni}: come ci si sente
+        quando lo si indossa, quali emozioni sono state provate. A differenza del nero,
+        \textbf{non dà spiegazioni}: dice ``io mi sento così''. È un cappello molto utile e
+        \textbf{spesso sottovalutato}, perché c'è la credenza che le emozioni valgano meno
+        dei fatti; in realtà le emozioni guidano a capire qual è \textbf{l'esperienza
+        desiderata}, che cosa si vuole ottenere da un \emph{design}, e se il \emph{design} lo
+        sta facendo emergere.
+  \item[Il giallo: i punti di forza.] È l'opposto del nero: elenca \textbf{le cose positive},
+        i punti di forza, gli aspetti che esaltano l'esperienza. Anche questo è abbastanza
+        semplice da indossare; anche qui l'invito è a ``lasciarsi andare'' sulle
+        \textbf{ragioni} per cui quei punti sono di forza, e a sviscerarle.
+  \item[La creatività.] Uno dei due cappelli ``più particolari''\footnote{Marta non dice il
+        colore di questo cappello. Nel metodo originale di Edward de Bono (\emph{Six Thinking
+        Hats}, 1985) il cappello della creatività è il \textbf{verde}.}: significa
+        \textbf{lanciarsi in soluzioni anche esagerate e irrealistiche}. È il cappello del
+        \textbf{\emph{brainstorming}}: si analizzano le possibilità, anche quelle fuori dagli
+        schemi. Non importa se sono fattibili: il lavoro della creatività è \textbf{proporre
+        idee}, soluzioni, possibilità; pensare a quali e quante sono, e cercare quelle più
+        inusuali.
+  \item[Il blu: l'organizzazione.] Il più particolare. In \emph{team} serve a
+        \textbf{gestire gli altri cappelli}: chi indossa il blu stabilisce quando si cambia
+        cappello. E inoltre dice: ``ok, però che cosa faremo? Che cosa implementeremo? Che
+        cosa serve adesso per raggiungere gli scopi che ci prefiggiamo?''. È la parte
+        \textbf{organizzativa} del processo, quella che segue la parte pratica una volta
+        individuate le caratteristiche.
+\end{description}
+
+Nel complesso, i cappelli sono anche un modo di \textbf{dividere i pensieri in compartimenti
+stagni}, ``e a volte questa cosa torna particolarmente utile''.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.3cm}p{3.6cm}p{3.9cm}p{3.7cm}@{}}
+\toprule
+\textbf{Cappello} & \textbf{Guarda a} & \textbf{Esempio di frase} & \textbf{Attenzione} \\
+\midrule
+Bianco & i fatti, neutri & ``durante il \emph{playtest} è successo due volte X'' & niente
+  giudizi \\
+\addlinespace
+Nero & difficoltà, insicurezze, pericoli & ``questo potrebbe non funzionare perché\ldots'' &
+  facile da indossare: va approfondito \\
+\addlinespace
+Rosso & le emozioni & ``io mi sento così'' & niente spiegazioni; spesso sottovalutato \\
+\addlinespace
+Giallo & i punti di forza & ``questo esalta l'esperienza perché\ldots'' & facile: andare a
+  fondo delle ragioni \\
+\addlinespace
+Creatività (verde) & idee e soluzioni, anche irrealistiche & ``e se\ldots?'' & non giudica
+  la fattibilità \\
+\addlinespace
+Blu & l'organizzazione: quando cambiare, che cosa fare ora & ``che cosa implementiamo?'' &
+  in \emph{team}, gestisce gli altri \\
+\bottomrule
+\end{tabular}
+\caption{I sei cappelli per pensare come li presenta Marta. Si possono pescare da un mazzetto
+di sei carte, da soli, o far ruotare in un \emph{team}.}
+\label{a14:tab:cappelli}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Il bilanciamento secondo Garfield}
+\label{a14:sec:garfield}
+
+``Ecco, ce l'ho fatta'': la slide successiva è il \textbf{bilanciamento}. ``Questo è il capitolo
+un po' più complicato da fare, ma vedremo perché.'' Marta raccomanda di interromperla con le
+domande, perché è ``un argomento molto spesso spinoso'', e lei lo tratta ``in un modo un po'
+atipico rispetto ai miei colleghi''.
+
+\paragraph{\emph{The Balancing Act}.} Si parte da uno degli articoli che da qualche anno sono
+diventati un punto di riferimento per il suo lavoro, scritto ``niente di meno che'' da
+\textbf{Richard Garfield}\footnote{Marta cita il titolo dell'articolo, \emph{The Balancing
+Act}, ma non dice dove sia stato pubblicato; il capitolo non lo ha verificato. Le citazioni
+che seguono sono la parafrasi italiana di Marta dalla slide, non il testo originale.}. Lo si
+troverà citato spesso: Garfield è un designer con un'esperienza ormai
+\textbf{quarantennale} (``ormai sono 40 anni, direi''), con tantissimi giochi di successo,
+``non c'è solo \emph{Magic}'', e ha una profonda conoscenza non solo del gioco ma di tutto
+ciò che gli ruota attorno. ``Secondo me è un'ottima lettura a prescindere'': molto spesso è
+stato \textbf{sottovalutato}, perché molti lo associano solo a \emph{Magic}, ``e invece ha
+fatto tanto, tanto di più''. Nell'articolo Garfield esorta così:
+\begin{quote}
+\textbf{il bilanciamento perfetto dei giochi è un mito. Il bilanciamento consiste nel
+migliorare il \emph{play}, il giocare, per un ampio spettro di possibili giocatori, e
+comporta costi e benefici.}
+\end{quote}
+È una frase che, per Marta, riassume perfettamente tanti punti del bilanciamento. La parte che
+molti dimenticano è quella dei \textbf{costi e benefici}: qualsiasi bilanciamento si operi
+presenterà, ``se vogliamo, anche per ricondurci all'analisi SWOT'', delle forze, delle
+debolezze, delle opportunità e dei rischi.
+
+\paragraph{Un'esplorazione dello spazio di gioco.} Che cos'è, allora, il bilanciamento? Si
+può definire come \textbf{l'esplorazione di una parte dello spazio di gioco totale}. Dato un
+gioco, applicando bilanciamenti diversi, e anche regole diverse, se ne esplora una parte
+diversa. Quando si presenta un gioco sviluppato, finito, si sta implicitamente consegnando
+\textbf{una porzione di uno spazio di gioco molto più ampio} (figura~\ref{a14:fig:spazio}).
+
+\paragraph{Non esiste un bilanciamento che accontenti tutti.} Si pensa che questa porzione
+debba accontentare tutti, ma, proprio per i costi e benefici, non è così. Molto spesso chi
+segue il principio di accontentare tutti \textbf{sta accontentando soltanto la parte più
+rumorosa dell'utenza}: quella che si esprime in modo più vocale, spesso non da una posizione
+di conoscenza, ma perché è molto facile giudicare un gioco; e ``quindi molto spesso si
+prendono dei granchi''. \textbf{Abbandonare l'idea che un gioco possa risultare adatto a
+chiunque} è, per Marta, l'obiettivo da avere quando ci si mette sotto con lo sviluppo: ``non
+esistono giochi che sono adatti a tutte le persone''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small]
+  \draw[thick, fill=gray!6] (0,0) ellipse (5.6cm and 2.3cm);
+  \node[font=\footnotesize\bfseries] at (0,1.85) {lo spazio di gioco totale};
+  \draw[thick, fill=gray!22] (-2.6,-0.2) ellipse (1.5cm and 0.9cm);
+  \node[align=center, font=\footnotesize] at (-2.6,-0.2) {il gioco\\pubblicato};
+  \draw[thick, dashed] (0.6,0.1) ellipse (1.3cm and 0.75cm);
+  \node[align=center, font=\footnotesize] at (0.6,0.1) {una\\\emph{house rule}};
+  \draw[thick, dashed] (3.3,-0.5) ellipse (1.4cm and 0.8cm);
+  \node[align=center, font=\footnotesize] at (3.3,-0.5) {un altro\\bilanciamento};
+  \node[font=\footnotesize, text width=10cm, align=center] at (0,-2.85) {ogni bilanciamento
+    (e ogni variante) ritaglia una porzione diversa dello stesso spazio, con i suoi costi e
+    benefici: nessuna porzione accontenta tutti};
+\end{tikzpicture}
+\caption{Il bilanciamento come esplorazione dello spazio di gioco: il gioco finito ne
+consegna una porzione; le \emph{house rules} e le varianti, nell'analogico, permettono a chi
+gioca di esplorarne altre.}
+\label{a14:fig:spazio}
+\end{figure}
+
+\paragraph{Dare più potere a chi gioca.} Il mondo analogico ha una grande forza che nel
+videogioco non è altrettanto facile: \textbf{se vogliamo cambiare una regola, basta dirlo
+quando si spiegano le regole}. Nel videogioco, per farlo, servono di solito conoscenze di
+programmazione o di progettazione che vanno al di là di quello che l'utenza comune riesce a
+fare. Il gioco analogico dà invece uno strumento molto forte: \textbf{varianti} e
+\textbf{\emph{house rules}}, per tarare il gioco sul proprio livello.
+
+\paragraph{Il gioco non è un artefatto immutabile.} Marta spende ``altre due parole''. C'è una
+tendenza, che lei stessa ha seguito per tanti anni, a pensare al gioco come a un
+\textbf{artefatto immutabile}: è stato fatto così e non può essere toccato. Esiste in molti
+ambiti, per esempio con i libri, che molte persone non vogliono assolutamente modificare,
+segnare, sottolineare. È una concezione che Marta si prende la libertà di definire ``molto
+orientata al capitalismo'', in cui gli oggetti non sono davvero propri ma entità da
+preservare per preservarne il valore. I \textbf{giochi \emph{legacy}} aiutano a svincolarsi
+da questo principio. \textbf{Lavorare su un gioco e metterci del proprio è il gesto di
+possesso più forte che si possa fare}, e in un certo senso anche un gesto d'amore: se si
+modifica un gioco con \emph{house rules} e varianti, probabilmente è perché piace così tanto
+che, piuttosto che bollarlo come ``non è un gioco per me'', si è disposti a
+\textbf{esplorarne lo spazio di gioco}. È una cosa che nell'ambiente si è un po' persa, ma
+che è sempre stata una caratteristica del gioco: Marta invita a riscoprirla, ``perché tira
+fuori tante cose positive''.
+
+\paragraph{Le \emph{house rules} come palestra di sviluppo.} Inoltre, praticare le \emph{house
+rules} \textbf{spinge verso lo sviluppo}: toccare un gioco edito e vedere come cambia variando
+le regole trasmette il \emph{feeling} di lavorare a un gioco già creato da qualcun altro e
+metterci le mani sopra, cioè proprio il mestiere di chi sviluppa.
+
+\paragraph{L'obiettivo: esaltare le forze, minimizzare gli ostacoli.} L'obiettivo del
+bilanciamento è lo stesso dello sviluppo in generale: \textbf{esaltare le forze del
+\emph{design} e minimizzare gli ostacoli}. Non lo si pensi come il raggiungimento di un
+\textbf{equilibrio perfetto}, che non esiste; ci si chieda sempre: ``ok, però questo
+\emph{design} che cosa si promette di fare? Come faccio a veicolarlo?''.
+
+% ---------------------------------------------------------------------
+\section{Per chi si bilancia}
+\label{a14:sec:perchi}
+
+È importante ricordare \textbf{per chi} si sta facendo il bilanciamento. Potrebbero essere
+persone \textbf{esperte}, appassionate; persone \textbf{alle prime armi}; o, a volte, ``il
+\textbf{dio della simmetria}'', come lo chiamano dove lavora Marta.
+
+\paragraph{Il dio della simmetria.} È quando ci si intestardisce che \textbf{i numeri debbano
+finire tutti per 5 o per 10}, o che, siccome questa carta vale 2, \textbf{anche quella debba
+valere 2}, senza contemplare per esempio i numeri dispari: ``sono tutte delle fisime che vengono
+fuori quando si sviluppa''\footnote{Nella trascrizione ``sono tutte delle fisiche'': quasi
+certamente ``fisime''.}. ``Io sono la prima che a volte ci cade, in questi tranelli'': l'ha
+messo nella slide anche per prendersi in giro. Ma è un avvertimento serio: quando si bilancia,
+si tende verso i propri \emph{bias}, e il dio della simmetria è uno di questi.
+
+\paragraph{Bilanciare per il gioco.} A volte si bilancia \textbf{per il gioco}, cioè per il suo
+interesse: il gioco vuole creare certe dinamiche, quelle infuse da chi l'ha creato, e
+bilanciare per il gioco significa \textbf{non pensare necessariamente al \emph{target}}, ma a
+come tirare fuori il più possibile l'esperienza. Vale soprattutto per i \textbf{giochi non
+commerciali}, in cui l'interesse è portare l'esperienza anche a discapito dell'utenza, e per
+i giochi \textbf{molto sperimentali}.
+
+L'esempio è un gioco ``molto bello'' di \textbf{Amabel Holland}, in solitario, che si chiama
+\textbf{\emph{Endurance}}\footnote{Il titolo e l'autrice sono detti chiaramente; editore e
+anno non sono nominati. Amabel Holland pubblica di solito con Hollandspiele.}. Ricrea le
+vicende della spedizione dell'\emph{Endurance}, ``una spedizione miracolosa'' in cui i membri
+dell'equipaggio si sono salvati dopo una quantità immensa di tempo passato, ``se non
+sbaglio'', in Antartide\footnote{È la spedizione imperiale transantartica di Ernest
+Shackleton (1914--1917): la nave \emph{Endurance} rimase intrappolata nei ghiacci e affondò,
+e tutto l'equipaggio sopravvisse dopo quasi due anni.}. Quello che Holland ha voluto ricreare
+è che, quando si gioca, \textbf{nel 99\% dei casi si perde}, perché l'equipaggio muore.
+``Perdere'' è un'imprecisione: nel gioco \textbf{non ci sono vere condizioni di vittoria o di
+sconfitta}, ma un'analisi di quello che è successo e un racconto dell'esperienza. La storia in
+cui tutti si salvano è \textbf{volutamente rarissima}, per dimostrare la straordinarietà
+dell'evento reale e ricalcare la difficoltà di ottenere un risultato del genere. Qui si
+bilancia per il gioco, anche se il \emph{target} potrebbe non apprezzarlo; o meglio, c'è un
+\emph{target} ``un po' più nascosto'' di quello commerciale.
+
+\paragraph{Bilanciare per il \emph{target}.} È il discorso inverso: si bilancia per chi,
+secondo noi, giocherà il gioco. Tendenzialmente si bilancia per il \emph{target}, ma nella
+pratica è più difficile di quanto sembri, perché è facile \textbf{dimenticare che si sta
+bilanciando per persone con interessi diversi dai nostri}, e finire a bilanciare per noi
+stessi. L'esempio che aiuta è quello dei \textbf{giochi per bambini}: lì ``chiaramente noi non
+siamo bambini'', e la differenza salta all'occhio. Quando Marta ha lavorato a un gioco per
+bambini chiamato \textbf{\emph{Sun Farm}}\footnote{Così nella trascrizione; il titolo non è
+verificabile.}, il bilanciamento è partito \textbf{dai bambini e dai genitori}: capire quale
+potesse essere l'esperienza desiderata da un bambino, e perché in quel caso \textbf{vincere
+non era la cosa più importante dell'universo}, mentre contavano di più
+l'\textbf{espressività} e la possibilità di giocare un po' con le strategie senza restringere
+il campo delle possibilità.
+
+\paragraph{Esperti o principianti.} C'è spesso la tendenza a fare giochi \textbf{solo per i
+giocatori migliori}, o per quelli che sono vocali e si spacciano per i migliori. Molto spesso
+sono persone che \textbf{il gioco l'hanno giocato pochissimo}: sui gruppi e sui \emph{forum}
+si trovano persone che dicono ``questo gioco è rotto'' dopo una partita. È una tendenza che
+c'è anche \textbf{nell'industria}, dietro le quinte, tra addetti ai lavori; ``posso ammettere
+che anche io l'ho fatto''. Ed è, come dice anche Garfield, \textbf{profondamente
+irrispettoso}: si pensa che il gioco sia fatto solo per noi, quando magari non siamo
+minimamente nel suo \emph{target}, o il gioco richiede competenze che non abbiamo o non
+abbiamo voglia di applicare. Bisogna ricordarsi che \textbf{un gioco non è giocato soltanto
+da queste persone}: è giocato da tantissime persone che non commentano sui \emph{forum}, non
+scrivono su BGG, non lasciano voti. E il gioco deve essere \textbf{accessibile al maggior
+numero possibile di persone}, proprio perché arrivi anche nelle mani di chi non si esprime ma
+avrebbe piacere di giocarlo.
+
+\paragraph{Tecnicità contro approcciabilità.} Per riassumere: da una parte si bilancia
+\textbf{per tecnicità}, per rendere il gioco ``più bello'', e magari non si riesce ad
+accontentare nessuno, perché per $N$ persone che si lamentano ce ne saranno $M$ che si
+lamenteranno una volta fatta la modifica. Dall'altra si bilancia \textbf{per
+approcciabilità}, per rendere il gioco più approcciabile: questo \textbf{allarga la base
+d'utenza} che può accedere al gioco e favorisce che venga effettivamente provato. Marta
+precisa, ``fatemi sapere se non vi è chiara la differenza'': \textbf{non significa che non si
+possano fare giochi complessi}, o impegnativi. ``Non è questo il punto del discorso.''
+
+% ---------------------------------------------------------------------
+\section{Perché non bilanciare (solo) con la matematica}
+\label{a14:sec:matematica}
+
+Perché, allora, non si bilancia spesso \textbf{``in modo matematico''}, come si dice? Marta
+elenca le ragioni.
+
+\paragraph{È lungo e soggetto a errori.} Non conosce le competenze matematiche di tutte le
+persone che si avvicinano al \emph{design} e allo sviluppo, ma nella sua esperienza vede
+molto spesso \textbf{ragionamenti matematici fallaci}, che ``non stanno in piedi''. Ed è un
+processo \textbf{lungo e faticoso}, che porta a sbagliare tantissime volte. A meno di essere
+``davvero, davvero, davvero molto in gamba'' su questo aspetto, va affrontato con cautela.
+
+\paragraph{È difficilmente modellabile.} Molto spesso \textbf{i modelli sono sbagliati}:
+quando si cerca di sintetizzare un gioco si perdono \textbf{le dipendenze tra le risorse}, le
+\textbf{transazioni} da una risorsa all'altra, da una carta all'altra. E si perde quello che
+rende i giochi affascinanti: i cosiddetti \textbf{spazi di permeabilità}, già nominati
+``ieri'', che \textbf{neanche il designer conosce sempre in modo approfondito} e che fanno la
+differenza. I giochi sono interessanti proprio perché sono sistemi \textbf{non pienamente
+controllati, non pienamente compresi}. Si pensi agli \textbf{scacchi}: chi li ha progettati
+non aveva ``minimamente idea'' di tutto quello che è venuto dopo; molte innovazioni
+strategiche sono degli ultimi cinquant'anni. È notevole quanti spazi di permeabilità avesse,
+grazie alla struttura aperta del suo albero decisionale, ``che, penso lo sapete, è
+immenso''.
+
+\paragraph{Appiattisce le scelte.} Bilanciare in modo matematico porta a un
+\textbf{appiattimento delle scelte}, perché si tende a trovare degli \textbf{equilibri
+statici}: si immagini una bilancia perfettamente in equilibrio. Ne nascono le famose
+\textbf{scelte indifferenti}: qualsiasi cosa si faccia, la ricompensa è identica. Un percorso
+dà 1 punto vittoria al primo turno, 3 al secondo e 2 al terzo; un altro ne dà 1 al primo, 2 al
+secondo e 3 al terzo. Alla fine \textbf{sono 6 punti per tutte e due le strade}: ``quindi
+abbiamo risolto assolutamente niente'' (figura~\ref{a14:fig:indifferenti}). L'esperienza
+diventa \textbf{statica e priva di significato}.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small, x=0.9cm, y=0.55cm]
+  % assi
+  \foreach \ox/\tit/\a/\b/\c in {0/{strada A}/1/3/2, 7/{strada B}/1/2/3}{
+    \draw[thick, ->] (\ox,0) -- (\ox+4.4,0);
+    \draw[thick, ->] (\ox,0) -- (\ox,4.0);
+    \node[font=\footnotesize\bfseries] at (\ox+2.2,4.6) {\tit};
+    \fill[gray!45] (\ox+0.5,0) rectangle (\ox+1.3,\a);
+    \fill[gray!45] (\ox+1.7,0) rectangle (\ox+2.5,\b);
+    \fill[gray!45] (\ox+2.9,0) rectangle (\ox+3.7,\c);
+    \node[font=\footnotesize, above] at (\ox+0.9,\a) {\a};
+    \node[font=\footnotesize, above] at (\ox+2.1,\b) {\b};
+    \node[font=\footnotesize, above] at (\ox+3.3,\c) {\c};
+    \node[font=\scriptsize, below] at (\ox+0.9,0) {turno 1};
+    \node[font=\scriptsize, below] at (\ox+2.1,0) {turno 2};
+    \node[font=\scriptsize, below] at (\ox+3.3,0) {turno 3};
+    \node[font=\footnotesize] at (\ox+2.2,-1.6) {totale: \textbf{6 punti}};
+  }
+  \node[font=\footnotesize, text width=2.4cm, align=center] at (5.7,2.0) {stessa
+    ricompensa: \textbf{scelta indifferente}};
+\end{tikzpicture}
+\caption{L'esempio di Marta di scelte indifferenti, prodotto da un bilanciamento matematico
+``statico'': due percorsi con andamenti diversi ma lo stesso totale. Scegliere l'uno o
+l'altro non cambia niente.}
+\label{a14:fig:indifferenti}
+\end{figure}
+
+``Anche qua'', precisa, ``non significa che non si usa la matematica'': la matematica aiuta e
+può tornare comoda sotto molti aspetti. Ma bisogna fare attenzione a \textbf{non guardare il
+bilanciamento solo da questo punto di vista}, perché è una tendenza comune a chi si avvicina al
+bilanciamento e porta a degli errori.
+
+\paragraph{Il bilanciamento esperienziale.} Marta consiglia sempre il \textbf{bilanciamento
+esperienziale}: veicolare \textbf{i percorsi intesi}, l'obiettivo del \emph{design}. Che cosa
+si prefigge il gioco? Quali strade voglio che siano percorse a livello strategico? Che cosa
+voglio \textbf{premiare}? Costruire le \textbf{scelte sensibili}, cioè indirizzare le scelte
+delle persone verso alcune delle idee e delle strategie che si vogliono mettere in campo, e
+lasciare che il \emph{gameplay} sia \textbf{emergente}, che consenta anche a chi gioca di
+metterci del proprio. Il bilanciamento esperienziale è anche \textbf{parametrizzabile}: se tra
+gli \emph{stakeholder} c'è chi vuole un gioco ``un po' più cattivo'', che restituisca un
+\emph{feeling} di frustrazione, lo si può fare senza problemi; il bilanciamento matematico
+molto spesso lo impedisce, perché tende a equalizzare tutto su un livello statico.
+
+\paragraph{E l'intelligenza artificiale?} Un tema diventato rilevante quest'anno, ``l'anno
+scorso lo era un po' meno'': molte persone \textbf{bilanciano con l'intelligenza
+artificiale}. Marta non si mette a spiegare come funziona, ``però insomma, non è una cosa che
+veramente pensi, mettiamola così: è semplicemente un \textbf{algoritmo predittivo}''. Molto
+spesso porta proprio agli \textbf{errori del bilanciamento matematico}. Il suo invito è a
+\textbf{non usarla}; ma chi la usa faccia attenzione, perché può portare a un bilanciamento
+``assolutamente errato e che appiattisce il gioco''.
+
+\paragraph{Approfondimento: il modello e il gioco.} Schell non è contrario ai modelli, ma ne
+descrive bene il limite: ``il modello informa il bilanciamento, e il bilanciamento informa il
+modello''. Si scrive il proprio modello di come sono legate le meccaniche, lo si mette alla
+prova giocando, e lo si corregge ogni volta che il gioco non si comporta come previsto.
+Aggiunge che il bilanciamento può cominciare davvero solo quando il gioco è giocabile, e che
+la sua regola personale è dedicare al bilanciamento \textbf{metà del tempo di sviluppo}. È la
+stessa direzione di Marta: i numeri servono, ma come ipotesi da verificare al tavolo, non come
+risposta.
+
+% ---------------------------------------------------------------------
+\section{Come cominciare: giochi a scarsa interazione}
+\label{a14:sec:cominciare}
+
+Un consiglio per chi vuole iniziare a sperimentare con il bilanciamento: partire da
+\textbf{giochi a scarsa interazione}. I giochi ad alta interazione hanno tante
+\textbf{interdipendenze} con quello che fanno i giocatori; si possono modellare anche
+matematicamente, soprattutto in termini probabilistici, ``ma è molto complesso''. Partire da
+giochi con poca interazione permette di lavorare in modo più agevole. Marta precisa che sta
+parlando soprattutto di giochi con \textbf{un modello matematico alle spalle}: giochi con
+\textbf{conversioni di risorse}, in cui si vince a \textbf{punti vittoria}; non tanto di giochi
+narrativi. Nel mondo del gioco da tavolo c'è ancora una preponderanza di questo tipo di giochi,
+e quando si parla di bilanciamento si parla di solito di questo, anche se, come detto la volta
+prima, non è affatto l'unico che si fa.
+
+\paragraph{Modellare il sistema.} Partendo da un gioco a scarsa interazione, si prova a
+\textbf{modellarne il sistema}: capire le \textbf{dipendenze} tra le risorse, con un
+\textbf{diagramma di flusso} o anche un \textbf{diagramma di stato}, se torna utile.
+L'obiettivo è individuare il \textbf{percorso che fanno le risorse}: quando vengono prese,
+quando vengono restituite, e così via.
+
+\paragraph{Un esempio: \emph{Splendor} infinito.} Si può partire da \textbf{\emph{Splendor}} e
+immaginarlo con \textbf{risorse infinite}: le fiche di ogni colore sono infinite, e le carte
+sono in $N$ copie, quindi possono essere sempre prese. Si prova a bilanciare da lì e si vede
+che succede.
+
+\paragraph{Variare i parametri.} Si testa come varia il gioco al variare dei parametri,
+semplicemente \textbf{cambiando i parametri}, anche in modo arbitrario (tra poco si vedranno
+alcune tecniche). Per esempio: che succede se, in \emph{Splendor}, una delle risorse, la
+carta, diventa \textbf{esclusiva}, e non più in $N$ copie?
+
+\paragraph{I \emph{test} in solitaria e il \emph{groupthink}.} I \emph{test} in solitaria qui
+sono agevoli, ma attenzione al \textbf{\emph{groupthink}}, soprattutto se se ne fanno molti
+durante il bilanciamento: ragionando da soli capita molto spesso di \textbf{rinforzare i
+propri \emph{bias}}, e può diventare un problema, soprattutto se non si è consapevoli di
+averli. Bisogna testare con \textbf{più persone}, e potenzialmente con \textbf{più gruppi
+possibili}, per capire come si assesta il bilanciamento ed evitare il fenomeno.
+
+\paragraph{Lasciare gli spazi di permeabilità.} ``Mi raccomando'': non bisogna avere
+\textbf{l'ansia di controllare tutto il sistema di gioco}; non è necessario.
+
+\paragraph{La strategia dominante emerge.} Se c'è una \textbf{strategia dominante}, di solito
+la si intuisce analizzando il gioco da diversi punti di vista, o anche banalmente con i
+\emph{playtest}: con un numero sufficiente di partite, i comportamenti emergono. L'esempio più
+popolare: \textbf{tenere traccia di chi inizia a giocare} e vedere se è la persona che vince.
+Se lo è, c'è un problema: chi inizia magari vince perché \textbf{fa un turno in più} degli
+altri (``generalmente questo può essere uno dei motivi'').
+
+% ---------------------------------------------------------------------
+\section{Il budget di complessità}
+\label{a14:sec:budget}
+
+Uno dei concetti che tornano molto utili nello sviluppo, e che si trovano spesso soprattutto
+nel bilanciamento, è il \textbf{budget di complessità}. Un gioco ha una certa complessità, un
+certo grado di difficoltà: non la si immagini necessariamente come un numero, ma comunque come
+\textbf{una quantità}, una quantità $x$. Quando si lavora al gioco, \textbf{rimuovere o
+cambiare delle parti altera il budget}. Generalmente, togliendo per esempio una meccanica, si
+\textbf{guadagna} complessità disponibile. E che cosa ci si fa, con questo guadagno?
+\begin{itemize}
+  \item lo si può semplicemente \textbf{togliere}, riducendo la complessità generale
+        dell'esperienza;
+  \item oppure lo si può \textbf{investire} altrove.
+\end{itemize}
+
+\paragraph{L'esempio del mercato azionario.} Si immagini un gioco con un obiettivo molto
+definito: far sperimentare a chi gioca \textbf{come varia il mercato azionario}. Sul tavolo ci
+sono i vari beni messi sul mercato, e bisogna rappresentare questo aspetto. Se il gioco ha
+anche una \textbf{fase d'asta}, sta concentrandosi sull'asta: oltre ad aggiungere complessità,
+\textbf{toglie \emph{focus}} alle fluttuazioni di mercato, cioè al comprare e vendere.
+Togliendo l'asta si riduce la complessità; e quello che si è guadagnato lo si può usare per
+rendere \textbf{un po' più complessa} la parte del mercato: il comprare, il vendere, il variare
+dei prezzi dei beni. Il gioco diventa \textbf{più focalizzato}, più centrato su ciò che vuole
+rappresentare, al prezzo di aver tolto una meccanica, ma \textbf{senza aver necessariamente
+ridotto il budget di complessità} (figura~\ref{a14:fig:budget}).
+
+\paragraph{Nel dubbio, accessibile.} Se non si intuisce che c'è qualcosa da fare con la
+complessità recuperata, ``chiaramente sappiate che è sempre meglio avere un gioco
+\textbf{accessibile} laddove è possibile'': lo scoglio iniziale, cioè provare il gioco e
+metterlo sul tavolo, diventa più semplice.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small, x=1cm, y=1cm]
+  % prima
+  \node[font=\footnotesize\bfseries] at (1.0,4.5) {prima};
+  \draw[thick] (0,0) rectangle (2,4);
+  \fill[gray!20] (0,0) rectangle (2,1.6);
+  \node[font=\footnotesize] at (1,0.8) {asta};
+  \fill[gray!45] (0,1.6) rectangle (2,3.6);
+  \node[font=\footnotesize, align=center] at (1,2.6) {mercato};
+  \node[font=\scriptsize] at (1,3.8) {altro};
+  % opzione 1
+  \node[font=\footnotesize\bfseries, align=center] at (5.2,4.5) {togliere e\\basta};
+  \draw[thick] (4.2,0) rectangle (6.2,4);
+  \fill[gray!45] (4.2,0) rectangle (6.2,2.0);
+  \node[font=\footnotesize] at (5.2,1.0) {mercato};
+  \node[font=\scriptsize] at (5.2,2.2) {altro};
+  \node[font=\scriptsize, align=center] at (5.2,3.3) {budget\\libero};
+  % opzione 2
+  \node[font=\footnotesize\bfseries, align=center] at (9.4,4.5) {reinvestire\\nel focus};
+  \draw[thick] (8.4,0) rectangle (10.4,4);
+  \fill[gray!45] (8.4,0) rectangle (10.4,3.6);
+  \node[font=\footnotesize, align=center] at (9.4,1.8) {mercato\\più ricco};
+  \node[font=\scriptsize] at (9.4,3.8) {altro};
+  \draw[-{Stealth[length=2.5mm]}, thick] (2.3,2) -- (3.9,2);
+  \draw[-{Stealth[length=2.5mm]}, thick] (2.3,2.6) to[bend left=25] (8.1,2.6);
+  \node[font=\footnotesize, text width=11cm, align=center] at (5.2,-0.7) {togliendo
+    l'asta si libera complessità: la si può lasciare libera (gioco più accessibile) o
+    spenderla dove il gioco vuole il suo \emph{focus}};
+\end{tikzpicture}
+\caption{Il budget di complessità nell'esempio di Marta del gioco sul mercato azionario.
+L'altezza della colonna è il budget complessivo; i blocchi sono le parti del gioco che lo
+consumano.}
+\label{a14:fig:budget}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Strategie ad alto e a basso rischio}
+\label{a14:sec:rischio}
+
+Un altro concetto che torna spesso sono le \textbf{strategie ad alto e a basso rischio}. Quando
+si bilancia, uno dei riferimenti può essere avere più strategie: alcune in cui si
+\textbf{rischia tanto, ma la ricompensa è elevata}, e altre in cui il \textbf{rischio è
+ridotto, ma la ricompensa è parziale}. È un esempio tipico di tecnica per creare
+\textbf{scelte sensibili}: dove c'è una sola possibilità, creare questa \textbf{biforcazione}
+aiuta a costruire una scelta, ``e per come è fatta funziona un po' sempre''.
+
+\paragraph{Perché funziona.} La difficoltà sta nel \textbf{valutare il livello di rischio} e
+quanto si vuole rischiare di volta in volta. E siccome noi umani \textbf{fatichiamo con il
+calcolo delle probabilità}, questo nel gioco diventa una forza, ``una sorta di abilità che si
+può allenare''. È uno degli strumenti da mettere a disposizione quando serve una dinamica con
+\textbf{più strade per arrivare a un risultato}: due macro-strategie, una che lavora tendenzialmente
+a basso rischio e una ad alto rischio. Le due strade \textbf{non sono separate}: magari ci sono
+strategie definite, ma è sempre possibile \textbf{passare dall'una all'altra lungo il
+percorso}, e questo crea una dinamica di gioco effettiva.
+
+\paragraph{L'esempio su \emph{Splendor}.} Sempre partendo da \emph{Splendor}: posso prendere
+\textbf{una carta senza vederla} da uno dei mazzi e \textbf{riservarmela in mano}. Potrebbe
+essere una strategia ad alto rischio, ma magari è l'unico modo di arrivare a \textbf{un quarto
+mazzo} con le ricompense più alte: perdo il turno rischiando di non trovare quello che mi
+serve, ma intanto ho la possibilità di fare qualcosa che le altre carte non mi permettono.
+Una strategia a basso rischio è invece giocare con quello che ho, magari con le carte del
+primo livello\footnote{L'esempio è in parte ipotetico: in \emph{Splendor} si può davvero
+riservare una carta a faccia in giù dalla cima di un mazzo (ricevendo un gettone oro), ma i
+mazzi di sviluppo sono tre; il ``quarto mazzo'' con le ricompense più alte è un'aggiunta di
+Marta per illustrare il principio.}.
+
+\paragraph{Approfondimento: la triangolarità.} È la \emph{lente della triangolarità} di
+Schell, già incontrata nella lezione precedente: offrire al giocatore la scelta tra una mossa
+sicura a bassa ricompensa e una rischiosa ad alta ricompensa. Il suo esempio è \emph{Space
+Invaders}: i nemici normali valgono pochi punti e sono facili da colpire, mentre la navicella
+misteriosa che attraversa ogni tanto lo schermo vale molto di più, ma inseguirla espone al
+pericolo. Schell aggiunge una domanda di controllo che si applica bene alla biforcazione di
+Marta: il tentativo di triangolarità è bilanciato, cioè la ricompensa è commisurata al
+rischio?
+
+% ---------------------------------------------------------------------
+\section{L'ancoraggio}
+\label{a14:sec:ancoraggio}
+
+Un'altra tecnica di bilanciamento è l'\textbf{ancoraggio}. Quando si vogliono bilanciare dei
+valori, può essere utile vedere le risorse attraverso \textbf{un valore di riferimento}: c'è un
+cosiddetto \textbf{valore ancora}, e \textbf{tutto il sistema viene rapportato a quel
+valore}. Due avvertenze, perché la tecnica è molto matematica, molto legata alla gestione dei
+numeri:
+\begin{itemize}
+  \item le \textbf{risorse interdipendenti} rischiano di non essere facili da modellare. Per
+        esempio: quanto vale \textbf{un turno extra}, in termini di valore ancora? ``È un
+        argomento un po' complesso, perché un turno quanto vale?'';
+  \item attenzione ai \textbf{meccanismi autobilancianti}, come il \textbf{\emph{draft}} di
+        carte, che molto spesso vanno in opposizione alla tecnica dell'ancoraggio.
+\end{itemize}
+
+\paragraph{Il caso \emph{Stone Age}.} Come si fa? Partendo da un gioco molto semplice,
+\textbf{\emph{Stone Age}}. ``Non so se lo conoscete.'' Gli studenti non ricordano di averlo
+visto a lezione. È un gioco ``abbastanza vecchio'', un classico \textbf{piazzamento
+lavoratori}. La sua particolarità: si piazzano i propri omini sui vari spazi, e quando li si
+riprende \textbf{si lanciano tanti dadi quanti omini} si sono usati per prendere quella risorsa.
+Se, per esempio, sono il giocatore giallo e ho \textbf{4 omini sul legno}, li riprendo e lancio
+\textbf{4 dadi}; sommo il risultato e lo \textbf{divido per 3}, cioè conto quante volte il 3 sta
+nel numero che ho fatto: quelle sono le risorse legno che ottengo. \textbf{Con 4 dadi e un
+totale di 9, ottengo 3 legni}.
+
+\paragraph{Le capanne.} A un certo punto del gioco si possono costruire \textbf{le capanne}, che
+danno un certo numero di punti, mostrati nella slide sotto le capanne. Marta fa notare (dopo
+essersi corretta: ``oddio, scusate, ho fatto un errore'') che \textbf{il valore in punti di una
+capanna è pari al suo costo di costruzione}: un legno vale 3, un altro legno 3, un oro 6, come
+si vede dalla tabella; $3+3+6=12$, e questo è il valore della capanna. Da qui si intuisce che
+\textbf{il valore ancora del gioco sono i puntini sul dado}: \textbf{un puntino sul dado equivale
+a un punto vittoria}. Va convertito, perché non dà punti di per sé, ma è il valore a cui si
+appoggia tutta la matematica sottesa del gioco. Infatti: $3+3+5=11$, $4+4+6=14$, e così via
+(tabella~\ref{a14:tab:stoneage}). Ci sono anche \textbf{capanne con il punto interrogativo}:
+quella della slide dice ``usa 5 risorse qualsiasi, ma di almeno 4 tipi diversi'', e il
+punteggio è dato proprio dalla somma dei valori delle risorse spese. ``Quindi non è neanche così
+nascosta, come informazione.''
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}lcp{7.2cm}@{}}
+\toprule
+\textbf{Risorsa} & \textbf{Divisore = valore} & \textbf{Che cosa vuol dire} \\
+\midrule
+Cibo & 2 & (non usato per le capanne) \\
+Legno & 3 & con 4 dadi e totale 9, si prendono 3 legni \\
+Argilla & 4 & \\
+Pietra & 5 & \\
+Oro & 6 & la risorsa più ``cara'' da ottenere ai dadi \\
+\midrule
+\multicolumn{3}{@{}l}{\textbf{Capanne (punti = somma dei valori delle risorse spese)}} \\
+\multicolumn{3}{@{}l}{legno + legno + oro: $3+3+6 = 12$} \\
+\multicolumn{3}{@{}l}{legno + legno + pietra: $3+3+5 = 11$} \\
+\multicolumn{3}{@{}l}{argilla + argilla + oro: $4+4+6 = 14$} \\
+\multicolumn{3}{@{}l}{capanna ``?'' (5 risorse qualsiasi, almeno 4 tipi): la somma dei
+  loro valori} \\
+\bottomrule
+\end{tabular}
+\caption{L'ancoraggio in \emph{Stone Age}: il valore ancora è il puntino del dado (un puntino
+= un punto vittoria), e ogni risorsa vale quanti puntini servono per ottenerla. I divisori di
+cibo, argilla e pietra non sono detti nella lezione e sono quelli del gioco; Marta nomina
+esplicitamente il 3 del legno e il 6 dell'oro.}
+\label{a14:tab:stoneage}
+\end{table}
+
+\paragraph{Che cosa permette l'ancoraggio.} Con il valore ancora si possono progettare
+\textbf{quante capanne si vogliono}, perché è facile capire il loro valore in punti vittoria; e
+si può costruire tutta la matematica del gioco, per esempio il valore di una carta, o quanto
+valgono le risorse a fine partita. È un gioco con cui si può fare esercizio: e se il valore
+ancora fosse \textbf{2}? Che cosa cambierebbe nell'economia del gioco? Quanto dovrebbero valere
+le capanne? Si fanno questi \emph{test} e si guarda il bilanciamento.
+
+\paragraph{L'ancoraggio rivela i problemi.} Analizzando bene l'ancoraggio emergono anche problemi
+e difficoltà del gioco. In \emph{Stone Age} c'è un aspetto che cambia le cose:
+\textbf{le priorità del piazzamento lavoratori}, un'interdipendenza legata ai giocatori.
+Le capanne non sono accessibili a chiunque: bisogna metterci uno dei propri omini per
+reclamarle, e le priorità cambiano il flusso della partita\footnote{Qui Marta si interrompe
+per problemi di connessione (``scusatemi un attimo, che sto avendo dei problemi''), poi
+riprende il filo.}. Se si omette questo aspetto (per esempio stabilendo che le risorse si
+spendono nel momento in cui si piazzano gli omini, invece che quando li si riprende), ci si
+accorge che il gioco diventa \textbf{molto più banale}, e che molto spesso conviene prendere
+\textbf{il legno}, perché è la risorsa che, sul lancio dei dadi, si converte più facilmente.
+Sono piccoli ragionamenti che vengono fuori proprio applicando l'ancoraggio.
+
+\paragraph{Come applicarlo al proprio gioco.} Si individua \textbf{la risorsa base}, o il
+punto più comune su cui costruire tutto il resto, e tutte le cose verranno rapportate a quella
+risorsa e alle \textbf{conversioni} presenti nel gioco.
+
+\paragraph{La seconda pausa.} A questo punto la connessione si blocca di nuovo (``non so perché
+si era di nuovo bloccato tutto''), e Marta propone un'altra pausa di dieci minuti. Anche questa,
+nella trascrizione, è coperta da frasi ripetute senza senso. Al ritorno chiede ancora feedback:
+``mi rendo conto che sono un sacco di concetti''; ammette che alcune slide sono ``un po' fuori
+posto'' (``l'ancoraggio forse sta meglio prima''), ``ci sono ancora delle cose che sto
+migliorando anch'io''.
+
+% ---------------------------------------------------------------------
+\section{Il bilanciamento di durata}
+\label{a14:sec:durata}
+
+Si passa al \textbf{bilanciamento di durata}, una tecnica che si usa sempre in rapporto
+principalmente ai numeri. Serve a \textbf{contenere la durata dei giochi}: capita molto
+spesso con giochi che vanno troppo per le lunghe, o per cui non si trovano \textbf{sistemi di
+convergenza} (``poi vedremo meglio che cos'è la convergenza''). Fare un bilanciamento di durata
+porta a scoprire \textbf{i numeri che servono} di turno in turno, e quali valori devono avere le
+risorse perché la partita si concluda in un certo momento.
+
+\paragraph{I round prestabiliti.} Il principio più applicato è fare un gioco \textbf{a round
+prestabiliti}\footnote{Marta parte dicendo ``turni'' e si corregge: ``scusatemi, 10 round,
+chiamiamoli round, che forse è un po' meglio in questo caso''. È lo stesso principio di
+consistenza terminologica visto per il regolamento.}. Se il gioco si deve chiudere in
+\textbf{sette round} e si sa quanto dura in media un round, si sa \textbf{quanto durerà al
+massimo} il gioco, e si capisce che cosa mettere in quei round, per esempio quanti punti
+assegnare in ognuno. Se un gioco dura \textbf{10 round} e ci si aspetta un punteggio medio
+finale di \textbf{100 punti}, si sa che in ogni round saranno in palio \textbf{in media 10
+punti}. E da qui si deriva il bilanciamento \textbf{all'inverso}: ``se in un round si fanno 10
+punti al massimo, questa carta non ne può valere 10 da sola'', perché magari ci si aspetta che
+nel round vengano prese due o tre carte.
+
+\paragraph{La soglia di punti: \emph{Root}.} Lo stesso ragionamento si usa definendo la durata
+non con il numero di round ma con \textbf{una soglia di punti}: per esempio quando qualcuno
+raggiunge \textbf{30 punti}, come in \textbf{\emph{Root}}\footnote{Nella trascrizione ``Route'',
+qui e più avanti.}. Se voglio che la partita si chiuda quando le persone arrivano a 30 punti e
+che \textbf{non duri più di 5 round}, so che ogni giocatore nel suo turno dovrà poter ottenere
+\textbf{in media 6 punti}, oppure un valore \textbf{tra 4 e 8}: così la partita dovrebbe
+chiudersi intorno al quinto round. Se voglio che si chiuda \textbf{esattamente} al quinto round,
+senza lasciare la condizione implicita, posso dare \textbf{6 punti fissi} a round, più altri che
+si possono ottenere. In questo caso, però, ha poco senso, a meno di casi particolari: tanto
+vale dire che la partita finisce dopo cinque round.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small, x=1.15cm, y=0.13cm]
+  \draw[thick, ->] (0,0) -- (5.8,0) node[right, font=\footnotesize] {round};
+  \draw[thick, ->] (0,0) -- (0,36) node[above, font=\footnotesize] {punti};
+  \foreach \x in {1,...,5} \node[below, font=\footnotesize] at (\x,0) {\x};
+  \foreach \y in {0,10,20,30} \node[left, font=\footnotesize] at (0,\y) {\y};
+  \draw[dashed] (0,30) -- (5.6,30) node[right, font=\footnotesize] {soglia};
+  \fill[gray!15] (0,0) -- (1,4) -- (2,8) -- (3,12) -- (4,16) -- (5,20) -- (5,40) --
+    (4,32) -- (3,24) -- (2,16) -- (1,8) -- cycle;
+  \draw[thick] (0,0) -- (1,6) -- (2,12) -- (3,18) -- (4,24) -- (5,30);
+  \fill (5,30) circle (2pt);
+  \node[font=\footnotesize, text width=4.2cm, align=left, anchor=west] at (6.0,14)
+    {media 6 punti per round: la soglia di 30 arriva intorno al quinto round; la fascia
+    grigia è il caso ``tra 4 e 8''};
+\end{tikzpicture}
+\caption{Il bilanciamento di durata con una soglia di punti, nell'esempio di Marta su
+\emph{Root}: dal numero di round desiderato si ricava quanti punti deve poter fare un
+giocatore in un round, e da lì il valore di ogni elemento.}
+\label{a14:fig:durata}
+\end{figure}
+
+\paragraph{Tagliare i turni iniziali.} Che cosa si può fare per limare la durata? Si possono
+\textbf{tagliare i turni iniziali}, che molto spesso presentano \textbf{poche scelte
+significative}. Marta non invita a farlo sempre, anzi, ``con molta parsimonia''. Tra addetti
+ai lavori si parla di \textbf{bilanciamento di Kramer}\footnote{Così nella trascrizione (``tra
+detti e lavori si chiama il bilanciamento di Kramer''). Il riferimento è probabilmente al
+designer tedesco Wolfgang Kramer, ma il capitolo non ha trovato una fonte che usi questo nome
+per la tecnica.}: si danno \textbf{risorse di partenza} ai giocatori, perché i primi turni non
+siano impiegati a raccogliere risorse. Ha delle insidie: rende sicuramente il gioco più
+focalizzato e più attento, ma intanto bisogna fare \textbf{un buon bilanciamento delle risorse
+iniziali}; e, se le risorse date sono diverse tra i giocatori, bisogna capire se partire con
+certe risorse dia \textbf{un vantaggio}. È una cosa da fare \textbf{solo quando è necessaria}.
+Alcuni giochi beneficiano di un \textbf{turno iniziale semplice e guidato}, che è anche uno
+degli \textbf{strumenti di approcciabilità}: è vero che quei turni si somigliano da una partita
+all'altra, ma a volte servono ad agevolare l'ingresso nel gioco. Soprattutto in un gioco
+pensato per andare oltre i confini del proprio genere, qualche turno semplice può aiutare le
+persone a \textbf{entrare nel flusso}.
+
+\paragraph{Tagliare i turni finali.} Si fa molto spesso negli \textbf{\emph{engine
+building}}, i giochi a ``motore economico'', in cui c'è un \emph{feedback} che genera punti
+vittoria o risorse, o che comunque avvicina alla condizione di fine partita. Il motore, andando
+avanti, diventa sempre più performante; e se da un certo punto cresce in modo
+\textbf{lineare o esponenziale}, diventa probabilmente impossibile per gli altri recuperare.
+Allora si tagliano i turni finali: ``da questo punto in avanti è chiaro come andrebbe il resto
+della partita, non c'è bisogno di giocarla'', per non tediare le altre persone. L'esempio è
+\textbf{\emph{Race for the Galaxy}}: la partita finisce quando si esauriscono i
+\textbf{gettoni punti} o quando qualcuno ha giocato \textbf{12 carte}. Di solito avviene quando
+il motore si è innescato: i turni successivi ripeterebbero quello che si è già visto, perché
+le strategie sono ormai impostate.
+
+\paragraph{La durata dentro il turno.} Un'altra parola sulla durata \textbf{intraturno}. Se si
+aggiungono tantissime \textbf{microscelte} dentro il turno, la persona si sentirà
+\textbf{paralizzata} e spenderà molto tempo. E anche in una situazione normale, con poche
+scelte, se per stare dietro a tutte le regole \textbf{vanno via 5 minuti}, quei 5 minuti vanno
+\textbf{moltiplicati per il numero di persone e per il numero di round}: la durata di un gioco
+cresce molto in fretta. E si stanno ancora omettendo le altre fasi, come quelle di
+\textbf{amministrazione} o di \textbf{conteggio dei punti}. Bisogna quindi fare attenzione che
+i turni non siano inutilmente lunghi; ma a volte \textbf{un turno lungo può essere molto
+soddisfacente}. \emph{Root} dura, a detta di Marta, due ore e mezza, e i suoi turni sono molto
+lunghi rispetto ad altri giochi simili; ma senza quei turni e senza quella durata il gioco ne
+risentirebbe in termini di esperienza. ``Alla fine conta molto il gioco che stiamo facendo.''
+
+\subsection{La domanda: come si calcola la durata sulla scatola?}
+
+Uno studente chiede: sulle scatole c'è scritto quanto dura un gioco, ma spesso a lui sembra
+\textbf{sottodimensionato}. Come viene calcolato? C'è uno standard?
+
+``Lo standard in realtà non c'è'', risponde Marta. Tendenzialmente si dovrebbe indicare
+\textbf{la durata media di una partita una volta che si conoscono le regole}. Quindi:
+\begin{itemize}
+  \item \textbf{non è mai compresa la spiegazione delle regole};
+  \item \textbf{non è mai considerata la prima partita}: il valore vale più per chi ha giocato
+        tre o quattro volte e conosce il gioco, e non è più al punto di riprendere in mano il
+        regolamento.
+\end{itemize}
+Va da sé che il numero viene \textbf{sbagliato piuttosto spesso}, perché non è facile
+stabilirlo. Il metodo migliore, secondo Marta, è prendere \textbf{il tempo medio del gruppo di
+\emph{test} che conosce il gioco} e quello di chi fa \textbf{\emph{blind test}}, cioè di persone
+alle prime armi, e vedere dove si assesta \textbf{il valore di mezzo}: non tutti giocheranno come
+chi ha fatto cento partite, ma neanche ne faranno solo due; l'ideale sarebbe che a un gioco si
+facessero \textbf{5--10 partite}. E poi dipende molto dai \textbf{gruppi di gioco}: non c'è un
+vincolo su quanto si impiega a fare il proprio turno, e se si è al tavolo con persone che
+pensano molto, le durate cresceranno. Si tende comunque a trovare una durata
+\textbf{compatibile con il gioco}: un gioco per bambini non può durare due ore, ``ma queste
+cose penso le intuite anche voi''.
+
+\paragraph{Approfondimento: corto o lungo.} Schell dedica un intero tipo di bilanciamento
+(``corto contro lungo'') alla durata: se il gioco è troppo corto, i giocatori non riescono a
+sviluppare ed eseguire strategie significative; se è troppo lungo, si annoiano o lo evitano
+per l'impegno di tempo. Le leve principali sono le condizioni di vittoria e di sconfitta. Due
+suoi esempi mostrano soluzioni diverse dal taglio di turni: in \emph{Spy Hunter}, per i primi
+novanta secondi il giocatore ha auto infinite, perché i principianti non abbiano partite
+frustranti di pochi secondi; in \emph{Minotaur}, dopo venti minuti suona una campana e tutti i
+sopravvissuti vengono trasportati in una stanza piena di mostri, così la partita finisce in
+meno di venticinque minuti e c'è comunque un vincitore, lo stesso principio della zona che si
+restringe nei \emph{battle royale}. È convergenza (sezione~\ref{a14:sec:difetti}) imposta per
+regola.
+
+% ---------------------------------------------------------------------
+\section{Raddoppia o dividi la risorsa}
+\label{a14:sec:raddoppia}
+
+Un'altra tecnica ``molto popolare'' è \textbf{raddoppiare o dividere la risorsa}\footnote{Nella
+trascrizione ``il raddoppio di vidi la risorsa''.}. A volte è importante capire \textbf{quanto
+una risorsa incide sul gioco}, e dove ha senso bilanciarla, se farla crescere o diminuire: non
+è sempre semplice capirlo. La tecnica base è: se c'è uno spazio azione dove si ottengono delle
+risorse, \textbf{si raddoppia la quantità}, anche se il numero sembra grandissimo,
+\textbf{oppure la si divide}. Raddoppiare o dividere è un'\textbf{estremizzazione}, ed
+estremizzare una risorsa ne rende subito evidente l'impatto sul gioco: si applica la tecnica e
+si vede come reagisce il sistema.
+
+\paragraph{Le dipendenze.} Se la risorsa ha \textbf{tante dipendenze}, il sistema può
+``fallire'': la modifica scombina tantissime cose a cascata, e la tecnica diventa praticamente
+inutile, perché non restituisce alcun valore certo. Più dipendenze ha, più il rischio è alto.
+Per esempio, è \textbf{poco rischioso} applicarla ai \textbf{punti vittoria}: raddoppiare o
+dividere i punti di una carta specifica di solito ha poco impatto sul resto delle carte e dei
+componenti, perché è \textbf{un valore finale}, con poche dipendenze. Va comunque valutato di
+volta in volta.
+
+\paragraph{Quanto deve pesare ogni parte.} Va considerato anche, come questione a sé,
+\textbf{quanto valgono le varie parti del gioco}. Se si fa un gioco in cui si costruisce la
+propria \textbf{città} sulla propria plancia, e poi ci sono \textbf{obiettivi} e
+\textbf{risorse} che danno punti, e il \emph{focus} deve essere la città, allora la città deve
+valere \textbf{il 50, 60, anche 70\%} del punteggio totale, riservando il \textbf{10--15\%}
+agli altri sistemi che entrano nel conteggio finale. Non è un caso che in
+\textbf{\emph{Wingspan}} \textbf{quasi il 50\%} dei punti derivi dalle \textbf{carte uccello} o
+dall'uso di determinate abilità, perché sono il \emph{focus} del gioco: difficilmente si fa più
+della metà dei punti con le risorse rimaste a fine partita o con le carte obiettivo. È anche una
+questione di \textbf{dove mettere il \emph{focus} dell'esperienza}.
+
+\paragraph{Una ricerca progressiva.} La tecnica può essere \textbf{progressiva}: applicando
+costantemente il raddoppio o la divisione si arriva a trovare il \textbf{valore medio}. Si
+continua a raddoppiare finché la risorsa non diventa \textbf{troppo incisiva}; da lì si torna
+a dividere, cioè un po' indietro; e così, stringendo via via il campo, si trova il valore
+giusto (figura~\ref{a14:fig:raddoppia}). Anche qui, però, bisogna capire se il valore
+``giusto'' è quello che serve a \textbf{veicolare l'intento del \emph{design}}, o se è
+semplicemente qualcosa che funziona ma finisce per \textbf{appiattire} il resto delle risorse:
+``fare attenzione sempre al solito concetto''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small, x=1.25cm, y=1cm]
+  \draw[thick] (0,0) -- (9,0);
+  \foreach \x/\l in {0.5/1, 1.5/2, 3.5/4, 7.5/8} {
+    \draw (\x,-0.12) -- (\x,0.12);
+    \node[below, font=\footnotesize] at (\x,-0.15) {\l};
+  }
+  \fill[gray!25] (3.5,-0.08) rectangle (7.5,0.08);
+  \node[font=\footnotesize] at (5.5,-1.3) {qui sta il valore cercato};
+  \draw[-{Stealth[length=2mm]}, thick] (0.5,0.3) to[bend left=40] node[above,
+    font=\scriptsize] {$\times 2$} (1.5,0.3);
+  \draw[-{Stealth[length=2mm]}, thick] (1.5,0.3) to[bend left=40] node[above,
+    font=\scriptsize] {$\times 2$} (3.5,0.3);
+  \draw[-{Stealth[length=2mm]}, thick] (3.5,0.3) to[bend left=40] node[above,
+    font=\scriptsize] {$\times 2$: troppo!} (7.5,0.3);
+  \draw[-{Stealth[length=2mm]}, thick] (7.5,-0.2) to[bend left=40] node[below,
+    font=\scriptsize] {a metà strada} (5.5,-0.2);
+  \node[font=\footnotesize, text width=4.3cm, align=left, anchor=west] at (9.2,0.2)
+    {1: poco incisiva\\ 2, 4: ancora poco\\ 8: troppo incisiva\\ $\Rightarrow$ si torna
+    indietro e si stringe tra 4 e 8};
+\end{tikzpicture}
+\caption{Raddoppia o dividi come ricerca progressiva: si estremizza la risorsa finché il suo
+impatto non diventa evidente, poi si torna indietro stringendo l'intervallo. Funziona bene su
+valori con poche dipendenze, come i punti vittoria di una carta.}
+\label{a14:fig:raddoppia}
+\end{figure}
+
+\paragraph{Approfondimento: la regola di Sid Meier.} Schell riporta la stessa tecnica come
+``regola del raddoppio e del dimezzamento'': quando si cambia un valore per bilanciare, si
+spreca tempo a cambiarlo di poco; conviene raddoppiarlo o dimezzarlo nella direzione in cui
+deve andare, e poi, se si è esagerato, provare a metà strada. L'esempio è un razzo che fa 100
+punti di danno: se sembrano troppi, non si scende a 90 o 80, ma a 50. La regola è spesso
+attribuita a Brian Reynolds, che però, interpellato da Schell, ne dà il merito a \textbf{Sid
+Meier}: lo prese da parte, all'inizio degli anni Novanta, mentre lavoravano a
+\emph{Colonization}, dopo averlo visto cambiare ripetutamente un valore del 10\%. Il punto,
+dice Reynolds, è cambiare qualcosa in modo da \emph{sentire} subito la differenza, invece di
+perdersi a chiedersi se si è avuto un effetto, o peggio vederne uno che non c'è, magari per
+una serie sfortunata di numeri casuali.
+
+% ---------------------------------------------------------------------
+\section{Due problemi, una soluzione}
+\label{a14:sec:dueproblemi}
+
+Un'altra tecnica molto usata, soprattutto \textbf{all'inizio dello sviluppo}: \textbf{due
+problemi, una soluzione}. Quando si trova un problema, \textbf{non lo si risolve subito}: se ne
+cerca \textbf{almeno un altro}, e si applica \textbf{una soluzione a entrambi}, cioè una sola
+modifica che li risolva tutti e due. Questo aiuta a \textbf{far convergere il lavoro}, verso
+una riduzione del numero di problemi: magari la soluzione ne fa emergere un altro, ma
+generalmente \textbf{non ne fa emergere altri due}, e così si progredisce.
+
+È utile all'inizio. Applicata \textbf{verso la fine}, ci si accorge che intanto è \textbf{poco
+efficace}, e soprattutto che la soluzione trovata \textbf{impatta molto più forte} su tutti gli
+altri sistemi. Il consiglio è di usarla principalmente all'inizio, e di fare attenzione
+\textbf{all'impatto di ciascuna leva}: risolvendo due problemi con una nuova soluzione si
+modificano leve che a loro volta possono creare problemi. Purtroppo questo si risolve solo in
+due modi: con \textbf{l'esperienza}, cioè sapendo più o meno che cosa succede quando si
+applicano certe soluzioni, e con i \textbf{\emph{test}}, perché a volte non c'è modo di
+risolvere i problemi se non empiricamente.
+
+% ---------------------------------------------------------------------
+\section{Gli elementi ricorrenti del bilanciamento}
+\label{a14:sec:elementi}
+
+Seguono ``vari elementi'' che ricorrono quando si parla di bilanciamento e di sviluppo, e per
+cui Marta non ha trovato ``un modo coerente di metterli'': in questa slide ha cercato di
+trasmettere ``quelle cose che si apprendono un po' per esperienza''. La
+tabella~\ref{a14:tab:elementi}, alla fine della sezione, li riassume.
+
+\subsection{Le progressioni di punteggio}
+
+Ci sono \textbf{progressioni note} per i punteggi. Una classica è \textbf{1, 3, 6, 10, 15}: tra
+un numero e l'altro l'incremento cresce di uno (+2, +3, +4, +5). Serve, per esempio, in una
+\textbf{collezione di set}, a rendere la collezione \textbf{sempre più premiante} man mano che
+cresce. Una progressione ancora più forte è quella \textbf{quadratica}: con 5 pezzi di una
+risorsa si fanno \textbf{25 punti}; cresce molto più rapidamente dell'altra, e quindi si dà
+\textbf{ancora più importanza} a quella risorsa. Oppure ci può essere una progressione
+\textbf{penalizzante}: dà punti fino a un certo punto, per esempio 1, 3, 6, e poi
+\textbf{scende}, 5, 4; dice che quella risorsa la si vuole, \textbf{``ma non troppo''}
+(figura~\ref{a14:fig:progressioni}).
+
+Sono elementi che tornano comodi quando si ha una collezione di set e si vuole creare una certa
+esperienza in linea con il \emph{design}. Molto spesso la prima cosa che si fa è prendere una
+di queste progressioni ``classiche'', applicarla e vedere come reagisce il gioco; ``in rari casi
+vengono cambiate''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small, x=1.5cm, y=0.16cm]
+  \draw[thick, ->] (0,0) -- (5.6,0) node[right, font=\footnotesize] {pezzi};
+  \draw[thick, ->] (0,0) -- (0,27) node[above, font=\footnotesize] {punti};
+  \foreach \x in {1,...,5} \node[below, font=\footnotesize] at (\x,0) {\x};
+  \foreach \y in {0,5,10,15,20,25} \node[left, font=\footnotesize] at (0,\y) {\y};
+  % quadratica
+  \draw[thick] (1,1) -- (2,4) -- (3,9) -- (4,16) -- (5,25);
+  \foreach \x/\y in {1/1,2/4,3/9,4/16,5/25} \fill (\x,\y) circle (1.8pt);
+  \node[font=\footnotesize, anchor=west] at (5.1,25) {quadratica};
+  % triangolare
+  \draw[thick, dashed] (1,1) -- (2,3) -- (3,6) -- (4,10) -- (5,15);
+  \foreach \x/\y in {1/1,2/3,3/6,4/10,5/15} \fill[white, draw=black] (\x,\y) circle (1.8pt);
+  \node[font=\footnotesize, anchor=west] at (5.1,15) {1, 3, 6, 10, 15};
+  % penalizzante
+  \draw[thick, dotted] (1,1) -- (2,3) -- (3,6) -- (4,5) -- (5,4);
+  \foreach \x/\y in {1/1,2/3,3/6,4/5,5/4} \fill[gray] (\x,\y) circle (1.8pt);
+  \node[font=\footnotesize, anchor=west] at (5.1,4) {penalizzante (``ma non troppo'')};
+\end{tikzpicture}
+\caption{Le tre progressioni di punteggio di cui parla Marta. Più ripida è la curva, più il
+gioco spinge a concentrarsi su quella collezione; una curva che scende dopo un massimo dice
+che la risorsa serve, ma non in eccesso.}
+\label{a14:fig:progressioni}
+\end{figure}
+
+\subsection{Mettere in relazione le risorse: moltiplicazioni e set}
+
+\paragraph{La moltiplicazione.} Si possono \textbf{mettere in relazione due risorse}, per
+esempio con una \textbf{moltiplicazione}: si ottengono punti pari a \textbf{risorsa A per risorsa
+B}. L'intento di sviluppo che questo veicola è che si vogliono \textbf{possibilmente tante A
+quante B}, e non tante dell'una e poche dell'altra: per come funziona la moltiplicazione, a
+parità di pezzi totali si ottiene di più se i due numeri sono uguali che se uno è molto alto e
+l'altro molto basso (con 6 pezzi, $3 \times 3 = 9$, mentre $5 \times 1 = 5$). È una cosa che si
+adotta quando si vede che c'è \textbf{troppa concentrazione su una delle due risorse}, magari
+perché risulta più premiante: la moltiplicazione le \textbf{ribilancia}, in modo che abbiano lo
+stesso interesse.
+
+\paragraph{Il set.} Lo stesso vale per più di due risorse, tre o quattro, quando si vuole che
+nel gioco \textbf{siano tutte importanti} e non vengano trascurate: allora si premia
+\textbf{il set}. Per ogni set completo, cioè almeno una di ciascuna risorsa, si dà un certo
+punteggio.
+
+\paragraph{Punteggio verticale e orizzontale.} Marta non ricorda il termine inglese di
+partenza (``mi sfugge il termine'') e li chiama \textbf{punteggio verticale} e
+\textbf{punteggio orizzontale}. Il \textbf{verticale} è quello classico: questa risorsa dà
+tanto, quest'altra tanto, per quello che ho ottenuto nel gioco. L'\textbf{orizzontale} prende
+\textbf{l'altro asse}, e analizza \textbf{quante risorse diverse} ho ottenuto: è il caso, molto
+spesso, del calcolo dei set di risorse.
+
+``Anche queste sono tutte cose che trovate standard.'' Ed è anche per questo, come diceva la
+volta precedente, che è importante \textbf{giocare tanti giochi}, conoscere tanto, avere
+curiosità, esplorare anche giochi \textbf{fuori dalla propria \emph{comfort zone}} e
+guardarli con occhio critico: ci si accorge che molte di queste cose sono riusate in
+tantissimi giochi.
+
+\subsection{L'esclusività delle risorse}
+
+Si torna all'esempio di \emph{Splendor}: c'è un motivo per cui lì le risorse sono
+\textbf{esclusive}, cioè i gettoni sono \textbf{in numero prefissato}. ``Mi sembra che sono
+10, ora non sono sicurissima''\footnote{Nel gioco i gettoni gemma sono 7 per colore, più 5
+gettoni oro jolly, e se ne usano meno con due o tre giocatori. Il numero esatto non cambia il
+ragionamento di Marta.}, per ogni risorsa, e le persone ne possono prendere \textbf{tre a turno}
+con la propria azione. Essendo esclusive, il gioco si basa anche sulla \textbf{scarsità}: è una
+strategia lecita \textbf{prendere delle risorse per toglierle} agli altri e fare in modo che
+non ci siano per le altre persone al tavolo. E l'effetto si propaga: se c'è una carta che
+interessa a più giocatori, togliendo la risorsa dal tavolo la carta diventa \textbf{esclusiva a
+sua volta}, perché nessun altro la può completare. Poi la cosa si manifesta come un aspetto di
+\textbf{\emph{timing}}: diventa importante \textbf{quando} restituire quelle risorse.
+
+\paragraph{Da limite a opportunità.} Marta lo dice perché molto spesso l'esclusività delle
+risorse è nata come \textbf{limite}, per via del \textbf{numero di componenti}: essendo un
+prodotto fisico, come visto parlando dei limiti della componentistica, è complicato mettere
+tante cose in una scatola. Ma, come tutti i limiti, a un certo punto è diventata
+un'\textbf{opportunità} di \emph{design} e di sviluppo: quando ci si accorge che c'è
+\textbf{poca interazione tra i giocatori}, introdurre l'esclusività delle risorse a volte fa
+esattamente quello che serve per \textbf{generare interazione}. Lo stesso vale per gli
+\textbf{incentivi}, sia nel restituire queste risorse sia nel prenderle, nel caso la risorsa
+sia esclusiva ma i giocatori non la prendano in considerazione.
+
+\subsection{La crescita tra i round}
+
+Un altro aspetto importante è la \textbf{crescita tra round}. In molti giochi è importante che
+tra un round e l'altro \textbf{ci sia una differenza}: se in tutti i round si ha accesso alle
+stesse identiche risorse, la stessa situazione sulla plancia, le stesse possibilità, il gioco
+risulta \textbf{statico}. La crescita fa percepire \textbf{la progressione} a chi gioca. A volte
+viene tralasciata, ma si può fare in modo abbastanza semplice: se c'è una \textbf{rendita}, la
+rendita cresce; oppure, man mano che si piazzano cose sul tabellone, si \textbf{sbloccano} cose
+sulla propria plancia che danno più possibilità andando avanti. È un elemento che nello
+sviluppo viene esaminato molto spesso, perché magari il gioco funziona, ma ha \textbf{una
+crescita piatta}, e bisogna lavorare per farla aumentare.
+
+\subsection{Il controllo dell'alea e del caos}
+
+Altro elemento frequente: il \textbf{controllo dell'alea o del caos}. Il gioco può presentare
+sia alea sia caos, ma in modo \textbf{estremizzato}, e allora bisogna trovare strumenti per
+regolarli. L'esempio più classico: \textbf{lancio un dado e spendo una risorsa per fare il
+\emph{re-roll}}. Molti giochi con questa meccanica non avevano di base il \emph{re-roll}: è
+stato aggiunto \textbf{in fase di sviluppo}, perché si è visto che il lancio di dado senza
+possibilità di rilancio è un'esperienza \textbf{frustrante} per la maggior parte di chi gioca.
+C'è poi l'esempio pratico di \textbf{\emph{Magical Athlete}}, che ha ``abbattuto un po' questa
+concezione'': oggi ci sono giochi che accettano ``un po' più di buon grado'' anche il lancio
+del dado senza controllo. Ma in fase di sviluppo questo resta uno degli elementi su cui si va a
+incidere. Un altro esempio: tessere pescate \textbf{da un sacchetto}, con la possibilità di
+\textbf{pescarne più di una}, o di \textbf{rimettere} quella pescata e pescarne un'altra.
+
+\subsection{Le probabilità}
+
+È utile avere \textbf{una base di probabilità}. L'esempio più classico è il dado, e sapere come
+usare i dadi in un gioco ``può fare la differenza''.
+
+\paragraph{Lineare.} Un dado da 1 a 6 ha una probabilità cosiddetta \textbf{lineare}
+(uniforme): ogni faccia ha la stessa probabilità di uscire.
+
+\paragraph{A campana.} Con \textbf{due dadi} la probabilità segue una \textbf{curva a campana}:
+il risultato medio è più probabile dei risultati agli estremi. ``Penso che questo lo sappiate'':
+con due dadi è molto più probabile fare \textbf{7} che fare 2 o 12. È una particolarità che può
+\textbf{informare le decisioni}. Si immagini un \textbf{gioco di percorso} in cui si lancia un
+solo dado: si dà la stessa probabilità a tutte le facce, e mediamente ci si muove di
+\textbf{3,5}, il valore medio di un dado. Con due dadi, invece, uscirà più spesso il 7: è un
+sistema ``più morbido'', perché i risultati estremi sono più rari. Con un dado solo, il 6 può
+uscire tanto quanto il 3 o il 4, e solo su molti lanci la media si riporta a 3,5. Questo aiuta
+a capire che cosa serve in funzione del gioco (figura~\ref{a14:fig:dadi}).
+
+\paragraph{Calante.} La probabilità può anche essere \textbf{calante}. Si immagini di poter
+scegliere quante risorse ottenere, \textbf{da una a cinque}, ma per ogni risorsa voluta bisogna
+\textbf{lanciare una moneta}. Se se ne prende una, si lancia una moneta: con testa la si tiene,
+con croce no. Se se ne vogliono cinque, si lanciano cinque monete, ma \textbf{basta una sola
+croce per non tenerne nessuna}. La probabilità \textbf{cala} al crescere delle risorse che si
+vogliono ottenere. Si usa anche questo: per esempio, in un gioco di percorso, ``posso muovermi
+di quanto mi pare, ma poi lancio il dado'', e se il risultato è inferiore allo spostamento
+dichiarato devo tornare indietro, o non mi muovo affatto.
+
+Sono piccoli meccanismi che influenzano e guidano le scelte, e che aiutano a regolare lo
+sviluppo: magari in fase di \emph{design} si è detto ``mi interessa che sia un gioco di
+percorso, mi basta lanciare un dado da 6 e andare dove vado''; ma in sviluppo si vuole che la
+decisione sia \textbf{più controllata}, e si possono inserire strutture come il
+\textbf{cambiare la probabilità} di quel meccanismo.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small, x=0.42cm, y=0.30cm]
+  % un dado
+  \node[font=\footnotesize\bfseries] at (3.5,8.3) {un dado: lineare};
+  \draw[thick, ->] (0,0) -- (7.6,0);
+  \foreach \v in {1,...,6} {
+    \fill[gray!45] (\v-0.4,0) rectangle (\v+0.4,6);
+    \node[below, font=\scriptsize] at (\v,0) {\v};
+  }
+  \node[font=\scriptsize] at (3.5,7.0) {ogni faccia: 6/36};
+  % due dadi
+  \begin{scope}[shift={(9,0)}]
+    \node[font=\footnotesize\bfseries] at (7,8.3) {due dadi: a campana};
+    \draw[thick, ->] (0,0) -- (13.6,0);
+    \foreach \v/\h in {2/1,3/2,4/3,5/4,6/5,7/6,8/5,9/4,10/3,11/2,12/1} {
+      \fill[gray!45] (\v-0.4,0) rectangle (\v+0.4,\h);
+      \node[below, font=\scriptsize] at (\v,0) {\v};
+    }
+    \node[font=\scriptsize] at (7,7.0) {7: 6/36 \quad 2 o 12: 1/36};
+  \end{scope}
+  % monete
+  \begin{scope}[shift={(23.6,0)}]
+    \node[font=\footnotesize\bfseries, align=center] at (3.5,8.3) {monete: calante};
+    \draw[thick, ->] (0,0) -- (6.6,0);
+    \foreach \v/\h in {1/6.4,2/3.2,3/1.6,4/0.8,5/0.4} {
+      \fill[gray!45] (\v-0.4,0) rectangle (\v+0.4,\h);
+      \node[below, font=\scriptsize] at (\v,0) {\v};
+    }
+    \node[font=\scriptsize, align=center] at (3.5,7.0) {tenere $n$ risorse: $1/2^n$};
+  \end{scope}
+\end{tikzpicture}
+\caption{Le tre forme di probabilità dell'esempio di Marta: il dado singolo (ogni faccia
+ugualmente probabile, media 3,5), due dadi (il 7 è sei volte più probabile del 2 o del 12) e la
+probabilità calante delle monete (per tenere $n$ risorse servono $n$ teste di fila: 50\%,
+25\%, 12,5\%\ldots). Le barre sono in scala all'interno di ciascun grafico.}
+\label{a14:fig:dadi}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.2cm}p{5.2cm}p{5.0cm}@{}}
+\toprule
+\textbf{Tecnica o elemento} & \textbf{Che cosa fa} & \textbf{Attenzione a} \\
+\midrule
+Budget di complessità & ciò che si toglie libera complessità, da eliminare o reinvestire
+  nel \emph{focus} & nel dubbio, meglio accessibile \\
+\addlinespace
+Alto e basso rischio & crea una scelta sensibile con due macro-strategie comunicanti & la
+  ricompensa deve valere il rischio \\
+\addlinespace
+Ancoraggio & tutto è rapportato a un valore ancora (\emph{Stone Age}: un puntino = un punto)
+  & risorse interdipendenti, turni extra, \emph{draft} \\
+\addlinespace
+Durata & round o soglie fissate $\Rightarrow$ punti per round $\Rightarrow$ valore dei
+  pezzi; tagliare turni iniziali o finali & la durata intraturno si moltiplica per persone
+  e round \\
+\addlinespace
+Raddoppia o dividi & estremizza per vedere l'impatto, poi stringe & le dipendenze; il
+  valore ``giusto'' può appiattire \\
+\addlinespace
+Due problemi, una soluzione & fa convergere il lavoro & solo all'inizio dello sviluppo \\
+\addlinespace
+Progressioni & 1-3-6-10-15, quadratica, penalizzante & che cosa si vuole premiare \\
+\addlinespace
+$A \times B$ e set & spingono a bilanciare le risorse tra loro & punteggio verticale contro
+  orizzontale \\
+\addlinespace
+Esclusività & scarsità, interazione, \emph{timing} & nata come limite di componenti \\
+\addlinespace
+Crescita tra round & progressione percepita (rendite, sblocchi) & la crescita piatta \\
+\addlinespace
+Controllo dell'alea & \emph{re-roll}, più pescate, rimettere nel sacchetto & non sempre serve
+  (\emph{Magical Athlete}) \\
+\addlinespace
+Probabilità & lineare, a campana, calante & scegliere la forma che serve all'esperienza \\
+\bottomrule
+\end{tabular}
+\caption{Gli strumenti di bilanciamento presentati nella lezione, nell'ordine in cui li
+presenta Marta.}
+\label{a14:tab:elementi}
+\end{table}
+
+\paragraph{Approfondimento: la probabilità per chi progetta.} Schell dedica un capitolo alla
+probabilità con dieci ``regole'', e una delle sue osservazioni conferma il consiglio di Marta
+di testare invece di calcolare: il \emph{metodo Monte Carlo}, cioè ripetere la prova molte volte
+e contare i risultati, ``a volte dà risultati più utili della probabilità teorica, perché è una
+misura della cosa reale''. La sua ultima regola, scherzosa, è la più pratica: quando un calcolo
+si fa difficile, cercare qualcuno che si consideri ``un mago della matematica'', che ne sarà
+entusiasta. Brathwaite e Schreiber, in \emph{Challenges for Game Designers}, dedicano invece un
+intero capitolo all'equilibrio tra caso e abilità, il tema del controllo dell'alea.
+
+% ---------------------------------------------------------------------
+\section{Smussare la stella}
+\label{a14:sec:stella}
+
+``Vediamo, ok. Forse devo correre un po', allora.'' \textbf{Non è detto che chi crea il gioco
+abbia chiaro il \emph{design}.} Per spiegarlo Marta usa un modo di dire: un gioco è
+\textbf{una stella}, e lo sviluppo \textbf{smussa gli angoli}, perché le punte non blocchino
+l'ingresso in un ipotetico buco (``non so come dirlo meglio''). Le punte rappresentano le
+\textbf{qualità e le particolarità del \emph{design}}. Come detto la volta prima, il
+\emph{design} è anche \textbf{personale} e dovrebbe sfuggire un po' alle logiche di mercato; e
+così anche lo sviluppo. Oggi tenere alcune punte è diventato più importante che in passato;
+tuttavia si smussa, perché \textbf{più punte ha la stella, meno è digeribile per un pubblico
+ampio}: le persone hanno bisogno di un po' di \textbf{familiarità} e di un po' di
+\textbf{novità}, non accettano una cosa totalmente innovativa, ma neanche ne vogliono una
+estremamente familiare. È un gioco di \textbf{trovare il punto giusto}.
+
+\paragraph{Chi ha creato il gioco può non vedere l'intento.} In questo, a volte, anche chi ha
+creato il gioco ha poco chiaro l'intento del \emph{design}, nonostante il gioco lo manifesti:
+viene fuori giocandolo. Lo sviluppo deve però evitare di \textbf{finire sui \emph{bias}
+personali}: se si ha un genere preferito, bisogna fare attenzione a non mettere la propria
+preferenza in tutti i giochi. Se si fa un gioco per bambini, è inutile metterci le dinamiche di
+un \textbf{motore economico}: ``non funziona'', o quanto meno sarà molto complicato far capire a
+un bambino come funziona economicamente un motore di gioco. ``So che sembra una banalità'', ma è
+una tendenza in cui si cade con estrema facilità, anche in casi che sembrano estremi.
+
+\paragraph{Il GCD come bussola.} Il \textbf{\emph{Game Concept Document}} dà il \emph{focus} per
+restare sul progetto: averlo sempre a portata di mano aiuta a ricordare che cosa si sta
+facendo, come lo si sta facendo, e \textbf{che cosa si può davvero smussare} senza intaccare
+uno dei \textbf{pilastri}, cosa che comprometterebbe davvero il \emph{design}. Resta il fatto che
+\textbf{se una cosa non è fondamentale all'esperienza, può essere tolta}.
+
+\paragraph{Ma attenzione a che cosa è ``fondamentale''.} La valutazione personale porta sempre
+il rischio di sbagliarsi. Una cosa che \textbf{sembra} non fondamentale, come i \textbf{testi di
+ambientazione} (\emph{flavor text}) su alcune carte, solo perché non entrano in gioco in modo
+meccanico, a volte viene considerata non incisiva. Ma se \textbf{\emph{Wingspan}} non avesse i
+testini che raccontano i comportamenti degli uccelli e tutto il resto, probabilmente non avrebbe
+la stessa potenza, la stessa capacità di fare leva su tantissime persone che ha avuto nella
+pratica. Alcune cose non sembrano fondamentali, ``ma fanno la differenza''.
+
+\paragraph{Approfondimento: l'eleganza e il dettaglio.} Schell elenca tra i dodici tipi di
+bilanciamento anche ``semplice contro complesso'' e ``dettaglio contro immaginazione'', e
+propone una \emph{lente dell'eleganza}: un sistema elegante fa molto con pochi elementi. Ma per
+lui l'eleganza non è il taglio indiscriminato: i dettagli che \emph{nutrono} l'immaginazione,
+e che l'immaginazione può riusare più e più volte, vanno tenuti. I testi di \emph{Wingspan} sono
+esattamente questo tipo di dettaglio.
+
+% ---------------------------------------------------------------------
+\section{I ``difetti'' dei giochi da tavolo}
+\label{a14:sec:difetti}
+
+``Ok, vediamo alcuni dei difetti cosiddetti dei giochi da tavolo.'' Le virgolette sono volute:
+molte di queste cose vengono elencate come difetti, \textbf{ma non lo sono}. Lo sono se sono
+\textbf{una dinamica che va contro l'esperienza attesa}: ``tendenzialmente sì, se va contro
+l'esperienza attesa, di fatto lo possiamo chiamare difetto''. Ma \textbf{non esistono meccaniche
+che siano difetti a priori}: vanno viste in funzione del gioco. Molto spesso le persone
+confondono le meccaniche che generano \textbf{stati d'animo negativi} (la
+\textbf{frustrazione}, a volte la \textbf{noia}) con difetti del gioco. Non è sempre così.
+\textbf{Attenzione ai \emph{feedback}}, quindi: molto spesso vi elencheranno queste cose come
+difetti, e non è detto che lo siano. Una slide lo riassume: bisogna distinguere
+\textbf{l'intento del \emph{design}} dalle \textbf{dinamiche incontrollate}. Il ``difetto'' era
+un intento del \emph{design}, oppure è lì perché è un \textbf{aspetto vestigiale del genere}, e
+genera dinamiche che neanche il designer sa controllare? La tabella~\ref{a14:tab:difetti} li
+riassume.
+
+\paragraph{L'eliminazione dei giocatori: \emph{Bang!}.} La \textbf{\emph{player elimination}}
+viene prima perché probabilmente la conoscono tutti, per via di \textbf{\emph{Bang!}}. Tantissime
+persone si lamentano di \emph{Bang!} perché c'è l'eliminazione dei giocatori, ma poche si
+rendono conto che \textbf{\emph{Bang!} senza eliminazione non funzionerebbe}: sarebbe un gioco
+poco efficace. L'eliminazione garantisce che \textbf{tutta la partita sia giocata in tensione};
+che non si possano \textbf{scaricare le risorse} liberamente senza pensarci, perché poi si
+giocherebbe tutta la partita senza risorse; e fa tutta la differenza sulle
+\textbf{ritorsioni}: in certi casi ``posso permettermi di finire le risorse perché so che non
+subirò ritorsioni'', cosa che senza eliminazione non sarebbe possibile. La narrativa sottesa di
+\emph{Bang!}, e il motivo per cui continua a piacere a tantissime persone, è legata anche
+all'eliminazione: è un gioco sul \textbf{Far West}, in un certo senso spietato, che vuole
+trasmettere una narrativa con \textbf{\emph{high stakes}}, una posta in gioco
+altissima\footnote{Marta dice ``delle \emph{high stakes}, delle alte\ldots{} non mi torna il
+termine italiano, perdonatemi''.}. Ci sono però giochi in cui l'eliminazione è \textbf{poco
+giustificata}: in un gioco in cui si coopera per salvare il pianeta, ha poco senso eliminare
+un giocatore a caso, ``adesso faccio per dire; poi magari trovate la chiave di lettura per cui
+ha senso''.
+
+\paragraph{\emph{Runaway leader} e \emph{bash the leader}: \emph{Root}.} Anche queste sono
+spesso viste come negative. Il \textbf{\emph{runaway leader}} è quando un giocatore prende un
+distacco tale che diventa difficile recuperarlo. La dinamica contrapposta è il \textbf{\emph{bash
+the leader}}\footnote{Nella trascrizione ``Base the Leader'' e ``best dei leader''.}: le persone
+individuano chi potrebbe ``correre via'' e vincere, e lo \textbf{bastonano}, letteralmente;
+tutti se la prendono con la stessa persona, quella in testa. Entrambe possono essere utili in
+giochi che rappresentano \textbf{dinamiche di potere}. \emph{Root}, che rappresenta proprio le
+dinamiche di potere tra fazioni diverse, ha fatto del \emph{bash the leader} una delle sue
+caratteristiche peculiari: il designer l'ha voluta mettere dentro con l'obiettivo di far
+ruotare il gioco attorno a questa cosa. Non è una dinamica non voluta: è
+\textbf{desiderata}, e il gioco dà gli strumenti sia per metterla in pratica sia per evitare che
+diventi incontrastabile.
+
+\paragraph{I \emph{feedback loop}.} Sono quando le risorse o i meccanismi di gioco
+\textbf{informano la decisione successiva}. Un \emph{feedback loop} \textbf{positivo}: spendo
+risorse e ottengo punti vittoria, e magari un'altra risorsa, che posso usare per ottenere altri
+punti e altre risorse: ``capite che cresce all'infinito''. Un \emph{feedback loop}
+\textbf{negativo}: eseguire qualcosa non dà qualcosa che rinforza il ciclo, e quindi rifarlo non
+è premiante, e questo smorza le fasi successive. Sono dinamiche da tenere d'occhio, perché
+possono compromettere l'intento.
+
+\paragraph{Il \emph{kingmaking}.} ``Il \emph{kingmaking} è un'altra\ldots{} vabbè'': Marta non si
+dilunga, ``se avete qualche curiosità''\footnote{Il \emph{kingmaking} è la situazione in cui
+un giocatore che non può più vincere decide, con le sue mosse, chi tra gli altri vincerà.}.
+
+\paragraph{Divergenza e convergenza.} Le trova ``sempre interessanti''. Molto spesso i giochi
+\textbf{non convergono}, cioè non arrivano a una fine: il \emph{design} magari è bello, ma chi
+l'ha creato \textbf{non ha pensato a come finisce}, e il gioco può \textbf{stallare}, non
+concludersi mai. Bisogna sapere come farlo convergere, e ci sono meccanismi per farlo. Se la
+fine del gioco è legata alla \textbf{fine del mazzo}, in un gioco in cui le carte vengono
+\textbf{rimesse nel mazzo}, c'è \textbf{divergenza}: il gioco potrebbe non finire mai, perché il
+mazzo non finisce mai. Se invece le carte pescate \textbf{non vengono reinserite} in nessun modo
+e ogni turno se ne devono pescare \textbf{due}, si sa che \textbf{entro $n/2$ turni la partita
+sarà finita}, con $n$ carte nel mazzo (figura~\ref{a14:fig:convergenza}). ``Vedete, questi
+valori un po' così, perché è un po' diverso il valore vero; tuttavia fate finta che ora vada
+bene''\footnote{La precisazione di Marta è giusta: se a pescare sono più giocatori, o se ci sono
+altri modi di consumare il mazzo, il conto cambia. Il principio, cioè che una risorsa che si
+consuma senza tornare indietro garantisce la fine, resta.}.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a14b/.style={draw, thick, rounded corners=3pt, text width=2.0cm, align=center,
+               minimum height=0.9cm, fill=white},
+  a14arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  \node[font=\footnotesize\bfseries] at (2.0,1.6) {divergente};
+  \node[a14b] (m1) at (0,0) {mazzo};
+  \node[a14b] (g1) at (4,0) {gioco};
+  \draw[a14arr] (m1.north east) to[bend left=25] node[above, font=\footnotesize] {pesca}
+    (g1.north west);
+  \draw[a14arr] (g1.south west) to[bend left=25] node[below, font=\footnotesize]
+    {rimetti nel mazzo} (m1.south east);
+  \node[font=\footnotesize, text width=4.6cm, align=center] at (2.0,-1.75) {il mazzo non
+    finisce mai: la partita può stallare};
+  \node[font=\footnotesize\bfseries] at (9.0,1.6) {convergente};
+  \node[a14b] (m2) at (7,0) {mazzo da $n$ carte};
+  \node[a14b] (g2) at (11,0) {scarti};
+  \draw[a14arr] (m2) -- node[above, font=\footnotesize] {2 a turno} (g2);
+  \node[font=\footnotesize, text width=4.6cm, align=center] at (9.0,-1.75) {niente torna
+    indietro: entro circa $n/2$ turni la partita finisce};
+\end{tikzpicture}
+\caption{Divergenza e convergenza nell'esempio di Marta: legare la fine della partita alla fine
+di un mazzo funziona solo se il mazzo si consuma davvero.}
+\label{a14:fig:convergenza}
+\end{figure}
+
+\paragraph{L'ordine di turno.} Infine, attenzione all'\textbf{ordine di turno}: come sono
+disposti i giocatori può \textbf{influenzare la partita di chi segue}, e il \textbf{primo
+giocatore} potrebbe avere dei vantaggi. Anche \textbf{come sono distribuite le risorse
+iniziali} tra i giocatori va guardato con attenzione. L'esempio classico è fare una serie di
+\emph{test} attenti proprio a questo: se faccio iniziare sempre la stessa persona e questa
+vince sistematicamente, da qualche parte c'è un problema. Questo è uno di quei casi che
+``raramente può non essere un difetto: tendenzialmente lo è''. Ma anche qui c'è un'eccezione:
+in un gioco che vuole mostrare \textbf{meccanismi di potere diversi}, il primo giocatore può
+essere avvantaggiato di proposito. Marta pensa a \textbf{\emph{Il Grande Dalmuti}}, in cui il
+Grande Dalmuti, che comincia a giocare, è avvantaggiato: ma quello è un gioco che vuole proprio
+far percepire \textbf{la differenza di potere} tra i giocatori al tavolo\footnote{\emph{Il Grande
+Dalmuti} è anch'esso di Richard Garfield (1995).}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.0cm}p{4.8cm}p{5.6cm}@{}}
+\toprule
+\textbf{``Difetto''} & \textbf{Che cos'è} & \textbf{Quando è voluto (esempio di Marta)} \\
+\midrule
+\emph{Player elimination} & un giocatore esce dalla partita & \emph{Bang!}: tensione, niente
+  risorse sprecate, ritorsioni, narrativa del Far West \\
+\addlinespace
+\emph{Runaway leader} & un distacco irrecuperabile & in giochi sulle dinamiche di potere \\
+\addlinespace
+\emph{Bash the leader} & tutti contro chi è in testa & \emph{Root}: il gioco ruota attorno a
+  questo, e dà strumenti per farlo e per evitarlo \\
+\addlinespace
+\emph{Feedback loop} & positivo: cresce all'infinito; negativo: rifare non premia & da tenere
+  d'occhio rispetto all'intento \\
+\addlinespace
+\emph{Kingmaking} & chi non può vincere decide chi vince & (non approfondito) \\
+\addlinespace
+Divergenza & il gioco non converge, stalla & mai: va fatto convergere \\
+\addlinespace
+Ordine di turno & chi inizia vince sistematicamente & raramente: \emph{Il Grande Dalmuti}, che
+  vuole far sentire la differenza di potere \\
+\bottomrule
+\end{tabular}
+\caption{I ``difetti'' dei giochi da tavolo: dinamiche che diventano difetti solo se vanno
+contro l'esperienza attesa. La domanda è sempre se siano intento del \emph{design} o dinamiche
+incontrollate, magari vestigia del genere.}
+\label{a14:tab:difetti}
+\end{table}
+
+\paragraph{Approfondimento: \emph{feedback} positivo e durata.} Il caso del \emph{runaway
+leader} è lo stesso problema dei turni finali degli \emph{engine building}: un ciclo di
+\emph{feedback} positivo che rende la partita decisa prima della fine. Le soluzioni viste in
+lezione sono tre e si possono combinare: chiudere la partita quando il motore si è innescato
+(\emph{Race for the Galaxy}), dare agli altri giocatori strumenti per frenare chi è in testa
+(\emph{Root}), o introdurre cicli negativi che smorzino il vantaggio. Schell nota, a proposito
+di \emph{Monopoly}, quanto la durata dipenda da queste dinamiche: giocato con le regole
+ufficiali dura circa novanta minuti, ma molti gruppi aggiungono \emph{house rules} (premi in
+denaro, meno obblighi di acquisto) che rallentano la convergenza e lo portano a tre ore o più.
+
+% ---------------------------------------------------------------------
+\section{La domanda sulle sinergie: bilanciare per tentativi}
+\label{a14:sec:sinergie}
+
+Le slide successive contengono una serie di esempi tratti da giochi commerciali; ma
+``visto che ci avviamo a conclusione'', Marta preferisce dare la precedenza alle domande.
+
+Ne arriva una da uno studente che, si scusa, sta \textbf{guidando} (``scusate, sono in
+macchina''). Gli strumenti visti gli sono sembrati molto utili, ma c'è una cosa che farebbe
+ancora fatica a fare. Si immagini un \textbf{\emph{engine building}} in cui le singole carte
+hanno un certo valore, ma \textbf{il loro valore combinato è più alto della somma dei valori
+singoli}: tutti i casi in cui una strategia vale più delle componenti che la formano.
+\textbf{Come si bilanciano?}
+
+``Mi sembra un caso molto specifico'', risponde Marta: ``chiaramente non ho una bacchetta
+magica''. Andrebbe visto nel dettaglio, capendo le dipendenze. ``Così a naso'': se le carte da
+sole valgono poco e insieme valgono di più, si sta \textbf{premiando il set di quelle carte}.
+Bisogna capire \textbf{quante sinergie} hanno queste carte, \textbf{con quante carte} si
+sinergizzano, quali sono i \textbf{percorsi di vittoria} che ci si è figurati nel gioco, e
+analizzarle. Poi una risposta più pratica:
+\begin{itemize}
+  \item \textbf{partire da un bilanciamento per tentativi}: mettere dei numeri, anche un po' a
+        caso, ``e vai un po' a sentimento'', e vedere come reagisce il gioco. Se i valori sono
+        sballati, c'è qualcosa che non va alla radice: provare altri valori;
+  \item \textbf{partire da qualcosa di conosciuto}: prendere giochi simili, guardare i valori
+        che usano e provare a riportarli nel proprio;
+  \item se si trovano valori che fanno girare l'esperienza ma si teme che non sia bilanciata,
+        usare il \textbf{raddoppia o dividi}: che succede se \textbf{raddoppio il valore} che
+        danno le carte quando sinergizzano? È l'esperienza che voglio? Voglio premiare la
+        sinergia? Allora ha senso che diano un valore molto maggiore delle carte singole;
+  \item se invece si vogliono tenere le due cose più in equilibrio, ci si chiede se si può
+        \textbf{raddoppiare il valore delle carte singole}, e si guarda come reagiscono. Ma
+        ``viene da sé'' che, se i valori singoli superano il valore sinergico, la domanda
+        diventa: \textbf{perché dovrei farle sinergizzare?}
+\end{itemize}
+Mancano tante parti del gioco per rispondere fino in fondo, ma il consiglio è di procedere
+\textbf{per tentativi}: ``un modo di bilanciare si dice proprio bilanciamento per tentativi, ed
+è uno dei metodi più usati''. Lo studente ringrazia: gli piace l'idea di considerare
+\textbf{una strategia composta da più carte come un set}, ``è un po' di mentalità che aiuta''.
+
+\paragraph{Il valore sballato.} Marta aggiunge: il bilanciamento, ma tutto lo sviluppo, ``è una
+cosa che viene facendo''. Mettendo le mani in pasta l'esperienza conta tanto e diventa più
+chiaro quali valori usare; ma non va necessariamente fatto bene la prima volta. ``L'altro ieri''
+stava bilanciando un gioco a cui lavora e ha messo \textbf{un valore praticamente sballato}; se
+n'è accorta tardi, e il \emph{test} è andato così. Ha cercato di tenere a mente che c'era
+questa \textbf{``variabile un po' impazzita''} e si è chiesta: che cosa mi può dire, adesso? Come
+mi può informare? Se \textbf{tutti la prendono}, è una carta molto ``golosa'', e bisogna farci
+attenzione anche quando la si riporta al valore normale; e se è bastato quel cambio per
+attirare l'attenzione su di lei, \textbf{forse il valore di partenza non era così male}, e
+c'era qualche altro motivo per cui non veniva presa. Anche un errore, insomma, porta a dei
+ragionamenti.
+
+\paragraph{Approfondimento: allenare l'intuito.} Schell suggerisce un esercizio che rende meno
+casuale il ``bilanciamento per tentativi'': \emph{indovinare con precisione}. Se un proiettile
+si muove a 10 unità al secondo e sembra lento, non si prova ``un po' di più'', ma si cerca il
+numero esatto che l'intuito suggerisce (13,8?), lo si prova, e si confronta il risultato con la
+previsione. Ogni tentativo diventa un dato per l'intuito, come fa Marta con la sua variabile
+impazzita: non un fallimento, ma un'informazione.
+
+% ---------------------------------------------------------------------
+\section{Gli esempi: scelte di sviluppo in giochi pubblicati}
+\label{a14:sec:esempi}
+
+Non ci sono altre domande, e Marta usa ``questi ultimi dieci minuti'' per mostrare un paio
+degli esempi, ``giusto per dirvi delle cose che sono emerse a livello di sviluppo; spero di
+incuriosirvi''.
+
+\subsection{\emph{Carcassonne} a tre tessere}
+
+Il primo ``non è un vero e proprio sviluppo''. In \textbf{\emph{Carcassonne}} si piazzano
+tessere su un campo comune e si piazzano i propri \emph{meeple}\footnote{Nella trascrizione
+``mee-paul'' e ``people''.} sugli elementi della tessera appena piazzata; quando un elemento
+viene \textbf{chiuso} dalle altre tessere, il \emph{meeple} viene ripreso e si fanno punti,
+generalmente in base alla dimensione della strada o della città. Normalmente si
+\textbf{pesca una tessera}, la si piazza e si decide se mettere o no il \emph{meeple}.
+
+C'è una \textbf{variante molto popolare} che consiste nel giocare \textbf{con tre tessere in
+mano}: se ne sceglie una da piazzare e poi si ripesca. Spesso viene presentata come
+un'affermazione: la versione a tre tessere \textbf{è migliore}, perché c'è \textbf{meno
+incidenza della fortuna}: ho sempre una scelta tra tre, invece di pescare a caso e piazzare.
+Le preferenze individuali ``non si commentano'', perché magari alle persone piace così. Ma molte
+persone non sanno che questo cambiamento genera \textbf{importanti squilibri}.
+
+\paragraph{I \emph{meeple} perdono il loro peso.} Con tre tessere posso \textbf{riservarmi} le
+tessere che servono a chiudere una strada o una città per più avanti, e quindi gestire molto
+più facilmente \textbf{quando riprendere i \emph{meeple}}. Nel gioco i \emph{meeple} sono
+\textbf{sette}, una risorsa limitata: quando li ho piazzati tutti, se piazzo una tessera e non ho
+\emph{meeple}, non posso prenderne gli elementi e i punti. È una \textbf{dinamica voluta dal
+gioco}. Se invece ho sempre questo \textbf{``cuscinetto''} in mano, questa dimensione sparisce
+quasi completamente, perché avrò sempre dei \emph{meeple} disponibili. E allora la domanda è:
+``perché limitarli, a quel punto?''. In questo tipo di partita si perde molto il senso di
+questo aspetto del gioco.
+
+\paragraph{I monasteri diventano piatti.} Un'altra dinamica spesso fraintesa è quella dei
+\textbf{monasteri}. Nel gioco ce ne sono \textbf{sei}: un monastero va \textbf{completamente
+circondato}, ogni tessera che lo circonda vale un punto, e quando è completamente circondato si
+riprende il proprio \emph{meeple}. Giocando con una sola tessera sembra che la fortuna incida
+molto: ``o lo pesco o non lo pesco''. Ma poter scegliere \textbf{quando} piazzarlo cambia
+profondamente la dinamica:
+\begin{itemize}
+  \item \textbf{con una tessera}, si è costretti a giocare \textbf{d'anticipo} e sulle
+        probabilità, a capire quando ha senso rischiare, a \textbf{costruirsi il territorio}
+        perché il monastero possa svilupparsi;
+  \item \textbf{con tre tessere}, il monastero lo si tiene in mano finché non si trova il
+        momento opportuno, e tendenzialmente si \textbf{massimizzano i punti}. Se tutti sono
+        allo stesso livello di abilità, la massimizzazione si traduce in \textbf{un'esperienza
+        piatta}, in cui i monasteri valgono tutti più o meno lo stesso punteggio.
+\end{itemize}
+Con una tessera c'è incidenza della fortuna nella pesca, ``che, ripeto, c'è anche nell'altra
+versione''. Ma \textbf{aver preparato il terreno} al monastero e piazzarlo nel momento giusto fa
+tutta la differenza tra \textbf{una giocata di abilità} e una in cui una persona non si è
+costruita l'opportunità, o non nel momento giusto. ``C'è un motivo, ed è un motivo anche molto
+intelligente, per cui si gioca con una sola tessera e non con tre a \emph{Carcassonne}'',
+tranne, appunto, se piace e si vuole fare la \emph{house rule}.
+
+\subsection{\emph{Bonsai}: togliere i punti al legno}
+
+Il secondo esempio è un gioco su cui Marta e il suo \emph{team} hanno lavorato:
+\textbf{\emph{Bonsai}}\footnote{Marta non nomina l'editore; il contesto (``abbiamo applicato'',
+``quando il gioco ci è stato fornito'') indica che è un gioco sviluppato da lei e dai suoi
+colleghi.}. Come funziona, in breve: si prendono \textbf{carte} e \textbf{risorse}, che sono
+\textbf{esagoni}, e le si piazzano secondo un criterio, quello di \textbf{costruire una pianta
+bonsai}: si piazza il \textbf{legno}; accanto al legno si possono piazzare le \textbf{foglie};
+sulle foglie, \textbf{fiori} e \textbf{frutti}.
+
+\paragraph{Il problema.} Una volta arrivato il prototipo e giocato il gioco, si sono accorti che
+le persone, per \textbf{massimizzare i punti}, costruivano strutture \textbf{principalmente
+legnose}, e mettevano pochissimo del resto. Questo restituiva molto poco il \emph{feeling} di
+costruire un bonsai; e l'esperienza intesa era proprio quella di \textbf{far vivere l'idea di
+costruire un bonsai un po' alla volta}.
+
+\paragraph{La soluzione.} Una scelta semplice: \textbf{togliere i punti al legno}. Da quel
+momento le persone hanno cominciato a concentrarsi sul resto del gioco. Il legno continua a
+servire, perché, per la struttura di piazzamento, senza legno non si possono piazzare le foglie,
+né di conseguenza il resto: è \textbf{necessario, ma in una quantità proporzionata} agli altri
+elementi, e quindi se ne usa il \textbf{minimo indispensabile}. Ne sono nati alberi ``un po' più
+realistici'', sempre in maniera astratta, rispetto all'obiettivo di \emph{design} che si erano
+dati. È un esempio da manuale di bilanciamento esperienziale: un valore cambiato non per
+equilibrare i numeri, ma per \textbf{orientare il comportamento} verso l'esperienza voluta.
+
+\paragraph{L'espansione \emph{Wabi Sabi}.} Nell'espansione\footnote{Nella trascrizione ``WAPI
+SABI''.}, Marta parte dagli \textbf{obiettivi} del gioco base: si prendono nel momento in cui li
+si soddisfa (per esempio, chi realizza il \emph{pattern} indicato prende l'obiettivo viola
+corrispondente, e gli obiettivi più in alto sono più semplici, poi via via più difficili). Nel
+gioco base funzionavano bene: parlano di cose diverse, e per il pubblico a cui il gioco era
+indicato andavano ``particolarmente bene''. Quando il gioco è uscito, però, tante persone
+chiedevano \textbf{un'esperienza un po' più complicata}, con qualche dettaglio in più. Così
+nell'espansione hanno messo una meccanica pensata principalmente per \textbf{giocatori
+esperti}: delle \textbf{tessere tra gli obiettivi}; quando si prende un obiettivo, si può
+prendere anche la tessera associata, che dà \textbf{un obiettivo da realizzare entro la fine
+della partita}. A differenza dell'obiettivo base, che si prende appena soddisfatto, questo è
+\textbf{una condizione che deve essere vera a fine partita}: se è soddisfatta, il punteggio
+dell'obiettivo \textbf{raddoppia}; se no, \textbf{si annulla}. È una decisione molto forte, che
+crea un'\textbf{ulteriore propedeuticità} tra le strategie che si innescano nel gioco e
+aggiunge ``tutto un altro livello di pensiero''. Per un gioco considerato molto semplice e
+accessibile, ha aggiunto la dinamica in più che serviva ai giocatori, uno strumento di
+strategia ulteriore; e l'hanno fatto \textbf{partendo da un gioco già finalizzato}.
+
+\subsection{Gli altri esempi, per chi è curioso}
+
+``Va bene, io direi che ci siamo.'' C'erano un altro paio di punti, ``non proprio
+fondamentali''. Marta invita i curiosi a \textbf{intuire da soli} quali cambiamenti siano stati
+adottati:
+\begin{itemize}
+  \item \textbf{\emph{Magical Athlete}}: esiste un \textbf{\emph{designer diary}} in cui sono
+        presenti molte delle soluzioni adottate nella \textbf{reimplementazione} del gioco,
+        ``una lettura sempre molto affascinante'';
+  \item \textbf{\emph{Party House}}: è un \textbf{videogioco}, parte della collezione
+        \textbf{\emph{UFO 50}}, da cui è stato tratto un \textbf{gioco fisico}. Il gioco fisico
+        deve ancora uscire, ma si trovano il regolamento e dei video: se possibile, giocarli
+        entrambi, e farsi un'idea delle scelte fatte nella \textbf{trasposizione dal digitale al
+        fisico}. Nonostante la versione digitale sia ``di fatto un gioco da tavolo'', non è
+        bastato portarla com'era nel fisico, ``perché ci sono tanti aspetti che non
+        funzionavano''.
+\end{itemize}
+
+\paragraph{Approfondimento: dal digitale al fisico.} Il caso di \emph{Party House} rovescia la
+riflessione fatta all'inizio del bilanciamento: nel videogioco, il computer fa i conti, applica
+le regole e tiene la memoria dello stato; al tavolo, ognuna di queste cose diventa lavoro per i
+giocatori, tempo intraturno, componenti da produrre, budget di complessità. Brathwaite e
+Schreiber, in una delle sfide del loro libro, fanno l'osservazione opposta per il verso più
+difficile: trasformare in gioco da tavolo un videogioco d'azione in tempo reale sembra
+impossibile, ma basta decidere che un turno corrisponde a mezzo secondo di gioco e dividere la
+mappa in esagoni. In entrambi i versi la conversione costringe a scegliere che cosa del gioco
+originale sia davvero essenziale, e che cosa fosse solo comodo perché lo faceva la macchina.
+
+% ---------------------------------------------------------------------
+\section{Chiusura}
+\label{a14:sec:chiusura}
+
+``Ok, direi che siamo ben oltre la durata'': i problemi di accesso dell'inizio hanno pesato, e
+Marta non vuole trattenere gli studenti oltre l'orario stabilito. Se c'è un'ultima cosa da dire
+al volo, ``giuro che cerco di non prendervi più di due minuti''. Nessuno interviene.
+
+\textbf{Ringrazia} ``tantissimo per il tempo che mi avete dedicato'' e spera che sia stata
+``in generale un'esperienza interessante''. Se vengono in mente domande, le si possono far
+recapitare: \textbf{scrivendo a Daniele}, e lei troverà il modo di far avere la risposta. Gli
+studenti ringraziano; ``ciao ciao, buona serata''.
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Anche il \textbf{regolamento ha un \emph{target}}: quello dello sviluppo arriva in
+        stampa e lo leggeranno persone che giocano poco. Principi: \textbf{dal macro al
+        micro}, chiarezza e concisione, \textbf{integrità} (ogni regola una volta, con
+        rimandi), consistenza \textbf{strutturale}, \textbf{sintattica} e
+        \textbf{terminologica} (turni non sono round), \textbf{prossimità}.
+  \item La \textbf{seconda persona} e le frasi brevi aiutano; la narrativa nel regolamento
+        solo nei giochi ad alta coerenza (``volta la pagina'', non ``vai nel futuro''), con
+        eccezioni come \emph{Munchkin}.
+  \item Materiali promozionali: comunicare gli \textbf{USP}; foto di \textbf{metà partita};
+        promo; \textbf{\emph{setup} controllati} per le fiere.
+  \item Revisioni: \textbf{versionare} (data da anno a giorno), \textbf{dividersi i compiti}
+        (tecnico, sintattico, \emph{proofreading}), verificare la \textbf{copia zero} prima
+        del via libera.
+  \item La \textbf{cassetta degli attrezzi}: ognuno ha i suoi strumenti; conoscerne limiti e
+        forze, e ricordare la visione. Iterare; usare spazialità e flussi (sinistra--destra);
+        materiali \textbf{coerenti e intuitivi} (la stella blu).
+  \item \textbf{SWOT}: forze e debolezze interne, opportunità e rischi esterni (il mercato in
+        senso largo), lette a coppie. \textbf{\emph{Personas}}: profili concreti a cui fare
+        domande, meglio se basati su dati; attenzione ai \emph{bias}.
+  \item I \textbf{sei cappelli}: bianco (fatti), nero (rischi), rosso (emozioni), giallo
+        (forze), creatività, blu (organizzazione).
+  \item Garfield: \textbf{il bilanciamento perfetto è un mito}; bilanciare è migliorare il
+        gioco per un ampio spettro di giocatori, con \textbf{costi e benefici}. È
+        l'esplorazione di una porzione dello \textbf{spazio di gioco}; le \textbf{\emph{house
+        rules}} danno potere a chi gioca e sono una palestra di sviluppo.
+  \item Per chi si bilancia: attenzione al \textbf{dio della simmetria}; per il gioco
+        (\emph{Endurance}), per il \emph{target} (i bambini di \emph{Sun Farm}), non solo per
+        gli esperti rumorosi. \textbf{Approcciabilità} non vuol dire semplicità.
+  \item Il bilanciamento \textbf{matematico} è lungo, fallace, perde gli spazi di
+        permeabilità e produce \textbf{scelte indifferenti}; l'IA ne ripete gli errori. Meglio
+        il bilanciamento \textbf{esperienziale}: percorsi intesi, scelte sensibili,
+        \emph{gameplay} emergente.
+  \item Per cominciare: giochi a \textbf{scarsa interazione} (\emph{Splendor} infinito),
+        modellare i flussi delle risorse, testare con più gruppi (\emph{groupthink}),
+        guardare chi inizia e chi vince.
+  \item Le tecniche: \textbf{budget di complessità}, \textbf{alto e basso rischio},
+        \textbf{ancoraggio} (\emph{Stone Age}: un puntino = un punto), \textbf{durata}
+        (round o soglie, tagliare turni iniziali o finali, la durata intraturno),
+        \textbf{raddoppia o dividi}, \textbf{due problemi una soluzione}.
+  \item Gli elementi ricorrenti: progressioni (1-3-6-10-15, quadratica, penalizzante),
+        $A \times B$ e set, punteggio verticale e orizzontale, \textbf{esclusività} delle
+        risorse, \textbf{crescita tra round}, controllo dell'\textbf{alea}, probabilità
+        lineare, a campana e calante.
+  \item \textbf{Smussare la stella} senza togliere ciò che conta: il GCD come bussola; i testi
+        di \emph{Wingspan} sembrano superflui e non lo sono.
+  \item I ``difetti'' sono difetti solo contro l'esperienza attesa: \emph{Bang!} ha bisogno
+        dell'eliminazione, \emph{Root} del \emph{bash the leader}, \emph{Il Grande Dalmuti} del
+        primo giocatore avvantaggiato. Un gioco deve \textbf{convergere}.
+  \item Sinergie: trattarle come un \textbf{set} e bilanciare \textbf{per tentativi}; anche un
+        valore sballato informa.
+  \item Esempi: \emph{Carcassonne} a tre tessere svuota \emph{meeple} e monasteri;
+        \emph{Bonsai} toglie i punti al legno per far crescere alberi veri; \emph{Wabi Sabi}
+        aggiunge profondità per gli esperti; \emph{Magical Athlete} e \emph{Party House} da
+        studiare da soli.
+\end{itemize}

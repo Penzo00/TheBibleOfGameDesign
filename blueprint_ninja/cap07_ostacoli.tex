@@ -1,0 +1,156 @@
+\section{Gli ostacoli}
+
+\subsection{La torretta}
+
+La torretta vede il giocatore entro 18\,m, gira la testa verso di lui con una velocità limitata e spara ogni 1,4\,s solo se la mira è buona (entro 12\textdegree) e nessun muro è in mezzo. Nel gym del livello 2 il colpo è mortale: fa ricominciare il livello. Nel C++: \texttt{ATurret} e \texttt{APlatformerProjectile}.
+
+\begin{ricetta}
+  \item \var{BP\_Torretta}: \var{Base} (cilindro), \var{Testa} (Scene Component) con figli \var{TestaMesh}, \var{Canna} e \var{Bocca} (Arrow o Scene, sulla punta della canna), \var{Rilevamento} (Sphere Collision, raggio 1800).
+  \item Variabili: \var{Bersaglio} (Actor), \var{CadenzaPronta} (Bool), \var{RiavviaLivello} (Bool, \emph{Instance Editable}).
+  \item \var{BP\_Proiettile}: \var{Sfera} (Sphere Collision, raggio 12, root), mesh, \nodo{Projectile Movement} (Initial/Max Speed 1500, Gravity Scale 0), \emph{Initial Life Span} 4.
+\end{ricetta}
+
+\begin{bpgraph}
+\bpnode{ov}{(0,0)}{bpev}{On Component Begin Overlap (Rilevamento)}{-}{exec/,obj/Other Actor}
+\bpnode{c}{\dx{ov}{0.6}{0}}{bpcast}{Cast To BP\_Eroe}{exec/,obj/Object}{exec/,exec/Cast Failed,obj/As BP Eroe}
+\bpnode{s}{\dx{c}{0.6}{0}}{bpvarh}{Set Bersaglio}{exec/,obj/}{exec/}
+\bpnode{ov2}{\sotto{ov}{0}{-0.5}}{bpev}{On Component End Overlap (Rilevamento)}{-}{exec/,obj/Other Actor}
+\bpnode{s2}{\dxy{ov2}{ov2}{0.6}{0}}{bpvarh}{Set Bersaglio}{exec/,obj/None}{exec/}
+\bpexec{ov-out1}{c-in1}\bpwire{obj}{ov-out2}{c-in2}\bpexec{c-out1}{s-in1}\bpwire{obj}{c-out3}{s-in2}\bpexec{ov2-out1}{s2-in1}
+\end{bpgraph}
+
+\begin{bpgraph}
+\bpnode{t}{(0,0)}{bpev}{Event Tick}{-}{exec/,float/Delta Seconds}
+\bpnode{iv}{\dx{t}{0.6}{0}}{bpflow}{Is Valid}{exec/,obj/Bersaglio}{exec/Is Valid,exec/Is Not Valid}
+\bpnode{flr}{\sotto{t}{0}{-0.6}}{bppure}{Find Look at Rotation}{vec/Start: Testa World Location,vec/Target: Bersaglio Loc + (0 0 $-$60)}{rot/}
+\bpnode{ri}{\dx{flr}{0.6}{0}}{bppure}{RInterp To}{rot/Current: Testa World Rotation,rot/Target,float/Delta Time,float/Interp Speed 3}{rot/}
+\bpnode{cl}{\dx{ri}{0.6}{0}}{bppure}{Clamp Pitch ($-$40 ; 30)}{rot/}{rot/}
+\maxx{m1}{iv,cl}
+\bpnode{set}{\dxy{m1}{t}{0.6}{0}}{bpfn}{Set World Rotation}{exec/,obj/Target: Testa,rot/New Rotation}{exec/}
+\bpexec{t-out1}{iv-in1}\bpexec{iv-out1}{set-in1}\bpwire{rot}{flr-out1}{ri-in2}\bpwire{rot}{ri-out1}{cl-in1}\bpwire{rot}{cl-out1}{set-in3}
+\end{bpgraph}
+
+Il \nodo{RInterp To} con velocità 3 è ciò che rende la torretta \emph{battibile}: se correte di lato, la testa resta indietro. Il $-60$ sulla quota mira al petto e non alla testa (la capsula è alta 180\,cm, il centro è a 90).
+
+\begin{bpgraph}
+\bpnode{x}{(0,0)}{bpflow}{(dopo Set World Rotation)}{-}{exec/}
+\bpnode{ang}{\sotto{x}{0}{-0.4}}{bppure}{Angolo(Forward Testa ; Dir. Bersaglio) $<$ 12}{-}{bool/Mira}
+\bpnode{vis}{\sotto{ang}{0}{-0.3}}{bppure}{Line Trace Bocca$\rightarrow$Bersaglio: Hit Actor == Bersaglio}{-}{bool/Vede}
+\bpnode{and}{\dxy{vis}{ang}{0.6}{0}}{bppure}{AND}{bool/Mira,bool/Vede,bool/CadenzaPronta}{bool/}
+\bpnode[2.4]{br}{\dxy{and}{x}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{fire}{\dx{br}{0.6}{0}}{bpcustom}{Spara}{exec/}{exec/}
+\bpexec{x-out1}{br-in1}\bpwire{bool}{ang-out1}{and-in1}\bpwire{bool}{vis-out1}{and-in2}\bpwire{bool}{and-out1}{br-in2}\bpexec{br-out1}{fire-in1}
+\end{bpgraph}
+(L'angolo si calcola con \nodo{Dot Product} dei due vettori normalizzati e \nodo{Acos (Degrees)}.)
+
+\begin{bpgraph}
+\bpnode{f}{(0,0)}{bpcustom}{Spara}{-}{exec/}
+\bpnode{s0}{\dx{f}{0.6}{0}}{bpvarh}{Set CadenzaPronta}{exec/,bool/false}{exec/}
+\bpnode{tr}{\sotto{s0}{0}{-0.4}}{bppure}{Get World Transform}{obj/Target: Bocca}{struct/}
+\maxx{m1}{s0,tr}
+\bpnode{sp}{\dxy{m1}{f}{0.6}{0}}{bpfn}{SpawnActor BP\_Proiettile}{exec/,class/Class,struct/Spawn Transform,obj/Owner: self}{exec/,obj/Return Value}
+\bpnode{rl}{\dx{sp}{0.6}{0}}{bpvarh}{Set RiavviaLivello}{exec/,obj/Target: proiettile,bool/RiavviaLivello}{exec/}
+\bpnode{d}{\dx{rl}{0.6}{0}}{bpflow}{Delay}{exec/,float/Duration 1.4}{exec/Completed}
+\bpnode{s1}{\dx{d}{0.6}{0}}{bpvarh}{Set CadenzaPronta}{exec/,bool/true}{exec/}
+\bpexec{f-out1}{s0-in1}\bpexec{s0-out1}{sp-in1}\bpwire{struct}{tr-out1}{sp-in3}\bpexec{sp-out1}{rl-in1}\bpwire{obj}{sp-out2}{rl-in2}\bpexec{rl-out1}{d-in1}\bpexec{d-out1}{s1-in1}
+\end{bpgraph}
+
+Nel proiettile, il colpo decide cosa succede:
+
+\begin{bpgraph}
+\bpnode{hit}{(0,0)}{bpev}{On Component Hit (Sfera)}{-}{exec/,obj/Other Actor,vec/Normal Impulse}
+\bpnode{c}{\dx{hit}{0.6}{0}}{bpcast}{Cast To BP\_Eroe}{exec/,obj/Object}{exec/,exec/Cast Failed,obj/As BP Eroe}
+\bpnode[2.4]{br}{\dx{c}{0.6}{0}}{bpflow}{Branch}{exec/,bool/RiavviaLivello}{exec/True,exec/False}
+\bpnode{rs}{\dx{br}{0.6}{0}}{bpfn}{UccidiERiavvia}{exec/,float/Ritardo 0.4}{exec/}
+\bpnode{dmg}{\sotto{rs}{0}{-0.4}}{bpfn}{Apply Damage}{exec/,obj/Damaged Actor,float/Base Damage 25}{exec/}
+\bpnode{des}{\dxy{dmg}{hit}{0.6}{0}}{bpfn}{Destroy Actor}{exec/,obj/self}{exec/}
+\bpexec{hit-out1}{c-in1}\bpwire{obj}{hit-out2}{c-in2}\bpexec{c-out1}{br-in1}\bpexec{br-out1}{rs-in1}\bpexec{br-out2}{dmg-in1}\bpexec{rs-out1}{des-in1}\bpexec{dmg-out1}{des-in1}
+\bpbox{Il Cast Failed (muro, pavimento) va anch'esso a Destroy Actor}{(hit-nw) (des-se) (dmg-se)}
+\end{bpgraph}
+
+\var{UccidiERiavvia} (in \var{BP\_Eroe}): \nodo{Disable Input}, nasconde la mesh, \nodo{Delay} 0,4\,s, \nodo{Open Level (by Name)} con \nodo{Get Current Level Name}. Non toglie una vita: è l'ostacolo ``duro'' del gym, che rimanda all'inizio del livello e basta.
+
+\subsection{La zona che toglie 10 HP al secondo}
+
+La lava del livello 2. Finché si è dentro, ogni secondo arriva un danno di 10 (il primo subito, appena si entra).
+
+\begin{ricetta}
+  \item \var{BP\_ZonaDanno}: \nodo{Box Collision} + un piano con materiale emissivo. Variabili: \var{Danno} (10), \var{Intervallo} (1.0), \var{Vittima} (Actor), \var{TimerDanno} (Timer Handle).
+  \item In \var{BP\_Eroe}: \var{Vita} (Float, 100) ed \nodo{Event AnyDamage}.
+\end{ricetta}
+
+\begin{bpgraph}
+\bpnode{ov}{(0,0)}{bpev}{On Component Begin Overlap}{-}{exec/,obj/Other Actor}
+\bpnode{s}{\dx{ov}{0.6}{0}}{bpvarh}{Set Vittima}{exec/,obj/}{exec/}
+\bpnode{fe}{\dx{s}{0.6}{0}}{bpcustom}{Ferisci}{exec/}{exec/}
+\bpnode{tm}{\dx{fe}{0.6}{0}}{bpfn}{Set Timer by Function Name}{exec/,str/Ferisci,float/Time: Intervallo,bool/Looping true}{exec/,struct/Return Value}
+\bpnode{st}{\dx{tm}{0.6}{0}}{bpvarh}{Set TimerDanno}{exec/,struct/}{exec/}
+\bpexec{ov-out1}{s-in1}\bpwire{obj}{ov-out2}{s-in2}\bpexec{s-out1}{fe-in1}\bpexec{fe-out1}{tm-in1}\bpexec{tm-out1}{st-in1}\bpwire{struct}{tm-out2}{st-in2}
+\end{bpgraph}
+
+\begin{bpgraph}
+\bpnode{f}{(0,0)}{bpcustom}{Ferisci}{-}{exec/}
+\bpnode{ad}{\dx{f}{0.6}{0}}{bpfn}{Apply Damage}{exec/,obj/Damaged Actor: Vittima,float/Base Damage: Danno}{exec/}
+\bpnode{end}{($(f-nw|-ad-se)+(0,-0.5)$)}{bpev}{On Component End Overlap}{-}{exec/}
+\bpnode{cl}{\dx{end}{0.6}{0}}{bpfn}{Clear and Invalidate Timer by Handle}{exec/,struct/Handle: TimerDanno}{exec/}
+\bpexec{f-out1}{ad-in1}\bpexec{end-out1}{cl-in1}
+\end{bpgraph}
+
+E nell'eroe:
+
+\begin{bpgraph}
+\bpnode{ad}{(0,0)}{bpev}{Event AnyDamage}{-}{exec/,float/Damage}
+\bpnode{v}{\dx{ad}{0.6}{0}}{bpvarh}{Set Vita}{exec/,float/Clamp(Vita $-$ Damage ; 0 ; 100)}{exec/,float/}
+\bpnode{c}{\sotto{v}{0}{-0.4}}{bppure}{Vita $<=$ 0}{float/}{bool/}
+\maxx{m1}{v,c}
+\bpnode[2.4]{br}{\dxy{m1}{ad}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{r}{\dx{br}{0.6}{0}}{bpfn}{UccidiERiavvia}{exec/,float/0.5}{exec/}
+\bpexec{ad-out1}{v-in1}\bpwire{float}{v-out2}{c-in1}\bpexec{v-out1}{br-in1}\bpwire{bool}{c-out1}{br-in2}\bpexec{br-out1}{r-in1}
+\end{bpgraph}
+
+Notate che un \emph{Damage} \emph{negativo} cura: è così che funziona il pickup della salute (capitolo~\ref{sec:pickup}).
+
+\subsection{Zona mortale}
+
+\var{BP\_ZonaMortale}: overlap $\rightarrow$ \nodo{Cast To BP\_Eroe} $\rightarrow$ \var{UccidiERiavvia}(0,3). Serve per le trappole ``istantanee'' (spuntoni); per il vuoto si usa la zona di caduta del capitolo~5, che rispetta le vite.
+
+\subsection{Piattaforma mobile}
+
+Si muove avanti e indietro fra la posizione iniziale e \var{FineOffset} in 2\,s, con 0,5\,s di pausa agli estremi. È il caso d'uso perfetto per una \nodo{Timeline}.
+
+\begin{bpgraph}
+\bpnode{bp}{(0,0)}{bpev}{Event BeginPlay}{-}{exec/}
+\bpnode{s}{\dx{bp}{0.6}{0}}{bpvarh}{Set Inizio}{exec/,vec/Get Actor Location}{exec/}
+\bpnode{tl}{\dx{s}{0.6}{0}}{bptl}{TL\_Va (2 s; curva 0$\rightarrow$1 morbida)}{exec/Play from Start,exec/Reverse from End}{exec/Update,exec/Finished,float/Alpha,enum/Direction}
+\bpnode{lerp}{\sotto{tl}{0}{-0.4}}{bppure}{Lerp (Vector)}{vec/A: Inizio,vec/B: Inizio + FineOffset,float/Alpha}{vec/}
+\maxx{m1}{tl,lerp}
+\bpnode{set}{\dxy{m1}{bp}{0.6}{0}}{bpfn}{Set Actor Location}{exec/,vec/New Location}{exec/}
+\bpexec{bp-out1}{s-in1}\bpexec{s-out1}{tl-in1}\bpexec{tl-out1}{set-in1}\bpwire{float}{tl-out3}{lerp-in3}\bpwire{vec}{lerp-out1}{set-in2}
+\end{bpgraph}
+
+Su \emph{Finished}: \nodo{Delay} 0,5 $\rightarrow$ \nodo{Branch} su \emph{Direction == Forward} $\rightarrow$ \emph{Reverse from End}, altrimenti \emph{Play from Start}. Così la piattaforma fa avanti e indietro all'infinito. Il personaggio la segue da solo: il Character Movement ``eredita'' la base su cui sta in piedi (\emph{Impart Base Velocity}).
+
+\subsection{Piattaforma che crolla}
+
+Tre stati: \emph{Ferma} $\rightarrow$ (qualcuno ci sale) \emph{Trema} per 0,8\,s $\rightarrow$ \emph{Caduta} (nascosta e senza collisione) $\rightarrow$ dopo 3\,s torna \emph{Ferma}. Uno \emph{switch} su un enum \var{E\_StatoCrollo} nel Tick, oppure, più semplice, una catena di \nodo{Delay}:
+
+\begin{bpgraph}
+\bpnode{hit}{(0,0)}{bpev}{On Component Hit (Mesh)}{-}{exec/,obj/Other Actor}
+\bpnode{do}{\dx{hit}{0.6}{0}}{bpflow}{Do Once}{exec/,exec/Reset}{exec/Completed}
+\bpnode{sh}{\dx{do}{0.6}{0}}{bptl}{TL\_Trema (0,8 s)}{exec/Play from Start}{exec/Update,exec/Finished,float/Rumore}
+\bpnode{off}{\dx{sh}{0.6}{0}}{bpfn}{Set Actor Hidden + Collision off}{exec/}{exec/}
+\bpnode{d}{\dx{off}{0.6}{0}}{bpflow}{Delay}{exec/,float/3.0}{exec/Completed}
+\bpnode{on}{\sotto{off}{0}{-0.5}}{bpfn}{Set Actor Hidden false + Collision on}{exec/}{exec/}
+\bpexec{hit-out1}{do-in1}\bpexec{do-out1}{sh-in1}\bpexec{sh-out2}{off-in1}\bpexec{off-out1}{d-in1}
+\bpdraw[bpexecw] (d-out1) .. controls +(0.8,0) and +(1.5,0) .. ++(0,-1.3) -- ($(on-nw)+(-0.6,-0.7)$) .. controls +(-0.3,0) and +(-0.6,0) .. (on-in1);
+\bpdraw[bpexecw] (on-out1) .. controls +(1.5,0) and +(-1,-1.5) .. (do-in2);
+\end{bpgraph}
+Durante l'\emph{Update} di \var{TL\_Trema} si sposta la mesh di \nodo{Random Unit Vector}~$\cdot$~4\,cm (\nodo{Set Relative Location}); a \emph{Finished} la si rimette a $(0,0,0)$.
+
+\subsection{Trampolino e barra rotante}
+
+\textbf{Trampolino} (\var{BP\_Trampolino}): overlap $\rightarrow$ cast all'eroe $\rightarrow$ \nodo{Launch Character} con \nodo{Rotate Vector} $\big((300, 0, 1300)$, rotazione dell'actor$\big)$, \emph{XY Override} e \emph{Z Override} veri. Ruotando il trampolino nel livello si cambia la direzione del lancio senza toccare i numeri.
+
+\textbf{Barra rotante}: un \nodo{Rotating Movement Component} (Rotation Rate $(0,0,90)$) fa tutto da solo, senza nodi. Per la spinta: \emph{On Component Hit} della barra $\rightarrow$ \nodo{Launch Character} con \emph{Hit Normal}~$\cdot$~($-$900) + $(0,0,300)$.
+
+\ninja{Timer o Delay? Il \nodo{Delay} è comodo ma non si può fermare. Se l'effetto deve smettere quando si esce da una zona (la lava), usate \nodo{Set Timer} e salvatevi l'\emph{handle}: è l'unico modo per cancellarlo.}

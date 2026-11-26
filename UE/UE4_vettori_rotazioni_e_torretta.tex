@@ -1,0 +1,1932 @@
+% =====================================================================
+%  Fondamenti di Unreal Engine, lezione 4 — Vettori, rotazioni e la
+%  torretta: il mulino che gira e la torretta che segue il player.
+%  Quarta lezione del corso breve di introduzione a Unreal Engine (focus
+%  sui Blueprint), online su Zoom, dalle 16 circa alle 19. Dopo la
+%  sostituzione di Davide nella terza lezione, torna il docente
+%  titolare (Igor, che però nella trascrizione non viene mai chiamato
+%  per nome).
+%  Contenuti, nell'ordine della lezione: l'attesa (Quixel Megascans, la
+%  lava di Davide); il trucco del CCD per la pallina della seconda
+%  lezione; il programma (il mulino e la torretta che segue lo
+%  sguardo); i vettori (direzione, magnitudine, verso), addizione,
+%  sottrazione, moltiplicazione, prodotto scalare, vettori
+%  normalizzati; i rotator, il giroscopio, il gimbal lock e i
+%  quaternioni; il Rotating Movement Component e la mobilità Movable;
+%  l'esercizio dei tre cubi; il Blueprint del mulino (BP_Windmill, il
+%  corpo e le due pale), la viewport persa e l'editor in inglese; far
+%  girare una pala con l'Event Tick, i delta seconds, Make Rotator,
+%  Combine Rotators, Get e Set Relative Rotation; la gerarchia dei
+%  componenti (la seconda pala figlia della prima, il cubetto
+%  sull'estremità); Find Look at Rotation, Get Player Character,
+%  RInterp To e l'offset di 90 gradi: il mulino che guarda il player;
+%  il Clamp e il debug con Print String; la pausa; la torretta in tre
+%  pezzi (BP_Turret: Base, Pivot, Cannon) e Browse to Asset; la Sphere
+%  Collision, lo Sphere Radius e Hidden in Game; gli eventi dei
+%  componenti e On Component Begin Overlap; Other Actor; Is Valid;
+%  Actor Has Tag e i tag; la variabile Player Target; i Custom Event;
+%  Set Timer by Event, Get World Delta Seconds, Looping e Max Once Per
+%  Frame; l'evento Move Turret; il tuning dell'interpolazione; i
+%  problemi degli studenti (il pivot reimportato a 113, la gerarchia
+%  sbagliata, il Blueprint non in scena, Other Actor scollegato); la
+%  chiusura e la prossima lezione (proiettili, spawn e line trace).
+%  Fonte: trascrizione automatica della quarta lezione (UE4), circa tre
+%  ore. Integrazioni dai libri "Blueprints Visual Scripting for Unreal
+%  Engine 5" (Romero, Sewell; capitoli 1, 4, 5 e 14) e "Blueprints
+%  Visual Scripting for Unreal Engine", seconda edizione (stessi autori,
+%  Unreal Engine 4; capitoli 2 e 8), e nozioni tecniche generali su
+%  Unreal Engine 5, sempre segnalate come approfondimenti.
+%
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{amsmath},
+%  \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Fondamenti di Unreal Engine", quarto
+%  capitolo (numerazione propria 1.4). Nel file principale del libro,
+%  subito dopo la riga della terza lezione:
+%
+%    \input{UE/UE4_vettori_rotazioni_e_torretta}
+%
+%  Tutte le etichette di questo capitolo hanno il prefisso "ue4:"
+%  (ue4:cap:..., ue4:sec:..., ue4:fig:..., ue4:tab:...), e tutti gli
+%  stili TikZ hanno il prefisso "ue4" (ue4node, ue4exec, ue4data, ...)
+%  per non collidere con chiavi native di TikZ (come "step") né con
+%  quelli delle lezioni precedenti. Il capitolo è autonomo: non contiene
+%  \ref verso altri capitoli (i rimandi alle lezioni precedenti sono a
+%  parole).
+%  Le figure sono ricostruzioni schematiche di quanto mostrato e detto a
+%  lezione, non copie delle slide o delle schermate del docente. Dove la
+%  trascrizione è troppo rovinata per ricostruire un dettaglio, il
+%  capitolo lo dice invece di inventarlo.
+% =====================================================================
+
+\chapter[Vettori, rotazioni e la torretta]{Vettori, rotazioni e la torretta: il
+mulino che gira e la torretta che ti segue}
+\label{ue4:cap:torretta}
+
+Questa è la \textbf{quarta lezione} del corso breve di \textbf{introduzione a Unreal
+Engine}, e segna il ritorno del docente titolare dopo la lezione di Davide sulla
+grafica. Se la terza lezione guardava a ciò che ``fa il grafico all'interno di Unreal''
+(texture, materiali, l'import della torretta), questa torna alla \textbf{logica}, cioè
+ai \textbf{Blueprint}, e lo fa con un obiettivo preciso, mostrato in apertura: un
+\textbf{mulino} le cui pale girano, e la \textbf{torretta} importata con Davide che
+``adesso ci segue con lo sguardo''. Per arrivarci serve un po' di matematica dello
+spazio 3D: i \textbf{vettori}, le loro operazioni, i \textbf{rotator}.
+
+La lezione ha due metà separate da una pausa di venti minuti, presa alle 17:28. La
+prima metà parte dalla \textbf{teoria}: che cos'è un \textbf{vettore} (``una freccia
+con una direzione, una magnitudine e un verso''), le quattro operazioni
+(\textbf{addizione}, \textbf{sottrazione}, \textbf{moltiplicazione} e \textbf{prodotto
+scalare}, il \emph{dot product}), i \textbf{vettori normalizzati}, i
+\textbf{rotator} e il problema del \textbf{gimbal lock}. Poi si passa all'engine con un
+mulino: prima il modo più semplice di far ruotare un oggetto, il \textbf{Rotating
+Movement Component}, poi un Blueprint vero, \textbf{BP\_Windmill}, in cui una pala
+gira grazie all'\textbf{Event Tick}, ai \emph{delta seconds} e ai nodi \textbf{Make
+Rotator}, \textbf{Combine Rotators} e \textbf{Set Relative Rotation}; la seconda pala
+gira ``gratis'' grazie alla \textbf{gerarchia} dei componenti. Infine il mulino
+diventa ``magico'' e si gira verso il giocatore con \textbf{Find Look at Rotation} e
+\textbf{RInterp To}, con un \textbf{Clamp} per limitarne la rotazione. La seconda metà
+costruisce la \textbf{torretta}: un Blueprint in tre pezzi (\textbf{Base},
+\textbf{Pivot}, \textbf{Cannon}), una \textbf{Sphere Collision} come raggio d'azione,
+l'evento \textbf{On Component Begin Overlap}, i controlli \textbf{Is Valid} e
+\textbf{Actor Has Tag}, una variabile per ricordare il bersaglio, un \textbf{Custom
+Event} e un \textbf{timer} che, a ogni \emph{frame}, fa ruotare il pivot verso il
+player.
+
+La lezione è \textbf{online}, su Zoom, come le precedenti. Il docente alterna
+spiegazione e piccole esercitazioni ``botta e risposta'', da cinque minuti l'una, e
+passa gran parte della seconda metà a risolvere i problemi degli studenti in
+condivisione dello schermo. Finisce verso le 19, ``andiamo a cena tutti'', con
+l'appuntamento a \textbf{martedì}.
+
+Tre avvertenze di lettura, le stesse delle lezioni precedenti. La prima: la
+trascrizione è automatica e storpia moltissimi nomi. Unreal è ``a Real'', ``Arreal'',
+``Arry''; l'\textbf{Event Tick} è ``Leventic'', ``l'eventic'', ``eventHIC'' e
+``l'event kick''; i \textbf{vettori} sono una volta ``vittori''; i \emph{rotator} sono
+``rotatempi'' e ``rotatori''; \textbf{Find Look at Rotation} è ``findLookAtRotation'',
+``find all the rotation'' e ``Find, look, rotation''; \textbf{RInterp To} è ``Er inter
+tu'', ``R Inter2'' e ``r interp tu''; \textbf{Get Player Character} è
+``getLayerCharacter''; \textbf{Get Actor Location} è ``Get. Hector. Location'' e ``get
+active location''; il \textbf{Rotating Movement} è a un certo punto ``vetro in
+movement''; \textbf{Is Valid} è ``Svalid'' e ``isvalid''; \textbf{Other Actor} è
+``OderActor'' e ``Oder Actor''; la \textbf{gun} della torretta è ``Ganna'' e ``GAN'';
+il \textbf{Pivot} è spesso ``pivo''; il \emph{Third Person Character} è ``ter person
+character'' e ``Peter per personacarte''; \textbf{Quixel Megascans} è ``QuickSell'' e
+``Quixel megaschanico''. Dove la ricostruzione è sicura il capitolo usa la forma
+corretta e, la prima volta, lo segnala in nota; dove non lo è riporta la forma della
+trascrizione e lo dice. La seconda: all'inizio della registrazione, in un punto della
+prima esercitazione e durante tutta la pausa, il riconoscimento vocale produce lunghi
+blocchi di testo senza senso e ripetuto (``qual è la risposta che ci può essere?'',
+``grazie a tutti per l'attenzione'', discorsi sul ``mercato del lavoro'', sul ``governo
+di Dalai Lama'' e su ``la migliore dal 2005''): sono artefatti, non parole di nessuno,
+e il capitolo li ignora. La terza: gran parte della lezione è una dimostrazione dal
+vivo nell'editor dei Blueprint, spesso costruita a voce (``tirate fuori'',
+``collegate'', ``splittate''). Il capitolo ricostruisce i grafi da ciò che il docente
+dice mentre li costruisce, e li completa, dove serve, con i nomi esatti dei nodi e dei
+pin di Unreal Engine 5.
+
+\paragraph{Come leggere questo capitolo.} Il capitolo segue l'ordine della lezione.
+Le figure ricostruiscono gli schemi spiegati a voce o alla lavagna (``perdonate le mie
+doti molto brutte di disegno''): le operazioni tra vettori, i casi del prodotto
+scalare, gli assi di rotazione, la gerarchia del mulino, i grafi della pala, del
+mulino che guarda il player e della torretta, i casi dell'\emph{overlap}. Le tabelle
+riassumono le operazioni sui vettori, i nodi della lezione e gli errori più comuni
+incontrati dagli studenti. Qua e là, dei paragrafi di \textbf{approfondimento}
+collegano la lezione ai libri di Marcos Romero e Brenden Sewell (\emph{Blueprints
+Visual Scripting for Unreal Engine 5} e la seconda edizione dello stesso testo, scritta
+per Unreal Engine 4), i testi di riferimento per questa parte del libro, e a qualche
+nozione tecnica generale su Unreal Engine 5; sono segnalati come tali e non fanno parte
+della lezione.
+
+Il percorso del capitolo:
+\begin{enumerate}
+  \item l'attesa: \textbf{Quixel Megascans} e il materiale della lava; il trucco del
+        \textbf{CCD}; il programma della giornata (sezioni da~\ref{ue4:sec:attesa}
+        a~\ref{ue4:sec:programma});
+  \item la teoria: i \textbf{vettori} e le loro operazioni, il \textbf{prodotto
+        scalare}, la \textbf{normalizzazione}, i \textbf{rotator} e il \textbf{gimbal
+        lock} (sezioni da~\ref{ue4:sec:vettori} a~\ref{ue4:sec:rotator});
+  \item il \textbf{Rotating Movement Component} e l'esercizio dei tre cubi (sezione
+        \ref{ue4:sec:rotating});
+  \item il Blueprint del \textbf{mulino}: i componenti, la pala che gira con
+        l'Event Tick, la \textbf{gerarchia} (sezioni da~\ref{ue4:sec:mulino}
+        a~\ref{ue4:sec:gerarchia});
+  \item il mulino che guarda il player: \textbf{Find Look at Rotation},
+        \textbf{RInterp To}, il \textbf{Clamp} e il debug (sezioni
+        \ref{ue4:sec:lookat} e~\ref{ue4:sec:clamp});
+  \item dopo la pausa, la \textbf{torretta}: i tre pezzi, la \textbf{Sphere
+        Collision}, l'\textbf{overlap} (sezioni da~\ref{ue4:sec:torretta}
+        a~\ref{ue4:sec:overlap});
+  \item \textbf{Is Valid}, i \textbf{tag}, la variabile del bersaglio e i
+        \textbf{Custom Event} (sezioni da~\ref{ue4:sec:isvalid}
+        a~\ref{ue4:sec:custom});
+  \item il \textbf{timer} e l'evento \textbf{Move Turret}: la torretta che segue il
+        player (sezioni \ref{ue4:sec:timer} e~\ref{ue4:sec:move});
+  \item il \emph{tuning}, i problemi degli studenti e la chiusura (sezioni
+        \ref{ue4:sec:problemi} e~\ref{ue4:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'attesa: Quixel Megascans e la lava}
+\label{ue4:sec:attesa}
+
+La registrazione parte mentre il docente fa entrare gli studenti nella stanza di Zoom
+(``ho aperto io la prima a far entrare un po' tutti'') e chiacchiera con il primo
+arrivato. ``Come va con Unreal? Hai sperimentato un po', l'hai toccato un pochetto?''
+Lo studente ci ha giocato con un collega, che gli ha insegnato le texture, ma non ha
+trovato online ``alcuna fonte per prendere cose utili, file utili'': per l'esercizio
+della lava assegnato da Davide nella lezione precedente, un materiale di lava animata,
+ha usato quello che c'era nella cartella del Drive.
+
+\paragraph{Quixel Megascans.} La risposta del docente è \textbf{Quixel
+Megascans}\footnote{La trascrizione dice ``QuickSell'', ``Quixel megaschanico'' e
+``Materials pixel mega scan''. Il nome corretto è Quixel Megascans: la libreria di
+asset scansionati di Quixel, società acquisita da Epic Games, gratuita per l'uso con
+Unreal Engine.}, di cui passa il link in chat. Quixel ``ti permette di avere proprio
+dei materiali'': ``una marea di materiali di qualsiasi tipo'', ma anche rocce,
+\emph{mesh} e texture di alta qualità. Il docente fatica un po' a ritrovare la pagina
+giusta, ``perché hanno cambiato il sito'', e ricorda che serve accedere con l'account
+di Unreal (cioè di Epic Games). ``Ormai fanno la cooperazione tra di loro'': c'è un
+collegamento diretto tra Quixel e Unreal, ``proprio tipo \emph{face to face}''. Cercando
+\emph{lava} escono diverse risorse; una, \emph{lava story} o qualcosa del genere,
+``sembra carina''.
+
+\paragraph{Come sono fatte.} Le texture di Megascans ``sono proprio \emph{scan}'': c'è
+``gente che si mette là con queste macchine che costano una vita umana'' a
+scansionare le rocce. ``Quixel è un grande, grande calderone di risorse.'' Da lì si
+può partire anche per la lava senza trovare la texture perfetta: si prende una
+\textbf{roccia} e, ``come avete visto con Davide, con la matematica'', cioè con un
+\textbf{Multiply} e con il \textbf{Lerp} pilotato da un'\textbf{alfa}, si inserisce
+``il rosso della lava all'interno di queste rocce''. Un'altra strada sono i video su
+YouTube: alcuni tutorial lasciano in descrizione le texture usate (altri le fanno
+pagare, ``il maledetto''), e ``ti interessano le texture, il materiale poi lo fai tu''.
+
+\paragraph{La lava degli studenti.} Arrivano gli altri (``buongiorno, Filippo, Marco,
+Patrick''), e il docente chiede chi ha provato il materiale della lava ``che vi è stato
+dato da Davide''\footnote{La trascrizione dice ``da Dario'', ma subito dopo e più
+avanti il nome è Davide, il docente della terza lezione.}. Uno studente l'ha mandato sul
+Discord, e il docente lo commenta: ``bello il movimento che hai fatto''. L'hai messo
+su un piano, in engine, per vedere come reagiva? No. ``Quello vedilo un po' tu'',
+perché a volte il risultato in \emph{viewport} cambia a seconda di come è costruito il
+materiale (``che so, hai messo il Multiply sbagliato''): il consiglio è di provarlo
+sempre in \emph{viewport}, su un oggetto vero. E ``sicuramente una texture differente
+potrebbe essere più carina'': torna utile Megascans.
+
+\paragraph{L'appello.} Il docente aspetta ``2--3 minuti'' che entrino gli altri. Uno
+studente avvisa che anche oggi dovrà staccarsi venti minuti prima per andare a
+lavorare: ``assolutamente nessun problema''.
+
+% ---------------------------------------------------------------------
+\section{Le domande e il trucco del CCD}
+\label{ue4:sec:ccd}
+
+Prima di cominciare, il docente apre lo spazio delle domande: ``se qualcuno di voi ha
+avuto qualche particolare cosa di cui vuole parlare, domandare già prima che magari
+iniziamo, così facciamo il Q\&A già da subito''. Nessuno: ``mi sembrate tutti molto
+tranquilli''.
+
+\paragraph{La pallina che entra nel piano.} Allora è il docente a recuperare ``un
+piccolo trucchetto che mi sono dimenticato di dirvi'' per il \textbf{gioco della
+pallina} della seconda lezione, quello della piattaforma inclinabile: a volte la
+pallina, con la fisica attiva, \textbf{penetra} nel piano, ``come abbiamo visto''. Nei
+dettagli del componente, nella sezione della fisica (vicino a \textbf{Simulate
+Physics}), c'è un'opzione da spuntare: il \textbf{CCD}, \emph{Continuous Collision
+Detection}\footnote{La trascrizione dice ``Trucco Collision Collision Detection''.}.
+``Fondamentalmente, è un \emph{tick} che, se lo mettiamo su questo particolare
+\emph{asset}, lui in modo continuo cerca di vedere le collisioni'': le rende ``più
+precise'', ed evita che la pallina attraversi il terreno. ``Se fate questo, vi risolve
+tranquillamente il problema.'' Chi vuole, può sistemare il gioco per la prossima volta.
+
+\paragraph{Approfondimento: perché la pallina attraversa il piano.} La fisica di un
+gioco non è continua: il motore fisico controlla le collisioni a passi discreti, una
+volta per \emph{frame} (o per \emph{substep}). Se in un passo la pallina si sposta più
+dello spessore del piano, può trovarsi ``prima'' sopra e ``dopo'' già dentro o sotto,
+senza che nessun controllo l'abbia mai vista toccare la superficie: è il fenomeno del
+\emph{tunneling}, tanto più probabile quanto più l'oggetto è piccolo e veloce e il piano
+sottile. Il CCD (in Unreal la casella \emph{Use CCD} nella sezione \emph{Collision} del
+componente, nelle impostazioni avanzate) fa sì che il motore fisico consideri anche il
+percorso tra le due posizioni, la ``scia'' dell'oggetto, e non solo le posizioni
+finali. Costa un po' di più, ed è per questo che non è attivo di default: lo si accende
+solo sugli oggetti che ne hanno bisogno, come proiettili e palline veloci. Un'alternativa
+complementare è dare al piano uno spessore maggiore.
+
+% ---------------------------------------------------------------------
+\section{Il programma: il mulino e la torretta}
+\label{ue4:sec:programma}
+
+``Oggi vi dico già da subito cosa faremo.'' Gli studenti hanno scaricato il
+\textbf{materiale didattico}: dentro il file estratto c'è il progetto
+\emph{UE5 Intro Start}\footnote{La trascrizione dice ``Hive UE5 intro start'', la stessa
+parola iniziale incerta già incontrata nella terza lezione.}, con il suo file di
+progetto. Lo si apre, ``così almeno gli \emph{shader} si cominciano a buildare'', si fa
+``una piccola spiegazione teorica'' e poi ``partiamo direttamente con la pratica''.
+
+\paragraph{I due obiettivi.} Il docente sposta il \emph{Player Start} e mostra il
+livello. A sinistra c'è ``questo bellissimo \textbf{mulino}'', fatto ``facendo ruotare
+le pale''. Poi c'è la \textbf{torretta} che gli studenti hanno costruito la volta prima
+con Davide (``avete fatto il \emph{merge}, giusto?''), che ``adesso ci segue con lo
+sguardo''. O meglio, dovrebbe: nella dimostrazione non lo fa. ``Abbiamo scoperto un
+piccolo bug. Poi adesso lo aggiustiamo. E giustamente i bug ogni volta appaiono
+praticamente subito.'' Il programma della giornata è questo: le pale del mulino, e la
+torretta che segue il giocatore.
+
+% ---------------------------------------------------------------------
+\section{I vettori}
+\label{ue4:sec:vettori}
+
+``Avete sentito mai parlare di vettori? Matematica, i grafici cartesiani?'' Sì.
+
+\paragraph{Che cos'è un vettore.} ``In generale, un vettore può essere semplificato, in
+uno spazio, come letteralmente una \textbf{freccia}'' che ha tre caratteristiche: una
+\textbf{direzione}, una \textbf{magnitudine} (``la sua ampiezza'', cioè la lunghezza) e
+un \textbf{verso}. In Unreal i vettori si sono già visti senza nominarli: nella
+\textbf{location} e nella \textbf{rotation} di ogni oggetto, ``in particolare molto di
+più sulla location''. La location è fatta di tre coordinate, \textbf{X}, \textbf{Y} e
+\textbf{Z}, e ``queste particolari coordinate possono formare tra di loro, nello spazio
+3D, un vettore''. Il docente parte dalla parola ``velocità di movimento'' e si corregge:
+``più che una velocità, è più una direzione'', con la sua ampiezza e il suo verso.
+Con i vettori si possono ``fare tante cose in Unreal'', per esempio muovere degli
+oggetti; le pale del mulino girano in un verso, e anche se in quel caso si parla di
+rotazione, e quindi di \emph{rotator}, ``sono sempre formate da delle coordinate''.
+
+\paragraph{Un punto non è ancora un vettore.} Più avanti, alla lavagna, il docente
+aggiunge una precisazione importante: ``ricordatevi che quello che vediamo è un
+\textbf{punto} nello spazio, non è una freccia, quindi non è già un vettore''. Un
+punto, per esempio $(5, 4, 1)$, è solo una posizione; il vettore è la freccia che
+collega due punti, per esempio dall'origine $(0,0,0)$ a $(5,4,1)$\footnote{A lezione il
+docente dice che ``un vettore è formato dalla somma di due punti''. La relazione
+corretta è la \emph{differenza}: il vettore che va da A a B è B $-$ A (si veda la
+sottrazione, poco più sotto). Unreal, peraltro, usa la stessa struttura
+\emph{Vector} sia per i punti sia per gli spostamenti.}.
+
+\paragraph{Le operazioni.} Con i vettori ``possiamo fare varie operazioni matematiche,
+che sono praticamente quelle classiche'': \textbf{addizione}, \textbf{sottrazione},
+\textbf{moltiplicazione} e \textbf{prodotto scalare} (\emph{dot product}), ``che è
+un'altra cosa, che poi spiegheremo''. La slide le mostra con due vettori, A e B
+(figura~\ref{ue4:fig:vettori}).
+\begin{itemize}
+  \item \textbf{Addizione.} ``Se andiamo a prendere due vettori e li addizioniamo,
+        avremo un vettore unico.'' Il vettore A più il vettore B ``dà come risultato
+        il vettore C, che è $(5,4)$'': si mette la coda di B sulla punta di A, e C va
+        dall'inizio di A alla fine di B. ``Come fare l'ipotenusa, se vi ricordate i
+        triangoli.''
+  \item \textbf{Sottrazione.} Dà ``la \textbf{differenza} nello spazio tra due
+        punti''. Il risultato dipende dall'ordine: A $-$ B è il vettore che va da B
+        ad A, B $-$ A quello che va da A a B. La sua lunghezza è la distanza tra i due
+        punti.
+  \item \textbf{Moltiplicazione.} ``La useremo tantissimo'': si moltiplica tutto ciò
+        che fa parte del vettore, X, Y e Z, e quindi il vettore ``viene allungato nella
+        sua direzione''.
+  \item \textbf{Prodotto scalare.} ``Statemi un attimo a sentire: è l'unica operazione
+        che ci dà un valore \textbf{scalare}'', cioè ``non ci ridà un vettore indietro,
+        ma un valore in \emph{float}''. (``Chi si ricorda che è il float?'' ``I numeri
+        decimali.'' ``Perfetto.'') Lo si vede nella prossima sezione.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small, scale=0.8,
+  ue4vec/.style={-{Stealth[length=2.5mm]}, very thick},
+  ue4grid/.style={gray!25, very thin},
+  ue4ax/.style={-{Stealth[length=2mm]}, gray!70}]
+  % --- addizione
+  \begin{scope}
+    \draw[ue4grid] (0,0) grid (6,5);
+    \draw[ue4ax] (0,0) -- (6.3,0) node[right, font=\scriptsize]{X};
+    \draw[ue4ax] (0,0) -- (0,5.3) node[above, font=\scriptsize]{Y};
+    \draw[ue4vec, blue!70!black] (0,0) -- node[left, pos=0.55]{A} (2,3);
+    \draw[ue4vec, red!70!black] (2,3) -- node[above, pos=0.5]{B} (5,4);
+    \draw[ue4vec, green!45!black] (0,0) -- node[below right, pos=0.6]{C $=$ A $+$ B}
+      (5,4);
+    \fill (5,4) circle (1.5pt) node[above right, font=\scriptsize]{$(5,4)$};
+    \node[font=\bfseries] at (3,-0.9) {addizione};
+  \end{scope}
+  % --- sottrazione
+  \begin{scope}[shift={(8.5,0)}]
+    \draw[ue4grid] (0,0) grid (6,5);
+    \draw[ue4ax] (0,0) -- (6.3,0) node[right, font=\scriptsize]{X};
+    \draw[ue4ax] (0,0) -- (0,5.3) node[above, font=\scriptsize]{Y};
+    \fill[blue!70!black] (1,1) circle (2.5pt) node[below left]{A};
+    \fill[red!70!black] (5,4) circle (2.5pt) node[above right]{B};
+    \draw[ue4vec, green!45!black] (1.15,1.11) -- node[above left, pos=0.5]
+      {B $-$ A: da A a B} (4.85,3.89);
+    \draw[ue4vec, orange!80!black, dashed] (4.9,3.6) -- node[below right, pos=0.5]
+      {A $-$ B: da B ad A} (1.2,0.85);
+    \node[font=\bfseries] at (3,-0.9) {sottrazione};
+  \end{scope}
+  % --- moltiplicazione
+  \begin{scope}[shift={(0,-7.2)}]
+    \draw[ue4grid] (0,0) grid (6,5);
+    \draw[ue4ax] (0,0) -- (6.3,0) node[right, font=\scriptsize]{X};
+    \draw[ue4ax] (0,0) -- (0,5.3) node[above, font=\scriptsize]{Y};
+    \draw[ue4vec, green!45!black, line width=3pt, opacity=0.35] (0,0) -- (5,4);
+    \draw[ue4vec, blue!70!black] (0,0) -- (2.5,2) node[pos=0.5, above left]{V};
+    \node[green!45!black, font=\small] at (4.6,4.55) {$2 \times$ V};
+    \node[font=\bfseries] at (3,-0.9) {moltiplicazione per uno scalare};
+  \end{scope}
+  % --- normalizzazione
+  \begin{scope}[shift={(8.5,-7.2)}]
+    \draw[ue4grid] (0,0) grid (6,5);
+    \draw[ue4ax] (0,0) -- (6.3,0) node[right, font=\scriptsize]{X};
+    \draw[ue4ax] (0,0) -- (0,5.3) node[above, font=\scriptsize]{Y};
+    \draw[gray!60, dashed] (0,0) circle (1);
+    \node[gray, font=\scriptsize] at (1.35,-0.3) {lunghezza 1};
+    \draw[ue4vec, blue!70!black, opacity=0.45] (0,0) -- (4,3)
+      node[above right, font=\scriptsize]{V, lunghezza 5};
+    \draw[ue4vec, red!70!black] (0,0) -- (0.8,0.6);
+    \node[red!70!black, font=\scriptsize, align=left] at (2.7,0.45)
+      {Normalize(V)\\$= (0{,}8;\ 0{,}6)$};
+    \node[font=\bfseries] at (3,-0.9) {normalizzazione};
+  \end{scope}
+\end{tikzpicture}
+\caption{Le operazioni sui vettori viste a lezione, nel solo piano XY per semplicità.
+In alto a sinistra la somma della slide: A seguito da B porta al punto $(5,4)$. In
+alto a destra la sottrazione, il cui verso dipende dall'ordine dei fattori. In basso,
+la moltiplicazione per un numero, che allunga il vettore senza cambiarne la direzione,
+e la normalizzazione, che lo riporta a lunghezza 1 (sezione~\ref{ue4:sec:dot}). I
+valori di A e B della slide non si leggono nella trascrizione e sono scelti per
+l'esempio; il risultato $(5,4)$ è quello detto a lezione.}
+\label{ue4:fig:vettori}
+\end{figure}
+
+\paragraph{Approfondimento: i vettori nel libro di Romero e Sewell.} Il
+quattordicesimo capitolo di \emph{Blueprints Visual Scripting for Unreal Engine 5},
+dedicato ai nodi matematici e alle \emph{trace}, presenta i vettori con un esempio
+molto vicino a quello della lezione. In Unreal la struttura \textbf{Vector} contiene
+tre \emph{float}, X, Y e Z, e può rappresentare sia un \textbf{punto} nello spazio
+(una \emph{location}) sia uno \textbf{spostamento} o una velocità. Un personaggio sta
+in $(50, 0, 20)$, un divano in $(450, 0, 20)$, e un'unità di Unreal vale un
+centimetro. Per arrivare al divano il personaggio deve spostarsi di $(400, 0, 0)$: 400
+centimetri lungo X. Le due regole che ne derivano sono quelle della lezione, scritte
+in formula:
+\[
+  \text{destinazione} = \text{partenza} + \text{spostamento},
+  \qquad
+  \text{spostamento} = \text{destinazione} - \text{partenza}.
+\]
+Ogni operazione si fa componente per componente: $(3,5,0) + (5,2,0) = (8,7,0)$ e
+$(6,8,0) - (1,4,0) = (5,4,0)$. Il libro aggiunge due esempi pratici: se V1 è la
+posizione nel mondo di un personaggio e V2 la posizione \emph{relativa} della sua arma,
+V1 $+$ V2 è la posizione nel mondo dell'arma; e la \textbf{lunghezza} della differenza
+tra due posizioni (il nodo \emph{Vector Length}) è la loro distanza. Moltiplicare per un
+numero negativo inverte il verso: moltiplicando per $-1$ il vettore ``in avanti'' di un
+attore si ottiene quello ``all'indietro'', ed è lo stesso trucco usato nel quinto
+capitolo per far cambiare direzione a un bersaglio mobile. Il nodo \textbf{Multiply},
+avvertono gli autori, è un nodo \emph{wildcard}: se gli si collega un vettore diventa
+un \emph{Vector $\times$ Vector}, e per moltiplicare un vettore per un \emph{float}
+bisogna fare tasto destro sul secondo pin e scegliere \emph{Convert Pin\ldots} e poi
+\emph{Float}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.1cm}p{3.4cm}p{2.0cm}p{5.6cm}@{}}
+\toprule
+\textbf{Operazione} & \textbf{In formula} & \textbf{Risultato} &
+\textbf{A che cosa serve in un gioco} \\
+\midrule
+Addizione & $(a_x+b_x,\ a_y+b_y,\ a_z+b_z)$ & vettore & spostare un punto: posizione
+$+$ spostamento $=$ nuova posizione \\
+Sottrazione & $(b_x-a_x,\ b_y-a_y,\ b_z-a_z)$ & vettore & la direzione e la distanza
+da A a B (``dove sta il player rispetto a me?'') \\
+Moltiplicazione per uno scalare & $(k\,a_x,\ k\,a_y,\ k\,a_z)$ & vettore & allungare o
+accorciare; con $-1$ invertire il verso; velocità $\times$ \emph{delta seconds} \\
+Lunghezza (\emph{Vector Length}) & $\sqrt{a_x^2+a_y^2+a_z^2}$ & \emph{float} & la
+magnitudine; della differenza tra due punti, la distanza \\
+Normalizzazione (\emph{Normalize}) & $\vec a \,/\, |\vec a|$ & vettore lungo 1 & tenere
+solo la direzione, da moltiplicare poi per una velocità \\
+Prodotto scalare (\emph{Dot Product}) & $a_x b_x + a_y b_y + a_z b_z$ & \emph{float} &
+capire se due direzioni sono concordi, perpendicolari od opposte \\
+\bottomrule
+\end{tabular}
+\caption{Le operazioni sui vettori della lezione, con il nome del nodo Blueprint
+corrispondente dove serve e un uso tipico in un gioco.}
+\label{ue4:tab:vettori}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Il prodotto scalare e i vettori normalizzati}
+\label{ue4:sec:dot}
+
+Il \textbf{prodotto scalare} è l'operazione che restituisce un \emph{float} invece di un
+vettore. ``Che cosa ci dà?'' Ci dice come sono orientati due vettori l'uno rispetto
+all'altro. Con i vettori A e B della slide (figura~\ref{ue4:fig:dot}):
+\begin{itemize}
+  \item se il prodotto scalare è \textbf{maggiore di 0}, i due vettori sono
+        ``direzionati nella stessa direzione'', grosso modo concordi; se è
+        \textbf{1}, ``sono proprio uguali'', cioè puntano esattamente nello stesso
+        verso;
+  \item se è \textbf{uguale a 0}, sono ``perfettamente \textbf{perpendicolari}'',
+        formano un angolo retto;
+  \item se è \textbf{minore di 0}, formano un angolo ottuso, ``al verso opposto'': per
+        due vettori come quelli della slide ``magari $-0{,}4$, più o meno''; ``se
+        proprio sono così'', uno contro l'altro, è $-1$.
+\end{itemize}
+Questi valori ``puliti'', tra $-1$ e 1, valgono per i \textbf{vettori normalizzati}, ed
+è il motivo per cui la slide successiva li introduce.
+
+\paragraph{I vettori normalizzati.} ``Qualcuno di voi sa cos'è un vettore
+normalizzato?'' Uno studente: ``un vettore tra 0 e 1''. ``Esatto'': normalizzando un
+vettore, ``indipendentemente dalla sua lunghezza, lo ridurremo a 1''. Un vettore ``che
+è lungo 5'', normalizzato, ``lo portiamo a 1''\footnote{Più precisamente: un vettore
+normalizzato ha lunghezza \emph{esattamente} 1; sono le sue componenti, prese una a
+una, a stare tra $-1$ e 1. Il vettore $(4,3,0)$, lungo 5, normalizzato diventa
+$(0{,}8;\ 0{,}6;\ 0)$, come nella figura~\ref{ue4:fig:vettori}.}. La direzione resta la
+stessa, cambia solo la lunghezza.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small,
+  ue4vec/.style={-{Stealth[length=2.5mm]}, very thick}]
+  \foreach \xs/\ang/\val/\txt in {0/0/{$= 1$}/{stessa direzione},
+                                  3.4/40/{$\approx 0{,}77$}/{concordi},
+                                  6.8/90/{$= 0$}/{perpendicolari},
+                                  10.2/140/{$\approx -0{,}77$}/{angolo ottuso},
+                                  13.6/180/{$= -1$}/{opposti}} {
+    \begin{scope}[shift={(\xs,0)}]
+      \draw[ue4vec, blue!70!black] (0,0) -- (1.5,0) node[below, pos=0.8,
+        font=\scriptsize]{A};
+      \draw[ue4vec, red!70!black] (0,0) -- (\ang:1.35) node[above,
+        font=\scriptsize]{B};
+      \fill (0,0) circle (1.5pt);
+      \node[font=\small] at (0.3,-1.0) {A $\cdot$ B \val};
+      \node[font=\scriptsize, gray!50!black] at (0.3,-1.5) {\txt};
+    \end{scope}
+  }
+\end{tikzpicture}
+\caption{Il prodotto scalare tra due vettori normalizzati A e B, al variare
+dell'angolo tra di loro: 1 se puntano nello stesso verso, positivo se sono concordi,
+0 se sono perpendicolari, negativo se formano un angolo ottuso, $-1$ se sono opposti.
+I valori intermedi sono il coseno dell'angolo ($\cos 40^\circ \approx 0{,}77$).}
+\label{ue4:fig:dot}
+\end{figure}
+
+\paragraph{Approfondimento: il prodotto scalare è un coseno.} Per due vettori qualsiasi
+vale
+\[
+  \vec a \cdot \vec b \;=\; a_x b_x + a_y b_y + a_z b_z \;=\; |\vec a|\,|\vec b|\,
+  \cos\theta ,
+\]
+dove $\theta$ è l'angolo tra i due. Se i vettori sono normalizzati, le lunghezze valgono
+1 e il prodotto scalare \emph{è} il coseno dell'angolo: per questo varia tra $-1$ e 1,
+come dicono Romero e Sewell nel quattordicesimo capitolo (``il prodotto scalare di due
+vettori normalizzati è uguale al coseno dell'angolo che formano''), e per questo i casi
+della slide sono 1, 0 e $-1$. Con vettori non normalizzati il \emph{segno} resta
+affidabile (positivo, zero, negativo) ma il valore non è più confrontabile. Nei giochi
+il prodotto scalare risponde a domande come ``il player è davanti o dietro al
+nemico?'': si normalizza la differenza tra la posizione del player e quella del nemico
+e la si confronta con il \emph{Forward Vector} del nemico, che Unreal restituisce già
+normalizzato (nodi \emph{Get Actor Forward Vector}, \emph{Right Vector}, \emph{Up
+Vector}). Un risultato maggiore di $\cos 45^\circ \approx 0{,}71$, per esempio,
+significa ``il player è dentro un cono di visione di 90 gradi''. Il quinto capitolo del
+libro usa invece la normalizzazione per il movimento: si normalizza una direzione, la si
+moltiplica per una velocità e per il \emph{delta time} (con il nodo \textbf{Get World
+Delta Seconds}, che tornerà nella torretta) e la si somma alla posizione a ogni
+\emph{tick} con \emph{Add Actor World Offset}. ``Normalizzare'', scrivono, ``è una
+procedura comune che assicura che il vettore abbia lunghezza 1, il che lo rende
+compatibile con il resto dei calcoli''.
+
+% ---------------------------------------------------------------------
+\section{I rotator, il gimbal lock e i quaternioni}
+\label{ue4:sec:rotator}
+
+``Andiamo avanti: poi abbiamo i \textbf{rotator}.'' Per spiegarli il docente usa
+l'immagine del \textbf{giroscopio}: tre ``anelli che girano tra di loro e formano
+proprio quella che è la rotazione''. Ogni anello corrisponde a un asse, con i colori di
+sempre: la X in rosso, la Y in verde, la Z in blu (figura~\ref{ue4:fig:rotator}).
+
+\paragraph{Il gimbal lock.} Con le ``regole classiche di Eulero'', cioè descrivendo la
+rotazione come tre angoli applicati uno dopo l'altro, c'è ``un possibile problema'': il
+\textbf{gimbal lock}. ``Non vi sto a spiegare troppo, perché fondamentalmente andremo a
+parlare di quattro dimensioni invece di tre, ed è tutta una cosa molto, molto
+complessa.'' In breve, ``potrebbe succedere che due assi si blocchino tra di loro'' e
+comincino a ruotare ``sempre dipendenti l'uno dall'altro''. Si risolve con i
+\textbf{quaternioni}, che usano quattro valori invece di tre, ma ``parliamo di
+matematica molto complessa, e non andiamo molto avanti su questa cosa''. Quello che
+conta, per ora: per descrivere una rotazione nello spazio servono sempre la X, la Y e
+la Z, ``perché abbiamo tre giroscopi che girano di per sé''. Nell'editor, su un
+qualsiasi \emph{asset}, si vedono proprio questi tre valori.
+
+\paragraph{L'obiettivo.} ``Cosa vogliamo fare oggi? Vogliamo creare qualcosa che giri'':
+qualcosa che usi il \emph{rotator} per far girare le pale del mulino.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small,
+  ue4ax/.style={-{Stealth[length=2.5mm]}, very thick},
+  ue4rot/.style={-{Stealth[length=2mm]}, thick}]
+  % assi in proiezione
+  \coordinate (O) at (0,0);
+  \draw[ue4ax, red!75!black] (O) -- (-1.9,-1.1) node[below left]{X};
+  \draw[ue4ax, green!50!black] (O) -- (2.6,0) node[right]{Y};
+  \draw[ue4ax, blue!75!black] (O) -- (0,2.6) node[above]{Z};
+  % anelli di rotazione
+  \draw[ue4rot, red!75!black] (-1.25,-0.25) arc[x radius=0.35, y radius=0.6,
+    start angle=90, end angle=400];
+  \node[red!75!black, font=\scriptsize, align=center] at (-2.9,-0.1)
+    {\textbf{Roll}\\attorno a X};
+  \draw[ue4rot, green!50!black] (1.7,0.55) arc[x radius=0.3, y radius=0.55,
+    start angle=90, end angle=400];
+  \node[green!50!black, font=\scriptsize, align=center] at (2.4,1.05)
+    {\textbf{Pitch}\\attorno a Y};
+  \draw[ue4rot, blue!75!black] (0.55,1.75) arc[x radius=0.55, y radius=0.2,
+    start angle=0, end angle=310];
+  \node[blue!75!black, font=\scriptsize, align=center] at (1.65,2.15)
+    {\textbf{Yaw}\\attorno a Z};
+  % giroscopio stilizzato
+  \begin{scope}[shift={(7.0,0.6)}]
+    \draw[very thick, red!75!black] (0,0) ellipse (1.9 and 1.9);
+    \draw[very thick, green!50!black] (0,0) ellipse (1.45 and 0.55);
+    \draw[very thick, blue!75!black] (0,0) ellipse (0.45 and 1.05);
+    \fill (0,0) circle (2pt);
+    \node[font=\scriptsize, align=center] at (0,-2.4) {il giroscopio: tre anelli
+      annidati,\\ognuno ruota attorno al proprio asse};
+  \end{scope}
+\end{tikzpicture}
+\caption{I tre assi di Unreal con i loro colori e i nomi delle tre rotazioni di un
+\emph{rotator}: \emph{roll} attorno a X, \emph{pitch} attorno a Y, \emph{yaw} attorno a
+Z. A destra, l'immagine del giroscopio usata a lezione. Schema ricostruito.}
+\label{ue4:fig:rotator}
+\end{figure}
+
+\paragraph{Approfondimento: roll, pitch, yaw e il gimbal lock in pratica.} Nella seconda
+edizione di Romero e Sewell, l'elenco dei tipi di variabile descrive il
+\textbf{Rotator} così: contiene i \emph{float} X (\textbf{Roll}), Y (\textbf{Pitch}) e
+Z (\textbf{Yaw}), espressi in gradi. I tre nomi vengono dall'aviazione: il
+\emph{roll} è il rollio (l'aereo che inclina le ali), il \emph{pitch} il beccheggio (il
+muso che sale e scende), lo \emph{yaw} l'imbardata (il muso che gira a destra e a
+sinistra). Una torretta che insegue un bersaglio usa lo \emph{yaw} per girarsi e il
+\emph{pitch} per alzare la canna; le pale del mulino, come si vedrà, girano in
+\emph{pitch}. Il \textbf{gimbal lock} succede quando l'anello di mezzo ruota di 90
+gradi: il primo e il terzo anello si ritrovano allineati, e ruotarli produce lo stesso
+movimento, così un grado di libertà va perso. Con gli angoli di Unreal il caso tipico
+è il \emph{pitch} a $\pm 90$: con il muso dritto verso l'alto, \emph{yaw} e \emph{roll}
+fanno la stessa cosa. I \textbf{quaternioni} (in Unreal la struttura \emph{Quat})
+rappresentano invece ogni rotazione come una rotazione unica attorno a un asse
+qualsiasi, con quattro numeri, e non hanno questo problema. Unreal li usa
+internamente: un \emph{rotator} è il formato comodo per le persone, il quaternione
+quello sicuro per i calcoli, e nodi come \emph{Combine Rotators} convertono i
+\emph{rotator} in quaternioni, li combinano e li riconvertono. Un effetto collaterale,
+che conviene conoscere: dato che il \emph{pitch} di un \emph{rotator} viene sempre
+riportato tra $-90$ e $90$ gradi, una pala che ruota in \emph{pitch} oltre i 90 gradi
+viene descritta ``capovolta'' (\emph{yaw} e \emph{roll} a 180), e chi stampasse il suo
+\emph{rotator} vedrebbe numeri che saltano. La rotazione sullo schermo, però, resta
+corretta.
+
+% ---------------------------------------------------------------------
+\section{Il Rotating Movement Component}
+\label{ue4:sec:rotating}
+
+``Allora, avete aperto l'editor di Unreal? Sì? Perfetto.'' Prima di costruire il
+mulino, il docente mostra ``quello più semplice'' tra i ``vari modi per far ruotare un
+actor in generale''; un modo che però, avverte, ``è difficile usarlo su vari
+componenti''.
+
+\paragraph{Un componente aggiunto dai Details.} Si trascina in scena un \textbf{cubo}
+(con il tasto \textbf{Fine}, \emph{End}, l'oggetto ``va diretto sul
+terreno''\footnote{La trascrizione dice ``il tasto AND'': è il tasto \emph{End} (Fine),
+che in Unreal appoggia l'oggetto selezionato sulla superficie sottostante.}). Ora,
+``qui sui \textbf{Details} sulla destra, potete aggiungere dei componenti anche non
+avendo una schermata di Blueprint'': con il pulsante \textbf{Add} dei Details si può
+mettere un componente direttamente sull'actor in scena. Si scrive \emph{rotating
+movement} e si sceglie il \textbf{Rotating Movement Component}. ``Trovato? Sì?
+Perfetto.''
+
+\paragraph{I parametri.} Il componente ha una serie di dati, tra cui il più importante
+è il \textbf{Rotation Rate}, con i tre assi X, Y e Z: la velocità di rotazione su
+ciascun asse. ``Di default il Rotating Movement, come potete vedere, è messo a
+\textbf{180}'' sulla Z: mezzo giro al secondo attorno all'asse verticale.
+
+\paragraph{La regola della mobilità.} ``Intanto vi dico, ragazzi: come abbiamo visto,
+se un \emph{asset} si deve muovere all'interno di uno spazio, la sua mobilità dovrà
+essere \textbf{Movable}. Ricordatevelo sempre.'' Se lo si lascia \textbf{Static} e si
+va in Play, ``prima di tutto non si muove'', e poi l'engine restituisce un errore,
+che il docente legge: \emph{Static Mesh Component has to be movable if you'd like to
+move it with Rotating Movement Component}. Con la mobilità corretta, in Play il cubo
+gira su sé stesso: ``abbiamo fatto le munizioni di \emph{Metal Gear Solid}'', scherza
+il docente, pensando agli oggetti da raccogliere che ruotano a mezz'aria. ``Questo è un
+modo per far ruotare'': Unreal ``ci dà la possibilità di poter ruotare direttamente un
+nostro bellissimo actor tramite un componente che loro hanno già creato''. ``Un oggetto
+ruotante che ruota. Perché `ruotante' è brutto, sembra.''
+
+\paragraph{Esercitazione: i tre cubi.} ``Piccola esercitazione velocissima, faccio
+queste botte e risposte con le esercitazioni.'' Si copia il cubo (``tanto vi ricordate
+come si copiano'') e si fa in modo che \textbf{un cubo ruoti sull'asse X} e
+\textbf{un altro sull'asse Y}, alla velocità che si preferisce. ``Ricordatevi di
+metterli Movable. Vi do cinque minuti.'' La correzione: sul secondo cubo si azzera la Z
+e si mette 180 sulla X; sul terzo, 180 sulla Y. Si controlla che siano tutti e tre
+Movable, si va in Play, ``ed ecco le nostre tre rotazioni''. ``Possiamo farlo con
+qualsiasi \emph{asset}.''
+
+\paragraph{Approfondimento: la sedia che gira.} Il Rotating Movement Component è il
+primo componente che Romero e Sewell fanno usare nel libro, già nel primo capitolo: un
+Blueprint \emph{BP\_RotatingChair} con una \emph{Static Mesh} (la sedia dello
+\emph{Starter Content}) e un Rotating Movement. ``Di default'', scrivono, ``questo
+componente ruoterà il Blueprint attorno all'asse Z, quindi non serve cambiarne le
+proprietà'': si compila, si trascina la sedia nel livello e la si guarda girare in Play.
+Il componente fa parte della famiglia dei \emph{movement component}, componenti che non
+hanno una forma propria ma muovono un altro componente, quello indicato come
+\emph{Updated Component}, che di default è la \textbf{radice} dell'actor. È qui la
+ragione del limite che il docente scoprirà tra poco con il mulino: il Rotating Movement
+fa girare la radice, e con essa tutto ciò che vi è attaccato. Il componente ha anche
+un'opzione \emph{Rotation in Local Space} e un \emph{Pivot Translation}, che sposta il
+centro di rotazione; ma per far girare una parte sola di un actor la strada più chiara
+resta quella che segue, il Blueprint.
+
+% ---------------------------------------------------------------------
+\section{Il Blueprint del mulino}
+\label{ue4:sec:mulino}
+
+``Proviamo a fare intanto il nostro \emph{windmill}.'' Il mulino del livello di esempio
+è formato da più cose, si vede nei Details. ``Chi si ricorda come si chiamano queste
+cose qua, che sono tutte insieme in un singolo \emph{asset}?'' ``Componenti.''
+``Sono i \textbf{componenti}'': come si è visto nella seconda lezione, un actor ``può
+essere, scusate la ridondanza, composto da più componenti''. In questo caso un
+\textbf{body}, il corpo, ``la nostra \emph{mesh} principale, il cubone'', e
+\textbf{due pale}.
+
+\paragraph{La classe.} Si crea un nuovo \textbf{Blueprint Class} di tipo
+\textbf{Actor}, ``perché non sarà disponibile al giocatore, ma sarà solamente là come
+sfondo'': non va controllato, non è un \emph{Pawn}. Il docente lo chiama
+\textbf{BP\_Windmill}\footnote{La trascrizione dice ``Windmill, io in questo caso lo
+chiamerò 1'': probabilmente \emph{BP\_Windmill1}, per non confonderlo con il mulino già
+presente nel progetto.}.
+
+\paragraph{Il corpo.} Nella \textbf{Viewport} del Blueprint si aggiunge una
+\textbf{Static Mesh} (Add, in alto a sinistra, \emph{Static Mesh}) e la si chiama
+\textbf{Body}. Nei dettagli, alla voce \emph{Static Mesh}, si sceglie un cubo, per
+esempio \emph{SM\_Cube}. Il primo cubo scelto dal docente ``ha un \emph{pivot}
+particolarmente strano''; ne sceglie un altro, ``molto meglio, perché c'ha il
+\emph{pivot} al centro''. Lo solleva di circa 40 sulla Z e gli dà un materiale: il
+docente mette la \emph{prototype grid}, ``voi mettete quello che volete''. Poi lo scala
+per farne il corpo del mulino: ``3 metri per 5'' di altezza, ``di larghezza facciamo 2
+metri'', cioè una scala di circa 3, 2 e 5 sui tre assi\footnote{La trascrizione dice
+``x32 sulla y5 sull'altezza'' e ``3:25'': la lettura più probabile è X 3, Y 2, Z 5. Il
+cubo di base di Unreal misura un metro di lato, quindi una scala di 3 corrisponde a 3
+metri.}.
+
+\paragraph{La viewport che non si trova.} Uno studente non ricorda come si apre la
+viewport del Blueprint. ``O ce l'hai qua, o ce l'hai qua, oppure dovresti avere
+\textbf{Window} e dovresti vedere \textbf{Viewport}.'' La voce è già spuntata, ma la
+finestra non c'è: forse è ``nascosta da qualche schermata di Windows'' (``prova a fare
+Alt+Tab''). Si passa alla condivisione dello schermo, e si scopre che il problema è un
+altro: lo studente ha creato il Blueprint ma non lo ritrova. La soluzione è il
+\textbf{filtro} del Content Browser: le ``tre stanghettine'' vicino alla ricerca,
+categoria \emph{Blueprint}, ed ecco il file; doppio clic e, se si apre la versione
+ridotta, \emph{Open Full Blueprint Editor}. Poi Add, ma nell'editor in italiano la voce
+non si trova subito (è ``Componente Mesh Statica''). ``Effettivamente, ragazzi, vi
+consiglio di mettervi l'editor in \textbf{inglese}, perché è molto più semplice. Anzi,
+ve lo consiglio proprio'': i nomi dei nodi e dei componenti nei tutorial, nei libri e
+nella documentazione sono quasi sempre in inglese.
+
+\paragraph{Le pale.} ``Adesso dobbiamo creare le nostre palette.'' Si copia e incolla il
+corpo (Ctrl+C, Ctrl+V): le copie finiscono dentro il corpo, ``quindi cliccatele e
+tiratele fuori, perché sono uguali''. Si scalano a forma di pala, una orizzontale e una
+verticale, si dà loro un materiale diverso (il docente usa \emph{M\_Grid}, ``questa
+qua violacea'') e le si rinomina \textbf{Pala1} e \textbf{Pala2}.
+
+\paragraph{Attaccare le pale al corpo.} ``Importante, ragazzi: queste pale devono essere
+attaccate al corpo. Come facciamo? Abbiamo visto l'ereditarietà.'' È la
+\textbf{gerarchia} dei componenti: ``il fatto che io posso mettere degli \emph{asset}
+attaccati l'uno con l'altro''. Si prende una pala e la si \textbf{trascina sopra} Body,
+nell'elenco dei componenti: ora è sua figlia. ``Scusami, non ho capito come si fa.''
+``Se hai questa pala, la prendi e la trascini sopra Body.''
+
+\paragraph{Il Rotating Movement non basta.} ``Adesso dobbiamo dare una rotazione a
+queste pale. Potremmo provare con il Rotating Movement.'' Il docente lo aggiunge al
+Blueprint, mette il mulino in scena (``molto più grosso'') e va in Play. ``Guardate che
+succede'': il Rotating Movement è impostato sulla Z, e \textbf{ruota tutto il corpo}.
+``Una particolarità del Rotating Movement è che non può essere attaccato a
+componenti: o ruota tutto, o non ruota niente.'' Quindi bisogna programmare il
+movimento delle pale. Il Rotating Movement va tolto: ``se l'avete messo e avete adesso
+il vostro mulino che ruota su sé stesso, lo dovete eliminare''.
+
+% ---------------------------------------------------------------------
+\section{Far girare una pala: Event Tick e Combine Rotators}
+\label{ue4:sec:pala}
+
+``Domanda. Questo movimento deve essere fatto per ogni \emph{frame}. Quindi deve essere
+un evento che riprende ogni \emph{frame}. Chi si ricorda qual è l'evento che lo fa? L'abbiamo
+usato per la piattaforma dell'altra volta.'' ``L'\textbf{Event Tick}.'' ``Ottimo.''
+L'Event Tick, ``che sarà il nostro protagonista'', è già presente nell'Event Graph di un
+nuovo Blueprint.
+
+\paragraph{I delta seconds, di nuovo.} ``Chi si ricorda che sono i \textbf{Delta
+Seconds}?'' Uno studente: ``determina quanti tick al minuto\ldots''. Un altro: ``i
+secondi effettivi, e non quelli basati su \emph{frame}''. Il docente riprende: è ``lo
+spazio che intercorre tra un \emph{frame} e l'altro'', la differenza di tempo tra due
+\emph{frame}, ``in questo caso si parla di millisecondi''. Si moltiplica un valore per i
+\emph{delta seconds} perché la durata di un \emph{frame} cambia (a 30 \emph{frame} al
+secondo è molto più lunga che a 120), e così gli spostamenti ``non diventano più lenti
+se abbiamo meno \emph{frame}, o più veloci se ne abbiamo di più''. (Il docente prova a
+disegnarlo sullo schermo, ma lo strumento ``a quanto pare non mi funziona benissimo''.)
+
+\paragraph{La velocità.} Si tira fuori un cavo da Delta Seconds e si crea un
+\textbf{Multiply}: o scrivendo \emph{multiply}, o digitando semplicemente
+l'\textbf{asterisco}, ``e vi dà subito il Multiply''. Il secondo valore è la
+\textbf{velocità}: ``più è alto, più è veloce''. Per ora, \textbf{90}.
+
+\paragraph{Make Rotator.} ``Adesso vi dico una cosa.'' Il nodo \textbf{Make Rotator}
+costruisce un \emph{rotator}, ``quello che muove a livello di rotazione un
+\emph{asset}'', a partire da tre \emph{float}: X, Y e Z. Quale asse serve? ``Prendiamo
+la nostra bellissima pala e guardiamo subito in che asse la vogliamo ruotare. La X non
+mi sembra, la Z neanche: è la nostra carissima \textbf{Y}'', cioè il \textbf{pitch}.
+Si collega il risultato del Multiply al pin Y (Pitch): il \emph{rotator} creato ha X e
+Z a 0, ``perché non si devono muovere'', e la Y uguale a velocità per \emph{delta
+seconds}.
+
+\paragraph{Combine Rotators.} ``Possiamo farlo in tanti modi, ma oggi ne facciamo tipo
+tre.'' Il primo è \textbf{Combine Rotators}, che ``combina due \emph{rotator} per
+darne uno in uscita''. Il primo dei due è l'\textbf{origine}: ``a livello concettuale,
+qual è l'origine che dobbiamo prendere?'' ``Le coordinate del componente.'' ``Sì:
+quale componente?'' Per ora una sola pala, la Pala1. Siccome serve un componente e non
+l'intero actor, si trascina la pala dall'elenco dei componenti nel grafo: si ottiene
+una \textbf{referenza} a quel componente, ``un \emph{get}'' che ``si riferisce a quel
+componente preciso''.
+
+\paragraph{Relativa o del mondo?} Da quella referenza si chiede la rotazione. Ma quale?
+``Abbiamo visto la differenza tra \textbf{rotazione relativa} e \textbf{rotazione del
+mondo}.'' La pala è attaccata al corpo, ma deve muoversi da sola, indipendentemente dal
+corpo. ``Relativa al corpo, secondo me'', propone uno studente. ``Relativa a sé
+stessa, quindi la sua asse singola. Se prendiamo quella del mondo, girerà in modo
+strano.'' Si usa dunque \textbf{Get Relative Rotation}, la si collega al primo
+ingresso di Combine Rotators, e il \emph{rotator} di Make Rotator al secondo.
+
+\paragraph{Set Relative Rotation.} ``Chi si ricorda qual è il blocco che serve per
+settare la rotazione? Tanto è un \emph{set}.'' È \textbf{Set Relative Rotation},
+``perché, ovviamente, abbiamo preso la relativa''. Lo si crea tirando fuori un cavo da
+Pala1 (così il \emph{target} è già la pala), lo si collega all'Event Tick e gli si dà
+in ingresso la nuova rotazione, l'uscita di Combine Rotators
+(figura~\ref{ue4:fig:pala}). ``E mi raccomando, deve essere \textbf{Movable}.'' Si
+mette il mulino in scena, si va in Play: ``ed ecco che una pala ruota''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small,
+  ue4node/.style={draw, thick, rounded corners=4pt, align=center, fill=gray!8,
+                  minimum height=0.9cm},
+  ue4event/.style={ue4node, fill=red!12},
+  ue4exec/.style={-{Stealth[length=2.5mm]}, very thick, black!80},
+  ue4flt/.style={-{Stealth[length=2mm]}, thick, green!50!black},
+  ue4rot/.style={-{Stealth[length=2mm]}, thick, violet!70!black},
+  ue4obj/.style={-{Stealth[length=2mm]}, thick, blue!60!black}]
+  \node[ue4event, text width=2.1cm] (tick) at (0,0)
+    {\textbf{Event Tick}\\\footnotesize Delta Seconds};
+  \node[ue4node, text width=1.5cm] (mul) at (2.9,-1.6)
+    {\textbf{Multiply}\\\footnotesize $\times$ 90};
+  \node[ue4node, text width=1.9cm] (make) at (5.6,-1.6)
+    {\textbf{Make Rotator}\\\footnotesize X 0, \textbf{Y}, Z 0};
+  \node[ue4node, fill=blue!8, text width=1.3cm] (pala) at (2.9,-3.5)
+    {\textbf{Pala1}};
+  \node[ue4node, text width=2.1cm] (get) at (5.6,-3.5)
+    {\textbf{Get Relative}\\\textbf{Rotation}};
+  \node[ue4node, text width=2.0cm, minimum height=1.5cm] (comb) at (8.6,-2.5)
+    {\textbf{Combine}\\\textbf{Rotators}\\\footnotesize A, B};
+  \node[ue4node, text width=2.2cm, minimum height=1.6cm] (set) at (11.6,0)
+    {\textbf{Set Relative}\\\textbf{Rotation}\\\footnotesize Target: Pala1};
+  \draw[ue4exec] (tick.east) -- (set.west |- tick.east);
+  \draw[ue4flt] ([yshift=-3mm]tick.east) -- ++(0.4,0) |- (mul.west);
+  \draw[ue4flt] (mul.east) -- node[above, font=\scriptsize]{Pitch} (make.west);
+  \draw[ue4obj] (pala.east) -- (get.west);
+  \draw[ue4rot] (get.east) -- ++(0.4,0) |- node[pos=0.75, below,
+    font=\scriptsize]{A} ([yshift=-3mm]comb.west);
+  \draw[ue4rot] (make.east) -- ++(0.4,0) |- node[pos=0.75, above,
+    font=\scriptsize]{B} ([yshift=3mm]comb.west);
+  \draw[ue4rot] (comb.east) -- node[above, font=\scriptsize]{New Rotation}
+    ++(1.6,0) |- ([yshift=-4mm]set.west);
+  \draw[ue4obj, dashed] (pala.south) -- ++(0,-0.5) -| node[pos=0.25, below,
+    font=\scriptsize]{Target} (set.south);
+\end{tikzpicture}
+\caption{Il grafo della prima pala. A ogni \emph{frame}, l'Event Tick esegue Set
+Relative Rotation su Pala1; la nuova rotazione è la rotazione relativa attuale della
+pala combinata con un piccolo incremento in \emph{pitch}, pari a 90 gradi al secondo
+moltiplicati per i \emph{delta seconds}. Il cavo nero è l'esecuzione, gli altri sono
+dati (verde i \emph{float}, viola i \emph{rotator}, blu le referenze). Schema
+ricostruito.}
+\label{ue4:fig:pala}
+\end{figure}
+
+\paragraph{I problemi degli studenti.} ``Avete la vostra paletta che ruota?'' Non
+tutti. Una studentessa chiede di rivedere il codice e non trova il blocco Get Relative
+Rotation: ``tira fuori da Pala1 e scrivi \emph{get relative rotation}''. Un altro
+studente vede la pala ``staccarsi da tutto l'asset'' quando preme Play, e in
+condivisione si scoprono due errori. Il primo: ha calcolato la rotazione con Combine
+Rotators ma non l'ha collegata al Set (``hai calcolato la rotazione, ma non
+gliel'hai assegnata''). Il secondo: anche dopo, la pala gira attorno a un punto
+sbagliato, perché la \emph{mesh} che ha scelto ha il \textbf{pivot} spostato. ``Vedi che
+il pivot sta quasi lì? Cambia la \emph{mesh}'': con un cubo che ha il pivot al centro, la
+pala gira correttamente. (Nel frattempo il docente accenna anche a un \textbf{Set World
+Rotation}, per mostrare la differenza con la rotazione relativa.)
+
+\paragraph{Approfondimento: relativo e mondo nel libro.} Il quattordicesimo capitolo di
+Romero e Sewell spiega la differenza con un esempio molto simile al mulino. Un
+Blueprint ha come radice un \emph{DefaultSceneRoot}; sotto c'è un componente
+\emph{Table}, un tavolo, e sotto il tavolo un componente \emph{Statue}, una statua. Il
+\emph{transform} di Table è \textbf{relativo} a DefaultSceneRoot, e quello di Statue è
+relativo a Table: ``se muovete il componente Table nella Viewport, anche il componente
+Statue si muoverà; ma se cambiate il \emph{transform} relativo di Statue, Table resterà
+dov'è''. Lo stesso vale per il mulino: la rotazione relativa di Pala1 è misurata
+rispetto a Body. Se il mulino viene ruotato nel livello, la rotazione relativa della
+pala non cambia, e il grafo continua a farla girare attorno al proprio asse; usando la
+rotazione del mondo, invece, l'incremento in \emph{pitch} verrebbe applicato attorno
+all'asse Y del \emph{mondo}, che coincide con quello della pala solo se il mulino non è
+ruotato: è il ``girerà in modo strano'' del docente. Nei vettori lo si vede ancora più
+chiaramente: il punto iniziale di ogni posizione nel mondo è sempre $(0,0,0)$, mentre
+quello di una posizione relativa è il punto in cui sta il genitore.
+
+\paragraph{Approfondimento: una scorciatoia, Add Local Rotation.} Il trio Get Relative
+Rotation, Combine Rotators e Set Relative Rotation è istruttivo perché mostra i tre
+passaggi di ogni animazione fatta a mano: \emph{leggi} lo stato attuale, \emph{calcola}
+il nuovo, \emph{scrivi} il risultato. Unreal offre anche nodi che fanno tutto in uno:
+\textbf{Add Local Rotation} (o \emph{Add Relative Rotation}) su un componente aggiunge
+un \emph{Delta Rotation} alla rotazione attuale, così come \emph{Add Actor World
+Rotation}, usato nella seconda lezione per la piattaforma, lo fa per un intero actor.
+Collegando l'Event Tick a un Add Local Rotation su Pala1, con un Delta Rotation fatto
+con Make Rotator come sopra, si ottiene lo stesso mulino con un nodo in meno. Il
+risultato è lo stesso; cambia la chiarezza di ciò che succede, ed è per questo che a
+lezione conviene vedere prima la versione lunga.
+
+% ---------------------------------------------------------------------
+\section{La gerarchia: la seconda pala e il cubetto}
+\label{ue4:sec:gerarchia}
+
+``Possiamo fare una cosa bella: invece di dover fare la copia esatta per quanto
+riguarda la nostra prima pala, possiamo vedere quello che la \textbf{gerarchia} ci
+permette di fare in modo molto facile.'' La Pala2 deve seguire in ogni caso il movimento
+della Pala1. Invece di programmare anche lei, la si mette ``in eredità'' (``non quella
+con Carlo Conti, ragazzi'') alla Pala1: la si trascina sopra Pala1, e diventa sua
+\textbf{figlia}. Play: ``non abbiamo programmato niente'', ma la Pala2 segue la
+rotazione della Pala1. ``È la Pala1 che gira, non la Pala2; la Pala2 segue solamente.''
+
+\paragraph{Esercitazione: il cubetto sulla pala.} ``Se noi volessimo attaccare un
+cubettino su un estremo della pala\ldots anzi, sapete che c'è? Lo fate voi.'' La
+consegna: aggiungere una \textbf{Static Mesh} qualsiasi (``un cubo, una \emph{mesh},
+quello che vi pare''), piccola, su un'estremità della pala, e attaccarla alla
+\textbf{Pala2}, in modo che segua anche lei il movimento. ``Vi do cinque minuti
+classici. Ricordatevi l'ereditarietà: per spostarlo dovete prenderlo proprio e metterlo
+sopra.''
+
+\paragraph{La domanda sul pivot.} Uno studente l'ha fatto, ma è sorpreso: ``mi
+aspettavo di dover spostare il pivot al centro della rotazione. Invece,
+automaticamente, è come se si agganciasse alla pala.'' ``Esatto. Perché comunque
+\textbf{mantiene la sua posizione relativa}'': il cubetto ha il suo pivot al proprio
+centro, ma la sua posizione è espressa rispetto al genitore, e quando il genitore
+ruota, il figlio ruota con lui attorno al pivot del genitore. ``Se lo dovessimo
+spostare, andrebbe insieme: manterrebbe la sua origine, il fatto che sta sulla parte
+destra, sopra, giù, quello che è, ma si muoverebbe relativo all'altro.'' Play: ``eccolo
+che gira insieme''. ``Così abbiamo capito come si ereditano piano piano gli oggetti tra
+di loro'' (figura~\ref{ue4:fig:gerarchia}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small,
+  ue4comp/.style={draw, thick, rounded corners=3pt, minimum width=2.6cm,
+                  minimum height=0.7cm, align=center},
+  ue4tree/.style={thick, gray!60!black},
+  ue4arr/.style={-{Stealth[length=2.5mm]}, thick}]
+  % albero dei componenti
+  \node[ue4comp, fill=gray!10] (root) at (0,0) {BP\_Windmill (actor)};
+  \node[ue4comp, fill=orange!15] (body) at (0.6,-1.0) {Body};
+  \node[ue4comp, fill=violet!12] (p1) at (1.2,-2.0) {Pala1 \footnotesize(ruota)};
+  \node[ue4comp, fill=violet!6] (p2) at (1.8,-3.0) {Pala2 \footnotesize(segue)};
+  \node[ue4comp, fill=green!10] (cub) at (2.4,-4.0) {Cubetto \footnotesize(segue)};
+  \foreach \a/\b in {root/body, body/p1, p1/p2, p2/cub}
+    \draw[ue4tree] ([xshift=-1.0cm]\a.south) |- (\b.west);
+  \node[font=\footnotesize, align=center] at (1.2,-5.0) {l'elenco dei componenti};
+  % mulino stilizzato
+  \begin{scope}[shift={(8.2,-2.2)}]
+    \draw[thick, fill=orange!15] (-0.75,-2.5) rectangle (0.75,1.0);
+    \node[font=\scriptsize] at (0,-2.2) {Body};
+    \begin{scope}[rotate=25]
+      \draw[thick, fill=violet!25] (-2.2,-0.18) rectangle (2.2,0.18);
+      \draw[thick, fill=violet!12] (-0.18,-2.2) rectangle (0.18,2.2);
+      \draw[thick, fill=green!35] (-0.25,1.85) rectangle (0.25,2.35);
+    \end{scope}
+    \fill (0,0) circle (2.2pt);
+    \draw[ue4arr, red!70!black] (2.5,0.4) arc[start angle=10, end angle=70,
+      radius=2.5];
+    \node[font=\scriptsize, align=left] at (3.6,-0.4) {Pala1 orizzontale\\Pala2
+      verticale\\cubetto in cima};
+  \end{scope}
+\end{tikzpicture}
+\caption{La gerarchia del mulino. Solo Pala1 è programmata per ruotare; Pala2, sua
+figlia, e il cubetto, figlio di Pala2, ne seguono la rotazione senza alcun nodo,
+mantenendo la loro posizione relativa. Schema ricostruito (nel mulino della lezione le
+pale sono di fronte al corpo).}
+\label{ue4:fig:gerarchia}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Il mulino che guarda il player: Find Look at Rotation}
+\label{ue4:sec:lookat}
+
+``Adesso vi farò vedere un altro metodino'' per creare una rotazione, sempre
+sull'Event Tick, ``così vi faccio vedere anche un altro blocchettino interessante,
+perché sono tanti''. Nei Blueprint, come nella programmazione in generale, ``non esiste
+un qualcosa che sia fisso'': ``essendo che è un mondo di spazi, punti, vettori, ce lo
+possiamo giocare come ci pare''. Il docente ricorda una persona che una volta ha fatto
+``un materiale con la matematica senza usare texture. Non so come abbia fatto, ma si
+può fare''.
+
+\paragraph{Staccare i cavi.} Si stacca l'Event Tick dal grafo precedente. ``Ricordatevi:
+per staccare i cavettini, tenete premuto \textbf{Alt} e cliccate sui puntini.''
+
+\paragraph{Find Look at Rotation.} ``Un blocco chiamato \textbf{Find Look at Rotation}.
+Interessante, molto interessante. Questo è un sacco utile, ve lo dico.'' Il docente
+legge la descrizione del nodo: \emph{find a rotation for an object at Start location to
+point at Target location}. Alla lavagna (``scrittura incredibile, mi dispiace'') disegna
+due punti nello spazio: lo \textbf{Start}, ``da dove parto'', e il \textbf{Target}, il
+punto da raggiungere. Il nodo restituisce ``la rotazione verso quel punto'': la
+rotazione che un oggetto posto in Start deve avere per guardare Target.
+
+\paragraph{Un falso inizio.} Il docente parte con un esempio sbagliato (lo Start e un
+Target ottenuto sommando 360, poi 359, alla posizione), e si ferma: ``scusate, ragazzi,
+perdonatemi: il Find Look at Rotation lo facciamo per un esercizio che era diverso.
+Ho sbagliato io, perdonate, perché non ho gli appunti.'' L'esercizio vero: far ruotare
+il mulino \textbf{in direzione del character}, ``un mulino molto magico'' che si gira
+verso il giocatore.
+
+\paragraph{Il grafo.} I due punti sono:
+\begin{itemize}
+  \item lo \textbf{Start}: la posizione del mulino, con \textbf{Get Actor Location}
+        (senza \emph{target}, cioè il Blueprint stesso);
+  \item il \textbf{Target}: la posizione del giocatore, con \textbf{Get Player
+        Character} e, da questo, Get Actor Location.
+\end{itemize}
+Il Find Look at Rotation ``ci darà il vettore verso la posizione del nostro player'',
+o meglio la rotazione che lo punta.
+
+\paragraph{RInterp To: l'interpolazione.} ``Possiamo usare anche un altro blocco, che ci
+darà un'\textbf{interpolazione}.'' Si chiama \textbf{RInterp To} (R come
+\emph{rotator}). ``Qualcuno sa cosa vuol dire interpolazione? No.'' ``È letteralmente
+il passaggio tra due punti'': da un valore A a un valore B. I nodi di questo tipo
+(\emph{Lerp}, \emph{VLerp}, \emph{Interp}) sono ovunque: ``avete presente le animazioni?
+Un'animazione è un passaggio da un punto A a un punto B'', e di base è fatta a livello
+di valori, perché ruotare un braccio è cambiare i valori di mano, braccio, gamba. Il
+nodo ha quattro ingressi:
+\begin{itemize}
+  \item \textbf{Current}, la rotazione attuale del mulino (Get Actor Rotation, o la
+        rotazione relativa del corpo);
+  \item \textbf{Target}, la rotazione appena trovata da Find Look at Rotation;
+  \item \textbf{Delta Time}, che ``ci dice in quanto tempo'' si fa l'interpolazione;
+  \item \textbf{Interp Speed}, ``la velocità in cui lo fa''.
+\end{itemize}
+
+\paragraph{Solo lo yaw.} ``Però una cosa importante, ragazzi: non vogliamo che si muova
+tutto sulla stessa asse.'' Il mulino deve girare ``al massimo così'', in orizzontale,
+non inclinarsi verso l'alto o verso il basso. ``Quale asse dovrò influenzare?''
+``La Z?'' ``Esatto, perfetto.'' Si fa \textbf{Split Struct Pin} (tasto destro sul pin)
+sull'uscita di Find Look at Rotation e sull'ingresso Target, e si collega solo la Z,
+lo \emph{yaw}. Il risultato dell'interpolazione si applica con un nodo di rotazione
+(nella trascrizione, \emph{Set Relative Rotation})\footnote{La trascrizione dice ``set
+relative rotation di pala 1'', ma a girare verso il player è tutto il mulino. Con ogni
+probabilità il nodo è un Set Relative Rotation sul corpo (Body), a cui sono attaccate le
+pale, o un Set Actor Rotation sull'intero Blueprint: il risultato visibile è lo
+stesso.}, collegato all'Event Tick (figura~\ref{ue4:fig:lookat}).
+
+\paragraph{L'offset di 90 gradi.} In Play il mulino si gira verso il player, ma di
+lato. ``Possiamo mettere più 90'': si somma \textbf{90} alla Z prima di collegarla, ``in
+modo tale che sia\ldots ecco''. Ora il mulino guarda il giocatore. ``Quello che sta
+facendo è continuare a calcolare, visto che lo fa sull'Event Tick, il vettore che
+indirizza in un punto, che in questo caso è il player, in modo continuo.'' ``Questo è un
+blocco che serve moltissimo, ragazzi'': serve ogni volta che bisogna fare ``delle robe a
+\emph{target}'', e servirà per la torretta. ``Vedete che segue continuamente la nostra
+torretta? Questo è fatto con il Find Look at Rotation.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small,
+  ue4node/.style={draw, thick, rounded corners=4pt, align=center, fill=gray!8,
+                  minimum height=0.9cm},
+  ue4event/.style={ue4node, fill=red!12},
+  ue4exec/.style={-{Stealth[length=2.5mm]}, very thick, black!80},
+  ue4flt/.style={-{Stealth[length=2mm]}, thick, green!50!black},
+  ue4rot/.style={-{Stealth[length=2mm]}, thick, violet!70!black},
+  ue4vecw/.style={-{Stealth[length=2mm]}, thick, yellow!50!black},
+  ue4obj/.style={-{Stealth[length=2mm]}, thick, blue!60!black}]
+  \node[ue4event, text width=2.0cm] (tick) at (0,0)
+    {\textbf{Event Tick}\\\footnotesize Delta Seconds};
+  \node[ue4node, text width=2.0cm] (self) at (0,-1.9)
+    {\textbf{Get Actor}\\\textbf{Location}\\\footnotesize (self)};
+  \node[ue4node, fill=blue!8, text width=2.0cm] (pc) at (0,-3.9)
+    {\textbf{Get Player}\\\textbf{Character}};
+  \node[ue4node, text width=2.0cm] (pcl) at (2.8,-3.9)
+    {\textbf{Get Actor}\\\textbf{Location}};
+  \node[ue4node, text width=2.1cm, minimum height=1.4cm] (look) at (6.0,-2.6)
+    {\textbf{Find Look at}\\\textbf{Rotation}};
+  \node[ue4node, text width=1.2cm] (add) at (8.7,-2.6) {\textbf{$+$ 90}\\
+    \footnotesize su Z};
+  \node[ue4node, text width=2.0cm] (cur) at (8.7,-4.5)
+    {\textbf{Get Actor}\\\textbf{Rotation}};
+  \node[ue4node, text width=2.6cm, minimum height=2.2cm] (interp) at (11.5,-2.9)
+    {\textbf{RInterp To}\\[2pt]\footnotesize Current\\\footnotesize Target (Z)\\
+    \footnotesize Delta Time (Tick)\\\footnotesize Interp Speed};
+  \node[ue4node, text width=1.5cm, minimum height=1.3cm] (set) at (14.3,0)
+    {\textbf{Set}\\\textbf{Rotation}\\\footnotesize (Z)};
+  \draw[ue4exec] (tick.east) -- (set.west |- tick.east);
+  \draw[ue4vecw] (self.east) -- node[above, font=\scriptsize]{Start} (4.3,-1.9)
+    |- ([yshift=3mm]look.west);
+  \draw[ue4obj] (pc.east) -- (pcl.west);
+  \draw[ue4vecw] (pcl.east) -- node[below, font=\scriptsize, pos=0.6]{Target}
+    (4.5,-3.9) |- ([yshift=-3mm]look.west);
+  \draw[ue4flt] (look.east) -- node[above, font=\scriptsize]{Z} (add.west);
+  \draw[ue4flt] (add.east) -- ++(0.5,0) |- ([yshift=2mm]interp.west);
+  \draw[ue4rot] (cur.east) -- ++(0.5,0) |- ([yshift=-5mm]interp.west);
+  \draw[ue4rot] (interp.east) -- ++(0.4,0) |- ([yshift=-4mm]set.west);
+\end{tikzpicture}
+\caption{Il mulino che guarda il player. A ogni \emph{frame}, Find Look at Rotation
+calcola la rotazione che dal mulino (Start) punta al giocatore (Target); se ne tiene
+solo lo \emph{yaw} (Z), gli si sommano 90 gradi per compensare l'orientamento della
+\emph{mesh}, e RInterp To fa avvicinare gradualmente la rotazione attuale a quella
+cercata. Il Delta Time può venire dall'Event Tick, come qui (un cavo non disegnato per
+chiarezza), o essere un numero fisso (a lezione, 1); si veda l'approfondimento. Schema ricostruito.}
+\label{ue4:fig:lookat}
+\end{figure}
+
+\paragraph{``A me non va.''} Seguono tre studenti in condivisione.
+\begin{itemize}
+  \item Al primo il mulino resta fermo: ``ti manca il Delta Time e
+        l'Interp Speed''. Li riempie (``metti uno e due''), compila (``non ho
+        compilato, vabbè'') e aggiunge l'offset: ``tira fuori dalla Z, fai più, metti
+        90''. ``Perfetto, adesso ti segue.''
+  \item Al secondo manca anche a lui il Delta Time: ``metti uno''.
+  \item Il terzo, collegando il nodo a Find Look at Rotation, si ritrova un pin
+        diviso che non voleva: ha preso \textbf{Get Actor Rotation} invece di
+        \textbf{Get Actor Location}. Poi non riesce a collegare l'uscita alla Z:
+        ``lo devi splittare: tasto destro sul pinnetto, quello violaceo, quello
+        lilla, Split Struct Pin''. E infine l'offset: da Return Value di Find Look at
+        Rotation, la Z, un ``più'', 90, e al Target.
+\end{itemize}
+
+\paragraph{Approfondimento: che cosa calcola Find Look at Rotation.} Il nodo fa una cosa
+semplice: sottrae la posizione di partenza da quella di arrivo, ottenendo il vettore
+direzione $\vec d = T - S$ (la sottrazione della sezione~\ref{ue4:sec:vettori}), e
+trasforma quella direzione in un \emph{rotator} con \emph{roll} nullo. Per la sola
+rotazione orizzontale, quella che interessa al mulino e alla torretta, il conto è
+\[
+  \text{yaw} \;=\; \operatorname{atan2}(d_y,\ d_x) \quad \text{(in gradi)},
+\]
+cioè l'angolo, misurato nel piano XY a partire dall'asse X, sotto cui il bersaglio è
+visto. Il risultato presuppone che la ``faccia'' dell'oggetto guardi lungo il suo asse
+\textbf{X} locale, che in Unreal è la direzione ``in avanti'' (il \emph{Forward
+Vector}). Se la \emph{mesh} è stata modellata guardando lungo la Y, come le pale del
+mulino della lezione, la rotazione calcolata è sfasata di 90 gradi, e il ``più 90'' del
+docente non fa che correggere questo sfasamento. Lo stesso problema, come si vedrà, si
+ripresenta con la torretta.
+
+\paragraph{Approfondimento: come funziona RInterp To.} A ogni chiamata, RInterp To
+calcola quanto manca per arrivare al Target e ne percorre una frazione, pari
+(semplificando) a
+\[
+  \alpha \;=\; \min\bigl(1,\ \text{Delta Time} \times \text{Interp Speed}\bigr),
+  \qquad
+  \text{nuova rotazione} = \text{Current} + \alpha \cdot (\text{Target} - \text{Current}),
+\]
+con la differenza presa sempre ``dal lato più corto'' (da 350 a 10 gradi si passa per
+0, non per 180). Ne seguono tre cose utili. Primo: il movimento è veloce quando il
+bersaglio è lontano e rallenta avvicinandosi, perché a ogni \emph{frame} si percorre
+una frazione di una distanza sempre più piccola; è l'effetto ``morbido'' che si vede in
+Play. Secondo: il nodo è pensato per ricevere come \textbf{Delta Time} proprio i
+\emph{delta seconds} (dall'Event Tick o da \emph{Get World Delta Seconds}) e come
+\textbf{Interp Speed} un numero intorno a 1--10: così la velocità non dipende dal
+\emph{frame rate}. Con un Delta Time fisso, come l'1 messo a lezione, la frazione
+percorsa a ogni \emph{frame} è sempre la stessa, e il mulino gira più veloce su un PC
+che fa più \emph{frame}. Terzo: se il prodotto supera 1, la frazione è 1 e la rotazione
+\textbf{scatta} subito al Target; e se l'Interp Speed è 0 o negativo, Unreal restituisce
+direttamente il Target. Con Delta Time 1 e Interp Speed 2 il prodotto è 2: il mulino,
+in pratica, ``snappa''. Il fenomeno tornerà con la torretta
+(sezione~\ref{ue4:sec:problemi}).
+
+% ---------------------------------------------------------------------
+\section{Il Clamp, il debug con Print String e la pausa}
+\label{ue4:sec:clamp}
+
+``Abbiamo fatto il nostro bellissimo Find Look at Rotation. Potremmo anche
+\textbf{clamparlo}.'' ``Si ricorda il Clamp qualcuno di voi?'' ``È quello per dare un
+valore minimo'', e massimo. ``Esatto, bravissimo.'' Lo scopo: limitare la rotazione del
+mulino, in modo che non possa girarsi del tutto.
+
+\paragraph{Il grafo.} Si splitta il pin con Split Struct Pin, si inserisce un
+\textbf{Clamp (float)}, ``perché è un \emph{float}'', sulla Z, e la si ricompone con un
+\textbf{Make Rotator} prima di collegarla. Il primo tentativo è un intervallo stretto,
+da $-25$ a $25$ gradi, ma qualcosa non torna: i valori in gioco sono molto più grandi
+(``mi dice: Pala1 è un botto di valori'').
+
+\paragraph{Il debug con Print String.} ``Questo come ho fatto, ragazzi? Questo è un modo
+per \textbf{debuggare} le cose.'' Non sapendo di quanto ruotasse il mulino e quali
+limiti dargli, il docente collega un \textbf{Print String} al valore e lo stampa a
+schermo mentre si muove attorno al mulino: ``abbiamo stampato letteralmente il
+valore''. I numeri che compaiono vanno più o meno da $-160$ a $160$. Il docente prova
+quei limiti, poi li allarga: ``snappa un pochino. Facciamo duecento massimo. Molto
+meglio. Non dovrebbe andare oltre''\footnote{La trascrizione di questo passaggio è
+molto confusa (``facciamo zero, no, mettere meno duecento\ldots{} facciamo duecento
+massimo''), e non permette di ricostruire con certezza i valori finali del Clamp.
+Quello che conta è il metodo: stampare i valori, osservarli, scegliere i limiti.}.
+
+\paragraph{Approfondimento: Clamp e gli angoli.} Il Clamp restituisce il valore stesso
+se è compreso tra Min e Max, altrimenti il limite più vicino:
+$\operatorname{clamp}(v, m, M) = \min(\max(v, m), M)$. Con gli angoli c'è una
+sottigliezza che spiega i valori ``strani'' della lezione: lo \emph{yaw} restituito da
+Find Look at Rotation sta tra $-180$ e $180$, e passando ``dietro'' al mulino salta da
+$180$ a $-180$; sommandoci 90 gradi di offset, l'intervallo si sposta (da $-90$ a
+$270$). Un limite come $-25 \ldots 25$, applicato a questi numeri, non corrisponde a
+``25 gradi a destra e a sinistra della direzione di riposo'', ma a una fetta del cerchio
+che dipende da dove sta il player e da come è orientato il mulino nel livello. Il
+modo pulito è ragionare sulla differenza tra l'angolo voluto e quello di riposo,
+riportarla tra $-180$ e $180$ (Unreal ha il nodo \emph{Normalize Axis}, o \emph{Delta
+(Rotator)} per due \emph{rotator}), e solo allora fare il Clamp. Il metodo del docente,
+stampare i numeri prima di decidere, resta comunque la prima cosa da fare.
+
+\paragraph{La pausa.} ``Ci siete? C'è qualche cosa che non avete capito? C'è qualche
+blocco che vi risulta ancora un pochino nebuloso?'' Tutto chiaro. ``Sono le 17 e 28.
+Facciamo pausa, così poi riprendiamo e cominciamo a fare la nostra bellissima
+torrettina. Ci vediamo tra 20 minuti.''
+
+% ---------------------------------------------------------------------
+\section{Dopo la pausa: la torretta in tre pezzi}
+\label{ue4:sec:torretta}
+
+``Eccoci qua. Allora, ragazzi, adesso andremo a fare una bellissima torrettina.'' Il
+docente mostra la versione finita. Attorno alla torretta c'è una \textbf{sfera} disegnata
+con linee rosse: è il suo raggio d'azione. Quando il giocatore ci entra, la torretta
+``fa lo stesso processo che abbiamo visto'', cioè ruota verso il \emph{character}, e
+``in questo caso spara dei proiettili''. Non ci sono effetti speciali (``non abbiamo
+Niagara''\footnote{La trascrizione dice ``BevoFX'': con ogni probabilità
+\emph{Niagara VFX}, il sistema di effetti visivi di Unreal Engine, di cui Davide aveva
+parlato nella lezione precedente.}), ma si costruisce ``la logica che ci servirà con la
+torretta che avete \emph{mergiato}''. Si vedono anche delle linee che partono dal
+cannone: sono un \textbf{line trace}, ``che permette a noi di avere una corrispondenza
+dipendente da cosa incontra''. Oggi si fa la rotazione; proiettili e \emph{line trace}
+saranno la prossima volta.
+
+\paragraph{Il Blueprint.} ``La prima cosa che ovviamente dobbiamo fare è creare un
+nuovo Blueprint, sempre \textbf{Actor}'', chiamato \textbf{BP\_Turret}. Ma come hanno
+composto la torretta gli studenti, con Davide? ``Abbiamo preso i tre pezzi forniti e li
+abbiamo uniti'' con \textbf{Merge Actors}: una \emph{mesh} unica. ``Allora facciamo una
+cosa: la facciamo a \textbf{tre pezzi}.'' Per far girare il supporto e il cannone
+indipendentemente dalla base servono tre componenti distinti, quindi si torna ai tre
+pezzi importati con Davide: tre \textbf{Static Mesh} nel Blueprint, una per la
+\textbf{base}, una per il supporto (``l'\emph{holder}, chiamiamolo'', poi rinominato
+\textbf{Pivot}) e una per il \textbf{cannone} (``la \emph{gun}'', poi
+\textbf{Cannon}).
+
+\paragraph{Chi segue chi.} I tre pezzi vanno ``uno dentro l'altro''. Il docente parte
+con l'idea che il supporto segua il cannone, poi si corregge: ``fate il contrario, che
+è meglio: fate che la \emph{gun} segua l'\emph{holder}''. La gerarchia giusta è quindi:
+la \textbf{base} come radice, il \textbf{Pivot} figlio della base, il \textbf{Cannon}
+figlio del Pivot (figura~\ref{ue4:fig:turretbp}). Così, quando il Pivot ruota
+orizzontalmente, il cannone gira con lui; e un giorno il cannone potrà alzarsi e
+abbassarsi da solo, senza trascinarsi dietro il supporto.
+
+\paragraph{Un trucco: Browse to Asset.} Per assegnare le \emph{mesh} ai componenti non
+serve cercarle a mano nel Content Browser ``con l'elenchino e tutto quanto''. ``Andate
+qua sull'\emph{asset} che avete in scena, cliccate tasto destro e fate \textbf{Browse to
+Asset}'': il Content Browser salta direttamente alla posizione del file, e da lì lo si
+può \textbf{trascinare} (\emph{drag and drop}) nello slot \emph{Static Mesh} del
+componente. In alternativa, come sempre, si clicca sullo slot e si scrive il nome:
+\emph{turret base}, \emph{turret pivot}, \emph{cannon}. Poi si aggiustano le posizioni
+(``un buchettino sta un po' più giù'') finché i pezzi combaciano.
+
+\paragraph{Un problema di Add.} Una studentessa, premendo Add, vede solo la \emph{mesh}
+intera della torretta (\emph{SM\_\allowbreak Torretta}) e nessun'altra opzione. In condivisione si
+prova a compilare e a riaprire il Blueprint, e alla fine il componente si riesce ad
+aggiungere: ``va benissimo così, abbiamo risolto. A volte Unreal può fare dei giochi
+simpatici.''
+
+% ---------------------------------------------------------------------
+\section{Il raggio d'azione: la Sphere Collision}
+\label{ue4:sec:sfera}
+
+``Adesso dobbiamo creare quello che abbiamo visto qua: vedi questo cerchio rosso intorno
+alla torretta? Questo è una \textbf{Sphere Collision}.'' È il \textbf{range}: entrandoci
+dentro, la torretta si attiva.
+
+\paragraph{Aggiungerla.} In BP\_Turret si aggiunge, tra i componenti, una
+\textbf{Sphere Collision}, ``che tranquillamente può stare anche esterna alla base'',
+cioè non deve essere figlia di un pezzo che ruota. Appena aggiunta non si vede quasi,
+``semplicemente perché è molto piccola''. Cliccando su \emph{Sphere}, nei dettagli c'è
+lo \textbf{Sphere Radius}: di default è 32; il docente lo porta a \textbf{800}. C'è anche
+la \textbf{Line Thickness}, lo spessore delle linee con cui la sfera è disegnata
+nell'editor, ``che serve magari solo per vederla un po' più spessa''.
+
+\paragraph{Hidden in Game.} In Play, però, la sfera non si vede. ``Di base, questa è una
+\textbf{collisione}'', una cosa interna agli \emph{asset}, come le collisioni della
+\emph{mesh} viste con Davide: esiste per la logica, non per essere guardata. Per
+vederla mentre si prova il gioco (``per avere facilità nel vedere quando entriamo e
+usciamo'') si cerca nei dettagli \textbf{Hidden in Game} e lo si toglie. ``Parlando di
+\emph{rendering}, Hidden in Game dice: so che logicamente esiste all'interno del mondo,
+ma se non è \emph{hidden in game}, la renderizzo pure.'' Tolta la spunta, il valore è
+\emph{false}, ``quindi non è nascosto in gioco'', e in Play ecco il range. È la stessa
+opzione usata nella seconda lezione, al contrario, per rendere invisibile il soffitto
+della vaschetta.
+
+\paragraph{Ripetere i passaggi.} Uno studente ha perso questa parte mentre cercava i
+pezzi della torretta, e chiede di rivedere come si mettono le \emph{mesh} nei tre
+componenti. Il docente lo rifà: si clicca sul componente, si scrive il nome della
+\emph{mesh} nello slot Static Mesh (\emph{turret base}, \emph{turret pivot}), si
+rinominano i componenti in modo che siano coerenti (\textbf{Pivot}, \textbf{Cannon},
+``come a me è chiamata Cannon nella nostra \emph{mesh}'').
+
+% ---------------------------------------------------------------------
+\section{Gli eventi dei componenti e l'overlap}
+\label{ue4:sec:overlap}
+
+``Adesso andiamo a vedere un evento in particolare.'' Oltre agli eventi già visti, che
+appartengono all'intero actor (l'Event Begin Play, l'Event Actor Begin Overlap,
+l'Event Tick), ``possiamo richiamare degli eventi anche all'interno dei
+\textbf{componenti}''. Selezionando \emph{Sphere} e scorrendo in fondo ai dettagli, c'è
+una sezione \textbf{Events} piena di pulsanti: \emph{On Component Begin Overlap},
+\emph{On Component End Overlap}, \emph{On Component Wake}, \emph{On Component Sleep},
+gli eventi del cursore e altri. ``Tutta una serie di eventi'' che si possono usare
+``per far sì che avvenga qualcosa in un preciso momento''. Qui la torretta deve partire
+quando il player entra nella sfera: si clicca sul \textbf{+} di \textbf{On Component
+Begin Overlap}, e nel grafo compare l'evento, già legato alla Sphere.
+
+\paragraph{Che cos'è un overlap.} ``Sapete cosa si intende per \emph{overlap}?''
+Uno studente: ``tipo appena si passa un confine, qualcosa del genere''. ``In un certo
+senso.'' Alla lavagna (``perdonate le mie doti molto brutte di disegno'') il docente
+disegna la sfera con la torretta al centro: un \emph{overlap} avviene quando il player,
+``o un qualsiasi actor'', \textbf{tocca o entra} in quel volume. Un actor fuori non sta
+sovrapponendosi; uno dentro sì. E uno a cavallo del bordo? ``Sta overlappando o non sta
+overlappando?'' ``Sì.'' ``Qualcun altro ha un'opinione differente?'' Sta
+sovrapponendosi, ``perché anche un qualsiasi poligono da cui è formato è parte
+integrante di esso'': basta un pezzo (figura~\ref{ue4:fig:overlap}). Ci sono quindi tre
+situazioni: non si sovrappone, \textbf{comincia} a sovrapporsi (Begin Overlap),
+\textbf{smette} di sovrapporsi (End Overlap, ``quando ci esce''). Per ora serve solo la
+prima: ``vogliamo che quando lui entra in questo volume la torretta faccia tipo: ti ho
+visto, mo' comincio a ruotare verso di te''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small,
+  ue4arr/.style={-{Stealth[length=2.5mm]}, thick}]
+  \draw[red!70!black, thick, fill=red!4] (0,0) circle (2.4);
+  \node[red!70!black, font=\scriptsize] at (0,2.65) {Sphere Collision (raggio 800)};
+  \draw[thick, fill=orange!35] (-0.35,-0.3) rectangle (0.35,0.3);
+  \draw[thick, fill=orange!20] (0.35,-0.08) rectangle (0.9,0.08);
+  \node[font=\scriptsize] at (0,-0.55) {torretta};
+  % fuori
+  \draw[thick, fill=blue!15] (-4.3,0.6) circle (0.32);
+  \node[font=\scriptsize, align=center] at (-4.3,-0.2) {fuori:\\nessun overlap};
+  % a cavallo
+  \draw[thick, fill=blue!15] (1.75,1.65) circle (0.32);
+  \node[font=\scriptsize, align=left, anchor=west] at (2.3,1.9) {a cavallo del bordo:\\
+    \textbf{overlap} (basta un pezzo)};
+  % dentro
+  \draw[thick, fill=blue!15] (-1.0,-1.25) circle (0.32);
+  \node[font=\scriptsize, align=center] at (-1.0,-1.95) {dentro: overlap};
+  % frecce degli eventi
+  \draw[ue4arr, green!45!black] (-3.9,0.45) -- (-2.55,0.25);
+  \node[green!45!black, font=\scriptsize, align=center] at (-3.4,1.45)
+    {entra:\\\textbf{Begin Overlap}};
+  \draw[ue4arr, orange!80!black] (1.95,-1.55) -- (3.2,-2.3);
+  \node[orange!80!black, font=\scriptsize, align=left, anchor=west] at (3.3,-2.3)
+    {esce: \textbf{End Overlap}};
+\end{tikzpicture}
+\caption{Le situazioni dell'\emph{overlap} disegnate a lezione. Un actor si sovrappone
+alla sfera appena una parte qualsiasi della sua forma di collisione ne entra; Begin
+Overlap scatta una volta, nel momento in cui entra, End Overlap una volta, quando ne
+esce del tutto. Schema ricostruito.}
+\label{ue4:fig:overlap}
+\end{figure}
+
+\paragraph{Other Actor.} ``Come facciamo a capire quale actor ci dà indietro?'' L'evento
+ha una serie di uscite: \emph{Overlapped Component}, \textbf{Other Actor}, \emph{Other
+Comp}, \emph{Other Body Index}, \emph{From Sweep}, \emph{Sweep Result}. ``Sono tutti
+input che sono risultanti dall'overlap'', ``in parole povere'' le informazioni su chi si
+è sovrapposto a che cosa. Per mostrarlo, il docente collega Other Actor a un
+\textbf{Print String} (Unreal inserisce da solo un \emph{Get Display Name}, per
+trasformare l'actor in testo), va in Play ed entra nella sfera: in alto a sinistra
+compare \emph{BP\_ThirdPersonCharacter\_0}\footnote{La trascrizione dice ``BP ha perso
+un character 0''. Il suffisso \_0 è il numero che Unreal assegna a ogni istanza di una
+classe presente nel livello.}. ``Mi ridà cosa sta overlappando, che in questo caso è il
+\emph{character}.'' Esistono anche gli \emph{overlapped component} e gli \emph{other
+component}, ma quello che interessa è l'Other Actor, ``perché il nostro
+\emph{character} è un actor''.
+
+\paragraph{Approfondimento: perché l'overlap funziona ``da solo''.} Perché Unreal generi
+un evento di \emph{overlap} servono tre condizioni: entrambi i componenti devono avere
+attivo \emph{Generate Overlap Events}; le loro risposte di collisione reciproche devono
+essere \emph{Overlap} (e non \emph{Ignore}); e almeno uno dei due deve muoversi. La
+Sphere Collision nasce con il profilo di collisione \emph{OverlapAllDynamic}, che si
+sovrappone a tutto ciò che si muove, e la capsula del \emph{character} è un oggetto
+dinamico di tipo \emph{Pawn}: per questo, nella lezione, non c'è stato bisogno di
+toccare nulla. Se un giorno un evento di \emph{overlap} non scatta, è la prima cosa da
+controllare, nei dettagli di entrambi i componenti, sezione \emph{Collision}. La seconda
+edizione di Romero e Sewell elenca proprio gli eventi di collisione (``eseguiti quando
+due actor collidono o si sovrappongono'') tra le famiglie principali di eventi, accanto
+a quelli di input e all'Event Begin Play.
+
+% ---------------------------------------------------------------------
+\section{Is Valid: esiste davvero?}
+\label{ue4:sec:isvalid}
+
+``Vogliamo essere sicuri che il nostro actor in questione sia proprio il player. Perché
+un actor può essere anche un cubo, volendo.'' Prima, però, un controllo più semplice. Si
+tira fuori da Other Actor un \textbf{Is Valid}: ``ce ne avete tanti, ma quello che ci
+interessa è quello col \textbf{punto interrogativo}'', la \emph{macro} con due uscite di
+esecuzione, \textbf{Is Valid} e \textbf{Is Not Valid}.
+
+\paragraph{Che cosa controlla.} ``Is Valid, statemi a sentire, ci dà una risultante: è
+valido o non è valido?'' Qui chiede: ``hai overlappato qualcosa? È vero, esiste questa
+cosa?'' In generale, Is Valid serve a dire se esiste o no qualcosa, ``che può essere
+anche una \textbf{variabile}, quindi una variabile vuota''.
+
+\paragraph{L'esempio della variabile.} Per farlo vedere il docente costruisce un piccolo
+esperimento:
+\begin{enumerate}
+  \item da Other Actor crea una variabile con \textbf{Promote to Variable};
+  \item mette un Is Valid su quella variabile, all'inizio dell'evento di \emph{overlap};
+  \item sul ramo \textbf{Is Not Valid} assegna alla variabile l'actor appena
+        sovrapposto (il \emph{Third Person Character});
+  \item sul ramo \textbf{Is Valid} stampa con un Print String ``valore registrato'' e il
+        nome contenuto nella variabile.
+\end{enumerate}
+Prima entrata nella sfera: non succede nulla di visibile, ``è normale''. Il Blueprint ha
+chiesto: ``questa variabile ha qualcosa dentro? No, non c'è niente. Quindi non è
+valida'', e allora le ha assegnato l'actor. Si esce e si rientra: ``ah, me l'hai fatto
+prima, quindi questa cosa c'ha qualcosa dentro'', e il ramo è Is Valid: compare
+\emph{valore registrato: BP\_ThirdPersonCharacter\_0}. ``Qualcuno ha qualche dubbio
+riguardo all'Is Valid? Abbastanza chiaro?'' L'esperimento si cancella: ``ci serve
+solamente a capire cosa fa l'Is Valid''.
+
+\paragraph{Approfondimento: la regola di Romero e Sewell.} Il quarto capitolo di
+\emph{Blueprints Visual Scripting for Unreal Engine 5}, dedicato alla comunicazione tra
+Blueprint, mette in evidenza una nota: ``usate sempre la macro Is Valid prima di
+eseguire una funzione usando una variabile che contiene una referenza a un oggetto. La
+variabile può non essere valida per diversi motivi, ed eseguire una funzione con una
+variabile non valida causerà un errore durante l'esecuzione''. I motivi tipici sono
+due: la variabile non è mai stata riempita (come nella prima entrata dell'esempio), o
+l'oggetto a cui puntava è stato distrutto nel frattempo. In entrambi i casi un nodo che
+prova a leggere la posizione di ``nessuno'' produce nel registro il classico errore
+\emph{Accessed None}. Il libro usa lo stesso schema in molti punti: un Is Valid prima di
+distruggere un actor, prima di applicare un danno a un bersaglio, prima di leggere un
+salvataggio (se non è valido, lo si crea). La torretta lo userà due volte, nella
+prossima sezione e nell'evento Move Turret.
+
+% ---------------------------------------------------------------------
+\section{I tag e Actor Has Tag}
+\label{ue4:sec:tag}
+
+Is Valid dice che \emph{qualcosa} è entrato. Per sapere \emph{chi}, si tira fuori da
+Other Actor un \textbf{Actor Has Tag}, ``un blocco che va a esaminare una cosa chiamata
+\textbf{tag}''. I tag ``sono dei \emph{label}, delle \textbf{etichette} che noi possiamo
+mettere all'interno di vari \emph{asset} del gioco''.
+
+\paragraph{Mettere il tag al player.} Si apre il \textbf{Third Person Character} e,
+``non dobbiamo fare niente di particolare'', si scrive \emph{tag} nella ricerca dei
+dettagli: compare \textbf{Actor} $\rightarrow$ \textbf{Tags}, un elenco vuoto con un
+\textbf{+}. Si aggiunge un elemento e lo si chiama \textbf{Player}. ``Cosa abbiamo
+fatto? Abbiamo letteralmente etichettato il player con un tag Player'': è come avere un
+cartellino di riconoscimento sulla schiena, con scritto sopra ``tu sei il player''.
+
+\paragraph{Il controllo.} Tornati nella torretta, Actor Has Tag chiede: il
+\emph{target}, cioè l'actor sovrapposto (Other Actor), ha il tag \textbf{Player}? Il
+nodo restituisce un valore \textbf{booleano}: ``sì, questo actor che ho overlappato ha
+il tag Player'', e si va nel \textbf{True} di un \textbf{Branch}; ``se no, invece andrà
+in False''. Il docente lo mostra con due Print String, ``Player trovato'' sul ramo True e
+``Player non trovato'' sul ramo False: entrando nella sfera, ``Player trovato''.
+
+\paragraph{Attenzione all'ortografia.} ``Non lo fate, ragazzi, faccio solo vedere per
+esempio.'' Il docente modifica il tag, togliendo la R finale, e rientra: ``Player non
+trovato''. ``Questo vi fa vedere anche che dovete essere precisi nel dire qual è il
+tag.'' Il consiglio: ``fate Ctrl+C, Ctrl+V del tag che avete scritto'', copiandolo dal
+\emph{character} nel nodo invece di riscriverlo a mano.
+
+\paragraph{Approfondimento: tag, Cast o confronto?} Ci sono almeno tre modi per
+rispondere alla domanda ``l'actor che è entrato è il player?''. Il primo è il
+\textbf{tag}, quello della lezione: semplice, e indipendente dalla classe (lo stesso tag
+\emph{Player} può stare su personaggi diversi, e un tag \emph{Enemy} su nemici di classi
+diverse); esiste anche \emph{Component Has Tag}, per etichettare singoli componenti. Il
+secondo è il \textbf{Cast To} (per esempio \emph{Cast To BP\_ThirdPersonCharacter}),
+che verifica la classe e, se riesce, restituisce l'actor già ``convertito'', con
+accesso alle sue variabili e funzioni. Il terzo è il confronto diretto tra oggetti: nel
+capitolo sull'intelligenza artificiale della seconda edizione di Romero e Sewell, un
+nemico che pattuglia usa un \emph{Event Actor Begin Overlap} seguito da un Branch su un
+nodo \textbf{Equal (Object)}, che controlla se l'Other Actor è proprio il punto di
+pattuglia salvato in una variabile. Una curiosità sui tag: sono di tipo \emph{Name}, e
+in Unreal il confronto tra \emph{Name} \textbf{non distingue maiuscole e minuscole},
+per cui \emph{player} e \emph{Player} risultano uguali; quello che conta, come ha
+mostrato il docente, è che le lettere siano le stesse. Copiare e incollare il tag
+resta comunque la via più sicura.
+
+% ---------------------------------------------------------------------
+\section{La variabile del bersaglio e i Custom Event}
+\label{ue4:sec:custom}
+
+Ora che il player è stato trovato, bisogna ricordarselo: ``andiamo a crearci una
+variabile in cui mettiamo il nostro player che è stato trovato'', di tipo
+\textbf{Actor}. Il modo più veloce: tirare fuori un cavo da Other Actor e scegliere
+\textbf{Promote to Variable}. Si crea un nodo \emph{Set} di una variabile nuova, che si
+rinomina \textbf{PlayerTarget}. Per rinominare, ``o vai qua e fai \textbf{F2}, che è più
+facile, oppure fai tasto destro e Rinomina''.
+
+\paragraph{Un Custom Event.} ``Manca mezz'ora'', e il docente si chiede se si riuscirà a
+finire (``questo lo continueremo la prossima volta''), ma va avanti. ``Adesso qua dentro
+andremo a fare un \textbf{Custom Event}.'' Si scrive \emph{custom event} nel grafo, si
+sceglie \emph{Add Custom Event} e gli si dà un nome: \textbf{TrackTargetTimer}. ``Come
+potete vedere, questo bellissimo evento è un Custom Event: è uguale agli altri'', come
+il Begin Overlap, il Tick o il Begin Play, ``ma è un evento che abbiamo creato noi'',
+``che possiamo richiamare quando vogliamo, con delle regole specifiche''. Gli eventi di
+Unreal sono ``prefissati'': l'\emph{overlap} scatta perché l'editor di Unreal lo
+controlla già per conto suo. I Custom Event, invece, partono quando li si chiama.
+
+\paragraph{Chiamarlo.} Per mostrarlo, il docente collega al Custom Event un Print String
+che stampa ``Hello'' e lo chiama dal ramo del Begin Overlap, subito dopo il Set di
+PlayerTarget: si scrive il nome dell'evento (\emph{TrackTargetTimer}) e compare il nodo
+che lo invoca. In Play, entrando nella sfera: ``Hello''. ``Ho creato un evento
+customizzato che richiamo quando entro nella Sphere Collision. Compreso?'' ``Sappiate
+che di Custom Event ne potete creare a milioni'': basta scrivere \emph{custom event} e
+dare un nome.
+
+\paragraph{Approfondimento: eventi, funzioni e macro.} La seconda edizione di Romero e
+Sewell ricorda che nell'Event Graph ogni evento di Unreal può comparire una sola volta,
+mentre i \textbf{Custom Event} si possono creare a volontà; e offre una tabella per
+scegliere tra \emph{macro}, \emph{funzioni} ed \emph{eventi}. In sintesi: tutti e tre
+accettano parametri in ingresso; solo macro e funzioni restituiscono valori; le funzioni
+e gli eventi possono essere chiamati da altri Blueprint, le macro no; e solo macro ed
+eventi possono contenere azioni \emph{latenti}, cioè che aspettano (come un
+\emph{Delay}), mentre le \emph{Timeline} stanno solo negli eventi. Il capitolo sui
+vincoli di gioco della stessa edizione usa proprio un Custom Event, \emph{Sprint Drain},
+richiamato da un timer, per consumare la stamina del giocatore mentre corre: ``un Custom
+Event permette di attivare i nodi collegati a lui ogni volta che un altro nodo lo
+chiama; così gruppi di nodi dello stesso Blueprint possono comunicare tra loro anche
+quando non sono collegati direttamente''. È lo schema esatto della torretta.
+
+% ---------------------------------------------------------------------
+\section{Il timer: Set Timer by Event}
+\label{ue4:sec:timer}
+
+``Cosa vogliamo fare con questo Custom Event?'' Durante tutto il tempo, ``come un Event
+Tick'', la torretta deve cercare la posizione verso cui ruotare per seguire il player.
+``Lo potremmo fare tranquillamente nell'Event Tick, volendo, ma possiamo fare una cosa
+interessante: possiamo fare un \textbf{timer}. L'abbiamo chiamato timer apposta.''
+
+\paragraph{Il nodo.} Dal Custom Event si tira fuori \textbf{Set Timer by Event}, un
+blocco ``che ci permette di far partire un timer che ci chiede ogni quanto''. I suoi
+parametri, così come li imposta il docente:
+\begin{itemize}
+  \item \textbf{Time}: ogni quanti secondi scatta. ``Vogliamo che lo faccia allo stesso
+        tempo del Tick.'' Si potrebbe portare fin qui il cavo dei \emph{delta seconds}
+        dall'Event Tick (``ma è un po' brutto''); c'è invece un nodo apposta,
+        \textbf{Get World Delta Seconds}, ``un blocchetto semplicemente per comodità'',
+        ``per non far sì di filare il Tick così, a cavolo'';
+  \item \textbf{Looping}: spuntato, ``vogliamo che sia un timer che \emph{loopi}'';
+  \item \textbf{Max Once Per Frame}: spuntato anche questo, ``massimo una volta per
+        ogni \emph{frame}''. ``Ci permette almeno di dire: ok, per ogni \emph{frame} si
+        calcola, tanto effettivamente si muoverà per ogni \emph{frame}. Questa è una
+        cosa un po' più nel micro, però noi mettiamo \emph{max}, in modo che sia più
+        ottimizzato.''
+\end{itemize}
+
+\paragraph{Quale evento?} ``Set Timer by Event: quale evento?'' Sul nodo c'è un
+\textbf{quadratino rosso}, il pin \textbf{Event}, ``che guarda caso è uguale a quello del
+Custom Event'': un pin di tipo \emph{delegato}. Vuol dire che lo si può tirare fuori e
+creare da lì un \textbf{altro Custom Event}, quello che il timer chiamerà a ogni giro:
+lo si chiama \textbf{MoveTurret}. È lì che si farà muovere la torretta.
+
+\paragraph{Come ragiona.} Per farlo vedere, a MoveTurret si collega il solito Print
+String, ``Hello''. La catena completa è: Begin Overlap, Is Valid, Branch su Actor Has
+Tag, Set PlayerTarget, TrackTargetTimer; e TrackTargetTimer fa partire un timer, alla
+velocità dei \emph{delta seconds}, in \emph{loop}, al massimo una volta per
+\emph{frame}, che chiama MoveTurret, che stampa ``Hello''. ``Domanda: quando mi
+stamperà Hello?'' ``Da quando entri in range.'' ``Ottimo, esatto.'' Appena il player
+entra, Hello a ogni \emph{frame}. ``Esco fuori: si cancellano\ldots{} ah, no, scusate,
+non si stanno cancellando, è vero. Perché non stoppiamo mai il timer.'' Dalla prima
+entrata in poi, il timer continua all'infinito: ``ciò vuol dire che il timer a un certo
+punto va disattivato; lo vedremo dopo''.
+
+\paragraph{Approfondimento: timer o Event Tick?} Romero e Sewell presentano i timer, già
+nel secondo capitolo, come un'alternativa all'Event Tick: tutto ciò che è collegato al
+Tick viene eseguito a ogni \emph{frame}, e ciò che non ha bisogno di aggiornarsi così
+spesso può girare a intervalli più lunghi. Nel quinto capitolo un Custom Event
+\emph{ChangeDirection}, chiamato da un Set Timer by Event con Looping attivo, fa
+invertire periodicamente la direzione di un bersaglio mobile; nella seconda edizione un
+timer chiama ripetutamente \emph{Sprint Drain}, e un \emph{Clear Timer by Function Name}
+lo ferma quando il giocatore smette di correre. Nella torretta della lezione l'intervallo
+è pari ai \emph{delta seconds}, quindi il timer scatta (circa) una volta per
+\emph{frame}, come un Tick: il vantaggio non è la frequenza, ma il fatto che il timer
+\textbf{parte solo quando serve} (all'ingresso del player) e \textbf{si può fermare}.
+Tre dettagli utili. Primo: il valore di Get World Delta Seconds viene letto una sola
+volta, quando il timer viene impostato, e resta fisso anche se poi il \emph{frame rate}
+cambia. Secondo: se l'intervallo di un timer è più breve di un \emph{frame}, Unreal può
+eseguirlo più volte nello stesso \emph{frame} per ``recuperare''; \textbf{Max Once Per
+Frame}, un'opzione delle versioni recenti di Unreal Engine 5, impedisce proprio questo.
+Terzo: per fermarlo, Set Timer by Event restituisce un \textbf{Timer Handle}, una
+``maniglia'' che conviene salvare in una variabile (Promote to Variable) e passare,
+quando serve, a \textbf{Clear and Invalidate Timer by Handle}. Il posto naturale per
+farlo è l'evento \textbf{On Component End Overlap} della sfera, insieme a
+\emph{svuotare} la variabile PlayerTarget (un Set senza nulla collegato): altrimenti
+l'Is Valid di MoveTurret continuerà a trovare un bersaglio valido anche dopo che il
+player è uscito dal range.
+
+% ---------------------------------------------------------------------
+\section{Move Turret: la torretta che segue il player}
+\label{ue4:sec:move}
+
+``Cosa dobbiamo fare? L'abbiamo fatto prima, praticamente'': un \textbf{Find Look at
+Rotation}, ``perché dobbiamo ruotare il nostro Pivot in direzione del player''.
+
+\paragraph{Prima, un Is Valid.} ``Intanto facciamo un Is Valid. Perché? Perché diciamo:
+ma ce l'ho un target?'' Si trascina nel grafo la variabile \textbf{PlayerTarget} e la si
+collega a un Is Valid, in testa a MoveTurret. ``Ce l'ho un target effettivo, o non ce
+l'ho più, l'ho perso, sono uscito fuori? Se ce l'ho, lo faccio e mi muovo. Se non ce
+l'ho, non lo faccio'': senza questo controllo la torretta ``continuerebbe a ruotare a
+cavolo''.
+
+\paragraph{Start e Target.} ``Del Find Look at Rotation ci servono due punti nello
+spazio. Quali sono?'' ``Lo Start è l'\emph{holder}, che tanto la \emph{gun} è collegata
+all'\emph{holder}, e il Target è il player.'' ``Esatto.'' Per lo Start si usa
+\textbf{Get Actor Location} della torretta stessa, ``la locazione generale
+dell'actor''. Per il Target, il docente comincia con Get Player Character e Get Actor
+Location, come per il mulino, ma uno studente fa notare che si può usare
+\textbf{PlayerTarget}: ``bravo, mi piace che l'hai notato, effettivamente sarebbe stato
+il secondo metodo''. Da PlayerTarget si tira fuori Get Actor Location, ``una sua
+particolarità'', e la si collega al Target.
+
+\paragraph{Lo yaw e RInterp To.} Il Pivot deve ruotare attorno alla \textbf{Z}:
+``guardate un po' dove si modifica: sulla Z''. Si splitta l'uscita di Find Look at
+Rotation e si fa ``quello che abbiamo fatto prima'', un \textbf{RInterp To}:
+\begin{itemize}
+  \item \textbf{Current}: la rotazione attuale del Pivot, con \textbf{Get Relative
+        Rotation} sul componente Pivot;
+  \item \textbf{Target}: splittato, con la sola Z collegata, ``perché non ci interessa
+        la X e la Y'';
+  \item \textbf{Delta Time}: 5;
+  \item \textbf{Interp Speed}: \textbf{0,04}, ``perché, essendo che sta sui
+        \emph{frame}, è molto veloce. Se voi mettete uno, questa \emph{snappa}
+        diretto''.
+\end{itemize}
+Infine \textbf{Set Relative Rotation} sul Pivot (``prendete Pivot, Set Relative
+Rotation''), con i pin splittati ``per sicurezza'', collegato al ramo Is Valid; e un
+Print String per il debug (figura~\ref{ue4:fig:turretbp}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ue4node/.style={draw, thick, rounded corners=4pt, align=center, fill=gray!8,
+                  minimum height=0.85cm, text width=2.3cm},
+  ue4event/.style={ue4node, fill=red!12},
+  ue4exec/.style={-{Stealth[length=2.5mm]}, very thick, black!80},
+  ue4data/.style={-{Stealth[length=2mm]}, thick, blue!60!black},
+  ue4flt/.style={-{Stealth[length=2mm]}, thick, green!50!black},
+  ue4dlg/.style={-{Stealth[length=2mm]}, thick, red!70!black, dashed},
+  ue4comp/.style={draw, thick, rounded corners=3pt, minimum width=2.3cm,
+                  minimum height=0.55cm, align=center, font=\scriptsize}]
+  % --- riga 1: overlap
+  \node[ue4event] (ov) at (0,0)
+    {\textbf{On Component Begin Overlap}\\(Sphere)};
+  \node[ue4node] (iv1) at (2.95,0) {\textbf{Is Valid}\\Other Actor};
+  \node[ue4node] (br) at (5.9,0) {\textbf{Branch}\\Actor Has Tag ``Player''};
+  \node[ue4node] (set) at (8.85,0) {\textbf{Set}\\\textbf{PlayerTarget}};
+  \node[ue4node, text width=2.8cm] (call) at (12.05,0) {\textbf{TrackTargetTimer}\\(chiamata)};
+  \draw[ue4exec] (ov) -- (iv1);
+  \draw[ue4exec] (iv1) -- (br);
+  \draw[ue4exec] (br) -- node[above, font=\scriptsize]{True} (set);
+  \draw[ue4exec] (set) -- (call);
+  \draw[ue4data] (ov.south) -- (0,-1.15) -| node[pos=0.2, below,
+    font=\scriptsize]{Other Actor} (set.south);
+  % --- riga 2: timer
+  \node[ue4event, text width=2.8cm] (cev) at (0,-2.9)
+    {\textbf{Custom Event}\\\textbf{TrackTargetTimer}};
+  \node[ue4node, text width=3.0cm] (timer) at (3.65,-2.9)
+    {\textbf{Set Timer by Event}\\Time: Get World Delta Seconds\\Looping \checkmark\\
+    Max Once Per Frame \checkmark};
+  \node[ue4event] (mv) at (7.1,-2.9) {\textbf{Custom Event}\\\textbf{MoveTurret}};
+  \draw[ue4exec] (cev) -- (timer);
+  \draw[ue4dlg] (timer.east) -- node[above, font=\scriptsize]{Event} (mv.west);
+  % --- riga 3: move turret
+  \node[ue4node] (iv2) at (0,-5.7) {\textbf{Is Valid}\\PlayerTarget};
+  \node[ue4node] (look) at (3.1,-5.7) {\textbf{Find Look at Rotation}\\
+    Start: self\\Target: PlayerTarget};
+  \node[ue4node] (interp) at (6.3,-5.7) {\textbf{RInterp To}\\
+    Current: Pivot\\Target: solo Z\\Speed 0,04--0,05};
+  \node[ue4node] (srr) at (9.5,-5.7) {\textbf{Set Relative Rotation}\\Target: Pivot};
+  \draw[ue4exec] (mv.south) -- (7.1,-4.35) -| (iv2.north);
+  \draw[ue4exec] (iv2.south) -- (0,-7.1) -| node[pos=0.2, below,
+    font=\scriptsize]{Is Valid} (srr.south);
+  \draw[ue4flt] (look) -- node[above, font=\scriptsize]{Z} (interp);
+  \draw[ue4flt] (interp) -- (srr);
+  % --- gerarchia componenti
+  \node[font=\scriptsize] at (11.6,-1.95) {i componenti};
+  \node[ue4comp, fill=orange!25] (cb) at (11.4,-2.5) {Base (radice)};
+  \node[ue4comp, fill=gray!20] (cp) at (11.9,-3.2) {Pivot};
+  \node[ue4comp, fill=orange!12] (cc) at (12.4,-3.9) {Cannon};
+  \node[ue4comp, fill=red!8] (cs) at (11.9,-4.6) {Sphere (r. 800)};
+  \draw[thick, gray!60!black] ([xshift=-0.85cm]cb.south) |- (cp.west);
+  \draw[thick, gray!60!black] ([xshift=-0.85cm]cp.south) |- (cc.west);
+  \draw[thick, gray!60!black] ([xshift=-0.85cm]cb.south) |- (cs.west);
+\end{tikzpicture}
+\caption{La torretta della lezione. In alto: quando qualcosa entra nella sfera, se
+esiste ed è etichettato \emph{Player}, lo si salva in PlayerTarget e si chiama
+TrackTargetTimer. In mezzo: TrackTargetTimer fa partire un timer che, a ogni
+\emph{frame}, chiama MoveTurret (il pin rosso tratteggiato è il delegato Event). In
+basso: MoveTurret, se c'è ancora un bersaglio, calcola la rotazione verso di lui, ne
+tiene lo \emph{yaw}, la interpola e la applica al Pivot (la Current dell'interpolazione
+viene da Get Relative Rotation del Pivot; l'eventuale offset è discusso nel testo). A
+destra la gerarchia dei componenti: il Cannon segue il Pivot, la sfera non ruota. Schema
+ricostruito.}
+\label{ue4:fig:turretbp}
+\end{figure}
+
+\paragraph{L'offset, e il pivot reimportato.} In Play la torretta ruota, ma ``ha
+bisogno di un offset, come abbiamo visto con il nostro mulino''. Il docente prova con
+$-90$, poi con $+90$: ``eccolo qua. Non è esattamente precisissimo''. Uno studente
+osserva: ``noi questa cosa non la dobbiamo fare, perché l'altra volta abbiamo fatto un
+\textbf{reimport} modificando i valori''. Ed è la chiave: senza alcun offset, la
+torretta del docente ``guarda direttamente in faccia'', mentre quelle degli studenti no,
+perché con Davide avevano reimportato il \textbf{Pivot} e il \textbf{Cannon} con una
+\textbf{rotazione di 113} gradi sulla Z (la base no). Il docente ricostruisce i numeri
+con la classe (si parla anche di $-67$ e di $-271$, ``proprio perfetti''), reimporta
+prima il pivot, poi il cannone, prova con il solo pivot, e alla fine: ``ecco a voi.
+Adesso la nostra torretta ci segue perfettamente''. Per gli studenti la regola pratica,
+ripetuta più volte nel finale, è: se la torretta ha ``un \emph{offsettino}'',
+\textbf{reimportare il Pivot mettendo $-113$} sulla rotazione Z\footnote{La trascrizione
+di questo passaggio è tra le più confuse della lezione: i valori citati sono 113, $-113$,
+$-67$, 118, $-270$ e $-271$, e non è chiaro in che ordine siano stati provati. Il senso
+è comunque chiaro: la rotazione di 113 gradi aggiunta in import nella terza lezione
+sposta la direzione ``in avanti'' della \emph{mesh}, e Find Look at Rotation, che
+presuppone che l'oggetto guardi lungo la sua X, ne risulta sfasato. Le due correzioni
+possibili sono equivalenti: annullare la rotazione in import, o sommare un offset fisso
+allo \emph{yaw} nel grafo, come per il mulino.}.
+
+\paragraph{Approfondimento: Find Look at Rotation e lo spazio relativo.} Il grafo della
+lezione mescola due spazi: Find Look at Rotation lavora nello spazio del
+\textbf{mondo} (le posizioni di torretta e player sono posizioni nel mondo), mentre
+Set Relative Rotation imposta la rotazione del Pivot \textbf{relativa} alla base. Le
+due cose coincidono finché la torretta nel livello non è ruotata: se la si piazza
+girata di 30 gradi, il Pivot punterà 30 gradi a lato del player. Le soluzioni robuste
+sono due: usare \textbf{Set World Rotation} sul Pivot (la rotazione calcolata è già
+quella del mondo), oppure sottrarre allo \emph{yaw} calcolato quello dell'actor (Get
+Actor Rotation). Anche la Current dell'interpolazione andrebbe presa nello stesso
+spazio del Target: Get World Rotation con Set World Rotation, Get Relative Rotation con
+Set Relative Rotation. Lo Start, infine, è la posizione dell'actor, cioè della base; per
+una torretta alta conviene usare la posizione del Pivot o del cannone (\emph{Get World
+Location} sul componente), specie quando si vorrà calcolare anche il \emph{pitch} per
+alzare la canna.
+
+% ---------------------------------------------------------------------
+\section{Il tuning e i problemi degli studenti}
+\label{ue4:sec:problemi}
+
+\paragraph{La velocità di inseguimento.} ``Giratele intorno.'' Per aumentare o diminuire
+la velocità con cui la torretta ``ci mette a cercare il target'' si cambia l'\textbf{Interp
+Speed}. A 0,07 è ``molto più reattiva''; a 2 ``sarà proprio quasi uno \emph{snap}''
+(``pam, \emph{snappa} proprio''). Il consiglio: ``mettetela tipo 0,05''. E, volendo, la
+si può trasformare in variabile (Promote to Variable) ``e la potete settare
+esternamente'', nei dettagli dell'istanza in scena, come le variabili \emph{Instance
+Editable} della seconda lezione.
+
+\paragraph{``A me snappa lo stesso.''} Uno studente ha Delta Time 5 e Interp Speed 0,05,
+e la torretta scatta comunque. Si prova 0,02 (``vedo leggerissima differenza''), poi
+Delta Time 7: ``stampa sempre la stessa velocità''. In condivisione il docente controlla
+Get World Delta Seconds, Looping e Max Once Per Frame: tutto giusto. ``Prova ad andare di
+\emph{tweak}, di \emph{tuning}: vedi un po' tu i valori.'' Abbassando ancora l'Interp
+Speed, verso lo zero, la torretta rallenta: ``ora sì, già un po' più così''. (Nel
+frattempo lo studente che lavora deve andare: ``ciao, ciao''.)
+
+\paragraph{Approfondimento: perché ``snappa''.} La formula di RInterp To vista per il
+mulino spiega tutto. Con Delta Time fisso a 5 e Interp Speed 0,04, la frazione di
+strada percorsa a ogni chiamata è $5 \times 0{,}04 = 0{,}2$: il 20\% di quel che manca.
+Dopo dieci chiamate manca $0{,}8^{10} \approx 11\%$ dell'angolo iniziale; a 100
+\emph{frame} al secondo, sono un decimo di secondo. Con 0,05 la frazione è 0,25; con 7
+e 0,02 è 0,14; con Interp Speed 2 il prodotto è 10, cioè più di 1, e la torretta arriva
+in un solo \emph{frame}: lo \emph{snap}. In tutti questi casi, inoltre, la velocità
+dipende dai \emph{frame}: con il doppio dei \emph{frame} la torretta è due volte più
+rapida. L'uso previsto del nodo è il contrario di quello della lezione: \textbf{Delta
+Time} collegato a \textbf{Get World Delta Seconds} (circa 0,01 a 100 \emph{fps}) e
+\textbf{Interp Speed} nell'ordine delle unità (da 2 a 5 per un inseguimento morbido),
+così che il prodotto resti piccolo e la velocità sia la stessa su ogni macchina. È lo
+stesso principio dei \emph{delta seconds} della seconda lezione, applicato a
+un'interpolazione. E un'avvertenza: un Interp Speed esattamente 0 non ferma la torretta,
+ma la fa scattare subito sul bersaglio, perché Unreal lo interpreta come ``nessuna
+interpolazione''.
+
+\paragraph{La lista degli errori.} Il resto della lezione è una carrellata di
+condivisioni dello schermo, molto istruttiva perché mostra gli errori più frequenti. La
+tabella~\ref{ue4:tab:errori} li raccoglie. Il caso più ricco è quello di uno studente
+a cui ``non va perché probabilmente ho mancato delle parti'':
+\begin{itemize}
+  \item per la Current di RInterp To aveva usato un \emph{Set} invece di \textbf{Get
+        Relative Rotation} (``no, no, no, non \emph{set}: \emph{get}'');
+  \item l'Is Valid di MoveTurret non era collegato alla variabile \textbf{PlayerTarget}
+        (``a sinistra, proprio sulle variabili, non sul grafo'');
+  \item MoveTurret non era un evento separato. Per riorganizzare il grafo il docente
+        gli fa selezionare tutto tranne TrackTargetTimer, Set Timer by Event e Get
+        World Delta Seconds (``tieni premuto Ctrl e clicca su quelli che vuoi
+        escludere''), spostare in basso la selezione, tirare fuori dal pin Event del
+        timer un nuovo Custom Event chiamato \textbf{MoveTurret} e collegarlo all'Is
+        Valid;
+  \item il timer non era in \textbf{Looping};
+  \item il \textbf{Target} di Find Look at Rotation era scollegato: da PlayerTarget,
+        Get Actor Location, al Target;
+  \item il \emph{character} non aveva il \textbf{tag}: lo si aggiunge nel Third Person
+        Character, ``\emph{Player} esattamente come l'hai scritto, quindi con la P
+        maiuscola'';
+  \item la sfera aveva ancora Hidden in Game attivo e raggio \textbf{32}: ``devi
+        metterla a 800'';
+  \item in scena c'era solo la \textbf{mesh} della torretta, non il
+        \textbf{Blueprint}: ``questa è solo la \emph{mesh}, è solo il modello 3D che hai
+        messo in scena''; si cancella e si trascina nel livello BP\_Turret;
+  \item il player partiva già dentro il range, e quindi il Begin Overlap non scattava:
+        ``il player parte da fuori, mettilo fuori'';
+  \item in Play \textbf{girava la base}: nella gerarchia, la base era figlia del Pivot.
+        ``Devi staccare la base'': trascinando il Pivot dentro la base, ``perfetto, ce
+        l'hai perfettamente'';
+  \item infine, l'\emph{offset} del pivot reimportato: ``devi reimportare il pivot a
+        $-113$''.
+\end{itemize}
+Un altro studente ha la torretta ferma: ``Other Actor devi attaccarlo a PlayerTarget,
+perché così non gli stai impostando il \emph{target} che è overlappato: non avrà un
+\emph{target} da seguire''. Un terzo non vede la sfera in gioco, solo in modalità
+\emph{spectator}: aveva saltato il passaggio di Hidden in Game.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{5.4cm}p{8.6cm}@{}}
+\toprule
+\textbf{Sintomo} & \textbf{Causa e rimedio} \\
+\midrule
+La pala gira attorno a un punto sbagliato & la \emph{mesh} ha il pivot fuori
+centro: scegliere un cubo con il pivot al centro (o correggere il pivot) \\
+La pala non gira & il risultato di Combine Rotators non è collegato a Set
+Relative Rotation; oppure il componente non è Movable \\
+Il mulino o la torretta restano fermi & mancano Delta Time e Interp Speed in
+RInterp To; oppure non si è compilato \\
+Non si riesce a collegare un valore a una sola componente & fare Split Struct Pin
+(tasto destro sul pin) \\
+Gira tutto l'actor, non solo una parte & il Rotating Movement fa girare la radice:
+programmare la rotazione del componente \\
+La torretta non si accorge del player & manca il tag \emph{Player} (o è scritto
+diversamente); Other Actor non collegato al Set di PlayerTarget; il player parte già
+dentro la sfera \\
+La sfera non si vede in Play & Hidden in Game ancora attivo; raggio di default 32 \\
+Non succede niente in Play & in scena c'è la \emph{mesh}, non il Blueprint \\
+Gira la base & gerarchia sbagliata: la base deve essere la radice, il Pivot suo
+figlio, il Cannon figlio del Pivot \\
+La torretta guarda di lato & la \emph{mesh} non guarda lungo X (Pivot reimportato
+a 113): reimportare a $-113$ o sommare un offset allo \emph{yaw} \\
+La torretta scatta (\emph{snap}) & prodotto Delta Time $\times$ Interp Speed troppo
+grande: usare Get World Delta Seconds e un Interp Speed di qualche unità \\
+La torretta continua a seguire dopo l'uscita & il timer non viene mai fermato e
+PlayerTarget resta pieno: End Overlap, Clear and Invalidate Timer, svuotare la
+variabile \\
+\bottomrule
+\end{tabular}
+\caption{I problemi incontrati durante la lezione, con la causa e il rimedio. Le ultime
+due righe riguardano punti che il docente ha rimandato alla lezione successiva.}
+\label{ue4:tab:errori}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{La chiusura e la prossima lezione}
+\label{ue4:sec:chiusura}
+
+``Ok, perfetto, ragazzi.'' Per questa volta, ``nessun particolare compito da casa o
+dimostrazione''. Chi vuole può fare una \textbf{torretta di colore diverso}, con un
+materiale suo, verde o blu, ripassando quello che si è fatto con Davide.
+
+\paragraph{La prossima volta.} ``La prossima volta faremo la nostra bellissima
+\textbf{torretta che spara}'': \textbf{spawnerà} dei \textbf{proiettili}. Si vedrà
+``come funziona il sistema di \emph{spawning} di Unreal'': come si basa una cosa
+\emph{spawnata} ``con le sue regole'', come si fa apparire un oggetto in generale, e
+come si fa il \textbf{line trace}. ``Altre domande? Se no, andiamo a cena tutti,
+ragazzi.'' ``Vi auguro buona serata. E a martedì.''
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{4.0cm}p{10.0cm}@{}}
+\toprule
+\textbf{Nodo o componente} & \textbf{Che cosa fa} \\
+\midrule
+Rotating Movement Component & fa ruotare la radice dell'actor a velocità costante
+(Rotation Rate, default Z 180) \\
+Event Tick, Delta Seconds & esegue a ogni \emph{frame}; i \emph{delta seconds} sono il
+tempo tra due \emph{frame} \\
+Get World Delta Seconds & gli stessi \emph{delta seconds}, ovunque nel grafo \\
+Make Rotator & costruisce un \emph{rotator} da tre \emph{float} (Roll X, Pitch Y,
+Yaw Z) \\
+Combine Rotators & combina due rotazioni in una \\
+Get / Set Relative Rotation & legge e scrive la rotazione di un componente rispetto al
+genitore \\
+Get Actor Location & la posizione dell'actor nel mondo \\
+Get Player Character & una referenza al personaggio del giocatore \\
+Find Look at Rotation & la rotazione per guardare da Start verso Target \\
+RInterp To & avvicina gradualmente un \emph{rotator} a un altro \\
+Clamp (float) & limita un valore tra un minimo e un massimo \\
+Split Struct Pin & divide un pin di struttura (vettore, \emph{rotator}) nelle sue
+componenti \\
+Sphere Collision & un volume sferico per rilevare \emph{overlap} (Sphere Radius,
+Hidden in Game) \\
+On Component Begin Overlap & scatta quando qualcosa entra nel volume del componente;
+Other Actor è chi è entrato \\
+Is Valid (macro con il ``?'') & controlla che una referenza punti a qualcosa che
+esiste \\
+Actor Has Tag & controlla se un actor porta un'etichetta (Actor $\rightarrow$ Tags) \\
+Promote to Variable & crea una variabile del tipo giusto da un pin \\
+Custom Event & un evento creato da noi, che parte quando lo si chiama \\
+Set Timer by Event & chiama un evento dopo un tempo, una volta o in \emph{loop} (Max
+Once Per Frame) \\
+Print String & stampa a schermo: lo strumento base del debug \\
+\bottomrule
+\end{tabular}
+\caption{I nodi e i componenti della quarta lezione.}
+\label{ue4:tab:nodi}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item \textbf{Quixel Megascans} è un ``calderone'' gratuito di materiali, texture e
+        \emph{mesh} scansionati, da usare con l'account Epic. Per la pallina che
+        attraversa il piano: il \textbf{CCD} (\emph{Continuous Collision Detection}).
+  \item Un \textbf{vettore} ha direzione, magnitudine e verso; in Unreal la struttura
+        Vector (X, Y, Z) rappresenta sia punti sia spostamenti. Somma: si spostano i
+        punti; \textbf{sottrazione}: B $-$ A va da A a B; \textbf{moltiplicazione}:
+        allunga; \textbf{prodotto scalare}: un \emph{float}, 1 se concordi, 0 se
+        perpendicolari, $-1$ se opposti (per vettori normalizzati).
+  \item Un vettore \textbf{normalizzato} ha lunghezza 1: tiene solo la direzione.
+  \item Un \textbf{rotator} ha tre angoli: \textbf{Roll} (X), \textbf{Pitch} (Y),
+        \textbf{Yaw} (Z). Gli angoli di Eulero soffrono di \textbf{gimbal lock}; i
+        \textbf{quaternioni}, usati internamente da Unreal, no.
+  \item Il \textbf{Rotating Movement Component} fa girare un actor senza programmare,
+        ma solo per intero. Ogni oggetto che si muove deve essere \textbf{Movable}.
+  \item Per far girare un componente: \textbf{Event Tick} $\rightarrow$ velocità
+        $\times$ \emph{delta seconds} $\rightarrow$ \textbf{Make Rotator}
+        $\rightarrow$ \textbf{Combine Rotators} con \textbf{Get Relative Rotation}
+        $\rightarrow$ \textbf{Set Relative Rotation}. Le rotazioni dei componenti si
+        lavorano in spazio \textbf{relativo}.
+  \item La \textbf{gerarchia} fa il resto: un componente figlio segue il genitore,
+        mantenendo la propria posizione relativa (la seconda pala, il cubetto).
+  \item \textbf{Find Look at Rotation} calcola la rotazione per guardare un punto;
+        dello \emph{yaw} si tiene la Z (\textbf{Split Struct Pin}), con un
+        \textbf{offset} se la \emph{mesh} non guarda lungo X. \textbf{RInterp To}
+        rende il movimento graduale: Delta Time dai \emph{delta seconds}, Interp Speed
+        di qualche unità, altrimenti ``snappa''.
+  \item Il \textbf{Clamp} limita un valore; prima di sceglierne i limiti, si
+        \textbf{stampano} i valori con Print String.
+  \item La torretta è un Blueprint in \textbf{tre pezzi}: Base (radice), Pivot
+        (figlio, ruota in \emph{yaw}), Cannon (figlio del Pivot). Browse to Asset aiuta
+        a trovare le \emph{mesh}.
+  \item Il range è una \textbf{Sphere Collision} (raggio 800, Hidden in Game tolto per
+        vederla). \textbf{On Component Begin Overlap} scatta quando qualcosa ci entra;
+        \textbf{Other Actor} dice chi.
+  \item \textbf{Is Valid} prima di usare una referenza; \textbf{Actor Has Tag} con il tag
+        \emph{Player} (scritto identico) per riconoscere il giocatore;
+        \textbf{Promote to Variable} per ricordarlo in \emph{PlayerTarget}.
+  \item I \textbf{Custom Event} sono eventi nostri, chiamati quando vogliamo;
+        \textbf{Set Timer by Event} (Looping, Max Once Per Frame) chiama a ripetizione
+        l'evento \textbf{MoveTurret}, che ruota il Pivot verso il bersaglio. Il timer
+        va fermato (End Overlap, Clear and Invalidate Timer): sarà il prossimo passo.
+  \item Prossima lezione: la torretta che \textbf{spara}, lo \textbf{spawn} dei
+        proiettili e il \textbf{line trace}.
+\end{itemize}

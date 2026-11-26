@@ -1,0 +1,94 @@
+\section{La memoria del gioco: \texttt{GI\_Platform}}
+
+Un livello si distrugge quando se ne apre un altro: tutto quello che vive dentro (anche \var{BP\_Eroe}) sparisce. La \nodo{Game Instance} invece nasce all'avvio del gioco e muore alla chiusura. È il posto giusto per vite, monete, abilità sbloccate e record. Nel C++ è \texttt{UPlatformerRunSubsystem}.
+
+\begin{ricetta}
+  \item Blueprint \var{GI\_Platform}, classe padre \nodo{GameInstance}.
+  \item Variabili: \var{Vite} (Integer, 3), \var{MaxVite} (Integer, 3), \var{Monete} (Integer), \var{Abilita} (Set di \var{E\_Abilita}), \var{Salvataggio} (riferimento a \var{SG\_Platform}), \var{PrimoLivello} (Name, \var{L\_GD13\_Livello1}).
+  \item \var{SG\_Platform} (classe padre \nodo{SaveGame}) con le stesse \var{Monete} e \var{Abilita}, più una Map \var{Record} (Name $\rightarrow$ Float).
+  \item Event Dispatcher \var{OnAbilitaSbloccata} con un parametro \var{E\_Abilita}.
+\end{ricetta}
+
+\subsection{Caricare o creare il salvataggio}
+
+\begin{bpgraph}
+\bpnode{init}{(0,0)}{bpev}{Event Init}{-}{exec/}
+\bpnode{ex}{\dx{init}{0.6}{0}}{bpfn}{Does Save Game Exist}{exec/,str/Slot Name "Platform",int/User Index 0}{exec/,bool/Return Value}
+\bpnode[2.4]{br}{\dx{ex}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{load}{\dx{br}{0.6}{0}}{bpfn}{Load Game From Slot}{exec/,str/Slot Name,int/User Index}{exec/,obj/Return Value}
+\bpnode{cast}{\dx{load}{0.6}{0}}{bpcast}{Cast To SG\_Platform}{exec/,obj/Object}{exec/,exec/Cast Failed,obj/As SG Platform}
+\bpnode{set}{\dx{cast}{0.6}{0}}{bpvarh}{Set Salvataggio}{exec/,obj/Salvataggio}{exec/,obj/}
+\bpnode{cre}{\sotto{load}{0}{-0.6}}{bpfn}{Create Save Game Object}{exec/,class/Class: SG\_Platform}{exec/,obj/Return Value}
+\bpexec{init-out1}{ex-in1}
+\bpexec{ex-out1}{br-in1}
+\bpwire{bool}{ex-out2}{br-in2}
+\bpexec{br-out1}{load-in1}
+\bpexec{load-out1}{cast-in1}
+\bpwire{obj}{load-out2}{cast-in2}
+\bpexec{cast-out1}{set-in1}
+\bpwire{obj}{cast-out3}{set-in2}
+\bpexec{br-out2}{cre-in1}
+\bpexec{cre-out1}{set-in1}
+\bpwire{obj}{cre-out2}{set-in2}
+\bpbox{All'avvio: se lo slot esiste lo carico, altrimenti ne creo uno nuovo}{(init-nw) (set-se) (cre-se)}
+\end{bpgraph}
+
+Subito dopo, copiate \var{Monete} e \var{Abilita} dal salvataggio nelle variabili della Game Instance (due \nodo{Set} che leggono \var{Salvataggio}).
+
+\subsection{Sbloccare un'abilità}
+
+Funzione \var{SbloccaAbilita(Quale)}: aggiunge l'enum al Set, salva subito e avvisa chi ascolta (HUD, personaggio).
+
+\begin{bpgraph}
+\bpnode{f}{(0,0)}{bpcustom}{SbloccaAbilita}{-}{exec/,enum/Quale}
+\bpnode{add}{\dx{f}{0.6}{0}}{bpfn}{ADD (Set)}{exec/,wild/Target: Abilita,enum/New Item}{exec/}
+\bpnode{cp}{\dx{add}{0.6}{0}}{bpvarh}{Set Abilita (SG)}{exec/,obj/Target: Salvataggio,wild/Abilita}{exec/}
+\bpnode{sv}{\dx{cp}{0.6}{0}}{bpfn}{Save Game to Slot}{exec/,obj/Save Game Object,str/Slot Name "Platform",int/User Index 0}{exec/,bool/Return Value}
+\bpnode{call}{\dx{sv}{0.6}{0}}{bpcustom}{Call OnAbilitaSbloccata}{exec/,enum/Quale}{exec/}
+\bpexec{f-out1}{add-in1}\bpexec{add-out1}{cp-in1}\bpexec{cp-out1}{sv-in1}\bpexec{sv-out1}{call-in1}
+\bpwire{enum}{f-out2}{add-in3}
+\bpdraw[bpdataw, draw=bpc-enum] (f-out2) .. controls +(3,-2.6) and +(-3,-1.8) .. (call-in2);
+\end{bpgraph}
+
+Per sapere se il giocatore ha un'abilità basta una funzione \emph{pura} \var{HaAbilita(Quale)} $\rightarrow$ \nodo{CONTAINS (Set)}. Spuntate \emph{Pure} nei dettagli della funzione: così non ha pin di esecuzione e la potete collegare direttamente a un \nodo{Branch}.
+
+\subsection{Perdere una vita e il Game Over}
+
+\begin{bpgraph}
+\bpnode{f}{(0,0)}{bpcustom}{Funzione PerdiVita}{-}{exec/}
+\bpvar{v}{\sotto{f}{0.4}{-0.4}}{int}{Vite}
+\bpnode[1.4]{dec}{\dx{v}{0.5}{0.1}}{bppure}{$-$}{int/,int/1}{int/}
+\bpnode[2.4]{set}{\dx{f}{2.6}{0}}{bpvarh}{Set Vite}{exec/,int/Vite}{exec/,int/}
+\bpnode[1.4]{gt}{\dx{set}{0.5}{-1.2}}{bppure}{$>$}{int/,int/0}{bool/}
+\bpnode[2.4]{br}{\dx{set}{2.4}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{rt}{\dx{br}{0.6}{0}}{bpflow}{Return Node}{exec/,bool/Continua: true}{-}
+\bpnode{go}{\sotto{rt}{0}{-0.6}}{bpcustom}{GameOver}{exec/}{exec/}
+\bpnode{rf}{\dx{go}{0.6}{0}}{bpflow}{Return Node}{exec/,bool/Continua: false}{-}
+\bpwire{int}{v-out1}{dec-in1}
+\bpwire{int}{dec-out1}{set-in2}
+\bpexec{f-out1}{set-in1}
+\bpwire{int}{set-out2}{gt-in1}
+\bpexec{set-out1}{br-in1}
+\bpwire{bool}{gt-out1}{br-in2}
+\bpexec{br-out1}{rt-in1}
+\bpexec{br-out2}{go-in1}
+\bpexec{go-out1}{rf-in1}
+\bpbox{PerdiVita (funzione con uscita Continua): True se si riparte dal punto sicuro}{(f-nw) (rf-se) (v-se)}
+\end{bpgraph}
+
+\var{GameOver} è un evento custom: mostra il messaggio, svuota le abilità (se volete la regola dura del C++, \var{bGameOverResetsAbilities}) e dopo due secondi riparte dal primo livello.
+
+\begin{bpgraph}
+\bpnode{go}{(0,0)}{bpcustom}{Event GameOver}{-}{exec/}
+\bpnode{clr}{\dx{go}{0.6}{0}}{bpfn}{CLEAR (Set)}{exec/,wild/Target: Abilita}{exec/}
+\bpnode[2.4]{d}{\dx{clr}{0.6}{0}}{bpflow}{Delay}{exec/,float/Duration 2.0}{exec/Completed}
+\bpnode{sv}{\dx{d}{0.6}{0}}{bpvarh}{Set Vite}{exec/,int/= MaxVite}{exec/}
+\bpnode{op}{\dx{sv}{0.6}{0}}{bpfn}{Open Level (by Name)}{exec/,name/Level Name: PrimoLivello}{exec/}
+\bpexec{go-out1}{clr-in1}\bpexec{clr-out1}{d-in1}\bpexec{d-out1}{sv-in1}\bpexec{sv-out1}{op-in1}
+\end{bpgraph}
+
+\subsection{Cambiare livello}
+
+\var{VaiAlLivello(Nome)}: \nodo{Set Vite} = \var{MaxVite}, poi \nodo{Open Level (by Name)}. Così ogni livello parte con tre vite, come nel C++ (\texttt{GoToLevel}). Da qualsiasi Blueprint si arriva qui con \nodo{Get Game Instance} $\rightarrow$ \nodo{Cast To GI\_Platform}.
+
+\ninja{Il cast alla Game Instance fatelo \emph{una volta} nel BeginPlay di \var{BP\_Eroe} e salvate il risultato in una variabile \var{GI}. Castare a ogni Tick funziona, ma è come chiedere il nome a qualcuno ogni volta che lo incontri.}

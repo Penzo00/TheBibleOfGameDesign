@@ -1,0 +1,1868 @@
+% =====================================================================
+%  Capitolo 8 — Introduzione al level design: chi è il level designer,
+%  quali sono i suoi strumenti, e i primi passi nell'editor di Unreal
+%  Engine (primo anno)
+%  Fonte: trascrizione della lezione GD8, che è in realtà la prima
+%  lezione del corso di Level Design del primo anno (docente: Stefano
+%  Zocchi), lezione ibrida (in aula a Milano e da remoto).
+%  Contenuti, nell'ordine della lezione: annunci pratici; chi è il
+%  docente; il giro di presentazioni (le sei domande, il livello
+%  peggiore di ciascuno: la Cattedrale del Sangue Sacro di Code Vein,
+%  Subnautica, Nightreign, la Città Infame di Dark Souls, Pentiment,
+%  Slime Rancher, Frostpunk 2...); perché presentarsi: parlare in
+%  pubblico; che cos'è il level design; che cosa fa un level designer
+%  (blockout, luci, set dressing, documentazione, test, narrazione
+%  ambientale); qual è lo strumento del level designer ("dipende", e la
+%  risposta vera: sé stessi, imparare a imparare); teoria, pratica,
+%  expertise, esperienza sul campo, lavoro di gruppo; il picco della
+%  fiducia e l'effetto Dunning-Kruger; i tre corollari (niente regole
+%  fisse, design olistico, design come artigianato); la struttura del
+%  corso; la pausa; il progetto in Unreal Engine 5; l'editor
+%  (viewport, Place Actors, gizmo, Outliner, Content Browser, asset e
+%  actor, transform, Details, scorciatoie W/E/R, gruppi, istanze);
+%  la documentazione; i livelli e il salvataggio; le scorciatoie
+%  utili (snap to floor, operazioni nei campi numerici); il task: il
+%  blockout della propria stanza; il materiale extra (GDC, An
+%  Architectural Approach to Level Design); la chiusura.
+%  Integrazioni dal libro "An Architectural Approach to Level Design"
+%  (Christopher W. Totten), segnalate come approfondimenti.
+%
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{amsmath},
+%  \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Tutte le etichette di questo capitolo hanno il prefisso "gd8:"
+%  (gd8:sec:..., gd8:fig:..., gd8:tab:...) e tutti gli stili TikZ il
+%  prefisso "gd8", per non collidere con gli altri capitoli.
+%
+%  Nota sulla fonte: la trascrizione automatica è, come per GD7,
+%  molto rovinata. L'inizio della registrazione, la pausa e i tratti di
+%  lavoro individuale sono stati trascritti come frasi senza senso o
+%  ripetute in loop ("non funziona", "mi fai il mio sguardo", "un altro
+%  mixer"...), con interi brani captati da una fonte esterna (una radio
+%  o un video: frasi sul "mercato del lavoro", sulla "Corte Suprema di
+%  Internet", sulla "struttura del giardino", sugli "egiziani"), che qui
+%  sono omessi. Durante la pausa la registrazione cattura anche
+%  conversazioni private degli studenti (su un gioco di carte e sul suo
+%  meta), che non fanno parte della lezione e non sono riportate. Molti
+%  nomi propri (di giochi, persone, strumenti) sono storpiati: dove il
+%  riferimento è ricostruibile con certezza lo si riporta nella forma
+%  corretta; dove non lo è, lo si segnala in nota invece di indovinare.
+%  Le figure sono ricostruzioni schematiche di ciò che è mostrato a
+%  lezione, non le slide originali.
+% =====================================================================
+
+\chapter[Introduzione al level design]{Introduzione al level design: lo
+strumento sei tu, l'engine viene dopo}
+\label{gd8:cap:leveldesign}
+
+Il capitolo precedente ha aperto Unreal Engine dal lato del
+\textbf{codice}: eventi, nodi, variabili (capitolo~\ref{gd7:cap:blueprint}).
+Questo capitolo lo riapre dal lato dello \textbf{spazio}. La lezione da cui
+nasce è infatti la \textbf{prima lezione del corso di Level Design} del primo
+anno, tenuta da un docente nuovo, \textbf{Stefano Zocchi}, game e level
+designer: ``benvenuti alla prima lezione, per il primo anno, nel corso di Game
+Design, specificatamente alla lezione del corso di \textbf{Level Design}''.
+
+Il corso di level design, nel percorso di Game Design, è uno dei tre filoni
+che corrono in parallelo (gli studenti stessi parlano delle ``tre materie che
+dobbiamo fare nel corso''), e ha un taglio preciso: \textbf{molta pratica in
+engine}, accompagnata da teoria e metodologia. Questa prima lezione, però, è
+soprattutto un'apertura: chi è il docente, chi sono gli studenti, che cos'è il
+level design, che cosa fa davvero un level designer, e qual è l'unico
+strumento di cui ha veramente bisogno. Solo nell'ultima ora si apre l'editor,
+per imparare a muoversi, piazzare forme e organizzare una scena; e il primo
+task è il più semplice e personale possibile: ricostruire con le forme di base
+\textbf{la propria stanza}.
+
+Chi ha seguito il corso breve su Unreal troverà la parte pratica in gran parte
+nota (capitolo~\ref{ue1:cap:intro}, in particolare le
+sezioni~\ref{ue1:sec:interfaccia} e~\ref{ue1:sec:transform}); qui la si
+ripercorre con l'occhio del level designer, che passa ``quasi tutto il tempo
+in engine a piazzare cose, sistemare cose, testare cose''. Il blockout vero e
+proprio, con le luci, verrà poi ripreso in modo approfondito nel corso su
+Unreal, nel capitolo dedicato alla \emph{gym}, al blockout e alle luci.
+
+La struttura della lezione, e quindi del capitolo, è questa:
+\begin{enumerate}
+  \item gli \textbf{annunci pratici} e la presentazione del docente
+        (sezioni~\ref{gd8:sec:annunci} e~\ref{gd8:sec:docente});
+  \item il \textbf{giro di presentazioni}: sei domande a ciascuno, tra cui
+        il livello peggiore che si sia mai giocato e come lo si
+        cambierebbe (sezione~\ref{gd8:sec:presentazioni});
+  \item perché presentarsi: la prima lezione seria è \textbf{saper parlare
+        in pubblico} (sezione~\ref{gd8:sec:pubblico});
+  \item \textbf{che cos'è} il level design e \textbf{che cosa fa} un level
+        designer (sezioni~\ref{gd8:sec:cos-e} e~\ref{gd8:sec:cosa-fa});
+  \item lo \textbf{strumento} del level designer, la parola magica
+        ``dipende'' e l'imparare a imparare
+        (sezione~\ref{gd8:sec:strumento});
+  \item come si diventa level designer: teoria, pratica, expertise,
+        esperienza, gruppo (sezione~\ref{gd8:sec:imparare});
+  \item due curve da conoscere in anticipo: il \textbf{picco} della
+        fiducia e l'\textbf{effetto Dunning-Kruger}
+        (sezione~\ref{gd8:sec:curve});
+  \item i \textbf{tre corollari}: niente regole fisse, il design è olistico,
+        il design è artigianato (sezione~\ref{gd8:sec:corollari});
+  \item la \textbf{struttura del corso} e la pausa
+        (sezione~\ref{gd8:sec:struttura});
+  \item \textbf{Unreal Engine}: il progetto, l'editor, gli actor e gli asset,
+        il transform, le scorciatoie, i livelli
+        (sezioni~\ref{gd8:sec:progetto}--\ref{gd8:sec:livelli});
+  \item il \textbf{task}: il blockout della propria stanza, e il materiale
+        extra per chi vuole approfondire
+        (sezioni~\ref{gd8:sec:task} e~\ref{gd8:sec:extra}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{Prima di cominciare: gli annunci pratici}
+\label{gd8:sec:annunci}
+
+\subsection{Cinque minuti di margine}
+
+Il docente apre con una ``piccola informazione di servizio'': lascia
+\textbf{sempre cinque minuti} prima di iniziare, per dare a tutti il tempo di
+arrivare. Capita spesso, spiega, che ci sia ``gente che viene da fuori, o che
+c'è gente che lavora''; e se ci sono autobus in ritardo o ``casini vari'', è
+giusto che chi arriva possa sedersi con calma. Solo dopo si fanno
+presentazioni, introduzioni e tutto il resto.
+
+\subsection{In aula o da remoto}
+
+Le lezioni, ``come sapete perfettamente'', si possono seguire
+\textbf{contemporaneamente} in aula e online. Il docente non nasconde la sua
+preferenza: in classe è ``l'ambiente migliore'', perché è più veloce parlare
+con le persone, far vedere le cose, \textbf{andare ai vostri computer} e
+verificare se c'è qualcosa da sistemare. Ma se serve seguire da remoto, ``per
+me non c'è nessun problema''. L'unica richiesta: se c'è un motivo particolare,
+avvisarlo prima se non si è in grado di venire. Per il resto, ``la praticità
+conta più di tutto''.
+
+\subsection{Pausa e appello}
+
+Il ritmo della lezione è sempre lo stesso:
+\begin{itemize}
+  \item qualche minuto di margine all'inizio;
+  \item a \textbf{metà lezione} una \textbf{pausa} di 15, 20 o 30 minuti,
+        ``a seconda di quanto è stato pesante l'argomento'' trattato fino a
+        quel momento;
+  \item \textbf{dopo la pausa}, l'\textbf{appello}. Non lo fa subito
+        proprio per segnare come presente chi arriva in ritardo. Chi arriva
+        dopo l'appello deve farglielo sapere, così lo segna lo stesso; e se
+        il docente si dimentica di farlo, va ricordato: ``mi è capitato più
+        di una volta. Siamo umani''.
+\end{itemize}
+
+\paragraph{Un gruppo nuovo.} Il primo anno di quest'anno è ``più numeroso di
+quello dell'anno scorso, fantastico''; e, per la prima volta nella sede di
+Milano, ci sono anche delle ragazze a lezione, ``un'ottima cosa''.
+
+% ---------------------------------------------------------------------
+\section{Chi insegna}
+\label{gd8:sec:docente}
+
+\paragraph{Regola numero uno.} ``Regola numero uno dell'apprendimento:
+\textbf{sapere sempre chi vi sta insegnando qualcosa}''. Mai fidarsi della
+gente a caso su internet, ``soprattutto su YouTube'' (un tema che il docente
+promette di riprendere durante l'anno).
+
+\paragraph{La carriera.} Stefano Zocchi è un \textbf{game e level designer}.
+Il suo percorso, in breve:
+\begin{itemize}
+  \item è partito dal mondo \textbf{indie}, partecipando a vari progetti,
+        facendo ``un po' di roba horror per i fatti miei'' e lavorando con
+        altre persone;
+  \item è stato poi assunto da uno studio gallese, \textbf{Antimatter
+        Games}, dove ha lavorato a \textbf{sparatutto stealth strategici}.
+        Lo studio è stato chiuso durante l'ondata di chiusure che ha colpito
+        l'industria dei videogiochi negli ultimi anni;
+  \item ha lavorato per un periodo per \textbf{Behaviour Interactive}, nome
+        noto soprattutto per \emph{Dead by Daylight} (il gioco horror
+        multiplayer in cui un giocatore interpreta il killer e gli altri
+        quattro i sopravvissuti; il titolo glielo suggerisce la classe).
+        Behaviour, però, è ``un ombrello di un sacco di studi diversi'', e
+        lui non lavorava a quel gioco. A che cosa lavorasse, non può dirlo;
+  \item oggi lavora come \textbf{freelance}: insegna, collabora con un paio
+        di ex studenti e segue vari progetti.
+\end{itemize}
+
+\paragraph{L'NDA.} Il motivo per cui non può dire a che cosa ha lavorato è
+un \textbf{NDA}, un \emph{non-disclosure agreement}: una parte del contratto
+che si firma e che stabilisce che non si può parlare di ciò che lo studio non
+autorizza esplicitamente. C'è una ``grossa parte'' del suo curriculum per cui
+può dire ``ho lavorato in questo studio'', ma alla domanda ``bello, cosa hai
+fatto?'' la risposta è sempre la stessa: ``vorrei continuare a lavorare
+nell'industria dei videogiochi''. È una realtà del mestiere con cui chiunque,
+nel corso della carriera, si troverà a fare i conti.
+
+\paragraph{Il progetto attuale.} Il progetto più grosso a cui sta lavorando
+si chiama \textbf{\emph{Break the Night}}: un gioco d'azione corpo a corpo a
+tema un po' \emph{Y2K}, un po' \emph{pop punk}, ``energico'', con ``un sacco
+di combo'', attacchi pesanti, attacchi leggeri, mosse speciali, cancellazioni
+con gli scatti.\footnote{La trascrizione definisce il genere con una parola
+storpiata (``una cashlash''); dalla descrizione (combo, attacchi leggeri e
+pesanti, mosse speciali, \emph{cancel} con lo scatto) si tratta di un
+\emph{action} corpo a corpo, verosimilmente un \emph{hack and slash} o un
+\emph{beat 'em up}, ma il termine esatto usato dal docente non è
+ricostruibile.} ``Molto, molto divertente.''
+
+\paragraph{Come è arrivato a insegnare.} Qualche anno fa un insegnante non
+poteva più seguire il corso di Milano; l'altro docente che si occupa di questi
+corsi gli ha chiesto se poteva coprirlo lui. Essendo freelance, si inseriva
+``abbastanza bene'' nei lavori che stava facendo: bastava riorganizzare un po'
+gli orari. Da qualche anno, ormai, insegna lui il corso di level design.
+
+\paragraph{Alessandro.} In aula c'è anche \textbf{Alessandro}, che non fa
+parte del primo anno, ma che gli studenti vedranno ``un po' dappertutto in
+questo edificio, come un fantasma''.\footnote{La trascrizione aggiunge un
+dettaglio incomprensibile (``che va zika per via macchina''); non lo si
+ricostruisce.}
+
+% ---------------------------------------------------------------------
+\section{Il giro di presentazioni}
+\label{gd8:sec:presentazioni}
+
+``Basta con queste frasi noiose'': è un anno nuovo, il docente non conosce
+ancora la classe, e vuole sentire tutti, in aula e online. Le domande vanno
+``dal semplice al più interessante'', per capire che tipo di persona è
+ciascuno.
+
+\subsection{Le sei domande}
+
+\begin{enumerate}
+  \item \textbf{Chi siete?}
+  \item \textbf{Che tipo di giochi volete fare?}
+  \item \textbf{Qual è la vostra forza principale?}
+  \item \textbf{Qual è la vostra debolezza principale?}
+  \item \textbf{In che cosa vi vorreste specializzare}, se già avete
+        un'idea?
+  \item E, visto il tema del corso: \textbf{un livello che vi ha proprio
+        fatto schifo}, che vi ha fatto mollare il gioco, ``che ancora ce
+        l'avete qua'' e vi chiedete come sia possibile che abbiano fatto
+        ``una roba così orrenda''. \textbf{Perché} non vi è piaciuto, e
+        \textbf{che cosa fareste per migliorarlo}?
+\end{enumerate}
+
+L'ultima domanda è quella che conta per il corso: non basta dire che un
+livello è brutto, bisogna saper dire \emph{perché} e proporre un
+\emph{rimedio}. È, in piccolo, il lavoro di analisi che il level designer fa
+ogni giorno.
+
+\subsection{L'esempio del docente: la Cattedrale del Sangue Sacro}
+
+Siccome la prima persona a rispondere ``si trova un attimo sulle spine'',
+il primo a rispondere all'ultima domanda è il docente stesso. Ogni anno rifà
+le slide; questa, per la prima volta, non l'ha rifatta, perché il livello in
+questione ce l'ha in testa da quando ci ha giocato due anni fa e ``continua a
+tormentarmi i sogni'': gli appare ogni volta che sta facendo un livello,
+dicendogli ``vuoi fare questa roba? Non ti libererai mai di me''.
+
+Il livello è la \textbf{Cattedrale del Sangue Sacro} di \textbf{\emph{Code
+Vein}}, uno dei ``tantissimi giochi'' usciti sulla scia dei titoli di
+FromSoftware, un \emph{souls-like} ``tra virgolette''.\footnote{La
+trascrizione riporta prima ``sulla scia di Vlaovic'', poi si corregge in
+``sulla scia di From Software''; il primo nome non è ricostruibile.} Per il
+docente è uno degli esempi che toccano ``il punto più fondo di tutto questo
+abisso di mediocrità''.
+
+La slide mostra la mappa del livello, realizzata da un utente di DeviantArt
+per chi non riusciva a capire dove andare.\footnote{Il nome dell'utente
+ringraziato dal docente è storpiato nella trascrizione (``Cercheron
+Quartoro'') e non è ricostruibile.} Le linee grigie non sono strade: sono
+\textbf{passerelle}. La domanda alla classe è: guardando questa mappa, in
+un'ottica negativa, che cosa salta all'occhio? La risposta arriva subito:
+\textbf{è un labirinto}. Il docente elenca i problemi:
+\begin{description}
+  \item[Un labirinto di corridoi.] È ``una lunghissima serie di
+        corridoi'', con bivi di cui non si capisce la direzione giusta;
+        corridoi che ``vanno in giro totalmente a caso''.
+  \item[Su più livelli, non collegati.] I corridoi non sono tutti
+        collegati fra loro: stanno su piani diversi. Se ci si trova in un
+        punto e si vuole raggiungerne un altro, magari bisogna tornare
+        indietro, scendere, prendere un altro corridoio e girare a destra;
+        ``e io non lo so''.
+  \item[Un ``pastone'' visivo.] Tutti i corridoi sono circondati da enormi
+        decorazioni gotiche, ``un po' Duomo di Milano, un po' cattedrali
+        inglesi'': archi, pilastri, ``rampart'', decorazioni a caso. Rendono
+        impossibile capire anche solo dove si trova il corridoio successivo.
+  \item[Nessun punto di riferimento.] Non si capisce dove sono i punti di
+        riferimento, non si capisce dove andare anche quando si intuisce più
+        o meno la direzione.
+  \item[Ripetitivo e geometrico.] È ``ripetitivo da far paura'' e, come
+        mostra la struttura della mappa, totalmente geometrico: dall'inizio
+        alla fine è sempre lo stesso schema, corridoio e torre, corridoio e
+        torre. \textbf{Non c'è interesse nell'esplorazione}.
+  \item[E i boss sono terribili.] Risultato: ``ho mollato il gioco'' in quel
+        punto.
+\end{description}
+È, in negativo, una lista di quasi tutti i temi del corso: navigazione,
+leggibilità, punti di riferimento (\emph{landmark}), varietà, interesse
+dell'esplorazione.
+
+\subsection{Valerio: Subnautica}
+
+Il primo studente è \textbf{Valerio}. Non sa rispondere a due domande: che
+tipo di giochi vuole fare e in che cosa vorrebbe specializzarsi. ``Ci sta. È
+abbastanza comune questa risposta al primo anno'': si sta iniziando adesso, e
+probabilmente l'unica cosa che accomuna tutti i presenti è che gli piacciono i
+videogiochi (``c'è qualcuno a cui non piacciono i videogiochi?'').
+
+Più che un livello, Valerio cita un gioco intero che gli ha fatto smettere di
+giocare: \textbf{\emph{Subnautica}}, perché ``non aveva troppa libertà'' e non
+sapeva come muoversi; e, in generale, non ama i giochi di sopravvivenza e di
+esplorazione. Gliel'aveva consigliato un amico appassionato. Come debolezza,
+dice di fare fatica a impegnarsi in una cosa se non lo prende
+particolarmente; come forza, non sa. ``Molto onesto, molto diretto. Apprezzo
+questo approccio.'' Alla domanda su che cosa cambierebbe di \emph{Subnautica},
+la risposta è la più breve della giornata: ``cancellerei il gioco''. Il
+docente apprezza il tempismo comico.
+
+\paragraph{I nomi.} Il docente avverte che ripeterà spesso i nomi di tutti,
+perché fa ``una fatica enorme'' a ricordarli, e si scusa in anticipo. E
+aggiunge che, come tutte le esperienze educative, anche questa serve
+``anche per scoprire chi siamo''.
+
+\subsection{Alberto: Nightreign, e la differenza tra scelta ed errore}
+
+\textbf{Alberto} vorrebbe fare ``un po' di tutto'': non ha un genere
+preferito, dai giochi di calcio ai \emph{gacha} giapponesi.\footnote{La
+trascrizione è qui in loop (``un po' di tutto'' ripetuto decine di volte) e
+contiene uno scambio scherzoso su un simulatore di autobus nella Berlino degli
+anni Quaranta, che non è chiaro a chi vada attribuito.} La sua forza è
+l'\textbf{attenzione ai dettagli}: nota subito se in una scena c'è qualcosa
+leggermente spostato, ``un pallino''. È un punto di forza, ``ma anche no.
+Dipende dalla situazione''. La sua debolezza è il \textbf{multitasking}: non
+riesce a concentrarsi su più cose nello stesso momento.
+
+\paragraph{Il multitasking non esiste.} Il docente lo rassicura: non è
+necessariamente una debolezza, perché, a livello di capacità biologica di
+elaborare le informazioni, \textbf{il multitasking non esiste}. Quello che
+esiste è spostare completamente l'attenzione da una cosa all'altra a velocità
+straordinaria. Se ne riparlerà più avanti nel corso (il docente accenna a
+``sistema 1 e sistema 2'').
+
+\paragraph{Level o game?} Alberto è indeciso se specializzarsi in level design
+o in game design, ``senza aver mai fatto una lezione di level design''. ``Ti
+farò cambiare idea'', promette il docente.
+
+\paragraph{Il livello: la mappa di Nightreign.} Il livello che non gli è
+piaciuto viene da \textbf{\emph{Elden Ring Nightreign}}: una mappa (di un
+contenuto aggiuntivo) con un castello da una parte e un altro dall'altra, in
+cui bisogna risolvere delle cose su entrambi i lati per poi andare in un
+altro castello ancora, al centro, e battere vari boss in successione. Ma non
+c'è il tempo: come in un \emph{battle royale}, \textbf{la zona si stringe}, e
+non si riescono a fare entrambi i castelli prima di arrivare a quello
+centrale.
+
+\paragraph{Scelta creativa o errore?} La domanda del docente è
+provocatoria: ``secondo te, a FromSoftware sono così stupidi da non essersi
+resi conto che un giocatore non può fare entrambi i castelli?'' No: se ne sono
+resi conto, ma la scelta è voluta, perché il gioco è pensato per essere
+giocato in gruppo, mandando qualcuno da una parte e qualcuno dall'altra. Qui,
+dice il docente, ``iniziamo ad affrontare un discorso molto delicato e
+complesso'': \textbf{quando una cosa che non ci piace è una scelta creativa, e
+quando è un errore?} In questo caso diventa sempre più chiaro che impedire al
+giocatore di fare entrambe le parti della mappa (o costringerlo a dividersi e
+riunirsi al centro) è fatto apposta.
+
+\paragraph{La proposta, e le sue conseguenze.} Alberto cambierebbe la cosa
+lasciando la libertà di andare in quella zona anche quando si chiude: rendere
+la parte fuori zona \textbf{non dannosa} per un certo tempo, così da poterla
+completare anche dopo. Il docente fa notare che la modifica ``ha tutta una
+serie di conseguenze'': prima di tutto è \textbf{antitetica all'idea di battle
+royale}, in cui il campo di gioco si restringe proprio per costringere i
+giocatori a scontrarsi. Alberto ribatte che lì lo scopo è esplorare e
+potenziarsi il più possibile per battere il boss finale.
+
+\paragraph{L'intervento di Mattia.} Interviene \textbf{Mattia}: più che un
+vero battle royale (in cui, come dice il nome, alla fine ne resta uno solo),
+\emph{Nightreign} è una \textbf{boss rush a tempo}, in cui bisogna arrivare a
+un certo punto della mappa a seconda di come si restringe. Secondo lui il
+fattore di level design è proprio questo: a meno di dividersi, o se si gioca
+da soli, non si riesce a fare tutto, e questo serve a \textbf{impedire al
+giocatore singolo di diventare troppo forte}. Del resto, aggiunge, non è un
+gioco ``troppo divertente'' da soli. Il docente chiude la parentesi: la classe
+è numerosa e c'è meno tempo per ``le mie teatralità''.
+
+\subsection{Mattia: Monster Hunter, il sound design e la Città Infame}
+
+\textbf{Mattia Maestri} non sa ancora che tipo di gioco vorrebbe creare, ma ha
+un'idea dei giochi a cui gli piacerebbe lavorare: i \textbf{souls-like}, i
+suoi generi preferiti, e, sogno ``nel cassetto'', entrare in
+\textbf{Capcom} per lavorare a \textbf{\emph{Monster Hunter}}, la prima saga
+che abbia mai giocato e la sua preferita (``gli ho giocati praticamente quasi
+tutti''). Il docente nota la ``linea di discendenza'' interessante: i giochi di
+FromSoftware prendono molto da \emph{Monster Hunter}.
+
+\paragraph{Forza e debolezza.} La sua forza è la \textbf{creatività}: le idee
+gli vengono facilmente (``che poi siano buone idee è un altro punto di
+vista''). La debolezza: farà fatica nel level design, soprattutto nella parte
+\textbf{tecnica}; si definisce ``più una persona teorica che una persona
+pratica''.
+
+\paragraph{Il sound design.} Oltre al game design, vorrebbe specializzarsi in
+\textbf{sound design}: ama la musica, ``vivo di musica'', e alcuni giochi li
+ha iniziati solo per la colonna sonora. \emph{Kingdom Hearts}, per esempio,
+lo ha cominciato perché un amico gli aveva fatto sentire la musica del menu
+iniziale.\footnote{Lo scambio sul brano è confuso: la classe cita un verso
+(``If you walk away\dots''), che appartiene a una canzone di \emph{Kingdom
+Hearts II}, e il docente lo identifica con un titolo che la trascrizione
+riporta come ``Everly Hearts'', verosimilmente \emph{Dearly Beloved}, il tema
+del menu della serie. Non è possibile stabilire con certezza a quale dei due
+brani si riferisse Mattia.} All'inizio dell'anno aveva già chiesto se il sound
+design sarebbe stato trattato, e gli era stato detto di approfondirlo fuori.
+
+Il docente lo conferma: ci saranno ``delle piccole cose'' di sound design nel
+corso, ``ma sono veramente poche''. Il consiglio migliore è un altro: nei
+\textbf{progetti di gruppo} dei tre anni, quando il team si chiede ``che cosa
+facciamo con quei suoni?'', bisogna essere quelli che dicono ``\textbf{ragazzi,
+ci penso io}''. È così che ci si costruisce una specializzazione dentro un
+percorso generalista.
+
+\paragraph{Il livello: la Città Infame di Dark Souls.} Mattia ha platinato il
+primo \emph{Dark Souls}, ma un livello gli è rimasto sullo stomaco: la
+\textbf{Città Infame} (\emph{Blighttown}). È stata la parte che gli ha
+richiesto più tempo, per tre motivi:
+\begin{itemize}
+  \item la \textbf{scarsa visibilità}, in una città tutta di legno e ``tutta
+        uguale'';
+  \item i \textbf{checkpoint}: solo due falò in tutta l'area, uno
+        all'inizio e uno quando si è ``già praticamente fuori'', invece di
+        tre o quattro intermedi;
+  \item il \textbf{veleno}: quasi tutti i nemici lo infliggono, e si ha un
+        tempo limitato per raggiungere il falò successivo, che però non si
+        vede perché è lontanissimo.
+\end{itemize}
+Che cosa cambierebbe? Più visibilità, per capire meglio l'ambiente, oppure un
+\textbf{falò intermedio}.
+
+\paragraph{Fare souls-like.} Sui souls-like il docente è franco: da quando
+sono usciti i giochi di FromSoftware, ``una quantità gigantesca'' di studenti
+arriva dicendo ``io vorrei fare i souls-like'', e la risposta è sempre la
+stessa: \textbf{pochissima gente riesce a farli}. Mattia precisa che intende
+più in generale il genere \textbf{action RPG}. Non è impossibile: alcuni
+studenti hanno portato come progetto finale un piccolo souls-like ``venuto
+sorprendentemente bene''\footnote{Il titolo del progetto è storpiato nella
+trascrizione (``Steam qualcosa'', ``Steam Rush'') e non è ricostruibile con
+certezza.}; ovviamente non si può fare un gioco da sessanta ore nel contesto di
+uno studio, ma il risultato era buono. E in Capcom qualche italiano c'è, anche
+se quelli che il docente vede lavorare all'estero sono più nel dipartimento
+artistico che in quello di design.
+
+\subsection{Francesco: i JRPG, Fabula Ultima e il salto finale}
+
+\textbf{Francesco Muratore} ama i \textbf{JRPG}: più \emph{Persona} che i
+vecchi \emph{Final Fantasy}, anche se ha giocato di recente al settimo
+capitolo; adesso sta giocando una saga ``non famosissima'', quella di
+\emph{Trails}.\footnote{La trascrizione riporta ``trains in the sky''; dal
+seguito del discorso (una serie con moltissimi capitoli collegati tra loro) si
+tratta quasi certamente della serie \emph{The Legend of Heroes: Trails}, di
+cui \emph{Trails in the Sky} è il primo capitolo.} Il docente conosce la
+sensazione: a un certo punto ci si rende conto che una serie ``ha quindici
+giochi'', tutti collegati. ``Giocare a certi JRPG è come giocare una
+telenovela lunga vent'anni.''
+
+Vorrebbe fare JRPG perché sono giochi con una storia che ``sa riempire'':
+ogni volta che ne finisce uno resta appagato per un mese, un mese e mezzo,
+prima di iniziarne un altro. Il docente traduce: ``un livello di passione
+equivalente a quando ti rompi un ginocchio e non puoi andare a correre per un
+mese e mezzo''.
+
+\paragraph{Forza e debolezza.} La forza: ``mi rialzo facilmente dai miei
+problemi e li affronto'', a testa alta. La debolezza: si distrae spesso, ma ci
+sta lavorando. Il docente osserva che non è solo una questione di disciplina:
+può essere una questione di \textbf{neurodivergenza}, di disturbi
+dell'attenzione (``forse anche io''), e non c'è ``assolutamente niente di
+male'': ``siamo tutti a gestirci il corpo che abbiamo, e il cervello è un
+organo''.
+
+\paragraph{Fare JRPG in Italia.} La reazione istintiva sarebbe ``buona
+fortuna, fare JRPG in Italia''. Eppure c'è \textbf{\emph{Fabula Ultima}}: un
+gioco di ruolo carta e penna italiano nato da chi era stanco del fantasy
+classico europeo e americano di \emph{D\&D} e ha fatto un gioco da tavolo
+basato sui JRPG, ``molto Final Fantasy'', come si capisce dal nome. Ha avuto
+un successo ``stratosferico'': secondo il docente è probabilmente il gioco di
+ruolo carta e penna italiano di maggior successo della storia.
+
+\paragraph{Un paese di nippofili.} Del resto, ``viviamo in un paese di
+giapponofili'': l'Italia è stata uno dei primi paesi al mondo a importare
+anime, già dagli anni Ottanta, ben prima degli Stati Uniti. Con la
+liberalizzazione dei canali, la televisione privata italiana aveva bisogno di
+riempire il palinsesto, e i giapponesi vendevano serie da doppiare a prezzi
+bassissimi: \emph{Heidi}, \emph{Sampei}, e poi \emph{I Cavalieri dello
+Zodiaco}, \emph{Dragon Ball}.\footnote{La trascrizione cita anche un titolo
+storpiato (``l'Upen''), forse \emph{Lupin III}; non è ricostruibile con
+certezza.} Non è impossibile, quindi; è difficile, perché il mercato
+occidentale è ``un po' recalcitrante'', ma ``viviamo in un mondo
+globalizzato''. Il consiglio: \textbf{studiare i sistemi}, perché i JRPG sono
+``tutti sistemi''. Il loro level design, sinceramente, ``tende a non essere
+granché'': sono molto più concentrati su narrativa e sistemistica.
+
+\paragraph{Il livello: un salto al 99,6\%.} Francesco cita un livello battuto
+da poco in cui, al \textbf{99,6\%} del percorso, c'è un \textbf{salto finale
+precisissimo}: ci è morto almeno sette volte, dopo cinque minuti di livello
+tutti di fila.\footnote{Prima di questo esempio Francesco nomina un altro
+titolo, irriconoscibile nella trascrizione (``su Giove ti lascia''); anche il
+gioco del salto finale non è nominato in modo comprensibile.} È la classica
+\textbf{botta di difficoltà} finale che costringe a rifare tutto da capo.
+Taglierebbe quel pezzo? Il docente aggiunge una considerazione: forse proprio
+quella è la sfida vera, la parte divertente. Anche questo va considerato.
+
+\paragraph{L'inferno voluto.} Lo stesso vale per la Città Infame di Mattia:
+è \textbf{pensata per essere l'inferno}, il punto più basso di tutto il mondo
+di gioco. Una volta finita, la soddisfazione è ``non ci devo più tornare,
+finalmente ce l'ho fatta''. È ``leggendaria'', uno dei livelli più difficili e
+più ``tossici'' (``anche letteralmente'') di tutti gli action RPG. E c'è un
+motivo se, scegliendo all'inizio la classe del ladro, si ha la
+\textbf{Chiave Maestra}: permette di saltare l'intero livello, ed è ciò che
+molti fanno alla seconda partita.
+
+\subsection{Federica: i giochi intimi e la mappa di Pentiment}
+
+\textbf{Federica} parte dalla debolezza, perché si collega al resto: una
+grandissima \textbf{sensibilità}, ``in positivo, ma soprattutto in negativo'',
+che la porta a rimuginare molto. Ed è anche ciò che vorrebbe fare: un
+\textbf{piccolo gioco intimo}, come \emph{To the Moon}, \emph{Undertale},
+\emph{Omori}. Il docente le consiglia \textbf{\emph{OFF}}: se le è piaciuto
+\emph{Undertale}, è uno dei giochi a cui Toby Fox si è palesemente ispirato.
+
+La sua forza è legata alle sue neurodivergenze, che a volte la aiutano a
+\textbf{guardare le cose fuori dagli schemi} e la rendono molto creativa. Non
+ha un'idea precisa di specializzazione: il suo desiderio è sempre stato
+lavorare per conto suo, fare il suo piccolo gioco, anche senza fare molti
+soldi, perché un lavoro ce l'ha già.
+
+\paragraph{Il livello: la mappa di Pentiment.} Cita \textbf{\emph{Pentiment}},
+che le stava piacendo ma ha lasciato. Il problema è la \textbf{mappa}, e
+l'essere in \textbf{2D}: capisce la scelta di riprendere le miniature e il
+disegno dell'epoca, ma quando si apre la mappa e ci si vuole spostare da un
+punto all'altro si può andare ``a destra o a sinistra, a grandi linee''. Se si
+deve raggiungere un punto molto lontano, lo spostamento è dispendioso; e la
+mappa è poco chiara su quali NPC si trovino dove. La soluzione: un
+\textbf{viaggio rapido}, o \textbf{più indicatori} sulla mappa. Più che un
+livello specifico, nota il docente, è un problema di approccio alla
+comunicazione. Come livello vero e proprio, Federica cita anche il
+\textbf{Picco di Cristallo} di \emph{Hollow Knight}, che però mette alla prova
+soprattutto la sua difficoltà con i \emph{platform}.
+
+``Pochi masochisti hardcore gamer quest'anno'', commenta il docente
+(l'anno prima c'era un appassionato di \emph{bullet hell}): Federica è una
+delle persone ``con gli interessi più indie'' che abbia avuto finora.
+
+\subsection{Daniele: l'esplorazione e gli spazi vuoti}
+
+Si torna in aula, in senso antiorario, ``per tenere la gente sulle spine''.
+\textbf{Daniele} vorrebbe fare giochi con un po' di
+\textbf{esplorazione}, non necessariamente un \emph{open world}: anche
+qualcosa di più piccolo, come esplorare una città.
+
+\paragraph{Forza e debolezza.} La forza: è \textbf{preciso}, attento ai
+dettagli ``senza fare le maniacate''. Il docente aggiunge una nota di
+produzione: \textbf{c'è sempre una quantità di tempo limitata}, e l'attenzione
+ai dettagli può diventare un problema quando si parla di tempistiche. ``Non si
+può sempre fare tutto perfetto.'' La debolezza: non si sente tagliato per fare
+il \textbf{leader} di un gruppo, preferisce non assumersi responsabilità. Il
+docente: è importante saperlo. ``È bello dire: ah, io sono il capo''; ma
+``vi assicuro di persona che essere il capo di un progetto non è divertente
+per niente'', e non è sempre una buona idea essere quello che decide tutto e si
+occupa di tutto.
+
+\paragraph{Il livello: una montagna vuota.} Daniele descrive una zona di
+montagna, in un gioco che gli è piaciuto, che però è un \textbf{grande vuoto}:
+c'è poca roba, ci si arriva, ci si trova una grotta e poco
+altro.\footnote{Il passaggio è quasi del tutto incomprensibile nella
+trascrizione (``la parte della serena, papa, che è la montagna'') e il gioco
+non è nominato in modo riconoscibile. Il docente collega l'esempio agli
+``ultimi giochi di Pokémon'', e Daniele lo confronta con un'altra zona della
+stessa mappa, un deserto: è quindi probabile, ma non certo, che si tratti di un
+capitolo recente di \emph{Pokémon}.} Metterebbe \textbf{punti di interesse}:
+come in \emph{Breath of the Wild}, dove su una montagna c'è magari un ricordo da
+recuperare e su un'altra un minigioco come la discesa sullo scudo. In breve,
+``riempirlo un po' di più''. Il docente conferma: gli spazi vuoti sono ``un
+grosso problema degli ultimi giochi di Pokémon''. Daniele fa un confronto
+interno: un'altra parte della mappa, il \textbf{deserto}, è invece costruita
+\textbf{su più livelli}, ed è quindi uno spazio interessante; la montagna è
+``un grande vuoto piano''.
+
+\subsection{Francesca: i giochi psicologici e un labirinto di piani}
+
+\textbf{Francesca} gioca ``un po' a tutto'', ma se deve scegliere preferisce
+i giochi con un \textbf{valore psicologico} importante: molto narrativi, con
+una psicologia di fondo da capire, non superficiale; horror indie, horror
+psicologici. La sua forza è essere \textbf{estremamente inclusiva}: non giudica
+gli altri e cerca di mettere tutti a proprio agio. La debolezza è
+l'\textbf{introversione}, su cui sta lavorando. Come Daniele, non si sente
+tagliata per fare la leader, pur sapendo comunicare e fare da mediatrice. Le
+interessano sia la parte visiva e creativa sia quella tecnica e di
+programmazione: per questo ha scelto il game design, ``perché più o meno
+tocca tutti i punti''.
+
+\paragraph{Il livello: Slime Rancher.} Il livello che non le è piaciuto per
+niente è un'area del primo \textbf{\emph{Slime Rancher}}.\footnote{La
+trascrizione riporta ``Dreamland e The Grey Lightning''; nel primo
+\emph{Slime Rancher} esiste un'area chiamata \emph{The Grey Labyrinth}, che
+corrisponde alla descrizione, ma il nome esatto pronunciato da Francesca non è
+verificabile.} Non capisce il livello, e le ha fatto rigiocare la zona
+``tantissime volte'': la mappa non è affatto chiara e, come nell'esempio del
+docente, è tutto basato su \textbf{più piani intrecciati}, senza veri
+collegamenti. Per passare da un punto all'altro o si trova l'unica strada
+giusta ``tra i mille'' passaggi possibili, o ci si mette troppo tempo. Ed è
+paradossale per un gioco di \emph{farming} ed esplorazione: va contro ciò che
+il gioco stesso dovrebbe essere.
+
+\subsection{Antonino: i roguelike e la tempesta di Frostpunk 2}
+
+L'ultimo è \textbf{Antonino Etiopia} (``c'è sempre una persona che deve
+essere ultima''). Gli andrebbe bene qualsiasi gioco, ma sceglierebbe i
+\textbf{roguelike}, per le sinergie e le scelte; e, data la loro popolarità
+nei giochi indie, avrebbe ``molte occasioni di provarci''. La sua forza è
+lavorare in gruppo: rende meglio perché, se lavorasse male, la cosa ricadrebbe
+sugli altri. ``Il senso di colpa è un eccellente motivatore.'' La debolezza,
+che va un po' contro la forza, è l'introversione. Specializzazione: deve
+ancora ambientarsi nel mondo del game dev.
+
+\paragraph{Il livello: la città nella tempesta.} Il livello che gli ha fatto
+abbandonare il gioco viene da \textbf{\emph{Frostpunk 2}}. Il docente ricorda
+che \emph{Frostpunk} è una serie di \textbf{gestionali strategici} in cui si
+governa una città in un'era glaciale, con risorse limitatissime e una
+capacità di riscaldare gli ambienti molto ridotta: bisogna fare scelte
+difficili su chi salvare, che cosa sacrificare, che cosa bruciare. Dopo che la
+città sopravvive alla prima tempesta, bisogna andare a esplorare un'altra
+città per recuperare risorse. Si hanno un certo numero di anni per
+prepararsi, ma \textbf{non si ha idea di che cosa ci sia}, perché sopra la
+città c'è una tempesta. Si arriva impreparati, e si perde tutto il lavoro.
+
+\paragraph{L'analisi.} Che non si sappia che cosa si andrà ad affrontare è
+``chiaramente intenzionale''. Ma qual è l'effetto? Ci si adatta, si resiste,
+ci si prepara a perdere tutto e ad andare avanti comunque? O si ottiene
+l'effetto ``perdo, ricomincio il gioco, e adesso che so cosa aspettarmi lo
+faccio meglio''? Antonino aveva pensato la stessa cosa, ma il suo salvataggio
+si era anche corrotto due volte, e ricominciare era diventato pesante (``e lì
+c'è poco da fare: quando qualcosa si rompe, è difficile dire se è fatto
+apposta'').
+
+\paragraph{La proposta: un indizio.} Antonino darebbe, dopo la tempesta,
+almeno \textbf{una dritta} su che cosa preparare. Il docente suggerisce di
+inserirla nella \textbf{narrativa}: un sopravvissuto scappato da quella città
+che racconta che cosa c'è (``ci sono dei dinosauri allergici allo zafferano:
+manda la gente con i coltelli allo zafferano''; ``sparo cavolate, però è
+possibile''). Qualcosa che permetta di \textbf{fare un piano} invece di
+buttarsi nel vuoto totale. \emph{Frostpunk} è una serie hardcore, e mettere
+bastoni fra le ruote è lo scopo del gioco; ma qui sembra ``un po' troppo
+hardcore'', il tipo di cosa che ``devi saperlo prima: ci muori una volta e
+riprovi''. Arrivare senza le strutture giuste significa sacrificare un sacco
+di persone, e in un gioco così sbagliare una scelta tanto importante può
+condannare l'intera partita: per quanto ricorda il docente, non ci sono
+\textbf{meccaniche di recupero}. Se le cose vanno troppo male si entra in una
+\textbf{spirale} in cui si continuano a perdere risorse senza che la partita
+finisca.
+
+% ---------------------------------------------------------------------
+\section{Perché presentarsi: parlare in pubblico}
+\label{gd8:sec:pubblico}
+
+``Congratulazioni, avete passato la prima esercitazione del corso.'' Il giro
+di presentazioni aveva due scopi. Il primo, dichiarato con ironia: il
+docente fa fatica a ricordarsi i nomi e si dà una scusa per ripeterli (``Valerio'').
+Il secondo è serio: \textbf{abituarsi a parlare in pubblico}.
+
+Se si vuole fare qualunque cosa nei videogiochi, arriverà il momento in cui
+bisognerà \textbf{presentare quello che si sta facendo}, e presentarlo a più
+persone. Ci saranno molte occasioni per allenarsi, ma questa deve essere la
+prima cosa che resta impressa: bisogna imparare a presentare sé stessi e il
+proprio lavoro agli altri. Vale in quasi ogni settore lavorativo, ``ma
+soprattutto nei settori creativi''.
+
+\paragraph{La prima lezione seria.} ``Prima lezione seria di questo corso'':
+\begin{quote}
+\textbf{un designer mediocre, ma in grado di fare bei discorsi e di convincere
+la gente, avrà sempre più successo nel proporre le proprie idee di un designer
+geniale che non riesce a parlare in pubblico.}
+\end{quote}
+``Mi dispiace, la vita è così.'' Bisogna trovare un modo per superare le
+proprie difficoltà nel parlare in pubblico: è ``assolutamente necessario''.
+La buona notizia è che, a giudicare dal giro appena fatto, più o meno tutti
+hanno una base di partenza; si tratta di migliorarla.
+
+% ---------------------------------------------------------------------
+\section{Che cos'è il level design}
+\label{gd8:sec:cos-e}
+
+\paragraph{La definizione.} ``Terra-terra'': il \textbf{level design} è la
+disciplina che si occupa della \textbf{creazione di livelli, ambienti,
+locali}, di qualunque tipo di spazio all'interno di un videogioco.
+
+\paragraph{Il level editor.} Di solito lo si fa con un \textbf{level editor}.
+``Grazie a Dio non sono più gli anni Ottanta'': oggi non si devono più fare i
+livelli su carta a quadretti, prendendo le coordinate, convertendole e
+inserendo tutto a mano. Per \emph{Super Mario Bros.}, per esempio, non c'era un
+editor di livelli\footnote{La trascrizione riporta l'anno 1984; \emph{Super
+Mario Bros.} è uscito nel 1985.}: c'era il codice. Ci si segnava le cose, si
+scriveva il codice, e se un blocco finiva nel punto sbagliato bisognava
+tornare nel codice e modificare il punto in cui il blocco era scritto.
+
+\paragraph{Gli editor nei giochi.} Alcuni giochi includono un editor di
+livelli che permette di crearne di nuovi all'interno del gioco stesso: sono
+\textbf{ottimi per allenarsi} a fare level design con un set di meccaniche già
+pronto.
+
+\paragraph{Un lato artistico e un lato tecnico.} La cosa più importante da
+ricordare è che il level design \textbf{ha un lato artistico e un lato
+tecnico}. Lo si può trovare anche sotto altri nomi, come
+\textbf{environment design} o \textbf{game mapping}: nel settore ``un sacco di
+roba ha nomi diversi''.
+
+\paragraph{Il blockout.} Gli screenshot della slide mostrano l'aspetto di un
+videogioco \textbf{mentre viene sviluppato}: sono fasi di \textbf{blockout},
+cioè fasi in cui non è ancora stata inserita l'arte finale e si usano forme
+geometriche di base per cominciare a strutturare il livello. Sarà uno degli
+argomenti del percorso.
+
+\paragraph{Approfondimento: ``applied game design''.} Christopher Totten,
+nell'introduzione di \emph{An Architectural Approach to Level Design} (il
+libro che il docente consiglierà a fine lezione, sezione~\ref{gd8:sec:extra}),
+raccoglie alcune definizioni classiche. Per Rudolf Kremers lo scopo del level
+design è ``interpretare le regole del gioco e tradurle in un costrutto (un
+livello) che faciliti al meglio il gioco'': il level design è \emph{game design
+applicato}. Jay Wilbur e John Romero dicono che il level design è ``dove la
+gomma tocca l'asfalto'', e che il level designer è ``in larga parte
+responsabile dell'implementazione del gameplay''. Totten propone una
+definizione più spaziale: il level design è ``l'esecuzione ragionata del
+gameplay nello spazio di gioco, perché i giocatori lo abitino''. Ricorda anche
+che molti designer hanno cominciato proprio come suggerisce il docente,
+creando livelli personalizzati (\emph{mod}) con gli strumenti di giochi
+esistenti.
+
+% ---------------------------------------------------------------------
+\section{Che cosa fa un level designer}
+\label{gd8:sec:cosa-fa}
+
+\subsection{La risposta breve}
+
+``Un level designer si occupa di \textbf{creare spazi}.'' Spazi virtuali: in
+2D, in 3D, ``in 1D, in 4D: esistono. Delirio totale, ma esistono''.
+
+\subsection{La risposta lunga: un termine ombrello}
+
+La risposta lunga è che ``level design'' è un \textbf{termine ombrello}: una
+disciplina gigantesca che coinvolge diverse specializzazioni. A seconda del
+contesto, chi lavora al level design può occuparsi di cose molto diverse fra
+loro (figura~\ref{gd8:fig:ombrello}).
+
+\begin{description}
+  \item[Il blockout degli spazi.] ``Questo cubo è la casa, quest'altro cubo
+        è il grattacielo, questo parallelepipedo più allungato è il ponte'':
+        la prima struttura del livello, fatta di forme di base.
+  \item[Le luci.] Illuminare non vuol dire ``prendo il sole, metto il sole,
+        problema risolto'': le cose vanno illuminate \textbf{con cura}. Il
+        level design si sovrappone molto alla \textbf{fotografia} e al
+        \textbf{cinema}: nel cinema, le luci che illuminano una scena non
+        sono mai quelle che si vedono. Ci sono sempre lampade fuori
+        dall'inquadratura che illuminano con attenzione un personaggio o una
+        zona, c'è la luce riflessa e soffusa che fa stagliare meglio i
+        personaggi contro le ombre. Anche questo è un passaggio del level
+        design: il \textbf{lighting pass}.
+  \item[L'arredamento degli scenari.] Occuparsi di come
+        \textbf{arredare} gli spazi, il cosiddetto \emph{set
+        dressing}.\footnote{Il termine pronunciato dal docente è storpiato
+        nella trascrizione (``la business plan''); dal contesto (``occuparsi di
+        come arredare gli scenari'') si tratta con ogni probabilità del
+        \emph{set dressing}, o di un \emph{dressing pass}.}
+  \item[La documentazione.] Una cosa che fanno tutti i designer, e i level
+        designer sono designer, è \textbf{scrivere documentazione}: da
+        passare ad altri o da usare per tenere d'occhio il proprio lavoro.
+        Layout, mappe, appunti, \textbf{diagrammi di flusso} che permettono
+        di visualizzare la comunicazione tra le zone, la progressione nel
+        livello, le azioni del giocatore. Un lavoro ``quasi burocratico''
+        (si veda il capitolo~\ref{cap:brainstorming-flowchart} sui
+        flowchart).
+  \item[Il test.] Soprattutto, si \textbf{testa}. Le cose non si fanno ``su
+        carta, poi in engine e via'': si testa, si fa \emph{playtest}, si
+        prova un problema, si cambia, si riprova per vedere se un'altra
+        opzione era migliore; si manda ai tester, e se c'è la possibilità si
+        fa fare un giro al \textbf{QA}, persone esperte nel trovare
+        \emph{bug}. È un processo \textbf{iterativo}: ``niente resta mai fisso
+        nella prima forma che è stata creata''. Vale per le meccaniche come
+        per i livelli.
+  \item[La narrazione ambientale.] Vale anche per gli elementi più
+        artistico-narrativi, come l'\textbf{environmental narrative}.
+\end{description}
+
+\paragraph{I criceti assassini.} L'esempio del docente sulla narrazione
+ambientale merita di essere riportato. Nel livello c'è una registrazione:
+``Oh no, i criceti sono scappati dalla gabbia e hanno sete di sangue. Hanno
+già preso Frank, ma io non mi farò beccare. Se qualcuno sente questo
+messaggio, il codice della porta che porta alle gabbie è 723. Li sento: stanno
+graffiando le pareti. No\dots''. Chi scrive la registrazione non è
+necessariamente il level designer; ma è il level designer che decide
+\textbf{dove piazzarla}. Davanti alla porta 723? Oppure dall'altro lato della
+mappa, così che il giocatore pensi: ``ah, 723 è il codice della porta, devo
+tornare indietro, e attento che adesso ci sono i criceti assassini in giro''?
+La stessa informazione, collocata in due punti diversi, produce due
+esperienze diverse: una porta che si apre subito, oppure un ritorno carico di
+tensione.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  gd8core/.style={draw, very thick, ellipse, align=center, fill=blue!10,
+                  inner sep=4pt},
+  gd8leaf/.style={draw, thick, rounded corners=4pt, align=center,
+                  text width=3.1cm, inner sep=4pt, fill=gray!6},
+  gd8link/.style={thick}
+]
+  \node[gd8core] (ld) {\textbf{Level design}\\{\footnotesize creare spazi}};
+  \node[gd8leaf, above left=1.0cm and 0.9cm of ld] (bo)
+       {\textbf{Blockout}\\{\footnotesize forme di base: la casa,\\il grattacielo, il ponte}};
+  \node[gd8leaf, above right=1.0cm and 0.9cm of ld] (lu)
+       {\textbf{Luci}\\{\footnotesize il \emph{lighting pass},\\come nel cinema}};
+  \node[gd8leaf, left=1.2cm of ld] (sd)
+       {\textbf{Set dressing}\\{\footnotesize arredare gli scenari}};
+  \node[gd8leaf, right=1.2cm of ld] (doc)
+       {\textbf{Documentazione}\\{\footnotesize layout, mappe, appunti,\\diagrammi di flusso}};
+  \node[gd8leaf, below left=1.0cm and 0.9cm of ld] (te)
+       {\textbf{Test}\\{\footnotesize playtest, tester, QA:\\un processo iterativo}};
+  \node[gd8leaf, below right=1.0cm and 0.9cm of ld] (en)
+       {\textbf{Narrazione ambientale}\\{\footnotesize dove piazzare\\la registrazione}};
+  \foreach \n in {bo,lu,sd,doc,te,en} \draw[gd8link] (ld) -- (\n);
+\end{tikzpicture}
+\caption{``Level design'' è un termine ombrello: a seconda del team e del
+progetto, chi lo pratica può occuparsi di una o più di queste attività.}
+\label{gd8:fig:ombrello}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Lo strumento del level designer}
+\label{gd8:sec:strumento}
+
+\subsection{Il braccio armato dello sviluppo}
+
+In un team di sviluppo, il level designer è quello che \textbf{mette di più
+le mani nei giri}: per motivi pratici passa quasi tutto il tempo in engine, a
+piazzare, sistemare, testare. ``Noi siamo il \textbf{braccio armato} dello
+sviluppo, noi siamo quelli che zappano il terreno.'' La domanda, allora, è:
+\textbf{qual è la nostra zappa?} Qual è lo strumento che un level designer
+deve assolutamente conoscere per lavorare in un team?
+
+\subsection{La parola magica: ``dipende''}
+
+La prima risposta della classe è ovvia: l'\textbf{engine} in cui si crea il
+gioco. Ma quale engine? \textbf{Dipende dall'azienda}, da quello che ha scelto
+per creare il gioco. E qui il docente introduce ``la parola magica'' del corso:
+nel corso dell'anno farà moltissime domande, e a moltissime di queste l'unica
+vera risposta sarà \textbf{``dipende''}. ``Voglio che vi fissiate la parola
+magica del mio corso in testa.''
+
+L'engine potrebbe essere:
+\begin{itemize}
+  \item \textbf{Unreal};
+  \item \textbf{Unity};
+  \item \textbf{Godot}, ``che sta prendendo molto bene'';
+  \item un \textbf{framework personalizzato}\footnote{La trascrizione riporta
+        ``un custom framework fatto in 3GS''; potrebbe trattarsi di una
+        libreria web come \emph{three.js}, ma non è verificabile.};
+  \item \textbf{GameMaker}: \emph{Undertale} e \emph{Deltarune} sono fatti
+        con GameMaker;
+  \item un \textbf{engine proprietario}. Chi vuole lavorare in Capcom, per
+        esempio, si troverà a lavorare con l'engine interno con cui sono
+        stati fatti i \emph{Resident Evil} recenti e \emph{Monster
+        Hunter}.\footnote{La trascrizione dice ``è probabile che si trovino a
+        lavorare con l'Unreal Engine'', ma subito dopo parla dell'engine
+        ``con cui è stato fatto [Resident Evil] e con cui è stato fatto Monster
+        Hunter''. L'engine interno di Capcom è il RE Engine; è probabile che
+        la prima frase sia un errore di trascrizione per ``RE Engine''.}
+\end{itemize}
+Lo strumento indispensabile, quindi, \textbf{non può essere un engine
+preciso}, perché non si sa mai quale si andrà a usare. Nel corso si userà
+\textbf{Unreal}, perché è considerato lo standard dell'industria ``per
+adesso''; ma questo non significa che sia indispensabile conoscerlo. Ciò che
+si studia su Unreal ha applicabilità anche negli altri engine, magari con nomi
+diversi e procedimenti diversi.
+
+\subsection{La risposta vera: il level designer}
+
+``L'unico strumento di cui un level designer ha bisogno per fare il suo lavoro
+è \textbf{il level designer}.''
+
+Ecco lo scopo delle domande di inizio lezione: non servivano solo a conoscere
+la classe o a capire se fossero ``tutti fan di rhythm game e di simulatori di
+gioco d'azzardo''. Servivano a far capire che \textbf{lo strumento principale}
+che si userà in tutta la produzione di videogiochi \textbf{siete voi}. Conoscere
+le proprie forze e le proprie debolezze serve ad applicarle a contesti spesso
+molto diversi tra loro, perché \textbf{sono il contesto e le necessità del
+progetto a decidere quali strumenti si usano}.
+
+\paragraph{Imparare a imparare.} ``La vostra capacità di imparare è il vostro
+asset migliore.'' Il docente può insegnare per tre anni come si usa Unreal;
+poi si va a lavorare in Capcom, o in FromSoftware, che usa un suo engine
+sviluppato dagli anni Duemila, totalmente diverso da Unreal. La capacità da
+sviluppare in questi tre anni non è saper usare Unreal: è \textbf{sapere come
+si impara}. La caratteristica principale dello sviluppatore di videogiochi è
+essere \textbf{uno studente continuo}: la flessibilità mentale di imparare in
+fretta strumenti diversi, saper fare ricerca, saper fare pratica, tenersi
+allenati, tenere d'occhio i cambiamenti.
+
+\paragraph{Due esempi.} Epic ha annunciato che molto cambierà con la
+\textbf{versione 6} di Unreal, ``quando o se esce'': quando succederà, se si
+deciderà di passarci, bisognerà attivarsi. E un gruppo di studenti del terzo
+anno ha chiesto di fare il proprio progetto in \textbf{Unity}: metà del gruppo
+ci si trovava meglio, l'altra metà non l'aveva mai toccato. Quest'altra metà
+``si è rimboccata le maniche'' ed è andata a impararlo.
+
+``Imparate a imparare: questa è la cosa più importante che dovete saper
+fare.'' (Seguito da un'autoironia: ``vedo che alcuni di voi hanno la
+lacrimuccia\dots{} no, siamo tutti cinici, col cuore raggrinzito come una
+prugna.'')
+
+% ---------------------------------------------------------------------
+\section{Come si impara il level design}
+\label{gd8:sec:imparare}
+
+A livello pratico, che cosa bisogna fare per imparare il level design? Il
+docente indica alcune aree su cui concentrarsi.
+
+\subsection{La teoria}
+
+Il vantaggio della teoria è che \textbf{si applica a qualunque cosa}. I
+principi di level design valgono che si lavori in Unity, in Unreal o in Godot,
+che si stia facendo un FPS o un gioco di corse.
+
+\paragraph{Il landmark.} L'esempio è il \textbf{landmark}: ``un landmark è un
+landmark è un landmark'', ha sempre la stessa funzione in qualunque tipo di
+gioco. Un landmark è \textbf{un elemento dello scenario distinguibile e
+visibile dalla distanza, che aiuta il giocatore a orientarsi}. La
+\textbf{Madonnina} è il landmark di Milano. Lo si vedrà con attenzione nelle
+lezioni future; ma si noti che è esattamente ciò che mancava nella Cattedrale
+del Sangue Sacro.
+
+\paragraph{Rifiutare una regola, sapendolo.} Anche quando si lavora a un gioco
+che \textbf{rifiuta intenzionalmente} queste regole, bisogna sapere che le si
+sta rifiutando. Un horror alla \emph{Silent Hill}, con la nebbia che impedisce
+di vedere a distanza, lo fa apposta: non è che i suoi autori non sappiano che
+cosa sia un landmark. C'è una conoscenza di questi elementi e un
+\textbf{rifiuto di usarli}, che fa parte della loro intenzione.
+
+\paragraph{Approfondimento: Lynch e l'immagine della città.} Totten dedica
+al tema una parte del suo libro, ispirata a Kevin Lynch e al suo studio
+sull'\emph{immagine della città}: gli abitanti si orientano grazie a pochi
+elementi riconoscibili, tra cui i \emph{percorsi} e i \emph{landmark}, punti di
+riferimento visibili da lontano. Nel capitolo sul \emph{pathfinding} con le
+``architectural weenies'' (l'espressione con cui Walt Disney indicava gli
+elementi visibili da lontano che attirano il visitatore, come il castello al
+centro del parco), il landmark non serve solo a orientarsi ma anche a
+\textbf{attirare} il giocatore verso una meta.
+
+\subsection{La pratica}
+
+``La teoria non vale niente senza la pratica.'' Bisogna mettere le mani in
+engine. C'è chi è più interessato alla teoria; ma finché si seguono le lezioni
+di questo corso si fa level design, almeno parzialmente, almeno per imparare.
+``Più pratica fate, più imparate a fare quello che dovete fare, più diventate
+veloci, più cose potete fare.'' E nei videogiochi ``la velocità è tutto''.
+
+\subsection{L'expertise}
+
+L'\textbf{expertise} non è solo esperienza: è \textbf{l'insieme di tutto
+quello che si sa fare}. Chi sa fare gli \emph{shader} può farsi un sacco di
+cose da solo, in fretta, senza aspettare altri. Chi sa fare i suoni non deve
+passare ore a cercare materiale, o rassegnarsi a risultati molto peggiori di
+quelli che otterrebbe un esperto.
+
+\subsection{L'esperienza sul campo}
+
+``Sembra stupido'', ma vagare, esplorare, fare \emph{trekking}, girare per le
+città, osservare l'ambiente rende un level designer migliore. \emph{The Legend
+of Zelda} è nato perché \textbf{Shigeru Miyamoto} voleva ricreare
+l'esperienza che aveva avuto da bambino, esplorando la campagna giapponese
+intorno a casa sua.\footnote{La trascrizione riporta ``Minamoto'' e
+``Zelda di terraferma''; l'aneddoto è quello, noto, di Miyamoto e delle sue
+esplorazioni d'infanzia nei dintorni di Kyoto.}
+
+\subsection{Il gruppo}
+
+Tutto questo (esperienza, ricerca, studio) non serve a niente se non lo si
+mette in pratica; e la pratica, in questo corso, avverrà spesso \textbf{in
+gruppo}. C'è chi vuole lavorare da solo, ma finché si segue il corso si lavora
+anche con gli altri, ed è fondamentale saperlo fare. ``Vi assicuro che
+finirete questi tre anni che qualcuno di voi odierà qualcun altro.
+Statisticamente è impossibile che non succeda.'' Ma anche lavorare con gli
+altri richiede pratica: è la pratica che rende veloci, che permette di
+ottenere risultati nei tempi previsti e di conoscere gli strumenti.
+
+\subsection{La parola che si ripete}
+
+``Siete persone intelligenti: starete notando che sto ripetendo molto spesso
+una certa parola.'' La parola è \textbf{pratica}. L'ultima cosa, ma non ultima
+per importanza: la cosa più importante quando si fa level design è
+\textbf{fare pratica}. Più si mettono le mani in pasta, meglio si lavora.
+``Tutto il resto dipende.''
+
+% ---------------------------------------------------------------------
+\section{Due curve da conoscere in anticipo}
+\label{gd8:sec:curve}
+
+Il docente mostra due grafici tratti dalla ricerca sociologica e
+psicologica, che descrivono ciò che succederà a quasi tutti nel corso di
+studi. Li presenta adesso perché ``è inutile affrontarlo quando succede'':
+prima ci si prepara, meglio è.
+
+\subsection{Il picco della fiducia}
+
+Si parte tutti più o meno da zero, o comunque da un livello molto basso. Nel
+corso del primo anno si impara una serie di cose: come mettere le mani in
+pasta, come analizzare i giochi. Più si impara, più cresce la
+\textbf{fiducia} di sapere che cosa si sta facendo, più ci si sente esperti:
+``più vi sentirete fighi, più andrete dai vostri amici su Discord a dire: eh,
+quel livello non è fatto troppo bene, io avrei messo un altro falò''.
+
+Poi, di solito tra la fine del primo anno e l'inizio del secondo, si arriva al
+\textbf{picco}, e ci si scontra con la realtà: non si è ``così fighi'' come si
+credeva. Ci si rende conto di quanto manca ancora da imparare, di quanto la
+propria conoscenza sia superficiale, di quanto i risultati siano scarsi
+rispetto alle speranze. ``Alessandro lo sa.'' \textbf{Più si sa, più ci si
+rende conto di quanto poco si sa.} È \textbf{fisiologico}: il docente si
+aspetta che ognuno abbia ``una botta di energia, figaggine, quanto sono bravo,
+quanto sono bello'', e poi, tra primo e secondo anno, ``la depressione''.
+``Non c'è niente di male, succede.'' Se si riesce a superare quel picco, si
+possono fare grandi cose.\footnote{Il grafico della slide non è disponibile e
+la trascrizione non ne riporta il titolo esatto (``il picco della realtà'');
+la descrizione è ricostruita dalle parole del docente.}
+
+\subsection{L'effetto Dunning-Kruger}
+
+Il secondo grafico è l'\textbf{effetto Dunning-Kruger}, anch'esso un effetto
+osservato: la \textbf{fiducia} di una persona in quanto sa di un argomento
+segue una curva per cui, \textbf{meno si sa, più ci si sente sicuri} nel
+parlarne (figura~\ref{gd8:fig:dk}).
+
+\paragraph{L'allenatore di calcio.} L'esempio del docente: parenti o amici che
+guardano il calcio e parlano con enorme sicurezza di quanto sia scemo
+l'allenatore, di quale giocatore avrebbe dovuto sostituire, ``e non capisco
+perché''. ``Quello è l'effetto Dunning-Kruger in azione.'' Ne sanno di più di
+una persona che fa calcio da trent'anni? Probabilmente no.
+
+\paragraph{Il giocatore che non ha mai fatto un gioco.} Appena si impara poco
+di un argomento, la fiducia (``io so quasi tutto di questa roba, sono un
+esperto'') schizza in alto. La gente che gioca ai videogiochi ma non li ha mai
+fatti si trova più o meno lì: ``fiduciosissima'' nel dire ``questo gioco fa
+schifo, avrebbero dovuto cambiare questa cosa, avrebbero dovuto portare i
+giocatori di una mappa da 12 a 128''. È chiaro che non sanno di che cosa
+parlano. Poi, più si impara, più ci si rende conto di quanto sia limitata la
+propria conoscenza: il punto più basso della curva è quando si sono imparate
+molte cose e si capisce quanto ne manchino ancora.
+
+\paragraph{L'obiettivo.} ``Il vostro obiettivo all'interno di questo corso di
+studi è \textbf{sopravvivere ai due punti centrali di questo grafico, senza
+abbandonare la nave}.'' E, aggiunge, ``non rendetemi la vita impossibile
+finché siete ancora nella prima metà del grafico'': durante l'anno ci si
+sentirà ``fighissimi'', e lui sarà lì a dire ``bravi, bravi'', aspettando che
+la prima fase passi. ``L'annuncio di servizio ve l'ho fatto; il resto sta a
+voi.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  gd8ax/.style={-{Stealth[length=2.5mm]}, thick},
+  gd8lab/.style={font=\footnotesize, align=center},
+  gd8dot/.style={circle, fill=black, inner sep=1.4pt}
+]
+  \draw[gd8ax] (0,0) -- (11,0) node[below left, gd8lab] {competenza, esperienza};
+  \draw[gd8ax] (0,0) -- (0,5.3) node[left, gd8lab] {fiducia};
+  \draw[very thick, blue!60!black]
+    (0.1,0.3) .. controls (0.9,5.6) and (1.9,5.4) .. (2.8,2.6)
+              .. controls (3.4,0.8) and (4.4,0.6) .. (5.4,1.2)
+              .. controls (7.0,2.2) and (8.8,3.3) .. (10.6,3.8);
+  \node[gd8dot] at (1.45,4.25) {};
+  \node[gd8lab, anchor=west] at (2.05,4.75)
+       {``so quasi tutto'': il tifoso, il giocatore\\che non ha mai fatto un gioco};
+  \node[gd8dot] at (4.5,0.85) {};
+  \node[gd8lab, anchor=north] at (4.5,-0.15)
+       {``quanto poco so'':\\il punto più basso};
+  \node[gd8lab, anchor=south] at (8.6,3.45)
+       {la risalita: la fiducia\\torna, fondata sulla pratica};
+  \node[gd8lab, text=red!70!black, anchor=west] (gd8fy) at (4.0,3.3)
+    {fine primo anno /\\inizio secondo anno};
+  \draw[thick, red!70!black, -{Stealth[length=2mm]}] (gd8fy.west) -- (2.75,2.85);
+\end{tikzpicture}
+\caption{Schema dell'effetto Dunning-Kruger come lo descrive il docente: con
+poche conoscenze la fiducia schizza in alto; imparando si precipita nel punto
+in cui ci si rende conto di quanto poco si sa; solo dopo risale. L'obiettivo
+del corso è superare la parte centrale della curva ``senza abbandonare la
+nave''. Le proporzioni sono indicative.}
+\label{gd8:fig:dk}
+\end{figure}
+
+\paragraph{Approfondimento: che cosa dice davvero lo studio.} L'effetto prende
+il nome da David Dunning e Justin Kruger, che nel 1999 pubblicarono uno studio
+in cui le persone meno competenti in un compito tendevano a
+\textbf{sovrastimare} la propria prestazione, e le più competenti a
+sottostimarla leggermente. La curva ``a montagna e valle'' che circola sotto
+questo nome (e che si vede anche nella slide) è una divulgazione molto
+diffusa, più che il grafico originale dello studio; ma rende bene l'idea che
+il docente vuole trasmettere: la sicurezza non è una misura della competenza.
+
+% ---------------------------------------------------------------------
+\section{Tre corollari}
+\label{gd8:sec:corollari}
+
+\subsection{Primo: non esistono regole fisse}
+
+Legato alla parola magica: \textbf{nel design non esistono regole fisse}, che
+si applichino invariabilmente a ogni cosa. Lo scopo non è mai trovare la
+risposta perfetta da applicare a ogni situazione: è \textbf{isolare la domanda
+e scoprire la ragione} per cui si sta facendo una scelta. Quella ragione la si
+può poi declinare a seconda della situazione. Progetti diversi, dimensioni
+diverse, disponibilità economiche o di risorse diverse, persone diverse nel
+team portano a risposte diverse.
+
+\paragraph{L'artista del fantasy.} Se l'artista che crea i modelli 3D non ha
+mai fatto fantascienza, fare un gioco di fantascienza ``magari non è il
+massimo''. Conviene considerare un'ambientazione fantasy, ``perché è quello che
+il nostro disegnatore disegna da quando aveva cinque anni''.
+
+\subsection{Secondo: il design è una disciplina olistica}
+
+``Chi conosce questa parola?'' Silenzio. L'\textbf{olismo} è il considerare
+qualcosa non come la somma di più parti separate, ma come \textbf{un unico
+insieme}, diverso dalla somma delle parti. Un designer deve capire l'insieme,
+non solo le parti.
+
+L'esempio pratico, dal level design: bisogna sapere
+\begin{itemize}
+  \item creare una \textbf{conformazione del terreno} interessante;
+  \item costruire una \textbf{casa} che abbia, almeno visivamente, un senso
+        architettonico, con gli strumenti a disposizione;
+  \item posizionare gli \textbf{elementi sonori}: se c'è un fiume, il suono
+        deve accompagnare il giocatore mentre si sposta lungo il fiume;
+  \item posizionare l'\textbf{illuminazione}: la luce di una lampada non sta
+        ``dentro la lampada'', va regolata con attenzione, e certi oggetti
+        vanno esclusi dal proiettare ombre, ``altrimenti diventa proprio
+        brutto vedere tutte le ombre sparate sui muri'';
+  \item costruire \textbf{puzzle}, posizionare \textbf{nemici}.
+\end{itemize}
+Tutte queste cose formano un insieme che è più della somma delle parti. Un
+level designer deve avere almeno una \textbf{conoscenza di base di tutti gli
+strumenti e di tutte le discipline} con cui lavora; e più sa delle altre
+discipline, meglio riesce a \textbf{comunicare con i colleghi} che se ne
+occupano.
+
+\subsection{Terzo: il design non è arte, è artigianato}
+
+Qual è la differenza? L'\textbf{arte} è qualcosa che non può essere giudicato
+pienamente secondo canoni puramente tecnici. Non si può dire che i
+\emph{Sex Pistols} facessero schifo perché non sapevano fare
+\emph{shredding} velocissimo come i \emph{Metallica}: sono due cose diverse,
+c'è un intento artistico.
+
+L'\textbf{artigianato} è diverso. Non si può dire ``questa sedia non è fatta
+per sedercisi, perché se ti siedi si spacca, però guarda com'è bella e
+artistica''. No: è una sedia, il suo scopo è che ci si possa sedere sopra. Se
+non ci si può sedere, non si sta facendo una sedia: si sta facendo un'opera
+d'arte, e allora non la si mette sotto il tavolo, la si mette su un
+piedistallo. Nel design \textbf{si fa artigianato}: ciò che si costruisce ha
+uno \textbf{scopo}, e richiede capacità ed esperienza artigianali.
+
+\subsection{Sporcarsi le mani}
+
+Da qui i consigli pratici:
+\begin{itemize}
+  \item \textbf{fare giochi}: più giochi si fanno, meglio si diventa come
+        designer. Le \emph{game jam}, se si vuole, ma anche progetti un po'
+        più lunghi;
+  \item \textbf{ricreare} ciò che si vede, con gli strumenti che si
+        studieranno nel corso;
+  \item \textbf{trovare altre persone}, ``creare una scena'': andare alle
+        serate di \emph{Milano Indies}, nei caffè in cui la gente si trova a
+        programmare, costruirsi attorno un gruppo di persone che fanno la
+        stessa cosa, ``perché si migliora sempre insieme''. I punk non
+        stavano da soli in cameretta: si trovavano nei bar, andavano ai
+        concerti insieme, si incontravano al parco, e hanno creato una delle
+        scene musicali più importanti della storia;
+  \item \textbf{farsi ispirare}: variare i giochi a cui si gioca, i film
+        che si guardano, la musica che si ascolta.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{La struttura del corso}
+\label{gd8:sec:struttura}
+
+Prima della parte pratica, un riassunto di come funzionerà il corso.
+\begin{description}
+  \item[Pratica in engine.] Si lavorerà molto in \textbf{Unreal Engine 5}.
+        Ci saranno momenti di \textbf{pratica assistita}, in cui il docente
+        mostra e guida, e momenti di \textbf{pratica a casa}.
+  \item[I task.] Il docente assegna dei compiti, da consegnare entro una o
+        due settimane a seconda del task, e poi li si rivede insieme in
+        classe per correggere eventuali problemi.
+  \item[La teoria.] Ci saranno momenti di studio teorico: \textbf{teoria} e
+        \textbf{metodologia} del level design. Anche la teoria avrà momenti
+        di pratica assistita, esercizi in classe ed esercizi a casa.
+  \item[Le letture.] Qualche libro per chi vuole approfondire, non
+        necessariamente obbligatorio: il docente tende a lasciare
+        suggerimenti più precisi a chi decide di specializzarsi nel level
+        design, e lo si deciderà durante l'anno in base alle preferenze.
+\end{description}
+
+\paragraph{La pausa.} Si è a metà lezione, ed è ora della pausa. Il docente ha
+una ``malattia un po' pesante'' e mal di gola, quindi la fa un po' più lunga,
+una ventina di minuti, ``sennò arrivo stasera che sputo sangue''. Al rientro
+si passa a Unreal: bisogna averlo installato, in una versione recente (``dopo
+la 5.5, 5.6 dovrebbe essere più o meno la stessa cosa''; al massimo cambia
+leggermente l'interfaccia).\footnote{La registrazione della pausa contiene
+quasi solo frammenti incomprensibili e conversazioni private degli studenti,
+che non sono riportate.}
+
+% ---------------------------------------------------------------------
+\section{Il progetto in Unreal Engine}
+\label{gd8:sec:progetto}
+
+\subsection{Lanciare l'engine in anticipo}
+
+Prima ancora di riprendere, il docente chiede di \textbf{lanciare Unreal}
+negli ultimi minuti della pausa: ``ha la tendenza a metterci un pochino ad
+aprirsi''. Va bene qualsiasi versione dalla 5.6 in su; sul computer dell'aula
+non è installata la 5.8, quindi il docente usa la 5.6. (``Non dirmi che si sta
+aggiornando. Ti prego.'')
+
+\subsection{Creare il progetto}
+
+Qualunque progetto va bene per ciò che si farà oggi. I passaggi:
+\begin{enumerate}
+  \item dal launcher si avvia Unreal Engine (5.6 o successivo): si apre il
+        \textbf{Project Browser};
+  \item si sceglie la categoria \textbf{Games} e il template \textbf{Third
+        Person};
+  \item si dà un nome al progetto (il docente usa ``primo anno'');
+  \item si fa \textbf{Create} e si aspetta che il progetto venga creato.
+\end{enumerate}
+
+\paragraph{Lo starter content.} La slide mostra una versione più vecchia del
+launcher, in cui lo \textbf{starter content} si includeva con una spunta al
+momento della creazione. Nelle versioni nuove non c'è più quell'opzione, ma lo
+si può aggiungere dopo (lo si vedrà tra poco, sezione~\ref{gd8:sec:content}).
+Per oggi non serve.
+
+\paragraph{Il computer che crolla.} Come nella lezione di programmazione
+(capitolo~\ref{gd7:cap:blueprint}), il computer dell'aula non regge: l'editor
+si blocca, il disco ``sta facendo un casino terrificante'', e il docente deve
+riaprire tutto più volte, fino ad aprire un progetto qualsiasi già presente
+(``incrociamo le dita''). Nel frattempo fa l'appello.
+
+\paragraph{Le slide.} Le slide della lezione sono nel \textbf{drive
+condiviso} degli studenti: cartella di Milano, primo anno, \emph{Lezioni},
+\emph{Level Design}. Il docente le scrive in modo molto esteso proprio per
+usarle anche come appunti, così che si possa rivedere tutto; ma consiglia
+comunque di \textbf{prendere appunti}, ``perché è il modo migliore di fissarsi
+le cose in mente''.
+
+% ---------------------------------------------------------------------
+\section{L'editor: muoversi e piazzare oggetti}
+\label{gd8:sec:editor}
+
+L'editor è diviso in \textbf{finestre}. Si possono riarrangiare e spostare
+dove si preferisce, ma alcune vanno conosciute subito
+(si vedano la figura~\ref{ue1:fig:editor} e la
+sezione~\ref{ue1:sec:interfaccia}).
+
+\subsection{La viewport}
+
+La finestra più importante è quella \textbf{centrale}, che mostra l'aspetto
+del livello: la \textbf{viewport}, ``il cuore del nostro editor''. È
+probabilmente l'unica finestra che resterà sempre aperta, comunque si decida di
+organizzare l'editor. Cliccando sugli oggetti li si \textbf{seleziona}.
+
+\paragraph{Che cos'è un actor.} Un \textbf{actor} è \textbf{un oggetto
+all'interno del gioco}, nel livello. La definizione verrà precisata tra poco,
+distinguendolo dall'\emph{asset} (sezione~\ref{gd8:sec:content}).
+
+\paragraph{Muoversi.} Per spostarsi nella viewport:
+\begin{itemize}
+  \item si \textbf{tiene premuto il tasto destro} del mouse e si muove il
+        mouse per \textbf{ruotare la telecamera};
+  \item tenendo premuto il tasto destro, con \textbf{W, A, S, D} ci si sposta
+        ``come in un first-person shooter'';
+  \item sempre con il tasto destro premuto, \textbf{Q} ed \textbf{E} spostano
+        la telecamera in \textbf{verticale}.
+\end{itemize}
+``Prendeteci la mano'': sono i controlli di base per esplorare la scena che
+Unreal crea automaticamente per ogni nuovo progetto.
+
+\subsection{Place Actors e le forme di base}
+
+A sinistra c'è la finestra \textbf{Place Actors}, che permette di selezionare
+degli actor da inserire nel livello. ``Oggetti'' non vuol dire necessariamente
+oggetti fisici: possono essere \textbf{luci}, \textbf{suoni},
+\textbf{volumi} (che si vedranno più avanti). Si afferrano, si trascinano e si
+piazzano nel mondo di gioco.
+
+Gli actor sono divisi in \textbf{categorie} (nelle versioni recenti l'elenco
+delle categorie è verticale; gli screenshot della slide vengono da una
+versione un po' precedente, ma le funzionalità sono le stesse). Se lo schermo è
+piccolo, \textbf{tre puntini} indicano che ci sono altre categorie nascoste.
+Quella che interessa oggi è \textbf{Shapes} (sotto \emph{More}, nelle versioni
+recenti), che contiene le \textbf{forme di base}.
+
+Si prende il \textbf{cubo}, lo si trascina in uno spazio libero della scena:
+``congratulazioni, avete fatto lo stesso passo che fa un bambino di due anni
+quando gioca con i cubi''. Un passo alla volta.
+
+\subsection{Il gizmo}
+
+Quando si trascina un oggetto nella scena compaiono tre frecce: un piccolo
+\textbf{gizmo} che permette di spostarlo (figura~\ref{gd8:fig:gizmo}).
+\begin{itemize}
+  \item Afferrando una \textbf{freccia} si sposta l'oggetto lungo un solo
+        asse: \textbf{X} (rossa), \textbf{Y} (verde) o \textbf{Z} (blu, la
+        verticale).
+  \item Afferrando il \textbf{centro}, lo si sposta in relazione alla
+        telecamera, sul piano che la telecamera sta guardando.
+  \item Afferrando uno dei \textbf{quadratini} tra due frecce, lo si sposta
+        su \textbf{due assi contemporaneamente}: si evidenziano entrambe le
+        frecce. Con il quadratino tra X e Y, per esempio, lo si sposta solo
+        sul piano orizzontale, senza preoccuparsi di alzarlo o abbassarlo:
+        se lo si era appoggiato a terra, resterà a terra.
+\end{itemize}
+``Prendeteci la mano, perché sarà la cosa che farete di più in questo
+engine.'' Ogni volta che si seleziona qualcosa, anche un elemento dello
+scenario, compare un gizmo, e lo si può spostare a piacere.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  gd8arr/.style={-{Stealth[length=3mm]}, line width=1.6pt},
+  gd8lab/.style={font=\footnotesize, align=left}
+]
+  \coordinate (o) at (0,0);
+  \draw[gd8arr, red!80!black] (o) -- (2.6,-0.9) node[right] {\textbf{X}};
+  \draw[gd8arr, green!50!black] (o) -- (2.4,0.9) node[right] {\textbf{Y}};
+  \draw[gd8arr, blue!80!black] (o) -- (0,2.6) node[above] {\textbf{Z}};
+  % quadratini dei piani
+  \fill[yellow!70!orange, opacity=0.8] (0.75,-0.26) -- (1.45,0) -- (0.7,0.26) -- (0,0) -- cycle;
+  \fill[cyan!40, opacity=0.8] (0,0.7) -- (0.7,0.96) -- (0.7,0.26) -- (0,0) -- cycle;
+  \fill[magenta!35, opacity=0.8] (0,0.7) -- (0.75,0.44) -- (0.75,-0.26) -- (0,0) -- cycle;
+  \fill[white, draw=black, thick] (o) circle (0.13);
+  \node[gd8lab, anchor=west] at (3.6,2.1)
+    {\textbf{frecce}: un solo asse\\(X rosso, Y verde, Z blu)};
+  \node[gd8lab, anchor=west] at (3.6,0.9)
+    {\textbf{quadratini}: due assi insieme\\(es. X--Y: resta sul pavimento)};
+  \node[gd8lab, anchor=west] at (3.6,-0.3)
+    {\textbf{centro}: sul piano\\perpendicolare alla telecamera};
+  \node[gd8lab, anchor=west] at (3.6,-1.5)
+    {\textbf{W} sposta \quad \textbf{E} ruota \quad \textbf{R} scala};
+\end{tikzpicture}
+\caption{Il gizmo di traslazione, schematizzato. Il punto in cui compare (il
+\emph{pivot}) non è necessariamente il centro geometrico dell'oggetto: lo
+decide chi ha creato la mesh.}
+\label{gd8:fig:gizmo}
+\end{figure}
+
+\paragraph{Il pivot non è sempre al centro.} Cliccando in giro si nota subito
+che non tutti i gizmo stanno al centro dell'oggetto: certe pedane della scena,
+per esempio, lo hanno sulla parete frontale. Il punto in cui viene piazzato il
+gizmo è \textbf{arbitrario}: lo decide chi fa la \emph{mesh}, e può essere in
+qualunque punto. Lo si può anche spostare, se serve cambiare l'origine di una
+mesh, ma se ne parlerà più avanti.
+
+% ---------------------------------------------------------------------
+\section{L'Outliner: tenere in ordine il livello}
+\label{gd8:sec:outliner}
+
+In alto a destra c'è l'\textbf{Outliner}: \textbf{la lista di tutti gli actor
+presenti nel livello}. (Il docente usa la terminologia inglese, ``actor''
+piuttosto che ``attori'': ``è più facile trovare risorse e abituarsi''.)
+
+\paragraph{Ogni oggetto ha un nome.} Il cubo appena trascinato, nel caso del
+docente, si chiama \emph{Cube2}, perché c'era già un altro cubo. Cliccandoci
+sopra nell'Outliner lo si seleziona, e lo si ritrova nella viewport.
+
+\paragraph{Le cartelle.} Tutto ciò che si trascina nel livello entra
+nell'Outliner secondo una \textbf{gerarchia}: gli actor si possono spostare,
+ordinare, raccogliere in \textbf{cartelle} (nella scena di esempio ce n'è una
+chiamata \emph{Playground}). Una nuova cartella si crea con tasto destro,
+\textbf{Create Folder} (il docente la chiama ``Bubba'', ``non so come
+chiamarla''). Organizzare le cose come file in cartelle, come sul proprio
+computer, aiuta a \textbf{tenere organizzato il livello}: ogni volta che si
+mette qualcosa nel gioco, fare attenzione al \textbf{nome} e alla
+\textbf{cartella}.
+
+\paragraph{L'ordine alfabetico.} Nota importante: l'Outliner è
+\textbf{ordinato alfabeticamente}. Non gli interessa che cosa è stato piazzato
+prima o dopo, né dove: l'ordine è sempre alfabetico. Le cartelle servono a
+raggruppare, e l'ordine alfabetico è quello in cui le cose verranno mostrate.
+
+\paragraph{Selezionare più oggetti.} L'Outliner rispetta le regole di
+Windows:
+\begin{itemize}
+  \item cliccando sul primo elemento e poi, con \textbf{Shift}, sull'ultimo,
+        si seleziona tutto ciò che sta in mezzo (il docente seleziona così
+        tutti gli oggetti della cartella \emph{Playground});
+  \item con tasto destro su una cartella, \textbf{Select} $\rightarrow$
+        \textbf{Immediate Children}, si selezionano rapidamente tutti gli
+        elementi contenuti.
+\end{itemize}
+
+\paragraph{Rinominare.} Come in Windows, si seleziona l'oggetto e si preme
+\textbf{F2} (il docente lo chiama ``Cubo Super Ultra''). In alternativa, un
+secondo clic lento sul nome, oppure tasto destro, \emph{Rename}. Ma il
+consiglio ``spassionato'' è imparare le \textbf{scorciatoie}: ``vi velocizzano
+tanto il lavoro''. I tasti \emph{funzione}, quelli più in alto sulla
+tastiera, vale la pena impararli.
+
+\paragraph{Ctrl+Z.} Come in Windows, \textbf{Ctrl+Z} annulla l'ultima azione:
+``abituatevi a usarlo, è la scorciatoia più utile''.
+
+% ---------------------------------------------------------------------
+\section{Il Content Browser: asset e actor}
+\label{gd8:sec:content}
+
+In basso c'è il \textbf{Content Browser}: \textbf{tutti gli asset che fanno
+parte del gioco}. Qui il docente introduce una distinzione importante:
+\begin{description}
+  \item[Asset] un oggetto \textbf{salvato tra i file del progetto}, su disco;
+  \item[Actor] un oggetto \textbf{nell'editor}, all'interno di un livello.
+\end{description}
+Gli asset stanno nel progetto e possono essere trascinati dal Content Browser
+dentro un livello; lì diventano actor.
+
+\paragraph{Aggiungere lo starter content.} Nelle versioni recenti lo starter
+content non viene inserito automaticamente. Per aggiungerlo (passaggio che non
+è nelle slide):
+\begin{enumerate}
+  \item tasto destro nel Content Browser;
+  \item \textbf{Add Feature or Content Pack};
+  \item nella sezione \textbf{Content}, \textbf{Starter Content}.
+\end{enumerate}
+È un insieme di texture, oggetti e altro materiale, fornito gratuitamente da
+Epic con Unreal Engine, per cominciare a fare i propri progetti. Oggi non
+serve, perché si lavora solo con le forme di base; ce ne si preoccuperà dalla
+prossima lezione.\footnote{Il docente aggiunge un commento sulle scelte
+recenti di Epic (``credo che tutti quelli che lavorano nel mondo dei
+videogiochi si stiano lamentando delle scelte che sta facendo Epic in questi
+ultimi mesi''), senza specificare a quali si riferisca.}
+
+\paragraph{Le finestre si ridimensionano.} Come tutte le finestre, anche il
+Content Browser si può allargare o stringere a piacere.
+
+\subsection{Istanze e stampi}
+
+Il docente ci torna sopra, perché è una distinzione da avere chiara. Un
+\textbf{asset} è la versione salvata su disco di un oggetto del progetto. Un
+\textbf{actor}, in termini tecnici, è una \textbf{instance} (istanza): una
+\textbf{copia} di quella cosa salvata su disco, inserita nel livello. Il cubo
+``Cubo Super Ultra'' è un'istanza del cubo; l'altro cubo nella scena è
+un'altra istanza dello stesso cubo.
+
+\paragraph{Le modifiche restano sull'istanza.} Quando si modifica un oggetto
+nei \emph{Details} o con il gizmo, \textbf{si modifica l'istanza nel livello,
+non l'asset nel progetto}. Se si allarga una sedia, le si cambia il materiale
+e poi si trascina di nuovo la stessa sedia dal Content Browser, la nuova sarà
+identica alla sedia di partenza. Le modifiche fatte nell'editor restano solo
+su quell'istanza, e non vengono sovrascritte sull'originale.
+
+L'immagine suggerita: pensare agli asset come a uno \textbf{stampo}, e alle
+istanze nel livello come alle \textbf{copie} create da quello stampo
+(figura~\ref{gd8:fig:stampo}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  gd8asset/.style={draw, very thick, rounded corners=3pt, align=center,
+                   fill=orange!15, inner sep=5pt},
+  gd8inst/.style={draw, thick, align=center, fill=gray!8, inner sep=4pt},
+  gd8arr/.style={-{Stealth[length=2.5mm]}, thick},
+  gd8lab/.style={font=\footnotesize\itshape, align=center}
+]
+  \node[gd8asset] (a) {\textbf{Asset}: \emph{Chair}\\{\footnotesize nel Content Browser}\\{\footnotesize (su disco, nel progetto)}};
+  \node[gd8inst, right=2.4cm of a, yshift=1.3cm] (i1) {\textbf{Istanza 1}\\{\footnotesize scala 1, materiale originale}};
+  \node[gd8inst, right=2.4cm of a] (i2) {\textbf{Istanza 2}\\{\footnotesize allargata, materiale cambiato}};
+  \node[gd8inst, right=2.4cm of a, yshift=-1.3cm] (i3) {\textbf{Istanza 3}\\{\footnotesize trascinata dopo: identica all'asset}};
+  \draw[gd8arr] (a.east) -- (i1.west);
+  \draw[gd8arr] (a.east) -- (i2.west);
+  \draw[gd8arr] (a.east) -- (i3.west);
+  \node[gd8lab, above=0.2cm of a] {lo stampo};
+  \node[gd8lab, above=0.15cm of i1] {le copie nel livello (actor)};
+  \node[draw, dashed, fit=(i1)(i2)(i3), inner sep=6pt] {};
+\end{tikzpicture}
+\caption{Asset e istanze: le modifiche fatte nel livello (nei Details o con il
+gizmo) restano sulla singola istanza e non toccano l'asset di partenza.}
+\label{gd8:fig:stampo}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Il transform e la finestra Details}
+\label{gd8:sec:transform}
+
+\subsection{Copiare, incollare, annullare}
+
+Prima di parlare del transform, altre scorciatoie ``ereditate'' da Windows:
+\begin{itemize}
+  \item \textbf{Ctrl+C}, \textbf{Ctrl+V}: copia e incolla. Si crea una copia
+        del cubo, che poi si può spostare;
+  \item \textbf{Ctrl+clic} su più oggetti: selezione multipla (si vede un
+        contorno giallo attorno a tutti gli oggetti selezionati). Con Ctrl+C,
+        Ctrl+V si duplicano tutti insieme;
+  \item \textbf{Ctrl+Z} ripetuto: si torna indietro fino all'inizio;
+  \item per \textbf{rifare} un'azione annullata (\emph{redo}): in alcuni
+        programmi è \textbf{Ctrl+Y}, in altri \textbf{Ctrl+Shift+Z}, perché
+        nel linguaggio di design di Windows \textbf{Shift inverte
+        l'operazione} che si sta facendo. ``È una gran rottura di scatole
+        ricordarsi quale ha l'uno e quale l'altro'': se non funziona uno, si
+        prova l'altro (Blender, per esempio, usa Ctrl+Shift+Z).
+\end{itemize}
+
+\subsection{Il transform}
+
+In termini tecnici, una \textbf{trasformazione} (\emph{transform}) è
+l'insieme di tre valori: \textbf{posizione}, \textbf{rotazione} e
+\textbf{scala}; in inglese \emph{location}, \emph{rotation}, \emph{scale}.
+
+\subsection{La finestra Details}
+
+Le caratteristiche dell'oggetto selezionato si vedono nella finestra in basso a
+destra, \textbf{Details}. Selezionando il cubo, in alto si legge il suo nome
+(``Cubo Super Ultra'') e che si tratta di un'\emph{instance}. Le prime tre voci
+sono i tre elementi del transform.
+
+\paragraph{Location.} Si può modificare cliccando e trascinando sul campo,
+oppure scrivendo il valore: \textbf{X} (rosso), \textbf{Y} (verde),
+\textbf{Z} (blu), ``ricordatevelo''. Il docente scrive 400 nella X, preme
+Invio, e il cubo si sposta: ``l'ho spostato di 70 centimetri più indietro''
+(era a 330).
+
+\paragraph{L'unità di misura.} Nota importante: \textbf{l'unità di misura di
+base di Unreal è il centimetro} (si veda anche la
+sezione~\ref{ue1:sec:transform}).
+
+\paragraph{Rotation.} Trascinando il primo valore, l'oggetto ruota
+\textbf{attorno all'asse X}: l'asse X ``fa da perno''. Il secondo valore lo fa
+ruotare attorno all'asse Y, il terzo attorno all'asse Z (quindi
+``così'', sul piano orizzontale).
+
+\paragraph{Scale.} È il fattore per cui viene \textbf{moltiplicata} la
+dimensione dell'oggetto lungo ciascun asse. Aumentando la scala sulla X,
+l'oggetto si allunga lungo la X; lo stesso per Y e Z. Applicato a una sedia
+della scena, la si allunga in modo ``psichedelico''. Le tre trasformazioni si
+combinano per ottenere l'effetto cercato.
+
+\paragraph{Tutto il resto.} Sotto il transform ci sono tutte le altre
+informazioni sull'oggetto selezionato e sulle sue caratteristiche: il
+materiale, le caratteristiche fisiche, una casella per \textbf{simulare la
+fisica}, una per decidere se l'oggetto \textbf{proietta un'ombra} quando è
+colpito da una luce (\emph{Cast Shadow}). Nel corso dell'anno se ne vedrà la
+maggior parte, non tutto: alcune voci sono estremamente tecniche e poco
+interessanti per il level design. Delle luci ci si occuperà in futuro.
+
+\subsection{W, E, R (e Q)}
+
+Anche il transform ha le sue scorciatoie da tastiera, che cambiano la modalità
+del gizmo:
+\begin{itemize}
+  \item \textbf{W}: spostamento (la modalità di base);
+  \item \textbf{E}: rotazione, con un gizmo pensato per ruotare;
+  \item \textbf{R}: scala;
+  \item \textbf{Q}: solo selezione (``non credo di averlo mai usato, tanto vale
+        usare direttamente W'').
+\end{itemize}
+
+\paragraph{L'asse appoggiata al muro.} La dimostrazione del docente: per fare
+un'asse appoggiata al muro, \textbf{R} per scalare il cubo e renderlo sottile
+e lungo, \textbf{W} per avvicinarlo al muro, \textbf{E} per inclinarlo, di
+nuovo \textbf{W} per sistemarlo, ``e tac, ho fatto la mia asse appoggiata al
+muro''. Poi si tratterà di metterci una texture, e anche questo si vedrà.
+``Sembrano tante robe da memorizzare'', ma più si fa pratica, più diventano
+automatiche: ``è il bello del cervello umano, siamo in grado di abituarci
+molto velocemente''.
+
+\subsection{I gruppi}
+
+Si possono \textbf{raggruppare} più oggetti per spostarli tutti insieme:
+selezionarli con \textbf{Ctrl+clic} e premere \textbf{Ctrl+G}. L'esempio:
+quando si prepara una libreria e ci si mettono dentro i libri, raggruppare i
+libri permette di spostarli, copiarli e incollarli velocemente.
+
+\subsection{Le operazioni nei campi numerici}
+
+Verso fine lezione, mentre la classe lavora, il docente mostra ``un piccolo
+trucco magico'' (a voce, perché ha chiuso Unreal per paura che il computer
+crolli di nuovo). Tutti i campi numerici dei Details \textbf{accettano
+operazioni matematiche} e le eseguono. Se un oggetto ha una scala di 2,75 e la
+si vuole triplicare, basta scrivere accanto al valore \texttt{*3} e premere
+Invio: il calcolo è automatico. Per dimezzare, \texttt{/2}; per aggiungere 3,
+\texttt{+3}. Vale per tutti i campi in cui si può inserire un numero, ed è
+così anche in Unity e negli altri engine. ``È molto, molto comodo per
+modificare robe con precisione.''
+
+% ---------------------------------------------------------------------
+\section{Leggere la documentazione}
+\label{gd8:sec:documentazione}
+
+``Nota importantissima'': \textbf{imparate a leggere la documentazione}, e a
+interpretare ciò che vi è scritto. ``Quasi tutto quello che vi serve è scritto
+da qualche parte.'' Sul sito di Epic Games c'è un'enorme quantità di
+informazioni: come funzionano le basi, i contenuti, la creazione di mondi
+virtuali, la grafica. Nelle slide c'è un link alla documentazione di Unreal
+Engine 5.5, ma si può consultare direttamente quella della 5.8. Il docente
+nota, senza commentare oltre, che ``Epic è impazzita per l'AI'': nella
+documentazione c'è ``un sacco di roba sull'AI''.
+
+È lo stesso principio della sezione~\ref{gd8:sec:strumento}: saper fare
+ricerca e sapere dove cercare è parte dell'imparare a imparare.
+
+% ---------------------------------------------------------------------
+\section{I livelli e il salvataggio}
+\label{gd8:sec:livelli}
+
+\paragraph{Un livello per ogni zona.} Unreal è diviso in \textbf{livelli}: per
+creare una nuova zona, ``tra virgolette'', si crea un nuovo livello, a meno che
+non si stia facendo un \emph{open world}. Quello è ``un discorso particolare''
+che richiede un lavoro diverso; e anche lì, comunque, ci sono aree chiuse in
+cui si entra con caricamenti e simili.
+
+\paragraph{Creare un livello.} \textbf{File} $\rightarrow$ \textbf{New Level},
+poi si sceglie un template. Il consiglio è partire da \textbf{Basic}, che ha
+già tutto il necessario. \emph{Open World} per ora no; \emph{Empty} nemmeno,
+perché per partire da un livello vuoto bisogna aggiungere un po' di cose, e se
+ne parlerà più avanti.
+
+\paragraph{Salvare spesso.} ``Abituatevi a salvare spesso.'' In Unreal, un
+livello appena creato \textbf{non viene salvato finché non lo si salva
+manualmente}. Per salvare:
+\begin{itemize}
+  \item l'icona del \textbf{floppy disk} (``per chi non sapesse esattamente
+        cos'è'': ormai è soprattutto il simbolo del salvataggio);
+  \item \textbf{Ctrl+S}: salva il \textbf{contesto attuale} in cui si sta
+        lavorando, dato che Unreal può avere più schede aperte in parallelo;
+  \item \textbf{Ctrl+Shift+S}: salva \textbf{tutto} (a volte richiede un po'
+        di calcolo).
+\end{itemize}
+In certi casi l'editor chiede dove salvare: si sceglie la cartella del
+progetto in cui si vuole mettere il file.
+
+\subsection{Le scorciatoie utili}
+
+Nelle slide c'è un elenco di \textbf{scorciatoie utili}, molte delle quali
+corrispondono a funzioni di Unreal che non hanno un pulsante nell'interfaccia e
+si possono usare \textbf{solo da tastiera}. Il consiglio è provarle almeno una
+alla volta. Quelle viste a lezione sono raccolte nella
+tabella~\ref{gd8:tab:scorciatoie}.
+
+\paragraph{Snap to floor.} Una delle più utili è lo \textbf{snap to floor}:
+se un oggetto è sospeso in aria e non appoggia sul pavimento, premendo il
+tasto \textbf{Fine} (\emph{End}) lo si attacca automaticamente alla superficie
+sottostante. (Sul portatile dell'aula il tasto \emph{End} non c'è:
+``magnifico''.)
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Comando} & \textbf{Effetto} \\
+\midrule
+Tasto destro + mouse & ruota la telecamera nella viewport \\
+Tasto destro + W/A/S/D & sposta la telecamera come in un FPS \\
+Tasto destro + Q/E & sposta la telecamera in verticale \\
+W / E / R & gizmo di spostamento / rotazione / scala \\
+Q & solo selezione \\
+F2 & rinomina l'oggetto selezionato \\
+Ctrl+clic & selezione multipla \\
+Shift+clic (Outliner) & seleziona tutto tra due elementi \\
+Ctrl+C / Ctrl+V & copia / incolla (duplica) \\
+Ctrl+Z & annulla l'ultima azione \\
+Ctrl+Shift+Z (o Ctrl+Y) & ripristina l'azione annullata \\
+Ctrl+G & raggruppa gli oggetti selezionati \\
+Fine (\emph{End}) & \emph{snap to floor}: appoggia l'oggetto alla superficie sotto \\
+Ctrl+S & salva il contesto attuale \\
+Ctrl+Shift+S & salva tutto \\
+\texttt{*3}, \texttt{/2}, \texttt{+3} in un campo & esegue l'operazione sul valore \\
+\bottomrule
+\end{tabular}
+\caption{Le scorciatoie e i trucchi dell'editor visti nella prima lezione di
+level design.}
+\label{gd8:tab:scorciatoie}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Il task: il blockout della propria stanza}
+\label{gd8:sec:task}
+
+Negli ultimi venticinque minuti circa si parla del lavoro per la volta
+successiva, e lo si comincia in classe.
+
+\begin{quote}
+\textbf{Creare un blockout della propria stanza}: con le forme di base
+(cubi, ma anche cilindri, scale e tutto ciò che c'è nella sezione
+\emph{Shapes}), modificate, spostate, allargate, ruotate, ricostruire una
+copia della stanza in cui si dorme. Niente colori, niente materiali: ``solo
+blocchi''. Consegna: \textbf{tre screenshot} nella cartella dei task, entro
+la settimana successiva.
+\end{quote}
+
+\paragraph{Perché cominciare in classe.} Il task si comincia subito, non
+tanto per finirlo quanto per verificare che tutto funzioni: finestre che non si
+vedono, problemi di installazione e simili si risolvono meglio insieme, in
+aula. ``Non c'è bisogno che iniziate a fare subito la camera'': si può
+cominciare spostando forme e prendendo la mano.
+
+\paragraph{Le domande.}
+\begin{itemize}
+  \item \emph{Bisogna fare anche pareti, porte, finestre, o bastano
+        pavimento e mobili?} ``Come preferite'': è un esercizio molto libero,
+        per prendere la mano. L'importante è allenarsi a lavorare
+        \textbf{velocemente}: ``metti la cera, togli la cera''. Spostare,
+        ridimensionare, ruotare.
+  \item \emph{Le forme sono molto geometriche: se volessi smussare i
+        cuscini?} Le forme di base \textbf{non si possono modificare}, o
+        meglio: si può, ma con uno strumento che si vedrà molto più avanti.
+        Si possono però combinare forme diverse. Lo scopo è la pratica con le
+        forme e le funzioni di base; chi vuole migliorare il risultato può
+        farlo, ma l'importante è dimostrare di aver capito come funziona
+        l'engine.
+  \item \emph{È il task per la settimana prossima o va consegnato oggi?}
+        Per la settimana prossima: lo si è iniziato in classe solo per
+        risolvere eventuali problemi tutti insieme.
+\end{itemize}
+
+\paragraph{La revisione.} I lavori verranno guardati velocemente la volta
+successiva, proiettati sullo schermo dell'aula; ma sarà più una verifica che
+il task sia stato fatto. Le correzioni più precise arriveranno con i task
+successivi.
+
+\paragraph{Approfondimento: perché la propria stanza.} L'esercizio, oltre a
+far prendere la mano con gli strumenti, mette insieme due dei consigli della
+lezione: l'\textbf{esperienza sul campo} (osservare lo spazio reale, le sue
+misure e le sue proporzioni) e la \textbf{pratica}. Ricostruire uno spazio che
+si conosce perfettamente costringe a confrontarsi con la scala: un letto, una
+porta, una scrivania hanno misure precise in centimetri, e Unreal ragiona
+proprio in centimetri. È anche, in piccolo, il primo blockout: forme di base
+che rappresentano oggetti, come il cubo che ``è la casa'' della
+sezione~\ref{gd8:sec:cosa-fa}.
+
+% ---------------------------------------------------------------------
+\section{Per chi vuole approfondire}
+\label{gd8:sec:extra}
+
+Prima di chiudere, ``cinque minuti e trenta secondi di attenzione''. Il level
+design è un ambito molto specializzato. Tutti devono imparare almeno ciò che
+si fa al primo e al secondo anno: lavorando nei videogiochi si finisce per
+parlare con altri designer, e sapere di che cosa si occupano le varie
+discipline è importante. Ma è anche innegabile che c'è chi è più interessato
+al level design e chi ad altri aspetti, per cui il level design conta meno.
+Per i primi, prima della slide del task c'è una \textbf{slide extra} con
+materiale aggiuntivo, non obbligatorio.
+
+\paragraph{I talk della GDC.} I primi due link sono video su YouTube:
+registrazioni di talk della \textbf{GDC}, la \emph{Game Developers
+Conference}\footnote{Il docente la chiama ``Game Developers Convention''; il
+nome ufficiale è \emph{Game Developers Conference}.}. È una convention annuale
+negli Stati Uniti, considerata ancora oggi \textbf{il punto di ritrovo
+dell'industria}. Non è la Milano Games Week, non è il Comic-Con di San Diego:
+non ci vanno i giocatori, ci vanno \textbf{gli sviluppatori}, solo chi i
+videogiochi li fa. Lì i designer tengono interventi, panel, conferenze e
+dibattiti sulla disciplina. Partecipare costa ``veramente tantissimo'' (è la
+critica principale che le viene fatta: l'idea è che il biglietto, intorno ai
+duemila euro, lo paghi lo studio), ma le registrazioni sono disponibili online.
+Si può vedere, per esempio, come gli sviluppatori di \emph{Resident Evil 7}
+hanno rinnovato da zero il gioco, e l'intero franchise, raccontato da loro.
+
+\paragraph{Il libro.} C'è poi un link a \textbf{\emph{An Architectural
+Approach to Level Design}} (di Christopher W. Totten), ``uno dei migliori libri
+sul level design che abbia mai letto'' e un ottimo modo per iniziare ad
+affrontare la disciplina. Lo si trova a molto meno dei 67 dollari indicati nel
+link; il docente lo ``stra-consiglia''.
+
+Non sono obbligatori: chi è incuriosito li trova lì, soprattutto i talk; chi
+preferisce specializzarsi in altro non ha problemi. Alcuni degli argomenti
+trattati in quei talk e in quel libro verranno comunque affrontati nel corso
+dell'anno.
+
+% ---------------------------------------------------------------------
+\section{La chiusura}
+\label{gd8:sec:chiusura}
+
+Come sempre, qualche minuto per domande ``varie ed eventuali'', anche se alla
+prima lezione di solito non c'è molto da chiedere; e per una volta, nota il
+docente, Unreal ha funzionato a tutti (tranne a lui). Uno studente ha già
+quasi finito la stanza, e chiede chiarimenti sulle forme geometriche (si veda
+la sezione~\ref{gd8:sec:task}).
+
+\paragraph{Come contattare il docente.} Lo si trova su \textbf{Discord},
+cercando ``Stefano Zocchi'' nel server della scuola\footnote{La trascrizione
+riporta il nome del server come ``Hive''; non è verificabile.}, oppure per
+email, che il docente comunica alla classe per le questioni più complesse.
+
+\paragraph{Il riepilogo.} ``Per la prossima volta voglio che mi creiate una
+simulazione di camera vostra fatta solo con le forme di base, senza colori,
+niente, solo blocchi.'' Non devono essere per forza cubi: cilindri e tutte le
+altre forme della sezione \emph{Shapes}. ``Divertitevi, usate la fantasia.''
+Tre screenshot nella cartella dei task. Ci si rivede la settimana successiva.
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Il corso di \textbf{Level Design} unisce teoria, metodologia e
+        soprattutto \textbf{pratica in Unreal Engine 5}, con pratica assistita,
+        task a casa (da rivedere in classe) ed esercizi teorici.
+  \item Un livello brutto va analizzato: \textbf{perché} non funziona e
+        \textbf{come} lo si migliorerebbe. La Cattedrale del Sangue Sacro di
+        \emph{Code Vein} riassume gli errori tipici: labirinto, piani non
+        collegati, rumore visivo, nessun landmark, ripetitività, nessun
+        interesse nell'esplorare. Bisogna anche distinguere
+        \textbf{scelte creative} (la Città Infame, \emph{Nightreign},
+        \emph{Frostpunk 2}) da \textbf{errori}, e valutare le conseguenze di
+        ogni modifica.
+  \item \textbf{Parlare in pubblico} è indispensabile: un designer mediocre
+        che sa presentare le proprie idee avrà più successo di un designer
+        geniale che non ci riesce.
+  \item Il \textbf{level design} è la disciplina che crea livelli, ambienti,
+        spazi di gioco, di solito con un \textbf{level editor}; ha un lato
+        artistico e uno tecnico, e altri nomi (environment design, game
+        mapping). Il \textbf{blockout} usa forme di base prima dell'arte
+        finale.
+  \item Il level designer \textbf{crea spazi}, ma ``level design'' è un
+        \textbf{termine ombrello}: blockout, luci (il \emph{lighting pass},
+        come nel cinema), set dressing, documentazione (layout, mappe,
+        diagrammi di flusso), test iterativo (playtest, QA), narrazione
+        ambientale (dove piazzare l'informazione cambia l'esperienza).
+  \item La parola magica è \textbf{``dipende''}. L'engine dipende
+        dall'azienda (Unreal, Unity, Godot, GameMaker, engine proprietari):
+        lo strumento vero del level designer è \textbf{il level designer},
+        e la capacità più importante è \textbf{imparare a imparare}.
+  \item Per imparare: \textbf{teoria} (vale ovunque; il \textbf{landmark} è
+        un elemento distinguibile e visibile da lontano che aiuta a
+        orientarsi; anche rifiutarlo dev'essere una scelta consapevole),
+        \textbf{pratica}, \textbf{expertise}, \textbf{esperienza sul campo},
+        \textbf{lavoro di gruppo}. E soprattutto pratica.
+  \item Il \textbf{picco della fiducia} (tra primo e secondo anno) e
+        l'\textbf{effetto Dunning-Kruger} (meno si sa, più ci si sente
+        sicuri): l'obiettivo è attraversare la valle senza abbandonare.
+  \item Tre corollari: \textbf{non esistono regole fisse} (isolare la
+        domanda e la ragione della scelta); il design è \textbf{olistico}
+        (conoscere almeno le basi di tutte le discipline); il design è
+        \textbf{artigianato}, non arte (ha uno scopo). Fare giochi, ricreare,
+        trovare una comunità, farsi ispirare.
+  \item Editor: \textbf{viewport} (tasto destro + WASD, Q/E), \textbf{Place
+        Actors} (Shapes), \textbf{gizmo} (frecce, quadratini, centro; il
+        pivot lo decide chi fa la mesh), \textbf{Outliner} (ordine
+        alfabetico, cartelle, F2), \textbf{Content Browser}, \textbf{Details}.
+  \item \textbf{Asset} = file nel progetto (lo stampo); \textbf{actor} =
+        istanza nel livello (la copia). Le modifiche fatte nel livello restano
+        sull'istanza.
+  \item \textbf{Transform} = location, rotation, scale; l'unità è il
+        \textbf{centimetro}. W/E/R per spostare, ruotare, scalare; Ctrl+G per
+        raggruppare; \emph{End} per lo snap to floor; i campi numerici
+        accettano operazioni (\texttt{*3}, \texttt{/2}).
+  \item \textbf{Leggere la documentazione}. Nuovo livello: File, New Level,
+        Basic; \textbf{salvare spesso} (Ctrl+S, Ctrl+Shift+S).
+  \item Task: il \textbf{blockout della propria stanza} con le sole forme di
+        base, tre screenshot nella cartella dei task. Per approfondire: i talk
+        della \textbf{GDC} e \emph{An Architectural Approach to Level Design}.
+\end{itemize}

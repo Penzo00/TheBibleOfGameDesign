@@ -1,0 +1,171 @@
+% bpninja.sty - nodi "Blueprint" di Unreal Engine disegnati con TikZ
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bpninja}[2026/11/24 Blueprint in TikZ]
+\RequirePackage{tikz}
+\RequirePackage{xcolor}
+\RequirePackage{etoolbox}
+\usetikzlibrary{shapes.geometric,calc,positioning,backgrounds,fit}
+
+% ---------------------------------------------------------------- colori
+\definecolor{bpbody}{HTML}{1C1D21}
+\definecolor{bpborder}{HTML}{0B0B0C}
+\definecolor{bptext}{HTML}{F2F2F2}
+\definecolor{bpev}{HTML}{8A1C1C}     % eventi
+\definecolor{bpfn}{HTML}{2A5B9C}     % funzioni (impure)
+\definecolor{bppure}{HTML}{3D7A3D}   % funzioni pure
+\definecolor{bpflow}{HTML}{5A5A5A}   % branch, sequence, macro
+\definecolor{bpcast}{HTML}{1D6E77}   % cast
+\definecolor{bpvarh}{HTML}{3A3A3A}   % set variabile
+\definecolor{bptl}{HTML}{B5651D}     % timeline
+\definecolor{bpcustom}{HTML}{6E2C8E} % evento custom / dispatcher
+\definecolor{bpstruct}{HTML}{1D4FB5}
+\definecolor{bpcomment}{HTML}{E9E4D2}
+\definecolor{bpcommentb}{HTML}{8C8670}
+% tipi dei pin (come in Unreal)
+\colorlet{bpc-exec}{black}
+\definecolor{bpc-bool}{HTML}{950000}
+\definecolor{bpc-int}{HTML}{1FBF92}
+\definecolor{bpc-float}{HTML}{8CCB3A}
+\definecolor{bpc-vec}{HTML}{E8B92F}
+\definecolor{bpc-rot}{HTML}{8EA6F2}
+\definecolor{bpc-tr}{HTML}{E2711D}
+\definecolor{bpc-obj}{HTML}{0A9BE8}
+\definecolor{bpc-class}{HTML}{6B1FBF}
+\definecolor{bpc-str}{HTML}{E20AA0}
+\definecolor{bpc-name}{HTML}{C873D9}
+\definecolor{bpc-text}{HTML}{E5738B}
+\definecolor{bpc-struct}{HTML}{1D4FB5}
+\definecolor{bpc-enum}{HTML}{0D6B4D}
+\definecolor{bpc-del}{HTML}{E0301E}
+\definecolor{bpc-wild}{HTML}{9A9A9A}
+
+\tikzset{
+  bpexecw/.style={line width=1.4pt, draw=black!80},
+  bpdataw/.style={line width=1.1pt},
+  bplabel/.style={font=\sffamily\scriptsize, text=bptext, inner sep=0pt},
+  bptitle/.style={font=\sffamily\bfseries\scriptsize, text=white, inner sep=0pt},
+}
+
+\newcommand{\bp@pin}[3]{% tipo, x, y
+  \edef\bp@tipo{#1}%
+  \ifdefstring{\bp@tipo}{exec}{%
+    \fill[white] (#2-0.07,#3+0.08) -- (#2+0.03,#3+0.08) -- (#2+0.1,#3) -- (#2+0.03,#3-0.08) -- (#2-0.07,#3-0.08) -- cycle;
+  }{%
+    \fill[bpc-#1] (#2,#3) circle (0.075);
+  }}
+
+\newcommand{\bp@scope}[1]{\begin{scope}[shift={#1}]}
+\newlength{\bp@w}
+\newlength{\bp@tmp}
+% \bpnode[larghezza minima]{id}{(x,y)}{colore testata}{Titolo}{ingressi}{uscite}
+% ingressi/uscite: tipo/etichetta, separati da virgole; "-" = nessuno
+% la larghezza cresce da sola se le etichette non ci stanno
+\newcommand{\bpnode}[7][3.0]{%
+  \edef\bp@pos{#3}\expandafter\bp@scope\expandafter{\bp@pos}
+    \xdef\bp@n{0}\xdef\bp@m{0}%
+    \ifstrequal{#6}{-}{}{\foreach \t/\l [count=\i] in {#6} {\xdef\bp@n{\i}%
+      \settowidth{\bp@tmp}{\pgfinterruptpicture\sffamily\scriptsize\l\endpgfinterruptpicture}\expandafter\xdef\csname bp@wi\i\endcsname{\the\bp@tmp}}}%
+    \ifstrequal{#7}{-}{}{\foreach \t/\l [count=\i] in {#7} {\xdef\bp@m{\i}%
+      \settowidth{\bp@tmp}{\pgfinterruptpicture\sffamily\scriptsize\l\endpgfinterruptpicture}\expandafter\xdef\csname bp@wo\i\endcsname{\the\bp@tmp}}}%
+    \pgfmathtruncatemacro{\bp@rows}{max(\bp@n,\bp@m)}%
+    \pgfmathsetmacro{\bp@h}{0.5+0.4*\bp@rows+0.12}%
+    \settowidth{\bp@tmp}{\pgfinterruptpicture\sffamily\bfseries\scriptsize #5\endpgfinterruptpicture}%
+    \pgfmathsetmacro{\bp@W}{max(#1,\bp@tmp/28.4528+0.35)}\xdef\bp@W{\bp@W}%
+    \ifnum\bp@rows>0
+    \foreach \i in {1,...,\bp@rows} {%
+      \setlength{\bp@tmp}{0pt}%
+      \ifnum\i>\bp@n\else\addtolength{\bp@tmp}{\csname bp@wi\i\endcsname}\fi
+      \ifnum\i>\bp@m\else\addtolength{\bp@tmp}{\csname bp@wo\i\endcsname}\fi
+      \pgfmathsetmacro{\bp@x}{max(\bp@W,\bp@tmp/28.4528+0.95)}\xdef\bp@W{\bp@x}}%
+    \fi
+    \fill[bpbody, draw=bpborder, rounded corners=3pt] (0,0) rectangle (\bp@W,-\bp@h);
+    \fill[#4, rounded corners=3pt] (0,0) rectangle (\bp@W,-0.46);
+    \fill[#4] (0,-0.25) rectangle (\bp@W,-0.46);
+    \node[bptitle, anchor=west] at (0.12,-0.23) {#5};
+    \coordinate (#2-nw) at (0,0);
+    \coordinate (#2-se) at (\bp@W,-\bp@h);
+    \coordinate (#2-ne) at (\bp@W,0);
+    \ifstrequal{#6}{-}{}{%
+    \foreach \t/\l [count=\i] in {#6} {%
+      \pgfmathsetmacro{\yy}{-0.46-0.4*\i+0.12}%
+      \coordinate (#2-in\i) at (0,\yy);
+      \bp@pin{\t}{0.16}{\yy}
+      \node[bplabel, anchor=west] at (0.32,\yy) {\l};
+    }}%
+    \ifstrequal{#7}{-}{}{%
+    \foreach \t/\l [count=\i] in {#7} {%
+      \pgfmathsetmacro{\yy}{-0.46-0.4*\i+0.12}%
+      \coordinate (#2-out\i) at (\bp@W,\yy);
+      \pgfmathsetmacro{\xx}{\bp@W-0.2}%
+      \bp@pin{\t}{\xx}{\yy}
+      \node[bplabel, anchor=east] at (\bp@W-0.34,\yy) {\l};
+    }}%
+  \end{scope}}
+
+% \bpvar[larghezza]{id}{(x,y)}{tipo}{Nome}  -- "Get" di una variabile (una sola uscita: id-out1)
+\newcommand{\bpvar}[5][1.0]{%
+  \edef\bp@pos{#3}\expandafter\bp@scope\expandafter{\bp@pos}
+    \settowidth{\bp@tmp}{\pgfinterruptpicture\sffamily\scriptsize #5\endpgfinterruptpicture}%
+    \pgfmathsetmacro{\bp@W}{max(#1,\bp@tmp/28.4528+0.55)}%
+    \fill[bpbody, draw=bpc-#4, line width=0.8pt, rounded corners=7pt] (0,0) rectangle (\bp@W,-0.42);
+    \node[bplabel, anchor=west] at (0.15,-0.21) {#5};
+    \pgfmathsetmacro{\xx}{\bp@W-0.18}%
+    \bp@pin{#4}{\xx}{-0.21}
+    \coordinate (#2-out1) at (\bp@W,-0.21);
+    \coordinate (#2-ne) at (\bp@W,0);
+    \coordinate (#2-nw) at (0,0);
+    \coordinate (#2-se) at (\bp@W,-0.42);
+  \end{scope}}
+
+% \bpconv{id}{(x,y)}{tipo in}{tipo out}  -- piccolo nodo di conversione (id-in1, id-out1)
+\newcommand{\bpconv}[4]{%
+  \edef\bp@pos{#2}\expandafter\bp@scope\expandafter{\bp@pos}
+    \fill[bpbody, draw=bpborder, rounded corners=5pt] (0,0) rectangle (0.7,-0.36);
+    \bp@pin{#3}{0.14}{-0.18}\bp@pin{#4}{0.56}{-0.18}
+    \coordinate (#1-in1) at (0,-0.18); \coordinate (#1-out1) at (0.7,-0.18);
+    \coordinate (#1-ne) at (0.7,0); \coordinate (#1-nw) at (0,0); \coordinate (#1-se) at (0.7,-0.36);
+  \end{scope}}
+
+% fili
+\pgfdeclarelayer{bpwires}
+\pgfsetlayers{background,bpwires,main}
+% \bpdraw[stile] percorso;  -- come \draw, ma dietro ai nodi
+\def\bpdraw[#1]#2;{\begin{pgfonlayer}{bpwires}\draw[#1]#2;\end{pgfonlayer}}
+\newcommand{\bpexec}[2]{\begin{pgfonlayer}{bpwires}\draw[bpexecw] (#1) .. controls +(0.9,0) and +(-0.9,0) .. (#2);\end{pgfonlayer}}
+\newcommand{\bpwire}[3]{\begin{pgfonlayer}{bpwires}\draw[bpdataw, draw=bpc-#1] (#2) .. controls +(0.9,0) and +(-0.9,0) .. (#3);\end{pgfonlayer}}
+
+% commento (riquadro dietro ai nodi): \bpcomment{(x1,y1)}{(x2,y2)}{testo}
+\newcommand{\bpcomment}[3]{%
+  \begin{scope}[on background layer]
+    \fill[bpcomment, draw=bpcommentb, rounded corners=2pt] #1 rectangle #2;
+    \node[font=\sffamily\bfseries\scriptsize, text=black!75, anchor=north west, inner sep=3pt] at #1 {#3};
+  \end{scope}}
+
+% commento che avvolge dei nodi: \bpbox{testo}{(a-nw) (b-se) ...}
+\newcommand{\bpbox}[2]{%
+  \begin{scope}[on background layer]
+    \node[fill=bpcomment, draw=bpcommentb, rounded corners=2pt, inner sep=6pt, fit=#2] (box) {};
+    \fill[bpcomment] (box.north west) rectangle ($(box.north east)+(0,0.4)$);
+    \draw[bpcommentb] (box.north west) -- ++(0,0.4) -| (box.north east);
+    \node[font=\sffamily\bfseries\scriptsize, text=black!75, anchor=south west, inner sep=3pt] at (box.north west) {#1};
+  \end{scope}}
+
+% legenda di un pin, per il testo
+\newcommand{\pin}[1]{\tikz[baseline=-0.6ex]{\fill[bpbody, rounded corners=1.5pt] (-0.16,-0.15) rectangle (0.2,0.15); \bp@pin{#1}{0}{0}}}
+
+% ambiente: grafico scalato alla larghezza della pagina
+\newenvironment{bpgraph}{\par\noindent\begin{center}\begin{adjustbox}{max width=\linewidth}\begin{tikzpicture}}{\end{tikzpicture}\end{adjustbox}\end{center}}
+\RequirePackage{adjustbox}
+% posizione relativa: a destra del nodo #1, spostata di (#2,#3) dal suo angolo in alto a destra
+\newcommand{\dx}[3]{($(#1-ne)+(#2,#3)$)}
+% sotto il nodo #1: x del suo angolo sinistro + #2, y del suo fondo + #3
+\newcommand{\sotto}[3]{($(#1-nw|-#1-se)+(#2,#3)$)}
+% a destra del nodo (o del \maxx) #1, alla quota del nodo #2
+\newcommand{\dxy}[4]{($(#1-ne|-#2-nw)+(#3,#4)$)}
+% \maxx{nome}{a,b,c}: crea il punto nome-ne con la x più a destra fra i nodi a, b, c
+\newcommand{\maxx}[2]{%
+  \xdef\bp@mx{-10000}%
+  \foreach \n in {#2}{\path (\n-ne); \pgfgetlastxy{\bp@px}{\bp@py}%
+    \pgfmathsetmacro{\bp@t}{max(\bp@mx,\bp@px)}\xdef\bp@mx{\bp@t}}%
+  \coordinate (#1-ne) at (\bp@mx pt,0);}
+\endinput

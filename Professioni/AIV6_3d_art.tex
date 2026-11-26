@@ -1,0 +1,1126 @@
+% =====================================================================
+%  Professioni 6 — Il 3D artist
+%  Fonte: trascrizione della presentazione del corso di 3D art ai Dev
+%  Days (AIV6): un incontro online su Zoom di circa un'ora, tenuto da
+%  Giacomo Caneschi, coordinatore del corso di 3D art di AIV. Slide
+%  condivise (poi non distribuite); domande finali a voce e in chat.
+%  Pacchetti richiesti nel preambolo del libro:
+%    \usepackage[utf8]{inputenc}, \usepackage{booktabs},
+%    \usepackage{tikz} con
+%    \usetikzlibrary{arrows.meta,positioning,calc,fit}
+%
+%  Collocazione nel libro: parte "Alcune Professioni nel Mondo
+%  Videoludico", dopo AIV5_programmazione (3.7).
+%  Tutte le etichette di questo capitolo hanno il prefisso "p6:".
+% =====================================================================
+
+\chapter[Il 3D artist]{Il 3D artist: specialisti, pipeline degli asset e
+collaborazione}
+\label{p6:cap:3d}
+
+La presentazione di corso dei Dev Days (capitolo~\ref{p1:cap:devdays};
+la trascrizione dice ``benvenuti a un'altra giornata di Database'') è quella
+di \textbf{3D art}, tenuta dal coordinatore del corso, \textbf{Giacomo
+Caneschi}\footnote{Nella trascrizione ``Canischi''.}. Il programma che
+annuncia: un'infarinatura su chi sono i 3D artist, come li forma AIV, che cosa
+fanno e che cosa \textbf{non} fanno; poi la pipeline di lavoro ``classica''
+per la maggior parte degli asset 3D, per far capire anche a chi non è un
+artista che cosa vuol dire fare modelli 3D da mettere in un motore ``a livello
+della generazione corrente, che non è assolutamente una cosa banale''; infine
+ampio spazio alle domande.
+
+L'incontro si tiene online su Zoom (``scusate questi tre minuti di ritardo, ma
+Zoom proprio non voleva collaborare: ci ho dovuto lottare un po' a mani
+nude''), di mattina. La data non è detta; due indizi la collocano verso la fine
+della settimana dei Dev Days, con ogni probabilità \textbf{giovedì 8 o venerdì
+9 ottobre 2026}\footnote{Il relatore dice agli studenti di 3D art che li vedrà
+``tra un paio di settimane'', e a uno studente che mancano ``una decina di
+giorni all'inizio del corso''; le lezioni cominciano ufficialmente il 19
+ottobre (capitolo~\ref{p1:cap:devdays}). È una deduzione.}.
+
+Avvertenza di lettura: la trascrizione è automatica ma, per questo incontro,
+abbastanza pulita; il relatore stesso si definisce ``logorroico'' e con ``uno
+\emph{stream of consciousness} piuttosto importante''. Storpia però molti nomi
+tecnici: AIV diventa ``Dive'', ``Ive'', ``Hive'', ``AIB'' e ``live'';
+Allegorithmic ``l'Algoritmic''; ZBrush ``Z-Brash''; Houdini ``Udini''; high
+poly ``iPoly'' o ``ai poli''; UV ``OV'' o ``V''; sculpting ``scalping''; il
+lead artist ``id artist''. Dove la ricostruzione è sicura si usa la forma
+corretta, altrimenti lo si dice in nota. Alcuni aneddoti e alcune affermazioni
+tecniche del relatore sono inesatti o non verificabili: lo si segnala in nota.
+
+Il percorso del capitolo:
+\begin{enumerate}
+  \item il relatore e la sua carriera: dal generalista allo specialista
+        (sezione~\ref{p6:sec:relatore});
+  \item che cos'è un 3D artist: artista e tecnico, con limiti giganteschi
+        (sezione~\ref{p6:sec:cosa});
+  \item conoscere il lavoro degli altri, e il lavoro a progetto
+        (sezione~\ref{p6:sec:altri});
+  \item il 3D artist interpreta, non inventa: il concept artist
+        (sezione~\ref{p6:sec:concept});
+  \item i tempi della formazione e della produzione, e perché l'arte finale
+        arriva per ultima (sezione~\ref{p6:sec:tempi});
+  \item le \textbf{tre macro specializzazioni}: character, environment,
+        props (sezione~\ref{p6:sec:specializzazioni});
+  \item la \textbf{pipeline} di un asset 3D, fase per fase
+        (sezione~\ref{p6:sec:pipeline});
+  \item chi comanda, il mercato, la pazienza
+        (sezione~\ref{p6:sec:comanda});
+  \item l'output prima di tutto, e la bellezza soggettiva
+        (sezione~\ref{p6:sec:output});
+  \item le domande finali (sezione~\ref{p6:sec:domande}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{Il relatore: dal generalista allo specialista}
+\label{p6:sec:relatore}
+
+Caneschi è un 3D artist, ``uno sviluppatore della vecchia guardia italiana'':
+sviluppa videogiochi in Italia da più di vent'anni. Nasce come \textbf{grafico
+classico}: per tantissimi anni ha lavorato nell'editoria del cinema, facendo
+poster, campagne pubblicitarie e cose del genere. Poi, visto che era un lavoro
+che stava morendo (``lo racconterò più nello specifico ai 3D artist''), si è
+spostato sul 3D, anche perché i videogiochi sono sempre stati una delle sue
+passioni principali.
+
+\subsection{Il generalista, ieri}
+
+Lavorare nel 3D vent'anni fa era molto diverso: un lavoro ``drasticamente più
+tecnico, molto meno artistico''. Si dava per scontato che chi faceva i modelli
+sapesse fare anche tutto il resto: i videogiochi hanno una quarantina d'anni,
+ma fino a una ventina d'anni fa farli era ``proprio magia'', e quando ci si è
+resi conto che era una cosa accessibile a tecnici specializzati, si pensava che
+questi tecnici fossero specializzati un po' in tutto. Per lavorare, il
+relatore ha dovuto imparare non solo il 3D con perizia, ma anche ad animare, a
+fare gli shader, qualche linguaggio di programmazione, e all'occorrenza fare il
+designer, lavorare in engine, ``qualsiasi cosa possibile e immaginabile''.
+
+\subsection{Lo specialista, oggi}
+
+Per fortuna l'industria è cambiata, e si è riconosciuto (``credo che ve
+l'avranno già detto in tanti'') che il \textbf{generalista}, il ``tuttologo''
+che risolveva tutti i problemi, prima molto ben visto, è in realtà un
+\textbf{gigantesco collo di bottiglia}. ``Più responsabilità do a una persona,
+più le do la possibilità di sbagliare'', e non è detto che sappia gestirle
+tutte allo stesso modo: ci sarà sempre qualcosa che le è più affine. Per questo
+è arrivata alla ribalta la figura dello \textbf{specialista}: nel 3D, una via
+di mezzo fra un tecnico e un artista, che deve saper fare una serie di cose, ma
+che viene assunto per farne \textbf{una specifica}.
+
+Questo è tanto più vero quanto più si sale di livello di qualità e di fondi
+delle società: le grandi, i tripla A, gran parte dei ``super indie'' tendono ad
+assumere specialisti. Nell'indie ``basso'', il ``garage plus'', gli schemi
+saltano: ci può essere un sound designer che fa gli sprite 2D, il programmatore
+che sceglie il design, ``l'artista probabilmente non si presenta nemmeno al
+lavoro''. Ma se si deve avere un obiettivo, almeno all'inizio, è lavorare in
+una \textbf{società di livello piuttosto alto}: lì ci si toglie soddisfazioni
+vere, si trova il proprio nome in produzioni molto grandi e si cominciano a
+guadagnare ``soldini veri''.
+
+\subsection{Texture e material artist}
+
+Più o meno nel 2015-2016, ``agli albori'' di Allegorithmic\footnote{Allegorithmic,
+la società francese di Substance Painter e Substance Designer, è stata fondata
+nel 2003; il relatore si riferisce con ogni probabilità all'affermazione dei
+suoi software (Substance Painter esce nel 2014). È stata acquisita da Adobe nel
+2019.}, ``una società che fa software per 3D artist'', il relatore ha
+intrapreso il percorso da specialista: ha abbandonato il 90\% delle cose che
+faceva per dedicarsi ai \textbf{materiali}. È un \textbf{texture artist},
+\textbf{material artist}: il tipo di 3D artist che lavora esclusivamente ``la
+parte 2D del 3D''. Un po' perché veniva dalla grafica classica e si muoveva
+meglio con le texture, un po' perché gli piaceva, era un lavoro nuovo e c'era
+grandissima richiesta: ha ``cavalcato l'onda''.
+
+Gli ha portato soddisfazioni che da generalista non aveva avuto: è passato dagli
+sviluppatori italiani ``zozzi'' (quelli che non fanno parte della ``rosa di 6-7
+società serie'' in Italia) a lavorare con gli internazionali, con ``stipendi
+giusti''; ha lavorato ``con veramente chiunque'', in Italia e all'estero. Nel
+\textbf{2019} è arrivato nel tripla A, reclutato da NVIDIA e Microsoft come
+uno degli sviluppatori della tecnologia RTX, il sistema di visualizzazione
+basato sulla fisica; in particolare è stato uno dei texture artist ufficiali di
+\textbf{Minecraft RTX}, ``il gioco che ha instaurato la tecnologia RTX nei
+videogiochi correnti''\footnote{La versione RTX di \emph{Minecraft} (beta nel
+2020) è stata una vetrina molto visibile del ray tracing in tempo reale, ma non
+il primo gioco a usarlo: lo avevano preceduta, fra gli altri,
+\emph{Battlefield~V} (2018) e \emph{Metro Exodus} (2019).}. Si definisce ``un
+tizio un po' più da R\&D e un po' meno da produzione'': gli piace giocare con
+cose che non è detto che funzionino. Oggi lavora anche per Amazon, sulla serie
+di \emph{Fallout}, come lead (``sono un po' il capoccia''): ``vita parallela''.
+
+% ---------------------------------------------------------------------
+\section{Che cos'è un 3D artist}
+\label{p6:sec:cosa}
+
+\subsection{Un tecnico specializzato}
+
+Il 3D artist ``non è semplicemente una persona che sta lì a pettinare le
+bambole'', come si dice in gergo: è un \textbf{tecnico specializzato}, che sa
+usare ``una pletora di programmi'', 12 o 13, con l'eccellenza in alcuni di
+essi. Per questo, dice il relatore, la parola ``artista'' è quasi sbagliata: la
+parte artistica è una parte, la tecnica è ``qualcosa di molto più
+validato''\footnote{Così la trascrizione (``molto più valdato''); forse ``molto
+più pesante'', ``molto più vasto''.}. Ci sono tanti artisti classici che si
+danno al 3D, con un ottimo approccio alla scultura e alla pittura, ma che sono
+``tecnicamente inabili'', e quindi non possono lavorare nei videogiochi.
+
+Il videogioco è infatti \textbf{la forma di grafica 3D più complessa che
+esista}. Per il cinema, la realtà aumentata, la prototipazione, la stampa 3D,
+tutto è ``drasticamente molto più semplice'': gli artisti di quello che gli
+sviluppatori chiamano l'\textbf{extrasettore} possono esagerare con tutto
+(numero di poligoni, grandezza delle texture, qualità delle scene). Gli artisti
+dei videogiochi lavorano con \textbf{limiti giganteschi}, e devono ``fare con
+pochissimo, tantissimo''. Va da sé che, quando un artista di videogiochi lavora
+nell'extrasettore, il suo lavoro si semplifica: per la serie di
+\emph{Fallout}, dice il relatore, ``il mio lavoro è drasticamente più
+semplice''.
+
+\subsection{I limiti}
+
+I limiti sono molteplici:
+\begin{itemize}
+  \item l'\textbf{hardware}, il più importante: il gioco deve girare
+        idealmente a 60 fotogrammi al secondo, possibilmente di più, ed essere
+        visivamente decente anche a 30. La macchina deve gestire qualcosa di
+        variabile, e anche l'output degli artisti deve esserlo;
+  \item l'\textbf{input del giocatore}: in ogni singolo fotogramma il giocatore
+        può dare indicazioni che cambiano drasticamente tutto ciò che è a
+        schermo, quindi quello che è a schermo non può essere esagerato,
+        altrimenti nemmeno il computer più potente riesce a fare tutti i
+        calcoli.
+\end{itemize}
+Bisogna quindi fare cose che sembrano fatte con tantissimi poligoni usandone
+pochissimi, cose che sembrano fatte con texture 4K usando texture 2K: essere
+``molto resilienti'' su come si lavora e sulle risorse che si usano.
+
+\subsection{Artista e tecnico, da soli o in gruppo}
+
+Il 3D artist è comunque ``assolutamente un artista'', perché produce qualcosa
+di manifatturiero che esprime la sua visione e le sue capacità; ma con tanta
+tecnica. Le sfumature sono molte:
+\begin{itemize}
+  \item ci sono 3D artist che usano più l'arte e meno la tecnica, e usano meno
+        software. In generale, \textbf{più si è specializzati, meno software si
+        usano}; più si è generalisti, più software servono (anche se alcune
+        specializzazioni richiedono comunque molti software);
+  \item ci sono artisti che lavorano \textbf{da soli} e artisti che lavorano
+        \textbf{in gruppo}, e non perché uno sia ``il lone wolf'' e l'altro
+        ``l'artista amico con cui vai a bere dopo'': alcune mansioni non possono
+        essere affrontate in tempo utile da una persona sola, mentre in altri
+        lavori è importante che si veda \textbf{una mano unica}.
+\end{itemize}
+I 3D artist hanno anche \textbf{capacità laterali}. Un \emph{weapon artist},
+specializzazione molto richiesta all'interno dell'universo dei prop artist, sa
+fare armi favolose, ma conosce anche tutto il resto: il giorno in cui sono
+finite le armi da produrre, ci sarà altra roba da fare, e gli verrà assegnato
+tutto ciò che gli è affine.
+
+% ---------------------------------------------------------------------
+\section{Conoscere il lavoro degli altri}
+\label{p6:sec:altri}
+
+``E questo lo dico per tutti'': un artista, ma in generale qualunque
+developer, deve conoscere a grandi linee, anzi con una \textbf{profondità
+media}, il lavoro di tutti gli altri sviluppatori. Un artista deve sapere che
+lavoro fa un designer, che cosa gli può chiedere e che cosa no; che tipo di
+programmatore ha accanto; che cosa può chiedere a un ingegnere del software, a
+un tech artist, a un tech designer. Non vuol dire saper fare tutto, ``essere una
+one man band'', ma avere \textbf{cultura generale sullo sviluppo dei
+videogiochi}. Questa cultura si sviluppa prima di tutto \textbf{giocando}, e
+poi interessandosi a tutto quello che accade ``oltre la quarta parete, oltre lo
+schermo''.
+
+\subsection{Il lavoro a progetto}
+
+In generale, una risorsa in grado di supportare gli altri reparti, o addirittura
+di sostituirli per alcune responsabilità, è molto ben vista, ed è il modo per
+\textbf{tenersi il lavoro}. Perché il lavoro nei videogiochi è \textbf{a
+progetto}: ``vi prendo per lavorare a \emph{Celestial Hammer}'' (un nome
+inventato); il giorno in cui \emph{Celestial Hammer} è finito, ``strette di
+mano, abbracci, aperitivo, si festeggia tutti insieme, e poi tutti a casa''. La
+maggior parte delle persone, a casa. Restano a lavorare, e in genere fanno
+carriera, quelle che si sono dimostrate \textbf{proattive}, sanno
+\textbf{automotivarsi} e sanno muoversi dentro ciò di cui c'è bisogno. Quindi:
+interessatevi di ciò che c'è accanto a voi, ``non pensate di essere in un vuoto:
+io faccio la mia parte e via''.
+
+\subsection{Il lavoro passa di mano}
+
+Non è vero che un 3D artist faccia solo i modelli: bisogna pensare da dove
+viene un modello e a chi va. A meno che non si faccia un gioco da soli (``se ce
+la fate avete tutta la mia stima, e qualcuno ce la fa, ma in genere no''),
+\textbf{il proprio lavoro passa di mano}, e su ciò che si è fatto lavora altra
+gente. Sul livello creato da un level designer lavora l'environment artist, che
+lo ``dressa'' e lo rende bellissimo. Quando si passa un character
+all'animatore, deve essere ottimizzato per l'animazione: se ha tutti i
+\emph{joint} smontati, uno scheletro brutto, o anche prima, prima del rigger,
+se semplicemente non è modellato \emph{animation friendly}, ``l'animatore non
+lo può animare in nessun modo'' (si veda il capitolo~\ref{p4:cap:animation}).
+
+Il 3D artist è quindi \textbf{prima di tutto uno sviluppatore}, come tutti gli
+altri ruoli; subito dopo è sia un artista sia un tecnico. E come passerà i suoi
+modelli al level designer, al rigger, all'animatore, così il suo lavoro gli
+viene passato da qualcuno: il \textbf{concept artist}.
+
+% ---------------------------------------------------------------------
+\section{Interpretare, non inventare: il concept artist}
+\label{p6:sec:concept}
+
+\subsection{L'arte su commissione}
+
+Qui ci si allontana dall'idea comune di arte, che oggi fa pensare a ``un tizio
+che mette un elicottero ribaltato in piazza, o una tipa che si fa tirare
+addosso i pomodori''. L'arte classica nasce invece come \textbf{lavoro su
+richiesta}, e così il lavoro del 3D artist. Michelangelo non faceva le sue
+sculture e i suoi dipinti perché gli andava: c'era ``un prete con un sacco di
+soldi'' che gli diceva ``voglio che mi fai la Pietà, voglio che mi fai il
+soffitto di questo posto''\footnote{Semplificazione scherzosa: la Pietà
+vaticana fu commissionata dal cardinale francese Jean de Bilhères, la volta
+della Cappella Sistina da papa Giulio II.}. Allo stesso modo un 3D artist,
+quando non sta facendo il portfolio, \textbf{non lavora per sé stesso}, ma per
+qualcun altro; e in genere non è chiamato a inventare quasi nulla, ma a
+\textbf{interpretare e ricreare nel modo più fedele possibile} le indicazioni
+del concept artist.
+
+Questo anche perché non è detto che il 3D artist venga dall'arte classica. Il
+relatore stesso non è un pittore: ha ``scarabocchiato tutta la vita'', e
+l'approccio più simile all'arte classica che ha avuto è stato dipingere sui
+muri\footnote{Nella trascrizione ``quando dipingevo sui muri Facelbrider'':
+forse ``quando facevo il writer'', cioè graffiti.}. Col 3D, ``come diciamo a
+Roma, me la comando'', ma non sente di avere la libertà di inventare, perché gli
+manca la cultura su tutta una serie di cose: basi anatomiche, teoria del
+colore, proporzioni, stili. Per questo gli artisti 3D si appoggiano ai
+\textbf{concept artist}: disegnatori formati su tutto ciò che i 3D artist non
+fanno, chiamati a dare la loro visione, ``un concetto di quello che dobbiamo
+andare a fare''.
+
+\subsection{Buoni occhi, non buone mani}
+
+Il relatore mostra due immagini, un disegno e il modello 3D ricavato: per un
+occhio non abituato ai videogiochi è difficile dire quale dei due sia il
+modello, e il modello non è nemmeno post-processato. È un lavoro di
+\textbf{Valerio Carbone}, docente di AIV al secondo anno, ``uno dei
+videoscultori più forti in Italia'': con questo modello è arrivato, se il
+relatore non sbaglia, secondo a uno dei \textbf{contest di ArtStation}, ``che
+non si fanno più'' e che erano ``la vetrina più importante a livello mondiale
+per i 3D artist''. Da lì è iniziata la sua carriera: ora lavora su
+\emph{Warhammer}\footnote{Nella trascrizione ``fa Overhammer, Tatticus'':
+forse \emph{Warhammer} e un titolo legato al personaggio di Titus
+(\emph{Warhammer 40,000: Space Marine}), ma non è verificabile.}, ha lavorato
+``con chiunque'', ha fatto \emph{Spyro}. E la sua carriera può iniziare da
+quel modello perché è \textbf{riprodotto con perizia}.
+
+È la skill principale del 3D artist: la capacità di \textbf{leggere quello che
+vede e saperlo riprodurre}. Per questo non è importantissimo aver fatto studi
+d'arte classica. Un artista classico può avere un immaginario fantastico e
+tantissima cultura, ma se non ha \textbf{buone mani} (per disegnare linee
+morbide, per scolpire la pietra senza spaccarla) non può fare nulla. Nell'arte
+digitale servono \textbf{buoni occhi}, ``e basta''; e poi memoria e
+applicazione.
+
+\subsection{Il talento non esiste}
+
+Per questo, dice il relatore, ``è un lavoro in cui il talento non è
+richiesto''. In più di vent'anni di lavoro e più di sedici di insegnamento si è
+convinto che \textbf{il talento non esista}: tutto si basa sull'applicazione.
+``La persona talentuosa è semplicemente una persona che ha iniziato a fare
+qualcosa, ci ha messo il cuore, e con il tempo è diventata brava''. Le persone
+che si avranno davanti non saranno necessariamente artisti navigati: potrebbero
+aver iniziato da pochi anni, ma con una ``fissa'' talmente grande da essere
+diventate molto brave.
+
+\subsection{Studiare sempre}
+
+Per esplorare tutto il 3D, tutte le sue applicazioni e tutti i software, non
+basterebbero sette-otto anni di formazione; ma per diventare un ottimo artista e
+produrre asset per la generazione corrente bastano \textbf{due-tre anni di
+formazione effettiva}, e il resto si studia da soli. È importantissimo capire
+che la tecnologia, soprattutto nelle immagini digitali, cambia ogni giorno:
+tutto ciò che si impara oggi è vero ``per un tot di tempo''; poi potrebbe uscire
+un software che rivoluziona l'industria, e lo si deve imparare. Il caso
+classico: Allegorithmic ha fatto \textbf{Substance Painter} e \textbf{Substance
+Designer}, di cui il relatore è specialista, che hanno cambiato radicalmente il
+modo di fare le texture: prima si facevano in Photoshop, ``una fatica, un
+dolore senza senso''. Quando esce un software che ``vi puzza'' di diventare lo
+standard dell'industria, lo si impara subito. ``Io tuttora, dopo vent'anni,
+studio''. E lo stesso vale per chiunque usi un motore o un software: il software
+si aggiorna di continuo, e bisogna aggiornarsi con lui.
+
+\subsection{Concept, key art e referenze}
+
+Per lo \textbf{stilizzato} (lo stile ``eroico'' del modello mostrato) c'è
+sempre prima il disegno di qualcuno. Per il \textbf{realismo} questa fase può
+essere in parte bypassata: in genere si ha una \textbf{key art} più che una
+concept art, cioè un'immagine chiave che racconta come deve essere ciò che si
+farà, e poi una pletora di \textbf{referenze} per ogni singolo dettaglio. Se si
+fa un character realistico, si vuole sapere il colore della barba, se ha i
+brufoli, se è grosso o piccolo, di che tessuto è fatta la maglietta; se la sua
+arma è nuova o rovinata, quanto, dove: nel deserto? in mezzo all'acqua? Sono
+informazioni molto importanti per creare qualcosa di visivamente corretto.
+
+% ---------------------------------------------------------------------
+\section{I tempi: della formazione e della produzione}
+\label{p6:sec:tempi}
+
+\subsection{Pronti l'ultimo giorno del terzo anno}
+
+Fra tutte le professioni che AIV forma, il 3D artist è quella che \textbf{ci
+mette di più} a raggiungere il suo livello massimo: ci sono tanti software da
+studiare e tanti lavori e argomenti diversi da esplorare prima che un artista
+capisca davvero che cosa gli piace e che cosa gli riesce meglio. Quindi, per
+tutti quelli che collaboreranno con i 3D artist: saranno perfettamente formati
+\textbf{l'ultimo giorno del terzo anno}. Non si arriva al livello finale al
+secondo anno per poi fare la tesi al terzo: servono tutti e tre gli anni. ``Lo
+dico per i designer, per i narratori, per i programmatori'': gli artisti con cui
+si comincerà a lavorare al secondo anno sono \textbf{totalmente in training} e
+non hanno abbastanza conoscenze per produrre tutto ciò che serve. ``Vi dovete
+dare del tempo''.
+
+\subsection{L'arte finale arriva per ultima}
+
+Per fortuna, nei videogiochi l'arte finale viene messa \textbf{alla fine}. Non
+si crea mai una \emph{gym} né si fa debugging con i modelli finali: per un
+modello come quello mostrato un professionista impiega \textbf{un mese, un
+mese e mezzo}; uno studente probabilmente quattro, in cui deve fare anche tante
+altre cose. Non bisogna aspettarsi la roba finita il primo giorno: nel
+frattempo si sviluppa il gioco con \textbf{blockout}, modelli secondari,
+\emph{dummy} (quelli base di Unreal per i character) e ``cuboni'' per
+l'environment. I giochi si sviluppano così.
+
+Tutto questo avviene in \textbf{pre-produzione}, prima di sviluppare
+effettivamente il gioco; gli artisti lavorano in \textbf{produzione}: quando
+il gioco è stato definito e non si fanno più cambi, si chiama l'artista per il
+modello definitivo. Un cambio drastico che butta via il lavoro di un 3D artist
+``è un po' una pezza'': se lo si è pagato per quattro mesi, si sono idealmente
+bruciati ``10.000 euro, ve lo butto un po' così''; anche se i videogiochi hanno
+spesso budget diversi, non lo si vuole mai fare.
+
+\subsection{L'esempio di Dragon Trainer}
+
+L'esempio che il relatore fa sempre, ``perché c'ero, sono stato coinvolto in
+questa cosa'', è il film \emph{Dragon Trainer}\footnote{\emph{How to Train
+Your Dragon} (DreamWorks, 2010). Che il protagonista e il drago siano stati
+ripensati in corso d'opera è documentato: quando Chris Sanders e Dean DeBlois
+presero in mano la regia (2008), la storia, Hiccup e Sdentato furono
+profondamente rivisti, rispetto anche ai libri di Cressida Cowell, dove
+Sdentato è un draghetto piccolo e comune. Non è corretto però che la decisione
+sia arrivata ``a film finito'': arrivò a metà sviluppo. Il ruolo del relatore
+nella produzione non è verificabile; il drago ``brutto'' della versione
+originale non è identificabile con certezza dalla trascrizione (``Terrore
+Verde''; nei libri c'è un drago gigantesco chiamato Green Death).}. Nella prima
+versione il protagonista e il drago erano molto diversi: lui era fiero, sicuro
+di sé, baldanzoso; il drago era un ``coso brutto'' ispirato alle leggende
+norvegesi, con ``una serie di occhi dispari'' (``sette occhi''). Quando gli
+\emph{stakeholder}, ``quelli coi soldi'', lo hanno visto, hanno detto che non
+andava: le persone non avrebbero empatizzato con il protagonista, e il drago
+era ``brutto come il peccato, come si dice in termine tecnico''. Sono stati
+sviluppati un altro protagonista, insicuro, zoppo, con caratteristiche in cui
+le persone si possono rivedere, e un drago dall'aspetto ``fico'', Sdentato,
+lungo, nero, \emph{slick}.
+
+Nei film, a fatica, si può fare: si sostituisce una serie di fotogrammi. Nei
+videogiochi \textbf{non si può}: un gioco viene annunciato con enorme anticipo,
+e quando è annunciato la gente ``stacca la bocca''; se non esce nell'anno
+previsto, ``internet si rivolta'', ed è probabile che lo studio ``prenda delle
+belle botte''. Per questo \textbf{tutte le decisioni si prendono in
+pre-produzione}. In genere, quando si immagina un gioco, c'è un solo artista
+che lavora con il team di design e di narrativa, il \textbf{lead artist}, che
+decide una serie di cose insieme all'\textbf{art director}, il capo dei
+concept artist. Loro discutono, cominciano a disegnare e a modellare, e quello
+diventa la base di tutto: ``non prendo 30 artisti se non so cosa devono fare,
+perché sono soldi buttati''. Gli artisti, in genere, non fanno lavoro
+sperimentale: ``accendono il computer e cominciano a lavorare''.
+
+Al tempo stesso il concept è un'immagine prospettica e basta: non c'è il retro,
+non si vede che cosa c'è sotto il collo. Tutte queste parti \textbf{le deve
+inventare il 3D artist}, in stile con il concept, ``perché il concept non si
+muove, il modello 3D sì''.
+
+% ---------------------------------------------------------------------
+\section{Le tre macro specializzazioni}
+\label{p6:sec:specializzazioni}
+
+Gli artisti che si incontreranno in questi anni rientrano in \textbf{tre macro
+categorie}, ciascuna con sottospecializzazioni: quando si incontra un artista,
+idealmente vorrà fare una di queste tre cose (tabella~\ref{p6:tab:macro}).
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}lp{3.3cm}p{3.3cm}p{3.3cm}@{}}
+\toprule
+ & \textbf{Character} & \textbf{Environment} & \textbf{Props} \\
+\midrule
+Chi lo fa & pochi artisti per studio; una sola mano (salvo clothing e
+grooming) & molti artisti, sempre in team, con level designer, programmatori,
+tech artist & tutti, e in particolare i junior: è il primo lavoro \\
+\addlinespace
+Tempi & un character ogni 2-3 mesi (stilizzato: circa un mese per un
+professionista) & 5-6 mesi per un environment; un modulo in giornata &
+tantissimi asset: 200 in due mesi e mezzo, circa 4 al giorno \\
+\addlinespace
+Risorse & circa 300.000 poligoni a schermo in un tripla A & un muro può essere
+due triangoli & spesso comprati in pack, soprattutto nel realismo \\
+\addlinespace
+Carattere & ``un po' più di ego'' & bisogna ``uccidere il proprio ego'' &
+responsabilità minori, ma un prop bello è difficile \\
+\bottomrule
+\end{tabular}
+\caption{Le tre macro specializzazioni del 3D artist come le descrive il
+relatore.}
+\label{p6:tab:macro}
+\end{table}
+
+\subsection{I character}
+
+I personaggi sono \textbf{il cuore} di quasi ogni videogioco (tranne quelli
+basati sulle interfacce; ``anche i giochi di carte hanno i personaggi, ormai''),
+perché serve un personaggio per identificarsi e immergersi. A volte non si vede
+(si è in prima persona, magari è solo raccontato, si vedono solo le mani): ma
+allora quelle mani devono comunicare tantissimo del personaggio. I character
+sono la cosa più \emph{glamour} che può fare un 3D artist: il \textbf{90\%}
+degli studenti che entrano in AIV dice ``voglio fare i personaggi''; solo il
+\textbf{20\%} circa di quelli che escono lo dice ancora.
+
+Perché fare personaggi è un \textbf{lavoro molto lungo}. Un semplice personaggio
+stilizzato può richiedere un mese a un professionista, per farlo bene, dopo i
+feedback; a un artista in formazione, probabilmente il doppio. Un character
+realistico non è più complesso, ma molto più lungo: nella stilizzazione i
+dettagli vengono rimossi, alcuni esasperati (``pompati''), e solo quelli
+principali vanno riportati; nel realismo bisogna metterci tutto. Anzi: ``il
+realismo è palloso e non lo facciamo mai''; si fa l'\textbf{iperrealismo}, il
+realismo pompato, definendo il personaggio fino ai \textbf{pori della pelle}:
+si texturizza per far capire se in una zona i pori sono grassi o no, se c'è un
+po' di peluria. Quindi, quando serve un character, bisogna essere consci che
+l'artista ci metterà parecchio tempo, soprattutto se lo si vuole fatto bene.
+
+Anche perché quell'artista deve fare tutto, o il 90\% delle cose, \textbf{da
+solo}: i character devono sembrare fatti dalla stessa mano, con dettagli
+congrui, senza distacchi di qualità o di stile, altrimenti si finisce nella
+\textbf{uncanny valley}, dove non si capisce che cosa sia stilizzato e che cosa
+realistico, ``né carne né pesce''. E gli artisti hanno qualità diverse: in due
+sulla stessa cosa, uno sarà più bravo, e ci saranno parti più belle di altre.
+Nei personaggi tutto deve sembrare estremamente consistente. Le due sole cose
+che di solito si appaltano ad altri artisti sono:
+\begin{itemize}
+  \item il \textbf{clothing}, solo nei personaggi realistici: vestiti fatti con
+        la fisica, da artisti specializzati;
+  \item il \textbf{grooming}: peli, capelli, barbe, pellicce, piume. È un lavoro
+        a parte, che si fa in modo molto diverso dalla modellazione classica;
+        se si ha un character artist bravo nel grooming ``si è trovato un
+        tesoro'', altrimenti si chiama un \emph{groomer}, ``una persona che di
+        lavoro pettina le bambole''. È identico a come si fa nel cinema: nel
+        cinema i peli e le piume sono molti di più e più definiti, ma il
+        workflow è lo stesso.
+\end{itemize}
+Il character artist è anche ``quello con un po' più di ego'', che ci mette
+parecchio del suo: in genere è la persona ``un po' più spinosa'' con cui avere a
+che fare. Qui ci si avvicina all'arte classica, e si sente il prodotto molto
+proprio.
+
+\paragraph{Low poly e high poly.} Il modello che si vede nel gioco non è mai
+fatto come lo si vede. Quello che si muove nel motore è una forma geometrica
+rozza, il \textbf{low poly}; la versione bellissima, l'\textbf{high poly},
+non può girare in un motore. ``Anche se quelli di Epic vi dicono che, grazie a
+Nanite, potete buttare i vostri modelli high poly dentro Unreal e farli girare,
+è assolutamente falso''\footnote{È un'affermazione netta: Nanite permette
+effettivamente di usare in Unreal Engine 5 mesh statiche con un numero di
+poligoni molto superiore a quello tradizionale, ma non elimina la necessità di
+ottimizzare, e per anni non ha supportato le mesh animate con scheletro
+(\emph{skeletal mesh}), supporto introdotto solo di recente in forma
+sperimentale. Il relatore ci torna più avanti
+(sezione~\ref{p6:sec:pipeline}).}: un high poly ``vi cuoce il computer'',
+perché può essere fatto di 70 milioni di poligoni, mentre un character a
+schermo in un tripla A è fatto di circa \textbf{300.000 poligoni}, ``e sono già
+tantissimi''. Per arrivare ai pori della pelle bisogna però aggiungere dettagli
+su dettagli: come si fa, se a schermo non ci si possono mettere milioni di
+poligoni? Si fanno in modo \textbf{simulato}, con un software apposito che
+permette di simulare anche miliardi di poligoni e poi di trasformarli in
+poligoni veri. Quindi il character artist sbozza il modello, fa i dettagli, fa
+il low poly, fa le texture: tutto il processo da solo.
+
+\subsection{Gli environment}
+
+Lavoro drasticamente diverso è quello dell'\textbf{environment artist}, che
+\textbf{riempie i livelli dei level designer} con una serie di modelli. È un
+lavoro che si fa \textbf{sempre in team}: i livelli sono estremamente grandi,
+anche quelli piccoli sono grandi scene 3D, e il lavoro di una persona non basta
+mai. Gli environment artist lavorano da soli solo quando fanno il portfolio;
+altrimenti sempre in gruppo, con i level designer, e molto anche con i
+programmatori e con i tech artist. È un lavoro molto più corale, in cui si può
+gestire tutto l'aspetto del 3D o solo alcune parti: c'è chi fa solo luci
+(\emph{light design}), chi solo effetti speciali e post-produzione, chi solo
+moduli architettonici (città, castelli); o si può saper fare tutto ma essere
+presi per una cosa sola.
+
+Per fare environment bisogna ``un attimo \textbf{uccidere il proprio ego}'',
+perché il proprio lavoro deriva da quello dei level designer: bisogna
+rispettarne la visione e il lavoro. È un lavoro più aperto al feedback, anche
+perché la visione da rispettare è in genere quella del lead artist, che
+``bene o male saprà come funziona''. Ed è un mondo \textbf{più tecnico}: se un
+character fa 300.000 poligoni, ``un muro, spesso e volentieri, dentro un
+videogioco sono due triangoli''. Si lavora con ancora meno risorse, si deve
+creare roba leggera che sembri estremamente bella, e saper lavorare
+l'ottimizzazione (``le sfumature sono infinite, ma non è oggi il momento di
+parlarne''). In compenso i moduli si fanno molto più velocemente: ``una sedia
+la fai in giornata'', anche in un'oretta, ad alcuni servono due giorni. Sembra
+un lavoro meno importante e meno complesso, ma proprio perché coinvolge un
+sacco di persone è estremamente complesso. In uno studio servono \textbf{pochi
+character artist} e \textbf{molti environment artist}.
+
+\subsection{I props}
+
+Il terzo ruolo, che può avere un artista dedicato ma che in genere si chiede di
+saper fare a tutti, ed è il primo lavoro che si fa quando si comincia a fare 3D
+per lavoro, sono i \textbf{props}: l'oggettistica, ``tutta''. Barili, formaggi,
+ma anche le pistole e le spade sono props; alcune parti di un'armatura possono
+esserlo, e quindi non le fa il character artist; un portafoglio, un cellulare,
+una catena, le scarpe. È il lavoro che si dà ai \textbf{junior}. In realtà
+fare un prop bello è complesso: bisogna \textbf{raccontare la storia di
+quell'oggetto}, e ``forse è più difficile raccontare la storia di una
+bottiglietta d'acqua che la storia di una persona''. Semplicemente gli oggetti
+sono più piccoli e più semplici: c'è differenza fra un'idra a nove teste e ``un
+barile, che è fondamentalmente un cilindro ciccione''. Le responsabilità sono
+minori, anche perché tantissimi props oggi \textbf{si comprano}: un grande pack
+di props anni Ottanta con dentro il mangianastri, la cassetta, il pupazzo di
+He-Man\footnote{Nella trascrizione ``il pupazzo dei men'': con ogni
+probabilità He-Man, o i Masters of the Universe.}, già pronti.
+
+Va ricordato anche nei propri progetti: nello \textbf{stilizzato}, avendo scelto
+uno stile specifico, in genere tutto ciò che si vede a schermo è stato fatto da
+qualcuno interno allo studio; nel \textbf{realismo}, spesso le cose vengono
+dall'\emph{outsourcing} o da pack. AIV ha avuto per molto tempo una
+collaborazione con \textbf{Quixel}, quella di Megascans, ``il primo software
+che utilizzava scansioni del mondo vero per farci le texture''\footnote{Più
+precisamente Megascans è una libreria di scansioni fotogrammetriche (oggi di
+Epic Games), affiancata da software di Quixel come Mixer e Bridge; non è stata
+l'unica né forse la prima, ma è stata la più diffusa.}: il relatore aveva una
+libreria di scansioni e materiali, che poi ha ritrovato dentro \emph{Call of
+Duty}, ``non dentro il gioco dell'indie zozzo''. È legale usare materiale
+scansionato e asset comprati. D'altra parte per un artista è importante fare
+lavoro proprietario, e negli studi più importanti ultimamente si cerca di fare
+tutto internamente, per avere visual più unici: ``se tutti usano gli stessi
+props, poi i giochi sono tutti uguali''.
+
+Questo è ancora più vero perché si usano sempre più \textbf{sistemi
+procedurali} e sempre meno lavoro fatto a mano (lo stilizzato è ancora in gran
+parte a mano). Nel procedurale non si dipinge il bronzo a mano: si prende un
+materiale bronzo e lo si associa a un modello, e il materiale ha dei valori per
+l'ossidazione, la superficie, i bozzi, le impurità. Il difetto è che, se non lo
+si lavora abbastanza, \textbf{è tutto uguale}, perché tutti hanno accesso alle
+stesse risorse: se tutti fanno la stessa spada, rischiano di sembrare fatte
+tutte dello stesso materiale.
+
+La grande differenza fra i props e le altre specializzazioni è la
+\textbf{quantità}. A un character artist si può chiedere un character ogni due
+o tre mesi; al team di environment, un environment in cinque-sei mesi. Un prop
+artist deve produrre tanto: quando il relatore ne ha assunto uno per un
+progetto di cui era lead, gli ha fatto una proposta che prevedeva \textbf{più
+di 200 asset in due mesi e mezzo}, cioè circa quattro modelli finiti al giorno,
+cinque giorni alla settimana (``il povero cristiano poi ce l'ha fatta''). Fra un
+sasso e il boss finale di \emph{Dark Souls}\footnote{Nella trascrizione ``il
+boss finale di Endsols''.} la differenza di complessità è grande, anche se
+vanno fatti tutti per bene: chi fa cose più semplici ne fa di più, ma le
+responsabilità sono le stesse.
+
+\subsection{Fare soldi, e far uscire i giochi}
+
+Il videogioco è \textbf{un bene condiviso}, a cui tutti lavorano insieme perché
+venga bello: si lavora per fare soldi, ma anche perché quei soldi siano
+associati a una \textbf{credibilità lavorativa}. Un amico del relatore lavora da
+tanti anni per Warner Bros.\ e guadagna benissimo, ma gli hanno chiuso quattro
+progetti ed è disperato, perché non è riuscito a far uscire nulla: ``ha farmato
+un sacco di soldi, ma al pubblico non c'è niente: è come se non avesse fatto
+nulla''.
+
+Le specializzazioni sono molte, e non serve conoscerle tutte oggi: se ne
+parlerà al corso, e la scelta si fa da soli alla fine del percorso. Gli artisti
+penseranno di fare una delle tre cose, ma possono fluttuare: si comincia
+volendo fare character, poi si fa environment, si scopre che è bellissimo e si
+cambia idea.
+
+% ---------------------------------------------------------------------
+\section{La pipeline di un asset 3D}
+\label{p6:sec:pipeline}
+
+``Che fa questo povero 3D artist tutta la vita? Impazzisce davanti a una serie
+di software''. Il relatore commenta la pipeline lineare di produzione di un
+asset 3D (figura~\ref{p6:fig:pipeline}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=Stealth, font=\scriptsize, node distance=0.35cm,
+  box/.style={draw, rounded corners, align=center, text width=2.1cm,
+              minimum height=0.9cm}]
+  \node[box, fill=gray!15] (c) {concept\\(pre-produzione)};
+  \node[box, right=of c] (l) {low poly /\\blockout};
+  \node[box, right=of l] (s) {high poly\\(inorganico) o\\sculpting (organico)};
+  \node[box, right=of s] (r) {retopology\\(solo dopo lo\\sculpting)};
+  \node[box, below=0.9cm of r] (u) {UV layout};
+  \node[box, left=of u] (b) {baking\\(normal map\\e altre mappe)};
+  \node[box, left=of b] (t) {texturing};
+  \node[box, left=of t, text width=2.4cm] (o) {inorganico $\to$ level design\\organico $\to$ rig $\to$ animazione};
+  \draw[->] (c) -- (l); \draw[->] (l) -- (s); \draw[->] (s) -- (r);
+  \draw[->] (r) -- (u); \draw[->] (u) -- (b); \draw[->] (b) -- (t); \draw[->] (t) -- (o);
+  \node[below=0.35cm of $(o.south)!0.5!(u.south)$, font=\scriptsize\itshape]
+    {nel frattempo i designer sviluppano il gioco con il blockout (low poly)};
+\end{tikzpicture}
+\caption{La pipeline lineare di un asset 3D. Il UV layout si fa dopo la
+retopology se c'è sculpting, altrimenti prima del dettaglio; il baking non
+compariva sulla slide e il relatore lo aggiunge a voce. Ricostruzione
+schematica.}
+\label{p6:fig:pipeline}
+\end{figure}
+
+\subsection{La fase concettuale}
+
+C'è sempre una \textbf{fase concettuale}, che viene in genere \textbf{dopo}
+che i narrative e gli scrittori hanno scritto la base della storia, che sono
+state create le prime \emph{gym} e il documento di design\footnote{Nella
+trascrizione ``il God Book di design'': con ogni probabilità il GDD
+(\emph{game design document}) o la ``bibbia'' del progetto.}. Definite le cose
+scritte, si traducono in immagini: si fa il concept del gioco, con immagini che
+rappresentano la visione superiore del gioco, e si comincia a definire come
+modellare i modelli. Il \emph{level concept} va in parallelo alle prime fasi di
+sviluppo del 3D, perché prima viene tutto ciò che riguarda il gioco in sé, poi
+i visual: un livello non è solo visual, è prima di tutto \textbf{giocabilità},
+spazi, metriche. ``Poi dopo lo facciamo diventare bello''.
+
+\paragraph{Il level designer non fa l'enrichment.} Attenzione, dice il
+relatore: vi potrà essere detto che ci sono level designer che fanno il
+cosiddetto \emph{enrichment}. ``Questa è una roba che non è assolutamente vera
+in tantissime società'', soprattutto nella parte alta. Il level designer si
+occupa esclusivamente di come funziona il livello e dei suoi ingombri, non della
+forma finale (si veda il capitolo~\ref{p2:cap:gamedesign}). ``Dire io voglio
+quella pianta proprio lì non è un lavoro da level designer'': il level designer
+ci mette un cilindro e dice ``da lì non si passa'', oppure ``è un cilindro sopra
+un piano, da lì non si passa, ma c'è una cosa che si muove col vento''. Punto.
+Il \textbf{designer} deve fare una cosa che \textbf{funziona}, l'\textbf{artista}
+una cosa \textbf{bella}, e il gioco deve fondere le due cose. Non si possono
+sviluppare le due skill contemporaneamente in tempo utile: prima il level
+design, poi l'arte. In realtà si lavora a braccetto, si decide un po' insieme;
+ma ogni figura ha la sua skill, e per i visual ci si affida alla mano
+dell'artista.
+
+I concept si fanno in pre-produzione; qualcosa di meno importante finisce in
+produzione, ma le cose principali (il personaggio principale, l'aspetto
+generale del mondo, i mostri principali) si fanno tutte prima di produrre
+effettivamente il gioco.
+
+\subsection{Low poly e blockout: si sviluppa con i cuboni}
+
+Poi l'artista fa il \textbf{low poly}: un modello estremamente rozzo che
+comprende la forma generale e soprattutto gli \textbf{ingombri}, importantissimi
+(``se ti serve un gigante e io ti do un nano, è un problema''): un gigante con
+la sua scala, fatto per bene, con pochissimi poligoni, super leggero. Sarà la
+base che si dettaglierà fino alla forma finale; ed è la forma ``cubosa, non
+definita'' con cui \textbf{lavorano i designer}.
+
+Il relatore lo dice perché gestisce anche lo sviluppo dei videogiochi in AIV,
+l'iniziativa \textbf{Game Dev}\footnote{Dal contesto, il progetto
+multidisciplinare dal secondo anno in poi (i Dev Projects,
+sezione~\ref{p1:sec:devprojects}).}: \textbf{non servono i modelli finali per
+sviluppare il gioco}; lo si fa tutto con i cuboni. I modelli finali servono
+prima delle \emph{milestone} importanti, delle consegne. Se tutto gira con il
+modello rozzo, basta sostituirlo: se è statico, è immediato; se si muove,
+bisogna fare il \emph{retargeting} delle animazioni, ``una roba rognosa, ma non
+infattibile, anzi, lo fanno tutti''. Con quei modelli bianchi, senza texture, i
+designer e chi lavora in engine testano tutto: post-produzione, illuminazione.
+
+\subsection{UV layout}
+
+Intanto i 3D artist, dopo il low poly, devono ``tagliare'' il modello per
+prepararlo alla fase successiva: si ottiene l'\textbf{UV layout}, per poter
+dipingere in due dimensioni quello che sarà il materiale, la texture, l'aspetto
+del modello. Il 3D non è dipingibile direttamente, ``perché il 3D sono dati e le
+texture sono pixel'': l'UV layout lega la posizione dei pixel in 2D alle
+coordinate del modello 3D. ``È una roba pallosa che va fatta per forza. Più la
+fate bene, più vi vorranno bene i vostri lead''. Se c'è la retopology, l'UV
+layout si fa dopo; se non c'è, prima del dettaglio. Il modello viene
+``spezzettato'' e steso su un piano, trasformato in un'immagine; ciò che si
+dipinge sull'immagine finisce sul modello.
+
+\subsection{Il detailing: high poly o sculpting}
+
+Poi c'è il \textbf{detailing}, in due modi:
+\begin{itemize}
+  \item per tutto ciò che è \textbf{inorganico} (una macchina, una pistola) si
+        fa l'\textbf{high poly modeling}: si prende il low poly e si aggiungono
+        dettagli, dettagli, dettagli, fino alla forma finale;
+  \item per tutto ciò che è \textbf{organico} (in genere un personaggio, una
+        creatura) si fa lo \textbf{sculpting}: non si modella in modo
+        geometrico, ma si prende ``una creta virtuale di poligoni simulati'' e
+        con la penna si scava, si disegna, si aggiunge e si toglie massa, fino
+        alla forma finale.
+\end{itemize}
+Il software di sculpting mostrato è \textbf{ZBrush}, ``un software che vi fa
+uscire il sangue dagli occhi quando guardate l'interfaccia'': ``un miliardo di
+menu'', quando oggi i software usano drag and drop, tasto destro, icone; tanto
+che spesso la prima lezione è come personalizzarne l'interfaccia per renderla
+più comprensibile. Lo sculpting è una fase lunga, che gli artisti tendono ad
+allungare all'infinito perché è la più bella, ``la più sugosa'', quella in cui
+si vede l'aspetto effettivo del modello. Ma va \textbf{chiusa al più presto}: un
+professionista la fa fra una settimana e dieci giorni al massimo, perché entro
+un mese deve consegnare; uno studente può passarci tranquillamente un mese, un
+mese e mezzo.
+
+\subsection{La retopology}
+
+La \textbf{retopology} c'è solo quando c'è lo sculpting. Per un modello
+inorganico si passa dal low poly all'high poly, ed è finita. Nella scultura,
+mentre si lavora il dettaglio, gli ingombri e le forme possono cambiare
+leggermente: quindi c'è una fase in più, in cui \textbf{si rifà il low poly
+sopra l'high poly}. All'inizio una cosa estremamente rozza, poi scolpita, poi
+ricreata low poly, ``ma non proprio rozza'', per farla girare nel motore.
+
+Sulla slide la topologia di un volto è colorata a zone: rappresentano i
+\textbf{gruppi muscolari} che si muovono insieme, ed è tutto lavoro fatto per
+l'animazione. Si potrebbero mettere i poligoni come si vuole e ottenere più o
+meno lo stesso aspetto; ma proprio perché gli artisti, soprattutto i character
+artist, non lavorano mai da soli, bisogna lavorare in un certo modo: altrimenti,
+quando si assegnano le \emph{blend shape} (la tecnica con cui si animano le
+facce), la faccia non reagisce come dovrebbe (si veda la discussione sulla
+topologia nel capitolo~\ref{p4:cap:animation}).
+
+\subsection{Il baking}
+
+Il \textbf{baking} non è sulla slide, ma il relatore lo aggiunge: è il
+trasferimento di tutti i dettagli dell'high poly o della scultura sul low poly,
+in modo da simularli nel motore. Il giocatore vede l'high poly, ma nel gioco
+gira il low poly\footnote{La trascrizione dice ``girano 20.000 poligoni ma io
+vedo 20.000'': evidentemente un numero è trascritto male (il senso è ``ne
+vedo milioni'').}. I dettagli vengono trasportati in una texture da assegnare al
+low poly: la mappa più importante è la \textbf{normal map}, ``la mappa di
+asperità'', che rappresenta i piccoli cambiamenti di altezza della
+superficie\footnote{La trascrizione dice ``i cambiamenti di altezza da uno a 5
+cm'': forse un ordine di grandezza indicativo dei dettagli che conviene
+affidare alla normal map invece che alla geometria.}, che così non serve
+modellare; insieme alle altre mappe permette un livello di dettaglio
+altissimo con pochissime risorse. ``Se in un \emph{Total War} ci devono essere
+500 modelli a scena, devono essere leggeri''.
+
+Esistono tecnologie che rendono tutto più leggero, come \textbf{Nanite} di
+Unreal; ma a Nanite, dice il relatore, ``non possono essere assegnate le
+skeletal mesh, quindi niente che si muove'': ``è una tecnologia un po' ibrida,
+che ancora non sappiamo bene che faccia''\footnote{Si veda la nota sulla
+sezione dei character: il supporto di Nanite alle mesh animate è stato
+introdotto di recente in forma sperimentale.}.
+
+\subsection{Il texturing}
+
+Infine il \textbf{texturing}, la specializzazione del relatore: lo standard è
+\textbf{Substance Painter}, che AIV insegna (sulla slide, ``con l'interfaccia
+drasticamente modificata''). È il dare un aspetto materico ai modelli, ``la
+loro pelle, il loro colore, le specifiche dei materiali'':
+\begin{itemize}
+  \item nello \textbf{stilizzato} si parla di volumi, valori di colore,
+        gradienti;
+  \item nel \textbf{realismo} si parla delle controparti fisiche: non solo il
+        colore, che ``in verità non esiste: esiste il colore percepito'', ``una
+        roba che si sono inventati gli artisti per riprodurre il mondo''; ma
+        anche la microsuperficie, la metallicità, le zone di
+        auto-ombreggiamento, per generare una texture realistica.
+\end{itemize}
+Finito il texturing, \textbf{il modello è finito}. Se è inorganico, passa in
+genere ai level designer; se è organico, al team di animazione, dove prima si
+sviluppa il rig e poi le animazioni.
+
+\paragraph{Un 3D artist anima? No.} ``No, assolutamente no. È un altro lavoro''.
+Si possono conoscere pillole di animazione, saper fare un po' di rigging, ma
+non è richiesto (``io ho dovuto impararlo, ai tempi, e ancora soffro'').
+
+\subsection{I software}
+
+Una slide mostra i software usati per ogni fase, ``e non sono neanche tutti'':
+per il blockout, Maya, 3ds Max o Blender (se ne usa uno dei tre); lo stesso per
+la retopology; per il texturing può capitare di dover usare tutti i software
+insieme per un risultato migliore. Il corso non ha nemmeno il tempo di insegnare
+tutto di ogni software, anche perché non serve: molte cose di Maya servono per
+render iperrealistici, per animazioni, per il CAD con le spline, e non vengono
+insegnate. Ma restano ``tòtere'' di software complessi. Il relatore lo dice
+soprattutto ai narrative e ai game designer che impareranno un software come
+Unreal: ``i grafici sono passati nelle vostre scarpe, e l'hanno dovuto fare
+dieci volte: invece di imparare un software, ne hanno dovuti imparare
+dodici''.
+
+% ---------------------------------------------------------------------
+\section{Chi comanda, il mercato, la pazienza}
+\label{p6:sec:comanda}
+
+\subsection{Nessuna figura ha la precedenza}
+
+Il lavoro del 3D artist passa per molte mani, quindi bisogna essere
+\textbf{molto flessibili} e aperti alla collaborazione con chi viene prima e
+con chi viene dopo. Non si va dal concept artist a dirgli che una cosa è brutta:
+``se piace al lead artist, la vostra opinione non conta''. Non si va a ``rompere
+le scatole'' ai level designer, che devono fare il loro lavoro: ci si lavora
+insieme, in collaborazione totale. \textbf{Non c'è una figura che ha la
+precedenza su un'altra}; l'unica che comanda sono gli \textbf{stakeholder},
+``quelli che ci mettono i soldi: arrivo io, metto 10 milioni, comando io''.
+
+E l'idea può venire da chiunque. Il relatore racconta sempre che il concept di
+\emph{Horizon Zero Dawn} è stato deciso da un tech artist, ``cioè da un
+programmatore'', che ha portato un prototipo di dinosauro robot fatto con i
+cuboni, che veniva colpito e perdeva i pezzi\footnote{L'aneddoto non è
+verificabile nella forma riportata; è noto che il concept del gioco nacque da
+una proposta interna a Guerrilla Games, scelta fra diverse candidate.}. ``Non
+c'era la visione incredibile di un narratore, non c'erano le skill infinite di
+un game designer''. Le figure che AIV forma \textbf{sviluppano} l'idea, non
+devono per forza averla. Chi comanda? \textbf{I tre lead insieme}: il lead
+designer, il lead artist e il lead developer, che comandano chi sta sotto di
+loro; e loro fanno quello che dicono l'art director, il technical director e,
+prima ancora, gli stakeholder (si veda anche la
+sezione~\ref{p2:sec:gerarchia}). ``In questo settore non fai mai quello che ti
+pare''.
+
+\subsection{I giochi si fanno per gli altri}
+
+A meno di non fondare una società e diventare capi di sé stessi; ``allora lì
+puoi fare quello che ti pare, e probabilmente la tua società fallirà e tu
+finirai nelle peste''. Perché anche da capi di sé stessi bisogna studiare il
+\textbf{mercato} e le \textbf{nicchie}: i videogiochi non si fanno mai per noi,
+ma per chi ci gioca. Fare quest'anno un roguelike di carte sarebbe ``da
+folli'': è uscito \emph{Slay the Spire 2}, e per chi gioca ad altri deck builder
+ne sono usciti di bellissimi (il relatore ne cita uno\footnote{Nella
+trascrizione ``Shroom Gloom'': il titolo non è verificabile.}). Il relatore è
+appassionato di carte (gioca a \emph{Magic}, colleziona Pokémon), ma non fa un
+gioco di carte ``perché mi va'': c'è il mercato, ci sono prima di tutto i
+giocatori. Anche un modello 3D si fa perché piaccia al pubblico, non per sé:
+``altrimenti vieni licenziato''.
+
+L'aneddoto: un concept artist, per un gioco ``targettizzato 12-14''\footnote{Così
+nella trascrizione (``12x14''): forse una fascia d'età 12-14 anni, o una
+classificazione PEGI 12.}, stilizzato, ``pupazzoso'', con violenza non
+realistica, aveva inserito nei concept delle armi una serie di riferimenti
+sessuali. Il relatore gli ha rimandato i concept con tutte quelle parti
+cerchiate, spiegando il target; il concept artist ha risposto ``no, sono io che
+mi immagino questo mondo, e questo mondo è fatto così''. ``Un abbraccio,
+grazie: da oggi non lo decidi più tu''. Strette di mano, contratto stracciato.
+
+\subsection{Pazienza, ma con dei limiti}
+
+``Il clou, la cosa più importante che ho da dire oggi a tutti i non 3D artist'':
+nel collaborare con i 3D artist, \textbf{soprattutto finché non vi pagano},
+bisogna avere \textbf{pazienza}. Ci vuole tempo, ci vuole un po' di
+\emph{trial and error}. ``Il tizio ancora non me l'ha consegnato'' è normale;
+poi, a un certo punto, ci sono dei limiti oltre i quali non è più normale. Nel
+lavoro, in quel caso, si licenzia: un videogioco, se va bene, venduto a 9 euro
+rischia di fare milioni; se ci sono persone che lavorano male o sono lente,
+quei milioni rischiano di non arrivare. Per questo le si riprende una volta, due
+volte, e alla terza le si allontana: o si viene licenziati brutalmente, o si
+viene ``dimensionati''\footnote{Il relatore usa il termine ``white quitting'';
+il fenomeno descritto si chiama di solito \emph{quiet firing}.}: si viene
+assegnati a cose sempre più stupide e ignobili, finché si dice ``ma che ci
+resto a fare qua dentro? me ne vado''.
+
+% ---------------------------------------------------------------------
+\section{L'output prima di tutto}
+\label{p6:sec:output}
+
+Il lavoro del 3D artist è, in fondo, semplice: ``parto da una roba rozza e la
+faccio sempre più bella''. Ma ha infinite sfumature e workflow differenti. Ci
+vuole quindi flessibilità quando si chiede qualcosa a un 3D artist: non è detto
+che la sappia fare, né che la faccia con un workflow classico. ``L'importante,
+per tutti, è l'\textbf{output}''.
+
+È una cosa che il relatore ha imparato in Ubisoft: ha due amici fraterni nelle
+risorse umane e una volta l'anno va a Parigi a parlare con gli artisti che,
+come lui, sono stati formati da Allegorithmic per insegnare quei software (``poi
+Allegorithmic è stata comprata da Adobe, tristemente le cose sono un po'
+cambiate''). Gli artisti di Ubisoft dicono che ai loro art director interessa
+una sola cosa: \textbf{che quello che fai sia bello}. Come l'hai fatto non
+importa, purché l'abbia fatto tu e non l'abbia rubato a qualcuno. Il processo è
+molto personale, perché esistono tanti software per fare la stessa cosa: per il
+texturing lo standard è Painter, ma si può usare 3D-Coat per lo stilizzato o
+Mari per i volti iperrealistici. Quindi non ci si chiede mai come il proprio
+artista stia facendo una cosa: conta che abbia un buon ritmo, che consegni
+quando deve e che ciò che consegna sia bello.
+
+\subsection{La bellezza è soggettiva}
+
+E la bellezza è soggettiva. Ci sono giochi con una grafica, per il relatore,
+``di una bruttezza incredibile'' che hanno avuto un successo enorme. Cita sempre
+\emph{Kenshi}, ``esteticamente di una bruttezza catastrofica'', con una grafica
+da primi anni Duemila: associata a un gioco sistemico con un design favoloso,
+``fa il giro'', diventa adatta, ``quasi bella''. In questi anni c'è il ritorno
+dell'8 bit, dei \emph{boomer shooter} (giochi che richiamano \emph{Doom}): a
+volte una grafica vecchio stile è quasi richiesta. La prima volta che ha visto un
+modello di \emph{Valheim} ha pensato ``ma che sta schifezza'': rozzo,
+texturizzato con un'unica mappa per tutto il gioco, a pixel, ``una roba di un
+team che non aveva artisti''. Poi ci ha giocato: non solo è un gioco favoloso, ma
+a livello artistico ``tutto torna'', quei pochi pixel ``fanno scopa con gli altri
+pixel che gli stanno accanto''. Oggi la \textbf{prodezza tecnica} non si valuta
+quasi più, ``la valuti su GTA, sui giochi che paghi 70 euro''; altrimenti c'è
+l'accettazione di ciò che si ha, se piace. ``Le cose brutte fanno il giro e
+diventano belle'': un qualcosa va sempre giudicato \textbf{nel suo insieme},
+perché anche una serie di modelli brutti può fare un gioco bello.
+
+\subsection{Le slide non si danno}
+
+Il relatore non distribuisce le slide: sono una versione ridotta di quelle che
+darà agli artisti il primo giorno, e a chi non è un artista servono fino a un
+certo punto; le usa solo come guida visiva. ``L'importante è che mi avete
+ascoltato''. Ai 3D artist: ``ci vediamo tra un paio di settimane''; agli altri:
+``dovrete aspettare un annetto e mezzo, ma tanto ci vediamo tutti a Game Dev''.
+
+% ---------------------------------------------------------------------
+\section{Le domande finali}
+\label{p6:sec:domande}
+
+\subsection{Per un gioco 2D ci si affida a un 3D artist?}
+
+Mentre sta salutando arriva una domanda, ``molto importante, di cui forse avrei
+dovuto parlare'': Federico chiede se, per un gioco 2D, ci si affidi comunque a
+un 3D artist. ``No, assolutamente no'': è un'altra skill, serve un
+\textbf{grafico 2D}. Anche l'animazione 2D e quella 3D sono lavori
+drasticamente diversi, non solo per una dimensione in meno: nel 2D interessano
+movimenti fluidi lungo una linea, ``su una fascia''; nel 3D ogni vertice del
+modello è gestito da tre curve, e spesso per armonizzare il movimento bisogna
+ritoccarle, decidere se in un punto la curva fa un angolo acuto o una
+sinusoide.
+
+L'animazione, aggiunge, è mezza tecnica e mezza artistica: la parte tecnica è il
+\textbf{rigging}, quella artistica sono le \textbf{capacità attoriali}, perché
+l'animatore deve far recitare il proprio modello (capitolo~\ref{p4:cap:animation}).
+In un gioco 2D conta solo la recitazione; in un gioco 3D la tecnica è tutto. Un
+gioco 2D lo potrebbe fare anche un concept artist: in genere c'è un
+illustratore, e a seconda della tecnica si usano il \emph{ragdoll} o le clip di
+animazione. AIV non forma 2D artist: fa ``la parte 2D del 3D'', il texturing.
+
+E le \textbf{interfacce}? Le fa un \textbf{UI artist}\footnote{Nella
+trascrizione ``un Wii Artist''.}, che in genere è un 2D artist; nei giochi
+futuri degli studenti potrebbe farle un 3D artist, o un designer, ``chiunque
+abbia un po' di gusto''. In genere c'è un grafico classico, abile a fare
+``pulsantino spento, pulsantino acceso'' in modo gustoso. In una jam o in un
+progettino chiunque può imparare ad animare in 2D (``non è difficilissimo;
+farlo bello è molto, molto, molto difficile''); ma i giochi che si faranno in
+AIV è bene farli \textbf{in 3D}, perché AIV forma 3D artist, e chi lavorerà sui
+visual farà 3D: ``se vi fate fare le cose in 2D è un problema''.
+
+\subsection{Quando si comincia a usare la tavoletta grafica?}
+
+Marco, presumibilmente un futuro artista, chiede quando si inizia a usare la
+tavoletta grafica e quale consigliare. La seconda domanda va rifatta alla prima
+lezione (al relatore, se si è a Roma o online; ``a Lorenzo'' se si è
+nell'\emph{Experience} di Milano), o in privato su Discord, perché ``è troppo
+lunga spiegarla a tutti''. Si comincia a usarla da subito. Non tutti gli artisti
+la usano: il relatore, che fa materiali procedurali, non la usa mai; ma la si
+insegna subito, perché qualcuno potrebbe avere affinità con la scultura, che si
+fa \textbf{solo con la tavoletta}. Fra le centinaia di studenti avuti, uno
+``psycho'' scolpiva col mouse ed era pure ``mezzo bravo'', ma era un
+\emph{unicum}. Le domande specifiche sul 3D, da artista ad artista, vanno fatte a
+lezione, dove ci sarà tempo, e dove il relatore racconterà di nuovo la sua vita,
+più nel dettaglio.
+
+\subsection{Quando comincia a lavorare il concept artist?}
+
+In \textbf{pre-produzione}: è il tipo di artista che lavora prima dei 3D artist.
+In pre-produzione la prima cosa che si vuole a livello visivo è la visione
+generale, e i primi concept li fa in genere l'\textbf{art director} (il
+relatore dice prima ``il lead artist'' e si corregge), che durante la produzione
+non disegna mai, ma in pre-produzione deve anche disegnare un po'. Più si va
+verso i ruoli di leadership, meno si fa ``manovalanza'', e per un art director
+disegnare un concept è manovalanza: scriverà una serie di cose e farà degli
+sketch.
+
+I concept più importanti si fanno in pre-produzione: il personaggio principale,
+le \emph{mood board} delle cose più importanti dei livelli, armi, oggetti,
+nemici. Perché quando si parte in produzione bisogna avere materiale su cui far
+lavorare il team di produzione, cioè grafici, animatori e programmatori. Poi si
+va ``a cascata'': il concept dell'ultimo livello si può fare in produzione,
+perché verrà fatto alla fine; quello del primo livello va fatto in
+pre-produzione, perché chi arriva a fare il livello deve avere il concept
+pronto, altrimenti è rallentato. È un punto chiave: ogni volta che questo ciclo
+non viene rispettato ci sono grossi problemi (``ah, ma non c'è il concept''), e
+bisogna aspettare, magari mentre i designer hanno trovato una feature nuova e
+devono testarla subito. La parte visual si testa anche tutti insieme, ognuno
+dice la sua, poi decidono gli artisti e l'art director: è una cosa condivisa, in
+cui si chiede l'impressione delle persone al proprio livello. ``Il lead artist
+non abbraccia l'ultimo dei grafici per chiedergli se gli piace'':
+probabilmente lo presenterà al lead developer e al lead designer: ``ho preso la
+tua idea e ci ho fatto questo. Secondo te funziona? Se lo facciamo in tempo
+utile, diventiamo tutti poveri e moriamo prima, oppure riusciamo a chiuderlo,
+farci dei soldi e prosperare?''.
+
+\paragraph{Rispettare la pipeline.} Se la pipeline non viene rispettata, in
+genere tocca \textbf{tornare indietro}, ``e tornare indietro sulla produzione è
+veramente una roba brutta''. Fare un videogioco è complesso: più ci si avvicina
+alla consegna, più tutto dovrebbe diventare leggero, ``la gente non ha le
+crisi''; tornare indietro è molto negativo. Si fa spessissimo, ma bisogna cercare
+di non farlo. Per questo la pre-produzione è così importante, anche per il
+singolo artista e per qualsiasi tecnico: la \textbf{fase preparatoria} è chiave.
+``Non dovete mai partire sull'onda dell'entusiasmo'': quando arriva un lavoro, la
+prima cosa è \textbf{documentarsi}. Nell'arte servono i concept o una bella
+ricerca; ma vale anche per un designer che volesse fare un gioco ambientato in
+un ospedale senza sapere che cosa succede in un ospedale: ne uscirebbe un gioco
+``palloso, terribile'', che non rispecchia la realtà.
+
+\paragraph{Il pitch e la tech demo.} Si può anche prototipare senza concept
+(il relatore si perde nel discorso, ``si vede che sono uno che lavora'', e poi
+lo ritrova). Quando si presenta un \textbf{pitch}, spesso lo presentano solo i
+game designer, parlando con tutti, ma in sostanza da soli: si va a cercare i
+soldi proprio per prendere grafici, programmatori, animatori, quindi non si hanno
+concept né disegni. ``Adesso si fanno con l'IA; prima si scaricava un po' di roba
+online'' e si mettevano nelle presentazioni le immagini più vicine all'idea.
+Insieme al pitch spesso c'è una \textbf{tech demo}, valida solo per il pitch:
+magari verrà buttata quando si farà il gioco, oppure diventerà la chiave per
+svilupparlo. I concept vengono dopo il pitch. L'ideazione viene sempre prima e la
+può fare chiunque, ma poi serve impostare una pipeline corretta, ``altrimenti
+non si consegna''. Tutti i giochi che il relatore ha visto fallire avevano gestito
+male la pipeline di produzione: si erano arenati, avevano grandi colli di
+bottiglia, mancava documentazione. ``Con un'ottima documentazione fai un'ottima
+fase preparatoria, e in genere non puoi fallire'': magari si arriva un po' più
+lunghi, con qualche imprevisto, ma raramente si fallisce. E vale per tutto ciò
+che riguarda un prodotto, anche il marketing.
+
+\subsection{Un muro che si distrugge: che cosa fa il programmatore?}
+
+Un programmatore chiede: per creare un muro che si distrugge in più parti, deve
+fare qualcosa con i modelli, o si applicano proprietà che simulano la fisica in
+automatico? Ha visto video su Blender in cui bastava applicare qualcosa al
+modello. ``Se c'è una roba che dici: la metto e succede qualcosa, c'è un
+programmatore che l'ha scriptata: il codice c'è, semplicemente tu non l'hai
+visto''. Le vie sono due:
+\begin{itemize}
+  \item il muro è \textbf{preparato per rompersi}, cioè già fratturato: con un
+        algoritmo di \emph{fracturing} che lo rompe in forme realistiche, o
+        rotto a mano; poi si implementa la fisica per farlo crollare;
+  \item il muro si rompe \textbf{dinamicamente}: e allora ``tutto quello che
+        hai visto su Blender è copiato da \textbf{Houdini}'', dove non serve
+        codice ma bisogna essere un artista super tecnico, un \textbf{tech
+        artist}, ``una persona che non pettina le bambole, ma a cui piace vedere
+        le cose che funzionano''. Houdini è un'altra categoria, un altro lavoro
+        rispetto alla modellazione.
+\end{itemize}
+Il relatore sconsiglia di far rompere le cose nei primi progetti: gli algoritmi
+di fracturing sono ottimo materiale da portfolio per programmatori, proprio
+perché sono complessi. ``Se il muro non si deve rompere, non lo rompere''; se
+proprio si deve, servono tutti, il grafico e il programmatore. ``L'altro giorno
+mi dicevano: sarebbe bellissimo un gioco in cui con la spada ti taglio il
+braccio, e nel punto in cui lo taglio dinamicamente si stacca. Fermo, fermo: non
+è fattibile''. Girerebbe ``su computer da NASA, quelli con cui farmavano i
+bitcoin e ora addestrano le intelligenze artificiali'', non ``sul computer del
+disperato come noi''\footnote{L'affermazione è troppo netta: il taglio dinamico
+in un punto qualsiasi è stato realizzato in tempo reale, per esempio nella
+``Blade Mode'' di \emph{Metal Gear Rising: Revengeance} (2013), anche se con
+molte semplificazioni; ma è certamente un sistema complesso, fuori portata per
+un progetto studentesco.}.
+
+\subsection{Che cosa posso fare prima che inizi il corso?}
+
+Marco chiede se, mancando una decina di giorni all'inizio, ci sia qualcosa da
+fare per prepararsi, o se sia meglio aspettare per non prendere brutte
+abitudini. Per prendere brutte abitudini bisogna fare una cosa molte volte, e
+dieci giorni non bastano; ma sono arrivate in AIV persone autodidatte che
+facevano tutto nel modo sbagliato, quindi il consiglio è \textbf{aspettare}.
+``Divertiti, fai tutto quello che ti va, perché poi tocca fare i seri'': il
+corso di 3D art è molto intenso, perché ci sono tanti software da insegnare.
+``Rilassati, respira, fai altre cose e preparati a imparare insieme a noi''.
+
+\subsection{I saluti}
+
+Il relatore deve chiudere l'aula (``serve per una riunione''). Le domande da
+artista ad artista si possono fargli in privato, anche prima dell'inizio delle
+lezioni; tutti gli altri, per domande strette sul 3D, possono scrivergli su
+Discord, ``sto su Discord appositamente''. Dall'anno prossimo, con i progetti di
+Game Dev, ci si vedrà spesso. ``Per la terza volta vi ringrazio, vi saluto, vi
+auguro buona giornata, e ci vediamo presto''.

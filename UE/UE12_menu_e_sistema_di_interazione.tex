@@ -1,0 +1,1835 @@
+% =====================================================================
+%  Fondamenti di Unreal Engine, lezione 12 — Il menu principale e il
+%  sistema di interazione.
+%  Dodicesima e ultima lezione del corso breve di introduzione a Unreal
+%  Engine (focus sui Blueprint) con questo docente, online, nel
+%  pomeriggio (pausa alle 17:26, ripresa "alle diciassette cinquantacinque,
+%  diciotto"). Docente titolare (come nelle lezioni precedenti, nella
+%  trascrizione non viene mai chiamato per nome). Da qui in poi il corso
+%  prosegue con Davide e il level design.
+%  Contenuti, nell'ordine della lezione: le domande d'apertura (recuperare
+%  le lezioni o seguire in diretta; l'esame, i Big One dei tre anni e il
+%  pezzo da portfolio; il designer che prototipa con i Blueprint; "less is
+%  more" e il testo iniziale di Star Wars); gli annunci (ultima lezione,
+%  le lezioni con Davide, il server Discord e i suoi canali, le
+%  registrazioni fino a settembre); la scelta dell'ordine (prima il menu,
+%  poi le interazioni); la dimostrazione del sistema di interazione; il
+%  menu: il Widget Blueprint WB_Menu, la mappa vuota M_Menu (Empty Level,
+%  il piano con il materiale a griglia), il Canvas Panel, i due Button
+%  (Size 300 x 80, ancora al centro, Alignment), i nomi Button_StartGame e
+%  Button_QuitGame, i Text dentro i bottoni, lo Style (Normal, Hovered,
+%  Pressed), il codice esadecimale sRGB del colore, l'Image dietro ai
+%  bottoni e l'ordine della Hierarchy, l'alfa a 0,2; il Level Blueprint
+%  (Begin Play, Create Widget, Add to Viewport), il GameMode Override con
+%  la Game Mode base e la Default Pawn, il Camera Actor, la Directional
+%  Light, Set View Target with Blend (prima cercato sul Camera Manager,
+%  poi trovato sul Player Controller); il Graph del menu (Event Construct,
+%  Set Show Mouse Cursor, Set Input Mode UI Only, On Clicked, Quit Game,
+%  Set Input Mode Game Only, Open Level by Name con ThirdPersonMap); i
+%  colori di hover e pressione; il diorama del menu (il bot in Idle, la
+%  porta modulare, la luce); i problemi degli studenti (il personaggio che
+%  compare ancora, World Settings, il Player Start fuori campo, il target
+%  dell'Add to Viewport, il cursore, la spunta del Set Show Mouse Cursor);
+%  le interfacce (l'intermediario, il volo di linea) e i Blueprint
+%  Component (Actor Component e Scene Component); il componente
+%  BPC_RayInteract: la funzione LookForInteractions, Sphere Trace by
+%  Channel con Radius 5, Get World Location, il Select con il trucco della
+%  variabile Scene Component, Get Owner e Get Component by Class (Camera
+%  Component), Is Valid, Get Forward Vector, DistanceTrace a 300, il
+%  componente aggiunto al bot, Draw Debug Type, l'Event Tick; il Trace
+%  Channel InteractionTrace (Ignore); Break Hit Result, Hit Actor, Does
+%  Object Implement Interface; la Blueprint Interface BPI_InteractionRay
+%  con le tre funzioni; la pausa (la stamina di Tommaso, il Call che
+%  mancava; il rumore della trascrizione); dopo la pausa (la BPI aperta
+%  "male"); la variabile Interactable, il diverso (!=), il Validated Get,
+%  Interaction End e Interaction Start come messaggi, lo svuotamento
+%  della variabile; il problema di tipo di uno studente; l'Event Tick del
+%  componente; l'actor BP_InteractableTest (Cube e Widget), Class Settings
+%  e Implemented Interfaces, gli eventi dell'interfaccia con tre Print
+%  String colorati, la collisione Block su InteractionTrace; IA_Interact
+%  (copia di IA_Run, Pressed e Released) e il tasto E nell'IMC; nel bot:
+%  Do Once, Interaction (Message), Set Actor Rotation con il solo Yaw da
+%  Find Look at Rotation, Play Montage, la variabile Interacting, Disable
+%  Input, Stop Movement Immediately, Enable Input, il Reset del Do Once; il
+%  Montage dall'animazione "Interact press button"; il widget
+%  WB_InteractUI (la cartella UI degli asset, i due Border, Panel e Panel
+%  Border, la E centrata); il Widget Component in Screen Space, Draw Size
+%  100 x 100, Set Hidden in Game; il problema dei segni di spunta; la luce
+%  accesa e spenta con Flip Flop e BP_ActivableLight; la chiusura del
+%  corso.
+%  Fonte: trascrizione automatica della dodicesima lezione (UE12).
+%  Integrazioni dal libro "Blueprints Visual Scripting for Unreal Engine 5"
+%  (Romero, Sewell; capitoli 4, 8, 11, 13, 15, 16 e 18) e nozioni tecniche
+%  generali su Unreal Engine 5, sempre segnalate come approfondimenti. Il
+%  libro non tratta la Default Pawn, il Widget Component in Screen Space,
+%  il trucco del Select, i Trace Channel per le interazioni né Stop
+%  Movement Immediately: su questi argomenti gli approfondimenti si basano
+%  sul funzionamento generale dell'engine.
+%
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{amsmath},
+%  \usepackage{amssymb}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Fondamenti di Unreal Engine",
+%  dodicesimo capitolo (numerazione propria 1.12). Nel file principale
+%  del libro, subito dopo la riga dell'undicesima lezione:
+%
+%    \input{UE/UE12_menu_e_sistema_di_interazione}
+%
+%  Tutte le etichette di questo capitolo hanno il prefisso "ue12:"
+%  (ue12:cap:..., ue12:sec:..., ue12:fig:..., ue12:tab:...), e tutti gli
+%  stili TikZ hanno il prefisso "ue12" (ue12node, ue12exec, ue12data,
+%  ...) per non collidere con chiavi native di TikZ né con quelli delle
+%  lezioni precedenti. Il capitolo è autonomo: non contiene \ref verso
+%  altri capitoli (i rimandi alle lezioni precedenti sono a parole).
+%  Le figure sono ricostruzioni schematiche di quanto mostrato e detto a
+%  lezione, non copie delle schermate del docente. Dove la trascrizione
+%  è troppo rovinata per ricostruire un dettaglio, il capitolo lo dice
+%  invece di inventarlo.
+% =====================================================================
+
+\chapter[Menu e sistema di interazione]{Il menu principale e il sistema di
+interazione}
+\label{ue12:cap:interazione}
+
+Questa è la \textbf{dodicesima lezione} del corso breve di \textbf{introduzione a Unreal
+Engine}, ed è l'\textbf{ultima} con questo docente: ``oggi è l'ultima lezione, almeno
+mia''. Nella lezione precedente il personaggio, il \textbf{bot}, ha ricevuto la vita, il
+danno della torretta, la stamina e le due barre dell'HUD; restavano in sospeso due
+argomenti annunciati, il \textbf{menu} e le \textbf{interazioni}. Oggi si fanno entrambi.
+``Sono argomenti che abbiamo già fatto in precedenza e adesso li uniamo'': Widget
+Blueprint, Level Blueprint, trace, collisioni personalizzate, Montage, timer e attivabili
+tornano tutti, messi insieme.
+
+Il primo argomento, il più corto, è un \textbf{menu principale}: una mappa a parte, con un
+piccolo \emph{diorama} 3D sullo sfondo, una camera fissa, due bottoni (\emph{gioca} ed
+\emph{esci}) e il passaggio alla mappa di gioco. Il secondo, ``piuttosto lungo'', è un
+\textbf{sistema di interazione} del tipo ``premi E per interagire'', costruito con due
+strumenti nuovi: un \textbf{Blueprint Component}, che si aggiunge a qualunque actor e
+``traccia'' dalla camera gli oggetti interagibili, e una \textbf{Blueprint Interface}, il
+``porto'' attraverso cui il personaggio dice a un oggetto \emph{sto iniziando a guardarti},
+\emph{non ti guardo più}, \emph{interagisco con te}. L'oggetto di prova mostra un piccolo
+widget con la lettera E quando è inquadrato; premendo E il personaggio si gira verso di lui
+e suona un'animazione; alla fine, lo stesso oggetto accende e spegne una luce.
+
+La lezione è \textbf{online}, come le precedenti, e si apre con una conversazione più
+generale: come recuperare le lezioni, che cosa aspetta gli studenti negli anni successivi,
+e un consiglio di design, ``\emph{less is more}''. Durante la pausa il docente risolve il
+problema della barra della stamina rimasto aperto la volta precedente; si chiude con i
+ringraziamenti e con la raccomandazione che riassume il corso: ``ricordatevi di validare
+sempre molte variabili''.
+
+Tre avvertenze di lettura, le stesse delle lezioni precedenti. La prima: la trascrizione
+è automatica e storpia moltissimi nomi. Unreal è ``Real'' e ``Arrial''; il
+\textbf{diorama} è ``diuramino''; il Widget Blueprint \textbf{WB\_Menu} è ``VB menu'' e
+``VBIN menu'', e \textbf{WB\_InteractUI} è ``VB Interact UI'' e ``Interacco uai''; il
+\textbf{Begin Play} è ``big in play'' e ``back in play''; la \textbf{ThirdPersonMap} è
+``Terperson map'' e ``there person''; il \textbf{Scene Component} è ``sin component'' e
+``sim component''; il componente \textbf{BPC\_RayInteract} è ``BPC Reinteract'', ``Ray
+interact one'' e ``IPC reinteract''; la Blueprint Interface \textbf{BPI\_InteractionRay} è
+``VPI interaction'', ``VPA Interaction Array'' e ``bibliotecazione:ray''; l'\textbf{Hit
+Actor} è ``it actor'' e ``I Tactor''; il \textbf{Validated Get} è ``variegate'' e ``vari da
+get''; \textbf{Does Object Implement Interface} è ``Hacker does object implement
+interface''; il \textbf{Draw Debug Type} è ``draw the bug type''; il bot è ``Boto'' e
+``Boto2'', e il suo Blueprint ``BiPi Bot''; \textbf{Find Look at Rotation} è
+``findLocatrotation''; l'\textbf{Anim Montage} è ``un montaggio un po' brasilero''; i
+\emph{Big One} del corso di laurea sono ``biggest one''. ``Mandragata'', invece, non è un
+errore: è il romanesco \emph{mandrakata}, ``trucchetto'', e il docente lo usa apposta.
+Dove la ricostruzione è sicura il capitolo usa la forma corretta; dove non lo è riporta la
+forma della trascrizione e lo dice. La seconda: durante la pausa il riconoscimento vocale
+produce un lungo blocco di testo senza senso e ripetuto decine di volte (``grazie a tutti
+per l'attenzione che ci ha spiegato'', ``qual è la risposta che ci può essere?''), seguito
+da un frammento che sembra l'audio di un video in sottofondo (una ``blue map'' che mostra
+``le secret room'' senza sprecare bombe, e ``un'altra monetina''): non appartengono alla
+lezione e sono stati ignorati. La terza: buona parte della lezione è fatta di indicazioni
+a voce mentre si lavora (``tira fuori'', ``attacca qua'', ``vai giù''), spesso rivolte
+allo schermo di uno studente; il capitolo ricostruisce i grafi da ciò che il docente dice
+mentre li costruisce, distingue i tentativi dalle soluzioni, completa i nomi esatti dei
+nodi e dei pin di Unreal Engine 5, e dichiara i punti in cui la trascrizione lascia un
+buco.
+
+\paragraph{Come leggere questo capitolo.} Il capitolo segue l'ordine della lezione. Le
+figure ricostruiscono la disposizione del menu, i due grafi che lo fanno funzionare (Level
+Blueprint e Widget Blueprint), il ruolo di componente e interfaccia, la funzione che
+cerca gli interagibili, il ciclo di vita della variabile Interactable e il grafo
+dell'interazione nel personaggio. Le tabelle riassumono gli asset e le variabili della
+giornata, gli errori incontrati durante la lezione e i nodi. Qua e là, dei paragrafi di
+\textbf{approfondimento} collegano la lezione al libro di Marcos Romero e Brenden Sewell,
+\emph{Blueprints Visual Scripting for Unreal Engine 5}, il testo di riferimento per questa
+parte del libro, e a qualche nozione tecnica generale su Unreal Engine 5; sono segnalati
+come tali e non fanno parte della lezione.
+
+Il percorso del capitolo:
+\begin{enumerate}
+  \item le \textbf{domande d'apertura}: recuperare le lezioni, l'esame e i Big One, il
+        lavoro del designer, \emph{less is more} (sezione~\ref{ue12:sec:inizio});
+  \item gli \textbf{annunci}, la scelta dell'ordine e la \textbf{dimostrazione} del
+        sistema di interazione (sezione~\ref{ue12:sec:annunci});
+  \item il \textbf{menu}: la mappa, il widget, i bottoni e i loro colori
+        (sezione~\ref{ue12:sec:menu});
+  \item il \textbf{Level Blueprint} del menu: il widget sullo schermo, la Game Mode e la
+        camera (sezione~\ref{ue12:sec:levelbp});
+  \item il \textbf{Graph del menu}: cursore, input e bottoni; il diorama e i problemi
+        degli studenti (sezioni \ref{ue12:sec:menugraph} e~\ref{ue12:sec:diorama});
+  \item \textbf{interfacce} e \textbf{Blueprint Component} (sezione~\ref{ue12:sec:concetti});
+  \item il componente \textbf{BPC\_RayInteract} e la sua Sphere Trace
+        (sezione~\ref{ue12:sec:componente});
+  \item il \textbf{Trace Channel} e la \textbf{Blueprint Interface}
+        (sezione~\ref{ue12:sec:bpi});
+  \item la \textbf{pausa}: la stamina di Tommaso (sezione~\ref{ue12:sec:pausa});
+  \item la logica della variabile \textbf{Interactable} (sezione~\ref{ue12:sec:logica});
+  \item l'oggetto di prova \textbf{BP\_InteractableTest} (sezione~\ref{ue12:sec:test});
+  \item l'\textbf{input} e l'interazione nel personaggio (sezioni \ref{ue12:sec:input}
+        e~\ref{ue12:sec:player});
+  \item il widget \textbf{``premi E''} (sezione~\ref{ue12:sec:widget});
+  \item la \textbf{luce} interattiva e la \textbf{chiusura} del corso (sezioni
+        \ref{ue12:sec:luce} e~\ref{ue12:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{Prima della lezione: recuperare, l'esame, il designer}
+\label{ue12:sec:inizio}
+
+\paragraph{Recuperare o seguire?} In apertura, prima che arrivino gli altri, uno
+studente rimasto indietro (``le sto andando pian piano'') chiede se gli convenga
+recuperare le lezioni vecchie o seguire questa. (Il nome, nella trascrizione, è incerto:
+il docente lo chiama una volta ``Dave'', ma poco dopo ricorda questa conversazione come
+quella fatta ``con Lorenzo''.) La risposta: seguire la lezione in diretta ha un vantaggio,
+``se c'è un qualche particolare dell'argomento, puoi farmi direttamente una domanda''; poi,
+siccome oggi si uniscono argomenti già visti, ``magari ti rifai anche quelle precedenti in
+modo tale da stare un po' più al passo''. L'unico prerequisito per l'esercizio di oggi è
+``avere il personaggio che si muove'', che ``può guardarsi in giro''; ``puoi anche usare
+il personaggio standard, volendo''. Le domande si possono fare anche dopo, sul
+\textbf{Discord}: ``mandarmi le domande anche quando non ci vediamo più, perché oggi è
+l'ultima lezione''. Lo studente sceglie di seguire e di riguardare la registrazione.
+
+\paragraph{L'esame e i Big One.} Seconda domanda: ci sarà un esame, con un progetto da
+consegnare? ``Nel corso no'': questo corso ``è strutturato che sia un'introduzione per
+voi''. Il docente chiede che corso farà lo studente (game designer: ``tanto farete sia game
+sia level designer'') e descrive il percorso, avvertendo che è quello che ha fatto lui
+(``almeno io feci così, adesso non so come sono cambiate le cose''):
+\begin{itemize}
+  \item al \textbf{primo anno} il progetto principale è un \textbf{gioco da tavolo}:
+        ``farete analog game design'';
+  \item al \textbf{secondo anno} il \textbf{Big One} è un progetto su Unreal, ``perché
+        Unreal è molto più improntato per i designer'';
+  \item al \textbf{terzo anno} il progetto più grande (nella trascrizione ``biggest one''),
+        che può anche essere la continuazione del secondo, ``se il vostro progetto nel
+        secondo anno è andato bene'', da portare fino al rilascio su \textbf{Steam},
+        ``con l'Accademia assieme''.
+\end{itemize}
+In questo senso l'esame c'è: ``sarà farvi un \textbf{pezzo da portfolio}'', ``un gioco che
+potete mettere sul vostro portfolio e promuovervi''. ``Quindi, più sapete, meglio è.''
+
+\paragraph{Che cosa fa il designer con Unreal.} ``Io sono designer'': per un designer
+Unreal ``servirà principalmente per prototipare le meccaniche'', cioè ``concretizzare
+l'idea che tu hai studiato, che tu hai tirato fuori, concretizzarla in editor e vedere se
+effettivamente funziona''. Il suo strumento sono i \textbf{Blueprint}, ``quindi non andare
+troppo in depth'' nella programmazione: in ambito lavorativo il designer ha ``un
+programmatore che lo assiste''; ``poi, quando si sta da soli, si fa di tutto''.
+
+\paragraph{Less is more.} Un consiglio ``da esperienza'': \textbf{less is more}. ``Più è
+leggibile un qualcosa anche nella vostra testa a livello di design, più sarà leggibile per
+un giocatore.'' L'esempio è ``la regola delle parole a schermo'': il testo che scorre
+all'inizio di \emph{Star Wars}. Chi l'ha scritto lo rilegge in venti secondi, perché lo
+conosce già; lo spettatore, che deve ``cominciare a creare le connessioni mentali'', ci
+mette ``non 20 secondi, ma 50''. Nel gioco vale lo stesso: chi lo ha progettato e testato
+pensa ``vabbè, tanto questo lo so ormai'', ma il giocatore ``ci metterà il triplo del
+tempo''. ``Più roba fate, più tempo il giocatore dovrà metterci per imparare tutto
+quanto.'' ``Credo che \emph{less is more} ve lo faranno fare'', aggiunge, ``ve lo
+diranno''; e per qualunque domanda di design, ``possiamo tranquillamente pure parlare''.
+
+\paragraph{Approfondimento: la maledizione della conoscenza.} Il fenomeno descritto dal
+docente ha un nome in psicologia, \emph{curse of knowledge}: chi conosce un'informazione
+fatica a immaginare come la percepisce chi non la conosce. È il motivo per cui il
+\emph{playtest} con persone esterne al team è insostituibile, e per cui le regole di un
+gioco andrebbero introdotte una alla volta, ciascuna quando serve (il cosiddetto
+\emph{onboarding} progressivo). I numeri del docente (20 secondi contro 50, ``il
+triplo'') sono un'immagine, non una misura. Questa è una nozione generale di design, non
+della lezione.
+
+% ---------------------------------------------------------------------
+\section{Gli annunci, l'ordine della giornata e la dimostrazione}
+\label{ue12:sec:annunci}
+
+\paragraph{Che cosa si fa oggi.} Prima che arrivino tutti, il docente chiede agli
+studenti di scegliere: oggi ci sono ``sia il sistema di interazioni, che è piuttosto
+lungo'', sia il \textbf{menu}, ``che l'altra volta non abbiamo finito, praticamente non
+abbiamo neanche iniziato''. Prima il lungo o prima il corto? Gli studenti scelgono
+``corto e lungo, così facciamo la pausa prima'' (``andiamo a un caffè''). Uno studente
+ricorda un'altra cosa in sospeso: ``durante la pausa sistemare il problema della stamina,
+che se tengo premuto non si vede, ma solo quando mollo il tasto si vede'' (è il problema
+rimasto aperto alla fine della lezione precedente); ``ricordamelo appena andiamo in
+pausa''.
+
+\paragraph{Gli annunci.} Arrivati gli altri, il docente ripete: ``oggi praticamente è la
+mia ultima lezione''. Seguiranno ``circa quattro lezioni'' (``adesso non mi ricordo quante
+lezioni avete'') con \textbf{Davide}, dedicate alla parte di \textbf{level design}: ``i
+tool che vi serviranno per fare level design'' e alcuni approfondimenti, ``credo di
+materiali''. ``Ciò non vuol dire che io vi abbandoni'':
+\begin{itemize}
+  \item il \textbf{canale Discord} resta aperto, anche quando inizierà il corso vero e
+        proprio: ``fate domande e dovrebbe arrivare qualcuno in vostro aiuto'';
+  \item anche i lavori si possono postare per avere un feedback (il docente cita quello
+        di \textbf{Federico La Porta}, ``che è bravissimo'', a cui ha già risposto);
+  \item i due canali vanno tenuti separati: quello del corso (``Introduzione a Unreal'')
+        per i compiti, ``così almeno non mandate mischiati, perché sennò perdo il filo'',
+        e la chat generale ``per qualsiasi comunicazione generica'';
+  \item le registrazioni restano disponibili ``fino a settembre, se non sbaglio'', ``quindi
+        avete comunque abbastanza tempo per poterle recuperare''.
+\end{itemize}
+
+\paragraph{La dimostrazione.} ``Adesso vi faccio vedere solamente un'introduzione, come
+nei classici video tutorial.'' Il personaggio è quello della volta scorsa, ``che si muoveva
+con stamina e adesso perde vita con la torretta''. Dalla sua testa parte un \textbf{trace}
+sottile, ``tipo un cilindrone'': ``questo sarà il nostro sistema che identificherà un
+possibile \emph{interactable} tramite la telecamera''. A sinistra, sullo schermo, i
+messaggi: se la camera inquadra l'oggetto compare \emph{inizio interazione}, se si
+distoglie lo sguardo \emph{fine interazione}; premendo il tasto, il personaggio ``si gira in
+automatico'' verso l'oggetto e interagisce. ``Visto che comunque abbiamo creato questo
+sistema, è un buon stampo modulare'': in futuro, pulsanti e altri oggetti potranno avere
+``l'interazione un po' più precisa'', riusando ciò che si è visto con i pulsanti classici:
+``sempre premi pulsantino e fai cosetta, e animazione''.
+
+% ---------------------------------------------------------------------
+\section{Il menu: la mappa, il widget e i bottoni}
+\label{ue12:sec:menu}
+
+\paragraph{Il Widget Blueprint.} Nella cartella \textbf{UI} del progetto, tasto destro,
+\emph{User Interface}, \textbf{Widget Blueprint}, ``come abbiamo creato per l'HUD''. Alla
+richiesta della classe base, ``non ci serve una particolare, ce ne serve una generica'':
+\textbf{User Widget}. Il nome: \textbf{WB\_Menu}.
+
+\paragraph{Una mappa per il menu.} ``Una cosa importante che io almeno consiglio'': creare
+una \textbf{nuova mappa} dedicata al menu, ``quindi differenziare il gioco dal menu''. ``Si
+possono fare anche volendo insieme, ma a livello di gestione'' è più comodo separarli, ``ed
+è molto più rapido''. Da \textbf{File}, \textbf{New Level}, si sceglie \textbf{Empty
+Level}: ``se vi diventa tutto nero, è normale, ragazzi: è un empty level''. Un livello
+\emph{Basic}, invece, contiene già ``la directional light, la skybox, tante cose che sono
+già prefatte''; qui si parte da zero. Poi:
+\begin{itemize}
+  \item il menu si può fare ``sia in 2D, con immagini 2D'', sia con elementi 3D, ``una
+        specie di diorama''; per cominciare, un \textbf{piano} abbastanza grande (dalle
+        forme base: il docente prende prima un cubo, poi si corregge), con un materiale a
+        griglia, ``il material base di Unreal'';
+  \item si salva la mappa con \textbf{Ctrl+S} nella cartella delle mappe, con il nome
+        \textbf{M\_Menu}.
+\end{itemize}
+(Un dettaglio marginale: il docente nota che qualcosa nel livello risulta \emph{Hidden in
+Game}, poi si accorge che non lo è; la trascrizione non dice di che cosa si tratti.)
+
+\paragraph{Il Canvas Panel.} Aperto WB\_Menu, ``la prima cosa, che in questo caso servirà
+per adattarlo allo schermo'': il \textbf{Canvas Panel}, ``la classica canvas''. La
+\textbf{Hierarchy} si vede ``da qua sotto''. A uno studente che non trova la
+\textbf{Palette} il docente mostra il pannello a sinistra dell'editor.
+
+\paragraph{Due bottoni.} ``Adesso andremo a fare due pulsanti molto semplici: uno di
+\emph{exit} e uno di \emph{open the game}.'' Nella Palette, la sezione
+\textbf{Common} (accanto alle altre: Audio, Input, Panel, Primitive e così via, che la
+trascrizione elenca a fatica) contiene il \textbf{Button}; se ne trascinano due al centro
+dello schermo. La disposizione passa per qualche tentativo ad alta voce (posizioni e
+allineamenti come $-2{,}7$ e $-5$, presto abbandonati: ``ok, mi sono perso''); la versione
+pulita, quella che il docente detta alla fine, è questa:
+\begin{enumerate}
+  \item \textbf{Size}: X \textbf{300}, Y \textbf{80} (``60? No, troppo piccolo'');
+  \item \textbf{Anchors} al \textbf{centro}, l'icona centrale del menu delle ancore, ``in
+        modo tale che questo bottone sia sempre ancorato al centro''; poi si
+        \textbf{azzerano} i valori della \textbf{Position};
+  \item \textbf{Alignment} \textbf{0,5} su X e \textbf{1,5} su Y, ``perché così è più
+        corretto'': il bottone resta centrato orizzontalmente e si alza di una volta e
+        mezza la sua altezza rispetto al centro dello schermo;
+  \item per il secondo bottone, ``copiate e incollate letteralmente'' il primo, azzerate
+        la posizione e cambiate solo l'allineamento verticale: dopo un ``$-1{,}5$? No,
+        troppo'' e un ``$-0{,}5$'', il docente si ferma a \textbf{$-0{,}3$} (``va bene''),
+        cioè il secondo bottone sta un po' sotto il centro.
+\end{enumerate}
+(I valori del secondo bottone, nella trascrizione, sono incerti: il senso è che i due
+bottoni stanno uno sopra e uno sotto il centro, con un po' di spazio fra loro.) A uno
+studente il copia e incolla non funziona: ``guarda nella Hierarchy: se c'hai due bottoni,
+vuol dire che ce ne hai due'', magari sovrapposti; altrimenti, ``metti semplicemente un
+altro bottone tramite il Common''.
+
+\paragraph{I nomi.} ``Una cosa che è importante da fare'': nella Hierarchy si rinominano i
+due bottoni con \textbf{F2}, \textbf{Button\_StartGame} e \textbf{Button\_QuitGame} (la
+trascrizione dice ``Button With Game''). ``Così abbiamo semplicemente perfettamente
+nomenclati.''
+
+\paragraph{Il testo dentro il bottone.} ``Una cosa carina che già esiste'': un
+\textbf{Text} (dalla sezione Common) trascinato \emph{sopra} un bottone ``si va a incastrare
+per benino'', diventa suo figlio e si centra da solo. Nei \textbf{Details} del Text, sezione
+\textbf{Content}, il campo \textbf{Text}: ``cancellate e scrivete \emph{Play Game}, o
+\emph{Play}, come volete''; nell'altro bottone, \emph{Quit}. Il testo bianco ``non si vede
+tantissimo'', ma i colori si cambiano subito dopo.
+
+\paragraph{Lo Style del bottone.} Selezionando il bottone (``mi raccomando''), nei Details
+la sezione \textbf{Style} ha tre stati, ciascuno con il suo colore:
+\begin{itemize}
+  \item \textbf{Normal}: il bottone a riposo;
+  \item \textbf{Hovered}: ``vuol dire che ci passi sopra il cursore'';
+  \item \textbf{Pressed}: ``se premuto''.
+\end{itemize}
+(La trascrizione nomina anche i \emph{foreground} e lo stato \emph{Disabled}: nelle
+versioni recenti dell'engine lo stile del bottone ha anche i colori del primo piano per
+ciascuno stato.) Cliccando sulla barra del colore si apre la ruota dei colori; il docente
+mette il Normal \textbf{blu}, ``e avremo questo cambiamento in diretta''.
+
+\paragraph{Copiare un colore esatto.} ``Se vogliamo prendere perfettamente il colore che ci
+interessa per spostarlo all'altro bottone'': nella finestra del colore, in basso, ci sono i
+campi \textbf{Hex sRGB} e \textbf{Hex Linear}. ``Potete prendere ambi i due'': si copia il
+codice con Ctrl+C, si apre lo stesso stato nell'altro bottone e lo si incolla \emph{nello
+stesso campo} (``se avete preso sRGB, sempre su sRGB''). È lo stesso principio dei siti
+web: ``in HTML, per mettere un colore, i colori sono tutti identificati tramite un codice
+colore''.
+
+\paragraph{Un'immagine dietro i bottoni.} Si aggiunge un'\textbf{Image}, allargata dietro i
+due bottoni; ma ``come potete vedere, mi copre tutto quanto''. ``Qui ci viene in aiuto la
+Hierarchy'': come i livelli di Photoshop, gli elementi del Canvas sono disegnati
+nell'ordine dell'elenco, e ``quello che è più sotto'' nell'elenco, stranamente, è quello
+``a livello più alto'', disegnato sopra gli altri. L'immagine, aggiunta per ultima, è in
+fondo all'elenco e quindi davanti ai bottoni. La si trascina nella Hierarchy fino a far
+comparire una \textbf{linea blu} fra il Canvas Panel e il primo bottone, e la si lascia lì:
+ora è disegnata per prima, cioè dietro. Poi la si rende trasparente: nel suo
+\textbf{Color and Opacity} (che il docente cerca nel Brush), l'\textbf{alfa} a 0,5, ``o
+forse un po' più basso'', \textbf{0,2}. ``Questa è la alfa di un colore: l'intensità,
+l'opacità.'' Ne viene ``una specie di schermatina piccoletta'', regolata a mano attorno ai
+bottoni (figura~\ref{ue12:fig:layout}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize, x=1cm, y=1cm]
+  % schermo
+  \draw[very thick, fill=gray!5] (0,0) rectangle (8.0,5.0);
+  \node[anchor=north west, font=\scriptsize] at (0.1,4.95) {Canvas Panel (schermo)};
+  % immagine trasparente
+  \draw[thick, fill=blue!8, opacity=0.9] (2.4,1.15) rectangle (5.6,4.15);
+  \node[font=\scriptsize, anchor=north] at (4.0,4.12) {Image, alfa 0,2};
+  % bottoni
+  \draw[thick, fill=blue!35, rounded corners=2pt] (2.9,2.70) rectangle (5.1,3.30);
+  \node at (4.0,3.0) {\textbf{Play Game}};
+  \draw[thick, fill=blue!35, rounded corners=2pt] (2.9,1.62) rectangle (5.1,2.22);
+  \node at (4.0,1.92) {\textbf{Quit}};
+  % ancora al centro
+  \draw[red!70!black, thick] (4.0,2.5) circle (0.09);
+  \draw[red!70!black, dashed] (0,2.5) -- (8.0,2.5);
+  \draw[red!70!black, dashed] (4.0,0) -- (4.0,5.0);
+  \node[red!70!black, font=\scriptsize, anchor=west] at (5.7,2.62) {ancora al centro,};
+  \node[red!70!black, font=\scriptsize, anchor=west] at (5.7,2.30) {Position 0, 0};
+  \node[font=\scriptsize, anchor=west, align=left] at (5.7,3.35) {Alignment\\0,5 / 1,5};
+  \node[font=\scriptsize, anchor=west, align=left] at (5.7,1.65) {Alignment\\0,5 / $-0{,}3$\\(circa)};
+  % hierarchy
+  \begin{scope}[xshift=9.0cm]
+    \draw[thick, fill=gray!8] (0,0.6) rectangle (4.2,4.4);
+    \node[anchor=north west, font=\scriptsize\bfseries] at (0.1,4.35) {Hierarchy};
+    \node[anchor=west] at (0.2,3.6) {[WB\_Menu]};
+    \node[anchor=west] at (0.45,3.1) {Canvas Panel};
+    \node[anchor=west, fill=blue!10] at (0.7,2.6) {Image};
+    \node[anchor=west] at (0.7,2.1) {Button\_StartGame};
+    \node[anchor=west] at (0.95,1.65) {Text ``Play Game''};
+    \node[anchor=west] at (0.7,1.2) {Button\_QuitGame};
+    \node[anchor=west] at (0.95,0.8) {Text ``Quit''};
+    \draw[-{Stealth[length=2mm]}, thick] (4.45,3.0) -- node[right, font=\scriptsize,
+      align=left]{disegnati\\in ordine:\\l'ultimo\\sta sopra} (4.45,0.9);
+  \end{scope}
+\end{tikzpicture}
+\caption{Il menu nel Designer. I due bottoni sono ancorati al centro dello schermo con la
+posizione azzerata; è l'Alignment (il pivot del bottone) a spostarli sopra e sotto il
+centro. L'immagine trasparente è stata trascinata in cima alla Hierarchy, così viene
+disegnata per prima, dietro ai bottoni. Ricostruzione dalla lezione: i valori del secondo
+bottone sono approssimativi.}
+\label{ue12:fig:layout}
+\end{figure}
+
+\paragraph{Approfondimento: Alignment, ancore e Size To Content.} Con l'ancora al centro e
+la posizione a zero, l'\textbf{Alignment} decide quale punto del bottone coincide con il
+centro dello schermo: 0 è il bordo sinistro (o superiore), 1 il bordo destro (o inferiore),
+0,5 il centro. Valori fuori dall'intervallo da 0 a 1 sono leciti: con Y = 1,5 il punto
+d'aggancio sta mezzo bottone \emph{sotto} il bordo inferiore, quindi il bottone sale; con Y
+negativo, scende. È il trucco usato a lezione per impilare due bottoni senza toccare la
+posizione. La via più ordinata, per menu con molti bottoni, è un \textbf{Vertical Box}
+(sezione Panel della Palette) ancorato al centro, con i bottoni dentro: lo spazio fra gli
+elementi si regola con il \emph{Padding} di ciascuno e non servono calcoli. Nel libro di
+Romero e Sewell (capitolo 8, \emph{WinMenu}) i bottoni sono ancorati al centro e spostati
+con la \emph{Position} (per esempio X $-180$, Y 150, Size 360 $\times$ 100), con l'alignment
+di default: è la terza via, equivalente. Funzionamento generale dell'UMG, salvo il
+riferimento al libro.
+
+% ---------------------------------------------------------------------
+\section{Il Level Blueprint del menu: il widget, la Game Mode e la camera}
+\label{ue12:sec:levelbp}
+
+\paragraph{Perché il Level Blueprint.} ``Adesso che ce famo con questa roba?'' Il widget
+va mostrato appena si apre la mappa del menu, e solo lì. Per questo si usa il
+\textbf{Level Blueprint}, ``che abbiamo usato nella prima lezione'': ogni livello ha il
+suo, ed è il posto giusto per la logica che appartiene a \emph{quella} mappa, ``perché
+vogliamo che questa mappa sia dedicata apposta al nostro menu''. Si apre dalla toolbar
+del Level Editor, dal pulsante dei Blueprint (``c'è il cubetto col più''),
+\textbf{Open Level Blueprint}.
+
+\paragraph{Il widget sullo schermo.} ``Ci interessa semplicemente usare il Begin Play,
+perché vogliamo che si crei già da subito'':
+\begin{enumerate}
+  \item \textbf{Event BeginPlay} $\rightarrow$ \textbf{Create Widget}, con
+        \textbf{Class} = WB\_Menu, ``come abbiamo visto l'altra volta'';
+  \item \textbf{Add to Viewport}, con il \textbf{Return Value} del Create Widget nel
+        Target. Il docente pensa per un momento di promuovere il widget a variabile, come
+        per l'HUD, poi rinuncia: ``no, beh, non lo facciamo, tanto è il level blueprint''.
+\end{enumerate}
+
+\paragraph{Il personaggio di troppo.} In Play il menu compare, ma ``è molto strano:
+abbiamo il nostro player dietro''. La mappa usa ancora la Game Mode del progetto, che fa
+nascere il bot con i suoi controlli. Nel menu, invece, serve ``una pawn senza controlli,
+senza niente'', e Unreal ce l'ha già: nelle \textbf{World Settings} della mappa, alla voce
+\textbf{GameMode Override}, si sceglie la \textbf{Game Mode base} di Unreal (nella
+trascrizione ``la game mode basica che esiste, la default''), che usa come Pawn la
+\textbf{Default Pawn}. In Play, ``già è una cosa diversa: non c'è più il nostro character,
+sparito, perché in questa mappa ho overridato la modalità Game Mode classica'', quella
+``proprio base di Unreal, in cui non c'è character in terza persona''. ``Ma, come potete
+vedere, non ho controllo'' (o meglio, come si vedrà, la Default Pawn si muove ancora:
+il controllo vero si toglie nel Graph del widget, sezione~\ref{ue12:sec:menugraph}).
+
+\paragraph{La camera fissa.} ``Andiamo a vedere anche un'altra cosa'': nel livello si
+aggiunge un \textbf{Camera Actor} (``scrivete \emph{camera actor}, eccola qua''), che sarà
+la vista fissa del menu. Insieme, una \textbf{Directional Light} (``e abbiamo messo il
+sole, ragazzi''), regolabile a piacere, e un muretto, ``un po' più carino, così capiamo
+meglio''. Per dire al gioco di guardare da quella camera, di nuovo nel Level Blueprint:
+\begin{itemize}
+  \item la \textbf{referenza} alla camera: selezionato il Camera Actor nel livello, nel
+        Level Blueprint tasto destro, \textbf{Create a Reference to CameraActor};
+  \item il nodo che cambia la vista. Qui il docente sbaglia strada in diretta: prova da
+        \emph{Get Player Camera Manager}, non trova il nodo giusto e rimanda (``adesso non
+        mi ricordo benissimo, lo vediamo un attimo dopo''). Dopo aver finito il Graph del
+        menu, ritrova la soluzione: ``non è che bisogna prendere il camera manager, ma
+        bisogna andare sul controller''. Quindi \textbf{Get Player Controller}
+        $\rightarrow$ \textbf{Set View Target with Blend}, con la camera nel pin
+        \textbf{New View Target}; il \emph{Blend Time} resta al default, ``non ci
+        interessa''.
+\end{itemize}
+``Questo blocco ci permette di blendare una nuova camera'': ``gli diciamo: guarda, questa
+è la tua nuova camera, da d'ora in poi'' (figura~\ref{ue12:fig:menugraph}, in alto).
+
+\paragraph{Il Player Start fuori campo.} Ultimo ritocco, emerso aiutando gli studenti: la
+Default Pawn ``è una palla'', e se nasce davanti alla camera si vede, o si vede il suo
+riflesso. ``Prendete un \textbf{Player Start} e mettetelo fuori campo'', ``così almeno non vi
+si vede la pallina''.
+
+\paragraph{Approfondimento: Game Mode, Default Pawn e Player Start.} La \textbf{Game Mode}
+è la classe che stabilisce le regole di una mappa e, fra le altre cose, quale
+\emph{Pawn} far nascere per il giocatore (\emph{Default Pawn Class}) e con quale
+\emph{Player Controller}. Il progetto ne ha una predefinita (in \emph{Project Settings},
+\emph{Maps \& Modes}); il \textbf{GameMode Override} delle World Settings la sostituisce
+\emph{solo per quella mappa}, ed è il modo standard di avere un menu senza personaggio.
+La classe scelta a lezione, \emph{GameModeBase}, usa come Pawn la \textbf{DefaultPawn}:
+una sfera con un movimento ``da spettatore'' (WASD e mouse, senza gravità), pensata per
+fare prove. Il Pawn nasce in un \textbf{Player Start}; se la mappa non ne ha, nasce
+all'origine o nella posizione della camera dell'editor. Un'alternativa ancora più pulita
+per un menu è una Game Mode con la \emph{Default Pawn Class} impostata su \emph{None}: il
+Player Controller esiste (e quindi esistono il cursore e gli input dell'interfaccia), ma
+nessun Pawn nasce. Funzionamento generale dell'engine.
+
+\paragraph{Approfondimento: Set View Target with Blend nel libro.} Romero e Sewell
+descrivono il nodo nel capitolo 15 (\emph{Blueprints Tips}): ``è una funzione della classe
+Player Controller'', ``usata per passare la vista di gioco fra camere diverse''; ``il
+parametro di input New View Target è l'actor da usare come view target, di solito una
+camera''. Il loro esempio è proprio in un Level Blueprint: quando il giocatore entra nella
+stanza del tesoro, la vista passa alla camera della stanza. Questo spiega l'errore del
+docente: il \emph{Player Camera Manager} gestisce la vista, ma la funzione esposta ai
+Blueprint per cambiarla appartiene al \emph{Player Controller}. Il \textbf{Blend Time} a 0
+fa uno stacco netto; un valore positivo fa una transizione morbida dalla vista precedente,
+con una curva scelta in \emph{Blend Func}.
+
+% ---------------------------------------------------------------------
+\section{Il Graph del menu: cursore, input e bottoni}
+\label{ue12:sec:menugraph}
+
+\paragraph{Event Construct.} Si torna in WB\_Menu, scheda \textbf{Graph}: ``vediamo le
+funzionalità del nostro menu quando clicchiamo le cose''. Dei tre eventi già presenti
+``non ci serve il Pre Construct, non ci serve il Tick''. Serve l'\textbf{Event Construct}:
+``vuol dire quando questo widget è costruito'', ``è un po' il Begin Play'', ``viene
+differenziato dal nome, giusto per non confonderti''.
+
+\paragraph{Il cursore e l'input dell'interfaccia.} In Play, per ora, ``mi posso muovere''
+(la Default Pawn) e il mouse non si vede. Nell'Event Construct:
+\begin{enumerate}
+  \item \textbf{Get Player Controller} $\rightarrow$ \textbf{Set Show Mouse Cursor},
+        con la spunta attiva: il cursore resta visibile anche cliccando nella finestra di
+        gioco. ``Però, ovviamente, posso ancora muovermi'';
+  \item \textbf{Set Input Mode UI Only} (``enable input UI'', dice prima il docente, poi
+        trova il nodo), con lo stesso Player Controller: ``questo ci permette di
+        utilizzare tranquillamente il nostro widget''. Il pin \emph{Widget to Focus} resta
+        vuoto: ``no, tanto non ci serve''.
+\end{enumerate}
+In Play, ora, ``se noi proviamo a muovere lateralmente, non si muove più''. ``Mi
+raccomando: questa cosa, quando noi cliccheremo un pulsante, dovrà essere disattivata e
+rimessa in un'altra modalità.''
+
+\paragraph{I colori di hover e pressione.} Con il cursore visibile si possono provare gli
+stati dello Style. Nel Designer il docente cambia il colore di \textbf{Hovered}: ``voglio
+che quando io ci passo sopra con il mouse diventi tipo arancione, sì, un bell'arancione''
+(``lo vediamo in preview, è normale''), e lo copia, con il codice esadecimale, sull'altro
+bottone. Il risultato, ammette, è ``molto Ikea''. Il \textbf{Pressed} di default diventa
+grigio, ``si vede pochissimo'': lo si mette \textbf{rosso}, su entrambi i bottoni.
+
+\paragraph{I bottoni.} Nel Graph, a sinistra, fra le variabili compaiono
+\textbf{Button\_QuitGame} e \textbf{Button\_StartGame} (sono variabili perché i bottoni,
+nel Designer, hanno \emph{Is Variable} attivo di default). Ogni bottone ha i suoi eventi,
+``l'abbiamo visto anche l'altra volta'': \emph{On Pressed}, \emph{On Released},
+\emph{On Hovered}, \emph{On Unhovered} e \textbf{On Clicked}. Si prende l'On Clicked di
+entrambi.
+\begin{itemize}
+  \item \textbf{On Clicked (Button\_QuitGame)} $\rightarrow$ \textbf{Quit Game}: ``è
+        piuttosto semplice, letteralmente Quit Game è già presente, di standard
+        proprio''. (``Adesso non mi ricordo se ti esce proprio dall'editor'': si veda
+        l'approfondimento più sotto.)
+  \item \textbf{On Clicked (Button\_StartGame)}: prima \textbf{Get Player Controller}
+        $\rightarrow$ \textbf{Set Input Mode Game Only}, ``molto importante'', ``in modo
+        tale che ritornino gli input al gioco''; poi \textbf{Open Level (by Name)}, con il
+        nome della mappa di gioco. Il docente lo cerca nel Content Browser (``era
+        MLevel1? Ah, questa no, era M level 2?'') e trova la mappa del template,
+        \textbf{ThirdPersonMap}; prova a copiarne il nome con F2 (``non lo fa, va bene''),
+        e lo scrive a mano.
+\end{itemize}
+Tornati nella mappa del menu e salvato tutto, in Play: Play Game ``ci carica la nostra
+bellissima mappina'' (figura~\ref{ue12:fig:menugraph}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ue12node/.style={draw, thick, rounded corners=4pt, align=center, fill=gray!8,
+                  minimum height=0.9cm, text width=2.3cm},
+  ue12ev/.style={ue12node, fill=red!12},
+  ue12pure/.style={ue12node, fill=green!10, rounded corners=8pt},
+  ue12exec/.style={-{Stealth[length=2.5mm]}, very thick, black!80},
+  ue12data/.style={-{Stealth[length=2mm]}, thick, blue!60!black}]
+  \node[font=\scriptsize\bfseries, anchor=west] at (-1.3,1.0) {Level Blueprint di M\_Menu};
+  \node[ue12ev, text width=1.7cm] (bp) at (0,0) {\textbf{Event BeginPlay}};
+  \node[ue12node] (cw) at (2.8,0) {\textbf{Create Widget}\\{\scriptsize Class: WB\_Menu}};
+  \node[ue12node, text width=2.5cm] (av) at (5.8,0) {\textbf{Add to Viewport}\\{\scriptsize Target: Return
+    Value}};
+  \node[ue12node, text width=2.6cm] (vt) at (8.9,0) {\textbf{Set View Target with
+    Blend}\\{\scriptsize Blend Time 0}};
+  \node[ue12pure] (gpc1) at (7.4,-1.8) {Get Player Controller};
+  \node[ue12pure, fill=blue!10] (cam) at (10.2,-1.8) {CameraActor\\{\scriptsize
+    (referenza)}};
+  \draw[ue12exec] (bp) -- (cw); \draw[ue12exec] (cw) -- (av); \draw[ue12exec] (av) -- (vt);
+  \draw[ue12data] ([yshift=-3mm]cw.east) -- ([yshift=-3mm]av.west);
+  \draw[ue12data] (gpc1.north) -- node[left, font=\scriptsize]{Target} ([xshift=-6mm]vt.south);
+  \draw[ue12data] (cam.north) -- node[right, font=\scriptsize]{New View Target}
+    ([xshift=6mm]vt.south);
+  % widget graph
+  \node[font=\scriptsize\bfseries, anchor=west] at (-1.3,-3.2) {Graph di WB\_Menu};
+  \node[ue12ev, text width=1.7cm] (con) at (0,-4.2) {\textbf{Event Construct}};
+  \node[ue12node] (smc) at (2.8,-4.2) {\textbf{Set Show Mouse Cursor}\\{\scriptsize
+    spunta attiva}};
+  \node[ue12node] (ui) at (5.7,-4.2) {\textbf{Set Input Mode UI Only}};
+  \node[ue12pure] (gpc2) at (4.2,-5.9) {Get Player Controller};
+  \draw[ue12exec] (con) -- (smc); \draw[ue12exec] (smc) -- (ui);
+  \draw[ue12data] (gpc2.north) -- (smc.south); \draw[ue12data] (gpc2.north) -- (ui.south);
+  \node[ue12ev, text width=2.6cm] (oq) at (0.3,-7.6) {\textbf{On Clicked}\\{\scriptsize
+    (Button\_QuitGame)}};
+  \node[ue12node] (qg) at (3.6,-7.6) {\textbf{Quit Game}};
+  \draw[ue12exec] (oq) -- (qg);
+  \node[ue12ev, text width=2.6cm] (os) at (0.3,-9.3) {\textbf{On Clicked}\\{\scriptsize
+    (Button\_StartGame)}};
+  \node[ue12node, text width=2.7cm] (gm) at (3.8,-9.3) {\textbf{Set Input Mode Game Only}};
+  \node[ue12node, text width=2.8cm] (ol) at (7.2,-9.3) {\textbf{Open Level (by
+    Name)}\\{\scriptsize ThirdPersonMap}};
+  \node[ue12pure] (gpc3) at (3.8,-11.0) {Get Player Controller};
+  \draw[ue12exec] (os) -- (gm); \draw[ue12exec] (gm) -- (ol);
+  \draw[ue12data] (gpc3) -- (gm);
+\end{tikzpicture}
+\caption{I grafi del menu. In alto, il Level Blueprint della mappa M\_Menu crea il widget,
+lo mostra e passa la vista alla camera fissa. In basso, il widget prende il controllo del
+cursore quando nasce, esce dal gioco con Quit e, con Play Game, restituisce l'input al
+gioco e apre la mappa di gioco. Ricostruzione dalla lezione.}
+\label{ue12:fig:menugraph}
+\end{figure}
+
+\paragraph{Approfondimento: il menu nel libro.} Romero e Sewell costruiscono un menu molto
+simile nel capitolo 8 (\emph{Creating Constraints and Gameplay Objectives}), il
+\emph{WinMenu} che compare a fine partita: due bottoni \emph{Btn restart} e \emph{Btn
+quit} ancorati al centro, ciascuno con un Text dentro (``font size 48''), e gli eventi
+aggiunti dal pulsante \emph{+} accanto a \emph{On Clicked}, in fondo ai Details del bottone.
+Il bottone Restart usa \emph{Open Level (by Object Reference)}, con la mappa scelta da un
+menu a tendina, seguito da \emph{Remove from Parent}, ``che rimuove il widget dalla
+vista''; il bottone Quit usa \emph{Quit Game}, ``così che il giocatore possa chiudere il
+gioco''. Il menu viene mostrato dal personaggio, in un Custom Event \emph{End Game}: Set
+Game Paused, \emph{SET Show Mouse Cursor} dal Get Player Controller (``per permettere al
+giocatore di riprendere il controllo del mouse''), Create Widget, Add to Viewport. Nel
+capitolo 15 il libro elenca anche le tre modalità di input:
+\begin{itemize}
+  \item \textbf{Set Input Mode Game Only}: ``solo il Player Controller riceve gli eventi
+        di input'';
+  \item \textbf{Set Input Mode UI Only}: ``solo la UI riceve gli eventi di input'';
+  \item \textbf{Set Input Mode Game and UI}: ``la UI ha la priorità nel gestire un evento
+        di input, ma se la UI non lo gestisce, lo riceve il Player Controller''; l'esempio
+        è un negozio, in cui si scelgono le opzioni con il mouse ma ci si può allontanare
+        con le frecce.
+\end{itemize}
+Una differenza utile da notare: \emph{Open Level (by Object Reference)} non si rompe se la
+mappa viene rinominata, mentre \emph{Open Level (by Name)}, usato a lezione, richiede il
+nome esatto (si può scrivere il nome semplice, \emph{ThirdPersonMap}, o il percorso
+completo, se esistono due mappe con lo stesso nome).
+
+\paragraph{Approfondimento: Construct, Quit Game e il cursore nella mappa di gioco.}
+Alcune nozioni generali, non della lezione. \textbf{Event Pre Construct} viene eseguito
+anche nell'editor, ogni volta che il widget viene ridisegnato nel Designer: serve per
+anteprime e impostazioni visive; \textbf{Event Construct} solo in gioco, quando il widget
+viene aggiunto allo schermo (e di nuovo se lo si rimuove e lo si aggiunge). \textbf{Quit
+Game}, durante il Play in Editor, \emph{termina la sessione di gioco} e riporta
+all'editor, senza chiudere l'editor; in un gioco pacchettizzato chiude l'applicazione. Il
+dubbio del docente si scioglie così. Infine, \emph{Open Level} distrugge il mondo corrente
+con tutti i suoi actor, widget compresi, e crea un Player Controller nuovo: per questo,
+nella mappa di gioco, il menu sparisce da solo e il cursore torna nascosto, anche senza un
+\emph{Remove from Parent} o un \emph{Set Show Mouse Cursor} a falso. Il \emph{Set Input
+Mode Game Only} prima dell'Open Level, raccomandato dal docente, è comunque una buona
+abitudine: il caso in cui non è superfluo è quello di un menu che si chiude \emph{senza}
+cambiare livello, come un menu di pausa (nel libro, capitolo 11, il \emph{Resume} fa
+Remove from Parent, Set Show Mouse Cursor a falso e Set Game Paused a falso).
+
+% ---------------------------------------------------------------------
+\section{Il diorama, e i problemi degli studenti}
+\label{ue12:sec:diorama}
+
+\paragraph{Il diorama.} Con il menu funzionante, ``passiamo sopra'' all'aspetto. Sullo
+sfondo, ``un piccolo diorama, una piccola box, in cui ci andiamo a mettere tutto quello che
+vogliamo''. ``Volendo, potete fare tutto un menu interattivo'': gli ostacoli, i Blueprint
+creati nel corso, i bottoni, la torretta. Il docente si limita ai modelli:
+\begin{itemize}
+  \item il \textbf{bot}: dal Content Browser, o la sua Skeletal Mesh, ``o li metto
+        direttamente l'animazione in Idle'': trascinando nel livello un asset di animazione,
+        Unreal crea un actor con la mesh che la riproduce;
+  \item la \textbf{porta} modulare del compito della volta scorsa, \textbf{SM\_Modular\_\allowbreak Wall\_Door}
+        (``wall door, eccola qua''), con le ante \textbf{SM\_Door};
+  \item qualche ritocco alla \textbf{camera} e alla \textbf{luce}: l'intensità a 10 è
+        ``enorme'', poi 5, poi valori molto più bassi (la trascrizione, qui, è quasi
+        incomprensibile: si sentono ``0,01'' e ``1'').
+\end{itemize}
+``Questo caso è più una cosa artistica, ragazzi, quindi potete fare un po' come volete.''
+Le funzioni di base, entrare nel gioco e uscire, ci sono. ``Questo è un menu che io di
+solito faccio quando faccio i miei prototipi'', cioè ``quando devo semplicemente mostrare
+qualche cosa a livello di gameplay''. Un menu delle \emph{opzioni} ``è già un discorso
+molto più'' complesso, ``perché bisogna andare a vedere gli slider'': non si tratta, ``perché
+tanto poi andiamo a fare qualcosa di più gameplayoso''.
+
+\paragraph{I problemi dei presenti.} Diversi studenti hanno ancora il personaggio nel
+menu.
+\begin{itemize}
+  \item \textbf{La camera.} Ripasso passo per passo: selezionare la camera nel livello
+        (``proprio diventa arancione''), Open Level Blueprint, tasto destro, Create a
+        Reference to CameraActor (``devi stare dentro il Level Blueprint''); Get Player
+        Controller, Set View Target with Blend, la camera nel New View Target.
+  \item \textbf{Il personaggio che nasce ancora.} ``Devi passare alla Game Mode
+        default'': \textbf{World Settings}, \textbf{GameMode Override}. Uno studente non
+        trova la finestra delle World Settings (si apre dal menu \emph{Window} dell'editor,
+        se è chiusa). Poi il Player Start fuori dalla camera.
+  \item \textbf{L'errore su Add to Viewport.} ``Mi dà un problema proprio su Add to
+        Viewport'': ``perché il target di base è Self, quindi non so se devo cambiare il
+        target''. Sì: il Target deve essere il \textbf{Return Value} del Create Widget.
+        ``Probabilmente devi dare return value'' al target.
+  \item \textbf{Il mouse che non si vede.} Va impostato nell'Event Construct del widget:
+        Get Player Controller, Set Show Mouse Cursor, Set Input Mode UI Only. Lo studente
+        aveva cancellato l'Event Construct (``basta che fai tasto destro'' e lo si ricrea)
+        e non aveva messo la \textbf{spunta} nel Set Show Mouse Cursor (``ah, però non
+        avevo messo il tick''): il nodo, senza spunta, imposta il cursore a \emph{falso}.
+        ``Funziona? Sì.''
+\end{itemize}
+Chiuso il menu, si torna alla ThirdPersonMap.
+
+% ---------------------------------------------------------------------
+\section{Interfacce e Blueprint Component}
+\label{ue12:sec:concetti}
+
+``Andiamo sul nostro amico fidato'': il docente apre il suo bot (``ah no, questo è Boto:
+dobbiamo andare su Boto2''), cioè BP\_Bot2. ``Oggi parleremo delle interfacce, ragazzi.''
+
+\paragraph{L'interfaccia, un intermediario.} ``Immaginatevi che un'interfaccia è un
+intermediario fra due o più Blueprint.'' Il docente mostra quella già pronta nel suo
+progetto, nella cartella dei componenti dei Blueprint: un tipo particolare di Blueprint
+che contiene solo tre \textbf{funzioni}, \emph{Interaction Start}, \emph{Interaction End}
+e \emph{Interaction}. L'immagine: un \textbf{volo di linea}, ``un'interconnessione tra due
+o più poli'', che ``trasporta molto spesso le stesse cose, passeggeri di un tipo,
+passeggeri di un altro''. ``Quindi è un qualcosa che va a trasportare varie funzioni da una
+parte all'altra.'' Nel caso di oggi l'interfaccia comunica tre messaggi: \emph{sto
+iniziando un'interazione} (ti sto guardando), \emph{sto finendo un'interazione} (non ti
+guardo più), \emph{sto interagendo} (ho premuto il tasto).
+
+\paragraph{Il componente, una funzionalità isolata.} Il lavoro di \emph{vedere se c'è
+qualcosa di interagibile} non lo fa il personaggio, ma un \textbf{Blueprint Component}:
+``dei componenti che noi possiamo aggiungere all'interno dei nostri actor per dare
+funzionalità in modo isolato''. Per esempio: ``questo actor può tracciare degli
+interactable''; ``questo actor ha la vita''. La vita, fatta la volta scorsa \emph{dentro}
+il personaggio, si potrebbe spostare in un componente, ``perché magari abbiamo anche i
+nemici che hanno la vita'', o ``degli oggetti che si possono rompere''. Lo scopo è
+``isolare sempre più possibile le funzionalità, e quindi essere anche modulari''. Infatti
+il BP\_Bot2 del docente, a parte un input nuovo, ``non ha niente di nuovo'': si gira verso
+l'oggetto e suona un Montage, ma ``non ha niente per tracciare'': il trace è tutto nel
+componente.
+
+\paragraph{Actor Component o Scene Component.} Si crea una \textbf{Blueprint Class} e, fra
+le classi comuni, non un Actor ma un componente. Ce ne sono due:
+\begin{itemize}
+  \item l'\textbf{Actor Component} ``mette semplicemente la funzionalità'';
+  \item lo \textbf{Scene Component} ``è un Actor Component che ha anche una scena'',
+        cioè un \textbf{Transform}: ``non so se vi ricordate la Scene, quando l'abbiamo
+        messa: il punto vuoto''. ``Almeno si può spostare nello spazio.''
+\end{itemize}
+Qui serve il secondo, perché il trace è ``un raggio che da quel punto parte e in un punto
+finisce'', e il punto di partenza si deve poter spostare. Il docente lo mostra nel suo bot:
+spostando il componente nel Blueprint del personaggio, in Play il raggio parte dal nuovo
+punto; lo rimette ``al centro della testa, più o meno''. Il nuovo Blueprint:
+\textbf{BPC\_RayInteract} (BPC sta per \emph{Blueprint Component}; il docente, che ne ha già
+uno, chiama il suo BPC\_RayInteract1).
+
+\paragraph{Il componente aperto.} ``Come potete vedere, presenta delle similitudini con
+tutti i Blueprint.'' ``L'unica cosa: non ha una viewport, perché non ha una forma fisica'',
+``tra virgolette, perché è una scena, ma è vuota''. ``E ricordiamoci che è un componente:
+quindi sarà qualcosa che deve essere per forza attaccato a qualcos'altro.''
+
+\paragraph{Che cos'è una funzione.} Prima di scrivere la logica, una domanda: chi ha già
+sentito parlare di \textbf{funzioni} in informatica? Risponde \textbf{Federico}, che ha
+studiato da programmatore: ``la funzione è un insieme di istruzioni: chiami la funzione e
+fai quelle istruzioni''. ``Esattamente.'' Il docente indica una catena di nodi nel bot: ``gli
+eventi non possono essere messi come funzioni, ma questo qua può essere una funzione''. È
+``un modo per ordinare anche il lavoro in varie tipologie di funzionalità, che possono
+essere magari trasportabili da un punto all'altro'': ``sempre questo senso di modularità''.
+(``Grande Federico, sempre miglior assistente.'')
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ue12box/.style={draw, thick, rounded corners=5pt, align=center, inner sep=5pt},
+  ue12msg/.style={-{Stealth[length=2.5mm]}, very thick, violet!70!black},
+  ue12own/.style={-{Stealth[length=2.2mm]}, thick, dashed, black!70}]
+  \node[ue12box, fill=gray!8, minimum width=4.4cm, minimum height=4.6cm] (bot) at (0,-0.3) {};
+  \node[anchor=north, font=\bfseries] at (bot.north) {BP\_Bot2};
+  \node[ue12box, fill=blue!10, text width=3.6cm] (cam) at (0,0.8) {Camera Component};
+  \node[ue12box, fill=orange!18, text width=3.6cm] (comp) at (0,-1.4)
+    {\textbf{BPC\_RayInteract}\\{\scriptsize Scene Component: ogni frame una Sphere Trace
+    lungo la camera; variabile Interactable}};
+  \draw[ue12own] (comp.north) -- node[right, font=\scriptsize, text width=1.9cm,
+    align=left]{Get Owner,\\Get Component by Class} (cam.south);
+  \node[ue12box, fill=violet!10, text width=3.2cm] (bpi) at (6.6,-0.3)
+    {\textbf{BPI\_InteractionRay}\\{\scriptsize Blueprint Interface}\\[2pt]{\scriptsize
+    Interaction Start\\Interaction End\\Interaction}};
+  \node[ue12box, fill=green!10, text width=3.3cm] (obj1) at (11.6,1.0)
+    {\textbf{BP\_InteractableTest}\\{\scriptsize implementa la BPI: Print String, widget
+    ``E'', luce}};
+  \node[ue12box, fill=green!5, text width=3.3cm] (obj2) at (11.6,-1.6) {{\scriptsize un
+    altro oggetto}\\{\scriptsize (bottone, ascensore\dots) con la stessa BPI e un'altra
+    risposta}};
+  \draw[ue12msg] (bot.east |- cam) -- node[above, font=\scriptsize, text width=2.4cm,
+    align=center]{Interaction\\(tasto E)} (bpi.west |- cam);
+  \draw[ue12msg] (comp.east) -- node[below, font=\scriptsize, text width=2.4cm,
+    align=center]{Start / End\\(guardare, smettere)} (bpi.west |- comp);
+  \draw[ue12msg] (bpi.east) -- (obj1.west);
+  \draw[ue12msg] (bpi.east) -- (obj2.west);
+\end{tikzpicture}
+\caption{I ruoli del sistema di interazione. Il componente, attaccato al personaggio, trova
+la camera del suo proprietario, traccia ciò che il giocatore guarda e invia i messaggi di
+inizio e fine; il personaggio invia il messaggio Interaction quando si preme E. I messaggi
+viaggiano attraverso l'interfaccia: chi li riceve decide che cosa fare, e un actor che non
+la implementa li ignora. Schema ricostruito dalla lezione.}
+\label{ue12:fig:ruoli}
+\end{figure}
+
+\paragraph{Approfondimento: i componenti nel libro.} Romero e Sewell dedicano ai componenti
+la seconda metà del capitolo 18 (\emph{Creating Blueprint Libraries and Components}).
+``Quando creiamo un Actor Blueprint aggiungiamo spesso componenti con una funzionalità
+incapsulata, pronta all'uso, come Projectile Movement, Static Mesh e Collision''; ``possiamo
+anche creare i nostri Actor Component con i Blueprint''. Nel pannello \emph{Pick Parent
+Class} le due classi sono fra quelle \emph{comuni}: ``lo Scene Component è una classe figlia
+dell'Actor Component che ha la struttura Transform (location, rotation e scale). Grazie al
+Transform, uno Scene Component può essere attaccato a un altro Scene Component.'' E, come a
+lezione: ``quando si scrive la logica di un componente nell'Event Graph, si può ottenere la
+referenza all'actor che usa il componente con il nodo \textbf{Get Owner}''. I due esempi del
+libro mostrano bene la differenza: \emph{BP\_ExpLevelComp} è un Actor Component che gestisce
+punti esperienza e livelli (non ha bisogno di una posizione), mentre \emph{BP\_CircularMovComp}
+è uno Scene Component che ruota attorno all'actor e a cui si attacca una Static Mesh, per
+simulare uno scudo rotante: ``lo Scene Component è usato come posizione di riferimento per
+altri componenti''. Il componente della lezione è dello stesso tipo: la sua posizione è il
+punto di partenza del raggio.
+
+% ---------------------------------------------------------------------
+\section{Il componente BPC\_RayInteract: la Sphere Trace}
+\label{ue12:sec:componente}
+
+\paragraph{La funzione LookForInteractions.} Nel componente si crea una nuova funzione
+(``eccolo che vi si crea questo pannellino violaceo''), \textbf{LookForInteractions}.
+Dentro, una \textbf{Sphere Trace By Channel}. ``Seguitemi per bene.''
+\begin{itemize}
+  \item \textbf{Radius}: \textbf{5}, ``perché se no non vi apparirà mai''. Con raggio zero
+        la Sphere Trace degenera in un raggio sottilissimo (e il debug quasi non si vede);
+        5 unità bastano a renderla visibile e un po' più tollerante.
+  \item \textbf{Start}: \textbf{Get World Location} del componente stesso, ``la posizione
+        nel mondo del nostro Scene Component: dovrà partire da qui''.
+  \item \textbf{End}: da costruire, ed è la parte con il trucco.
+\end{itemize}
+
+\paragraph{Prima la camera: Get Owner e Get Component by Class.} Il raggio deve seguire lo
+sguardo del giocatore, cioè la \emph{rotazione della camera}. Il componente, però, non sa
+nulla della camera del personaggio: deve trovarla. Nell'\textbf{Event Graph} del
+componente, all'\textbf{Event BeginPlay}:
+\begin{enumerate}
+  \item \textbf{Get Owner}: ``la referenza del proprietario di questo Scene Component'';
+  \item dal proprietario, \textbf{Get Component by Class} (``non \emph{components},
+        \emph{component}, perché se no vi dà un array''), con \textbf{Component Class} =
+        \textbf{Camera Component}: ``sarà il nostro punto principale da cui andremo a fare il
+        nostro trace'';
+  \item il risultato si promuove a variabile, \textbf{CameraComponent}, e si collega tutto
+        al Begin Play.
+\end{enumerate}
+``Perdonate, sono 30.000 componenti: un componente su componente su componente.'' In
+sintesi: ``in Begin Play io prendo il mio proprietario, prendo la sua camera, mi salvo la
+referenza alla sua camera, e poi la useremo all'interno del nostro componente''.
+
+\paragraph{La camera, se c'è.} Il componente deve funzionare anche su un actor
+\emph{senza} camera: ``se il nostro proprietario non ha una camera, allora prendi te stesso
+come pivot''. Quindi un \textbf{Select} fra due oggetti:
+\begin{itemize}
+  \item l'indice è un booleano, \textbf{Is Valid} (``la F verde'', la versione \emph{pura}
+        della funzione) sulla variabile CameraComponent: ``se il componente camera esiste,
+        quindi il nostro actor ha effettivamente una camera, e quindi questa variabile
+        CameraComponent ha qualcosa dentro'';
+  \item su \textbf{True}, CameraComponent: ``usami la camera come punto di riferimento'';
+  \item su \textbf{False}, \textbf{Self}: ``se no, usi te stesso''.
+\end{itemize}
+Il Select era già comparso con la torretta, per scegliere fra le due bocche di fuoco: lì
+con un \emph{Random Bool}, qui con l'Is Valid. ``So che è un po' complesso.''
+
+\paragraph{La ``mandragata'': il tipo del Select.} Il problema è il \emph{tipo} delle
+opzioni. ``Il Select praticamente c'è un piccolo problema'': il nodo è jolly (\emph{wildcard})
+e assume il tipo della \emph{prima} cosa che gli si collega. Collegando prima la camera, il
+Select diventa un Select di \emph{Camera Component Object Reference}, e Self (il componente
+BPC\_RayInteract) non entra più; collegando prima Self, il Select diventa un Select di
+riferimenti a BPC\_RayInteract, e la camera non entra. Entrambi però \emph{sono} Scene
+Component: la camera è uno Scene Component, e lo è anche il nostro componente. Il trucco
+(``qui bisogna fare una mandragata, ragazzi''):
+\begin{enumerate}
+  \item si crea una variabile qualunque di tipo \textbf{Scene Component Object Reference}
+        (il docente la chiama \emph{Scene}: ``e poi non ci servirà a niente'');
+  \item se ne mette un Get nel Select: ora le opzioni sono di tipo \emph{Scene Component};
+  \item si \textbf{cancella} il Get e si collegano CameraComponent e Self, che sono entrambi
+        accettati.
+\end{enumerate}
+``Ecco fatto che abbiamo praticamente fregato Unreal.''
+
+\paragraph{La domanda di Filippo.} ``Non ho capito perché abbiamo creato la variabile Scene
+prima.'' Il docente rifà la prova davanti a tutti: un Select nuovo, il cursore sul pin, la
+scritta ``Scene Component Object Reference''; poi Self in un Select vuoto, e il nodo diventa
+``Self Object Reference'', ``mi farà fare solamente un select fra due self, non due Scene
+Component''. ``Per fregare Unreal'' serve ``una variabile che appartiene generalmente allo
+Scene Component''. Uno studente prova a trasformare la variabile in Self: ``non è che te lo
+trasforma: lo devi cancellare, e poi tasto destro, scrivi \emph{self}''. Filippo insiste: e
+se avessimo collegato subito la camera? Prova del docente: ``Select camera component, camera
+component object reference, e io, se provo ad attaccare Self, non me lo attacca''. ``Ok,
+capito.''
+
+\paragraph{Il punto finale.} Dal risultato del Select, ``quello che abbiamo sempre fatto'':
+\begin{enumerate}
+  \item \textbf{Get Forward Vector} (della camera, o del componente stesso);
+  \item moltiplicato per una distanza: il secondo pin del Multiply si converte in float
+        (``tasto destro, mi raccomando: \emph{To Float}''), si promuove a variabile,
+        \textbf{DistanceTrace}, con valore \textbf{300};
+  \item il prodotto si \textbf{somma} (Add) allo Start, e il risultato va nell'\textbf{End}.
+\end{enumerate}
+
+\paragraph{Perché lo Start è il componente.} Una studentessa chiede perché lo Start sia la
+World Location: ``in relazione a dove attacchiamo il componente?'' ``Esatto.'' ``Il punto
+iniziale deve essere sempre il punto, il Transform, del nostro componente''; ``il punto che
+deve diversificare è la camera''. Il docente lo mostra nel bot: guardando in basso il
+raggio va in basso, guardando di lato va di lato, ma parte sempre dal componente, ``così
+magari posso posizionarlo avanti, posizionarlo indietro, posizionarlo qui, posizionarlo
+là'' (figura~\ref{ue12:fig:look}).
+
+\paragraph{Il componente nel personaggio.} Nel BP\_Bot2 (``a bot2, in questo caso, è il
+vostro character''), \textbf{Add} e il nome del componente: BPC\_RayInteract compare fra i
+componenti del personaggio. Per vederlo si imposta il \textbf{Draw Debug Type} della Sphere
+Trace (``lo metto a \emph{For One Frame}''). In Play, però, non succede niente: ``ah,
+certo, ecco perché: non facciamo LookForInteractions''. La funzione va chiamata
+nell'\textbf{Event Tick} del componente (``ah, nel tick, infatti''), così il controllo
+avviene a ogni frame. Con il debug persistente (\emph{Persistent}) il raggio lascia una scia
+``gigantesca''; con \emph{For Duration} resta qualche istante; con \emph{For One Frame}
+``rimane un po' più carino'', e si vede solo il raggio attuale. (La trascrizione, qui, è
+piena di prove e di parole storpiate: ``la duration vado a activate, troppo corto'', ``Lugano'',
+``Adobe''; anche una confusione momentanea fra il bot e il bot2 del docente.)
+
+\paragraph{Approfondimento: Sphere Trace, Tick e costo.} Una \textbf{Sphere Trace} è un
+\emph{line trace} ``spesso'': fa scorrere una sfera del raggio indicato dallo Start
+all'End e restituisce il primo oggetto che la sfera tocca nel canale scelto. Rispetto a un
+raggio sottile perdona di più la mira (con 5 unità di raggio, circa 5 cm, conta anche
+sfiorare il bordo di un oggetto), ed è il motivo per cui molti sistemi di interazione la
+preferiscono. Farla nel \textbf{Tick}, una volta per frame, costa poco: una singola trace di
+300 unità è un'operazione leggera, e il sistema la esegue solo per il personaggio del
+giocatore. Se gli actor con il componente fossero molti (per esempio dei nemici), conviene
+ridurre la frequenza con un timer (come quelli della stamina, a 0,1 secondi) o disattivare
+il Tick del componente quando non serve (\emph{Set Component Tick Enabled}). Una Sphere
+Trace può stare senza problemi dentro una funzione, perché non ha uno stato interno da
+ricordare fra una chiamata e l'altra; il Do Once e il Flip Flop, invece, sì (si veda più
+avanti). Funzionamento generale dell'engine.
+
+% ---------------------------------------------------------------------
+\section{Il Trace Channel e la Blueprint Interface}
+\label{ue12:sec:bpi}
+
+\paragraph{Un canale per le interazioni.} ``Ha colpito qualcosa? Sì, no.'' Prima di
+leggere il risultato serve un canale dedicato, ``che ci permette di identificare gli
+oggetti che vogliamo che siano interagibili'': ``se no, praticamente, interagirà con
+tutto''. ``Come abbiamo visto anche nella nostra torretta'': \textbf{Project Settings},
+\emph{Collision}, \textbf{New Trace Channel}, nome \textbf{InteractionTrace}, risposta di
+default \textbf{Ignore}. Il docente, che ce l'ha già, non lo rifà. Nella Sphere Trace, il
+\textbf{Trace Channel} diventa InteractionTrace: ``mi raccomando, se non vi appare, fate
+compila, perché ha bisogno un attimo di compilare il nuovo Trace Channel''.
+
+\paragraph{Che cosa abbiamo colpito.} Dopo la trace, un \textbf{Branch} sul suo Return
+Value (``ha colpito qualcosa?'') e un \textbf{Break Hit Result} sull'Out Hit, da cui, ``vi
+ricordate, no?'', escono l'actor colpito, il Physical Material ``e tutto''. Il piano:
+``useremo l'interfaccia, la Blueprint Interface, per andare a comunicare con questo actor'':
+``ha questo porto in cui può accogliere questa tipologia di interazione? Sì? Benissimo,
+allora fai l'interazione''. Dall'\textbf{Hit Actor} si chiede \textbf{Does Object
+Implement Interface}: ``ehi, questo actor ce l'ha l'interface?'' Ma l'interfaccia non
+esiste ancora: ``ci fermiamo qua per adesso, creiamo l'interface, e ci fermiamo''. (Il
+docente parla qui anche di promuovere l'Hit Actor a variabile; la variabile di appoggio
+vera e propria, \emph{Interactable}, si crea dopo la pausa, sezione~\ref{ue12:sec:logica}.)
+
+\paragraph{La Blueprint Interface.} Nella cartella \emph{Blueprints}, \emph{Components},
+tasto destro, \textbf{Blueprint}, ``non Blueprint Class questo, ma Blueprint questo'': il
+sottomenu offre \emph{Blueprint Class}, \emph{Blueprint Function Library} e
+\textbf{Blueprint Interface}. Il nome: \textbf{BPI\_InteractionRay}. Aperta:
+\begin{itemize}
+  \item il grafo è \textbf{in sola lettura}: ``non possiamo far niente'', ``cannot create
+        new nodes in read only graph''. Un'interfaccia contiene solo \emph{dichiarazioni};
+  \item si possono aggiungere \textbf{funzioni}: la prima c'è già e si rinomina (con F2),
+        \textbf{Interaction Start}; con \emph{Add Function} le altre due,
+        \textbf{Interaction End} e \textbf{Interaction}.
+\end{itemize}
+``Abbiamo messo che in questo cargo, questo trasporto, ci stanno Interaction Start,
+Interaction End e Interaction: quindi queste funzioni possono essere passate tra di loro.''
+
+\paragraph{Il collegamento.} Nel componente, il pin \textbf{Interface} di Does Object
+Implement Interface diventa \mbox{BPI\_}\allowbreak InteractionRay. ``Se quel qualcosa che ho colpito ha questa
+interfaccia, allora andremo a fare tutto il procedimento di interazione.'' ``Ci sono domande?
+Mi sembra di capire no.'' Sono le 17:26: pausa fino alle 17:55, ``diciotto''.
+
+\paragraph{Approfondimento: la Blueprint Interface nel libro.} Romero e Sewell presentano le
+interfacce nel capitolo 16 (\emph{Introduction to VR Development}), nel paragrafo
+\emph{Blueprint Communication using interfaces}: ``una Blueprint Interface è un tipo speciale
+di Blueprint che contiene solo nomi di funzioni e parametri. Si usa per permettere la
+comunicazione fra tipi diversi di Blueprint.'' Si crea dal pulsante \emph{Add} del Content
+Browser, sottomenu \emph{Blueprints}, \emph{Blueprint Interface}. L'esempio è il template VR:
+l'interfaccia \emph{VRInteraction BPI} è aggiunta alla pistola dalle \emph{Class Settings},
+categoria \emph{Interfaces}, e la pistola implementa la funzione \emph{Trigger Pressed}:
+``siccome la funzione non ha parametri di output, è implementata come un \emph{evento}''. Il
+Pawn VR chiama Trigger Pressed sull'actor che tiene in mano, ``e se l'actor ha implementato
+l'interfaccia VRInteraction BPI, Trigger Pressed viene eseguito. Non succede niente se l'actor
+non l'ha implementata.'' È esattamente lo schema della lezione: il personaggio non sa
+\emph{che cosa} sta guardando (un cubo, un bottone, un ascensore) e non deve fare un
+\emph{cast} a nessuna classe; manda il messaggio, e ciascun oggetto risponde a modo suo.
+Questo è il vantaggio delle interfacce rispetto al cast e all'ereditarietà viste con
+BP\_Activable: classi che non hanno niente in comune (un actor, un personaggio, un oggetto
+fisico) possono condividere la stessa ``porta''.
+
+% ---------------------------------------------------------------------
+\section{La pausa: la stamina di Tommaso}
+\label{ue12:sec:pausa}
+
+\paragraph{Il sintomo.} In pausa, come promesso, il problema rimasto aperto la volta
+precedente: \textbf{Tommaso} tiene premuto Shift, la barra della stamina non scende, e
+``appena mollo, si vede''. Il docente ripercorre il codice condiviso: l'evento StopRunning,
+il Clear and Invalidate, il Set Timer by Event e la variabile TimeStamina (``quanto sta?
+0,92''; nella trascrizione il valore è questo, ma va preso con cautela: nella lezione
+precedente il valore indicato era 0,05), RegainStamina, il Clamp con CurrentStamina e
+MaxStamina, l'InitializeStaminaBar nel Begin Play. ``Sembra tutto a posto.''
+
+\paragraph{Il debug.} Il metodo è quello della volta scorsa: un \textbf{Print String} con la
+CurrentStamina (``attaccalo al viola'') dopo l'evento di aggiornamento. I valori scendono
+correttamente (``500, 500, 300'' dice la trascrizione, forse leggendo la velocità), poi
+risalgono. Ma a schermo ci sono ``troppi Print String'': si cercano e si tolgono quelli
+vecchi, uno per volta (quello della torretta, uno della piattaforma, ``forse i mulini?'',
+``forse il collectable''; ``nessuno è perfetto''). Il comportamento: la barra
+\emph{ricarica} visibilmente, ma \emph{non scende}.
+
+\paragraph{La causa.} ``Ah, ecco perché: non chiami l'evento Call Update Stamina.'' Nella
+catena di \textbf{StaminaDeduction}, dopo il Set di CurrentStamina, mancava la
+\textbf{Call E\_UpdateStamina}: il valore calava, ma nessuno lo comunicava alla barra. La
+Call c'era solo in RegainStamina, che parte al rilascio del tasto; per questo la barra si
+aggiornava ``solo quando mollo''. Il rimedio: la Call anche in StaminaDeduction, con
+CurrentStamina e MaxStamina collegati. ``Perfetto. Ottimo.''
+
+\paragraph{Il rumore.} Il resto della pausa, nella trascrizione, è il blocco di testo
+ripetuto e il frammento di video già segnalati nell'introduzione. Alla ripresa, uno studente
+chiede aiuto per BPI\_InteractionRay, che dopo un riavvio di Unreal si apre ``male'': il
+grafo in sola lettura non si vede. Il docente prova i menu \emph{Window} (Bookmarks, Find
+Results, Compiler Results\dots), carica per sbaglio il layout di default dell'editor
+(``mi sono caricato il bellissimo layout di Unreal''), e alla fine trova la via più
+semplice: ``fai doppio clic sulla funzione'' nel pannello \emph{My Blueprint}, e il suo
+grafo si apre. ``Tanto non ti serve'': nell'interfaccia non si scrive nulla.
+
+% ---------------------------------------------------------------------
+\section{La logica: la variabile Interactable}
+\label{ue12:sec:logica}
+
+``Vai, allora finiamo questo bellissimo sistema di interazioni.'' Si torna in
+BPC\_RayInteract, nella funzione LookForInteractions. Il ramo di partenza è quello in cui
+la trace ha colpito qualcosa e l'actor colpito implementa BPI\_InteractionRay.
+
+\paragraph{La variabile d'appoggio.} Serve una variabile di tipo \textbf{Actor}
+(\emph{Object Reference}), \textbf{Interactable}: ``sarà la nostra variabile d'appoggio'',
+cioè l'oggetto interagibile che il giocatore sta guardando \emph{in questo momento}, o
+niente. Il suo scopo è evitare di ripetere il lavoro a ogni frame: ``se l'actor che io ho
+intercettato con il mio trace è lo stesso di prima, allora non voglio che mi rifai alcune
+sezioni del codice''; ``se è lo stesso, non lo svuoto''.
+
+\paragraph{È un oggetto nuovo?} Un secondo \textbf{Branch}, con la condizione \textbf{Hit
+Actor} \textbf{diverso da} Interactable: il nodo \emph{Not Equal} (``diverso si fa con il
+punto esclamativo e l'uguale''). ``Il punto esclamativo in informatica vuol dire che questo è
+un condizionale che ci dice: guarda, questo è diverso da questo, e ci restituisce un
+booleano. Se è diverso ci dà True, se sono uguali ci dà False.'' Sul False non si fa nulla:
+è lo stesso oggetto di prima.
+
+\paragraph{I messaggi dell'interfaccia.} ``Adesso, importante'': scrivendo
+\emph{interaction} nel menu dei nodi, compaiono già le funzioni di BPI\_InteractionRay,
+``senza fare niente'': ``ho già la possibilità di poter comunicare e messaggiare con
+l'interfaccia''. Sono i nodi \textbf{(Message)}, con l'icona della busta, che si possono
+chiamare su qualunque actor. Servono \textbf{Interaction End} e \textbf{Interaction Start}.
+
+\paragraph{Il ramo True: chiudere il vecchio, aprire il nuovo.} Sul True del diverso:
+\begin{enumerate}
+  \item un \textbf{Validated Get} di Interactable (si mette il Get, tasto destro,
+        \emph{Convert to Validated Get}): ``questa variabile Interactable è valida? C'è
+        qualcosa dentro?'';
+  \item \textbf{Is Valid}: c'era già un oggetto, quindi prima si chiude la vecchia
+        interazione, \textbf{Interaction End} con target il \emph{vecchio} Interactable;
+        poi \textbf{Set Interactable} = Hit Actor; poi \textbf{Interaction Start} con
+        target il \emph{nuovo} Interactable;
+  \item \textbf{Is Not Valid}: ``la variabile è vuota'', ``non è mai iniziata
+        un'interazione precedente''; si salta l'End e si fa direttamente il Set
+        Interactable = Hit Actor e l'\textbf{Interaction Start}.
+\end{enumerate}
+
+\paragraph{Il ramo False: non guardo niente.} Se la trace non colpisce nulla, \emph{oppure}
+colpisce un actor senza l'interfaccia (``il muro, ad esempio''), il giocatore ha distolto lo
+sguardo: ``allora ti finisco l'interazione''. Entrambi i False (quello del Branch sul Return
+Value e quello di Does Object Implement Interface) portano a un altro Validated Get di
+Interactable:
+\begin{itemize}
+  \item \textbf{Is Valid}: \textbf{Interaction End} sul vecchio Interactable, poi
+        \textbf{Set Interactable} senza collegare nulla al pin, cioè lo si
+        \textbf{svuota};
+  \item \textbf{Is Not Valid}: non c'era nessuna interazione da chiudere; per sicurezza
+        lo si svuota comunque (``semplicemente dirgli: guarda, svuotati'').
+\end{itemize}
+``Quindi mettere il Set così è come mettere uguale a null?'' ``È nulla, proprio. La
+annulliamo: la mettiamo vuota, e quindi diventerà non valida.'' Il caso del primo ramo,
+il passaggio diretto da un oggetto all'altro, serve quando due interagibili sono vicini:
+``lui finisce con quello precedente e inizia con il nuovo''; di solito, invece, gli oggetti
+sono distanti, la variabile si svuota e poi si riempie di nuovo
+(figure~\ref{ue12:fig:look} e~\ref{ue12:fig:stati}).
+
+\paragraph{Il problema di tipo.} Uno studente non riesce a collegare l'Hit Actor al Set
+Interactable: ``mi dice che non sono compatibili, perché uno è un riferimento oggetto e
+l'altro è un componente di scena''. La variabile Interactable era stata creata con il tipo
+sbagliato (ed era cambiata per un clic involontario in \emph{Geometry}, ``che non ho
+cliccato''). Rimedio: nei Details della variabile, il tipo \textbf{Actor}, \textbf{Object
+Reference} (``non quell'Actor: tipo oggetto, riferimento oggetto''), confermare la
+modifica del tipo, poi staccare e riattaccare i fili rossi dei nodi che usavano la
+variabile, ``era semplicemente sparito''.
+
+\paragraph{Il Tick.} ``Importante, ragazzi: far sì che questa funzione venga fatta su ogni
+frame.'' Nell'Event Graph del componente, \textbf{Event Tick} $\rightarrow$
+LookForInteractions (se non lo si è già fatto): ``a ogni frame farà il controllo: c'ho
+qualcosa di interagibile davanti a me, dove sto puntando la camera? Sì o no?''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ue12node/.style={draw, thick, rounded corners=4pt, align=center, fill=gray!8,
+                  minimum height=0.85cm, text width=2.4cm},
+  ue12dec/.style={draw, thick, diamond, aspect=2.2, align=center, fill=yellow!15,
+                  inner sep=1pt, text width=2.0cm, font=\scriptsize},
+  ue12msgn/.style={ue12node, fill=violet!12},
+  ue12exec/.style={-{Stealth[length=2.5mm]}, very thick, black!80}]
+  \node[ue12node, fill=red!12, text width=3.4cm] (st) at (0,0) {\textbf{Sphere Trace By
+    Channel}\\{\scriptsize Start: posizione del componente; End: Start + Forward (camera o
+    self) $\times$ 300; Radius 5; InteractionTrace}};
+  \node[ue12dec] (hit) at (0,-2.2) {colpito qualcosa?};
+  \node[ue12dec] (impl) at (0,-4.4) {Hit Actor implementa la BPI?};
+  \node[ue12dec] (diff) at (0,-6.6) {Hit Actor $\neq$ Interactable?};
+  \node[ue12dec] (val1) at (0,-8.9) {Interactable valido?};
+  \node[ue12msgn] (end1) at (-3.6,-10.8) {\textbf{Interaction End}\\{\scriptsize sul vecchio}};
+  \node[ue12node] (set1) at (0,-12.4) {\textbf{Set Interactable}\\{\scriptsize = Hit Actor}};
+  \node[ue12msgn] (start) at (0,-14.0) {\textbf{Interaction Start}\\{\scriptsize sul nuovo}};
+  \node[ue12node, fill=gray!3, text width=2.0cm] (none) at (3.7,-6.6) {niente\\{\scriptsize
+    (stesso oggetto)}};
+  \node[ue12dec] (val2) at (6.4,-3.3) {Interactable valido?};
+  \node[ue12msgn] (end2) at (6.4,-5.6) {\textbf{Interaction End}\\{\scriptsize sul vecchio}};
+  \node[ue12node] (clr) at (6.4,-7.6) {\textbf{Set Interactable}\\{\scriptsize vuoto (null)}};
+  \draw[ue12exec] (st) -- (hit);
+  \draw[ue12exec] (hit) -- node[left, font=\scriptsize]{True} (impl);
+  \draw[ue12exec] (impl) -- node[left, font=\scriptsize]{True} (diff);
+  \draw[ue12exec] (diff) -- node[left, font=\scriptsize]{True} (val1);
+  \draw[ue12exec] (diff) -- node[above, font=\scriptsize]{False} (none);
+  \draw[ue12exec] (val1.west) -| node[pos=0.25, above, font=\scriptsize]{Is Valid} (end1.north);
+  \draw[ue12exec] (end1.south) |- (set1.west);
+  \draw[ue12exec] (val1) -- node[right, font=\scriptsize]{Is Not Valid} (set1);
+  \draw[ue12exec] (set1) -- (start);
+  \draw[ue12exec] (hit.east) -| node[pos=0.2, above, font=\scriptsize]{False} (val2.north);
+  \draw[ue12exec] (impl.east) -- node[above, font=\scriptsize]{False} ++(2.5,0) |-
+    (val2.west);
+  \draw[ue12exec] (val2) -- node[right, font=\scriptsize]{Is Valid} (end2);
+  \draw[ue12exec] (end2) -- (clr);
+  \draw[ue12exec] (val2.east) -- ++(0.6,0) |- node[pos=0.3, right, font=\scriptsize, text
+    width=1.0cm, align=left]{Is Not Valid} (clr.east);
+\end{tikzpicture}
+\caption{La funzione LookForInteractions del componente, chiamata nell'Event Tick. Se il
+giocatore guarda un nuovo interagibile, si chiude l'interazione con il vecchio (se c'era)
+e si apre con il nuovo; se guarda un oggetto non interagibile, o niente, si chiude
+l'interazione in corso e si svuota la variabile. I nodi viola sono messaggi
+dell'interfaccia. Ricostruzione dalla lezione.}
+\label{ue12:fig:look}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ue12state/.style={draw, very thick, rounded corners=10pt, align=center,
+                    minimum height=1.3cm, text width=3.4cm},
+  ue12tr/.style={-{Stealth[length=2.5mm]}, very thick}]
+  \node[ue12state, fill=gray!10] (vuoto) at (0,0) {\textbf{Interactable vuoto}\\{\scriptsize
+    non guardo niente di interagibile}};
+  \node[ue12state, fill=green!12] (a) at (7.0,0) {\textbf{Interactable = A}\\{\scriptsize
+    widget ``E'' di A visibile}};
+  \node[ue12state, fill=green!6] (b) at (7.0,-3.4) {\textbf{Interactable = B}\\{\scriptsize
+    widget ``E'' di B visibile}};
+  \draw[ue12tr] ([yshift=3mm]vuoto.east) -- node[above, font=\scriptsize]{guardo A: Start(A)}
+    ([yshift=3mm]a.west);
+  \draw[ue12tr] ([yshift=-3mm]a.west) -- node[below, font=\scriptsize, text width=3.2cm,
+    align=center]{guardo il muro o niente: End(A), svuota} ([yshift=-3mm]vuoto.east);
+  \draw[ue12tr] (a.south) -- node[right, font=\scriptsize, text width=3.4cm]{passo
+    direttamente a B: End(A), Set, Start(B)} (b.north);
+  \draw[ue12tr] (b.west) -| node[pos=0.3, below, font=\scriptsize]{guardo il muro: End(B),
+    svuota} (vuoto.south);
+  \draw[ue12tr] (a.east) .. controls +(1.6,0.9) and +(1.6,-0.9) .. node[right,
+    font=\scriptsize, text width=1.9cm]{guardo ancora A: nulla} (a.east);
+\end{tikzpicture}
+\caption{La variabile Interactable come stato. Ogni Interaction Start è sempre seguito, prima
+o poi, dal suo Interaction End: l'oggetto può contare sulla coppia per mostrare e nascondere
+il suggerimento. Schema ricostruito.}
+\label{ue12:fig:stati}
+\end{figure}
+
+\paragraph{Approfondimento: messaggi, Does Implement Interface e Validated Get.} Tre
+precisazioni generali sui nodi usati. Primo: un nodo \emph{(Message)} di un'interfaccia si
+può chiamare su qualunque riferimento a oggetto; se l'oggetto non implementa l'interfaccia,
+la chiamata semplicemente non fa nulla, senza errori (la frase del libro citata sopra: ``non
+succede niente''). Il controllo \textbf{Does Object Implement Interface}, quindi, non serve
+a evitare un errore, ma a \emph{distinguere} gli interagibili dagli altri oggetti, così da
+chiudere l'interazione quando si guarda un muro. Secondo: il confronto \emph{Not Equal} fra
+due riferimenti confronta l'\emph{identità} degli oggetti (è lo stesso actor?), non la loro
+classe; due cubi identici sono comunque diversi. Terzo: il \textbf{Validated Get} è un Get
+con l'\emph{Is Valid} incorporato, con le due uscite \emph{Is Valid} e \emph{Is Not Valid};
+``validare'' un riferimento prima di usarlo è la raccomandazione con cui il docente chiude
+il corso, perché un riferimento vuoto o a un actor distrutto (per esempio un interagibile
+raccolto o eliminato) produce, se usato, gli errori \emph{Accessed None} a fine Play.
+Funzionamento generale dell'engine.
+
+% ---------------------------------------------------------------------
+\section{L'oggetto di prova: BP\_InteractableTest}
+\label{ue12:sec:test}
+
+\paragraph{L'actor.} ``Adesso creiamo il nostro actor interagibile.'' Nella cartella dei
+Blueprint, una Blueprint Class di tipo \textbf{Actor}, ``veramente semplicissimo'':
+\textbf{BP\_InteractableTest}. Due componenti: un \textbf{Cube} e un \textbf{Widget}
+(``fate widget, che poi faremo''), messo sopra il cubo.
+
+\paragraph{Implementare l'interfaccia.} ``Non si trova'', se si cerca l'interfaccia fra i
+componenti: va aggiunta in \textbf{Class Settings}, nella toolbar. Nei Details compaiono le
+categorie \emph{Imports} (\emph{Default Namespace}, \emph{Imported Namespaces}) e
+\textbf{Interfaces}, con \emph{Inherited Interfaces} e \textbf{Implemented Interfaces}; in
+quest'ultima, \textbf{Add}, BPI\_InteractionRay. ``Per vedere che l'hai aggiunto'': nel
+pannello My Blueprint compare la sezione \textbf{Interfaces}, con Interaction, Interaction End
+e Interaction Start.
+
+\paragraph{Implementare le funzioni.} Trascinare Interaction Start nel grafo non funziona:
+l'editor avverte che la funzione ``was not marked as Blueprint Callable'' e non può essere
+piazzata così. ``Dobbiamo overrideare la loro funzione, che di base è nulla'': le funzioni
+dell'interfaccia ``sono solo degli appoggi'', vuote, e il loro contenuto ``sarà da
+overrideare proprio dal livello di design''. Con un doppio clic (o tasto destro,
+\emph{Implement Event}) si ottengono tre eventi rossi: \textbf{Event Interaction Start},
+\textbf{Event Interaction End} ed \textbf{Event Interaction}. Ciascuno con un
+\textbf{Print String}:
+\begin{itemize}
+  \item Interaction Start: ``inizio interazione'', \textbf{Text Color} verde;
+  \item Interaction End: ``fine interazione'', rosso;
+  \item Interaction: ``interagendo'', giallo-arancione (``ancora non l'abbiamo usato,
+        quindi non lo vedremo, è normale'').
+\end{itemize}
+Il colore si trova aprendo la tendina del Print String (la freccia in basso del nodo).
+
+\paragraph{La collisione.} ``È importante però una cosa'': il canale InteractionTrace è in
+Ignore di default, quindi il cubo, così com'è, non viene visto dal raggio. Nella
+\textbf{Collision} del Cube, preset \emph{Custom} e \textbf{InteractionTrace} su
+\textbf{Block}. ``Su Cube, tanto la mesh è quella.''
+
+\paragraph{La prova.} Si mette il cubo in scena. In Play: ``inizio interazione, fine
+interazione, inizio interazione, fine interazione''. Con la camera in terza persona colpire
+il cubo è un po' difficile, ``ma ci sono delle volte in cui diventa verde''. ``Vi funziona?''
+``Sì, funziona.'' ``Quindi adesso abbiamo creato il nostro trace per quanto riguarda le
+interazioni.'' Il componente ``fa le veci di \emph{vado a controllarti se ci sono delle
+interazioni, e gestisco tutta la cosa}''; l'interazione vera, il tasto, la fa il personaggio,
+``in modo classico''.
+
+\paragraph{Approfondimento: eventi o funzioni dell'interfaccia.} Le tre funzioni di
+BPI\_InteractionRay non hanno \emph{output}: per questo, nell'actor che le implementa,
+diventano \emph{eventi} nell'Event Graph (è la stessa regola citata dal libro per la Trigger
+Pressed della pistola VR). Se una funzione dell'interfaccia avesse un valore di ritorno (per
+esempio un \emph{GetInteractionText} che restituisce ``Apri'' o ``Accendi''), andrebbe
+implementata come \emph{funzione}, con un doppio clic nella sezione Interfaces, e potrebbe
+essere chiamata per leggere un dato. Un'interfaccia non ha stato né variabili: ogni classe
+che la implementa decide da sé che cosa fare, e può anche lasciare vuote le funzioni che non
+le servono. Funzionamento generale dell'engine.
+
+% ---------------------------------------------------------------------
+\section{L'input: IA\_Interact e il tasto E}
+\label{ue12:sec:input}
+
+Nel BP\_Bot2 serve un nuovo input. ``Come si crea un nuovo input? Con l'IMC e con l'Input
+Action.''
+\begin{enumerate}
+  \item Nel Content Browser si va alle Input Action del progetto (cliccando su IA\_Jump,
+        \emph{Show in Folder View});
+  \item ``basta che fate una copia di IA\_Run'': \textbf{Duplicate}, nome
+        \textbf{IA\_Interact}; ``basta che qua dentro abbia i \textbf{Triggers}
+        \emph{Pressed} e \emph{Released}'' (come quelli di IA\_Run), da lasciare così;
+  \item nell'\textbf{IMC} di default (\emph{IMC\_\allowbreak Default}), il più accanto alle
+        \emph{Mappings} aggiunge una riga per IA\_Interact; poi, cliccando sull'icona
+        della tastiera e premendo il tasto, si assegna \textbf{E}.
+\end{enumerate}
+Il bot2 ``eredita la stessa cosa'': usa lo stesso IMC\_Default del template. Le domande dei
+presenti sono tutte sulla tendina dell'IMC (``non mi fa mettere l'azione di input'': ``è la
+tendina'') e sui trigger (``il primo è premuto e l'altro qual è?'': ``premuto e rilascio va
+benissimo così, lasciato così''). Nel personaggio, cercando \emph{IA\_Interact}, compare il
+nuovo evento d'input.
+
+\paragraph{Approfondimento: Pressed e Released nello stesso trigger.} Un'Input Action
+digitale senza trigger scatta in \emph{Triggered} a ogni frame finché il tasto è premuto; con
+il trigger \emph{Pressed} scatta una sola volta alla pressione, con \emph{Released} una
+volta al rilascio. Con \emph{entrambi}, come in IA\_Run e quindi in IA\_Interact, l'uscita
+\emph{Triggered} scatta due volte per ogni pressione: quando si preme e quando si rilascia.
+Nella lezione questo non dà problemi, perché il grafo del personaggio passa da un \emph{Do
+Once} che si resetta solo alla fine del Montage: il secondo impulso, al rilascio, arriva
+mentre l'animazione è in corso e viene ignorato. Ma se il Montage fosse molto breve, o il
+giocatore tenesse premuto a lungo, il rilascio potrebbe far partire una seconda
+interazione: per un'interazione ``a pressione'' basta il solo trigger Pressed, o l'uscita
+\emph{Started}. La trascrizione non dice quale uscita dell'evento IA\_Interact usi il docente.
+Funzionamento generale dell'Enhanced Input.
+
+% ---------------------------------------------------------------------
+\section{L'interazione nel personaggio}
+\label{ue12:sec:player}
+
+``Allora adesso partiamo a fare quello che ci servirà per indirizzare il nostro player,
+cioè farlo ruotare verso il nostro oggetto, e allo stesso modo far sì che l'interazione
+parta.''
+
+\paragraph{Un Do Once.} ``Vi dico che è un'azione che deve essere fatta su un \textbf{Do
+Once}'': l'interazione è una sequenza (girarsi, far partire il Montage, aspettarne la fine)
+e solo ``a fine del montaggio può reiniziare una prossima interazione''. Quindi IA\_Interact
+$\rightarrow$ Do Once.
+
+\paragraph{Chi stiamo guardando.} Dal componente \textbf{BPC\_RayInteract} (trascinato dal
+pannello dei componenti nel grafo: ``prendilo e trascinalo'') si prende la sua variabile
+\textbf{Interactable} e la si converte in \textbf{Validated Get}: ``questo Interactable è
+presente? Ci sta o non ci sta?''. Il personaggio non rifà la trace: legge il risultato del
+componente.
+\begin{itemize}
+  \item \textbf{Is Valid}: il messaggio \textbf{Interaction} di BPI\_InteractionRay
+        (``tira fuori e fai \emph{interaction}, cioè Interaction Message''), con target
+        Interactable: ``e questa è proprio la base: così interagiamo''.
+  \item \textbf{Is Not Valid}: \textbf{Reset} del Do Once (aggiunto dopo, quando il docente
+        si accorge che senza il reset, premendo E senza guardare nulla, il Do Once resta
+        chiuso per sempre: ``se non è valido, resetta il Do Once comunque, in ogni caso'').
+\end{itemize}
+
+\paragraph{Girarsi verso l'oggetto.} Dopo il messaggio, \textbf{Set Actor Rotation} con
+target \emph{Self} (``siamo già nel player''). Si splitta il pin \emph{New Rotation}, e si
+splitta anche l'uscita di un \textbf{Get Actor Rotation}: ``l'unica asse che ci interessa è
+la Z'', perché il personaggio deve girarsi solo attorno all'asse verticale (``se
+l'interactable sta qua, deve girare così''). Quindi:
+\begin{itemize}
+  \item X (Roll) e Y (Pitch) restano quelle attuali, dal Get Actor Rotation;
+  \item Z (Yaw) viene da un \textbf{Find Look at Rotation}, ``quello che abbiamo fatto
+        l'altra volta per la torretta'', con \textbf{Start} = \textbf{Get Actor Location}
+        del personaggio (il docente dice prima ``rotation'', poi si corregge: ``location,
+        ragazzi, scusatemi'') e \textbf{Target} = Get Actor Location dell'Interactable. Il
+        pin di uscita non si lascia splittare (``non me lo splitta''), quindi un
+        \textbf{Break Rotator}, e il suo Z va nella Z della nuova rotazione.
+\end{itemize}
+
+\paragraph{La prova provvisoria.} Prima del Montage, una prova: la scritta ``interagendo''
+compare, ma il personaggio non si gira; e dopo la prima volta non succede più nulla. ``Ah,
+giustamente, ragazzi'': il Do Once non si resetta mai. Il docente collega temporaneamente
+il Reset alla fine della catena (``lo faccio solamente per farvelo vedere''): ``mi giro di
+qua, e si gira verso di lui''. Poi lo stacca, ``perché ci servirà più avanti''.
+
+\paragraph{Il Montage.} Nel Content Browser si cerca \emph{interact}: fra le animazioni del
+bot c'è \textbf{Interact Press Button}. ``Vi ricordate come si fa il montaggio?'' Tasto
+destro sull'animazione, \textbf{Create}, \textbf{Create AnimMontage}: si crea un asset che
+``è sempre la stessa animazione, ma in questo caso è un montaggio''. Nel personaggio,
+\textbf{Play Montage}: nel pin \textbf{In Skeletal Mesh Component} la \textbf{Mesh} del
+personaggio (``basta che prendi la Mesh da qui e la metti così''), nel \textbf{Montage to
+Play} il nuovo Montage (\emph{Interact Press Button Montage}).
+
+\paragraph{La variabile Interacting.} ``Mettiamo, giusto perché in futuro ci possa
+servire, una variabile'' booleana, \textbf{Interacting}: ``dobbiamo verificare se stiamo
+interagendo, non stiamo interagendo, eccetera. Sempre buono mettere una variabile che dice:
+guarda, io sto interagendo''. Prima del Play Montage, Set Interacting a \textbf{vero}; sull'
+\textbf{On Completed}, ``quindi è finita l'animazione'', a \textbf{falso}.
+
+\paragraph{Fermare il giocatore.} Durante l'interazione il giocatore non deve muoversi:
+\begin{itemize}
+  \item prima del Montage, \textbf{Disable Input}, con il \textbf{Get Player Controller}
+        nel pin \emph{Player Controller}: ``chi dobbiamo levare? Gli input al controller del
+        nostro player'';
+  \item lo \textbf{Stop Movement Immediately}, ``andiamo a fermare qualsiasi tipologia
+        di movimento''. Il target non viene detto: il nodo appartiene al componente di
+        movimento del personaggio, il \emph{Character Movement};
+  \item sull'On Completed, \textbf{Enable Input}, con lo stesso Player Controller;
+  \item e infine il \textbf{Reset} del Do Once, ``in modo tale che io possa reinteragire di
+        nuovo''.
+\end{itemize}
+In Play: ``io giro di qua, si gira, fa l'animazione, non mi posso muovere''; ``e adesso mi
+riposso muovere appena finito il Montage'' (figura~\ref{ue12:fig:player}). ``Ci siete? Vi
+funziona? Perfetto.''
+
+\paragraph{I problemi dei presenti.} Uno studente non trova come prendere il componente
+(``l'hai aggiunto come components? Prendilo e trascinalo''); altri si perdono i due nodi
+successivi, ripetuti dal docente (Get Interactable, Convert to Validated Get, il messaggio
+Interaction). Un altro ha il Montage che non parte: manca la Mesh nel pin del Play Montage.
+Uno studente, a cui prima non funzionava, conferma che ora va, ma ha lo
+schermo ``pieno di \emph{Hello}'' (forse i Print String rimasti con il testo di default),
+``quindi li vedo con la coda dell'occhio''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ue12node/.style={draw, thick, rounded corners=4pt, align=center, fill=gray!8,
+                  minimum height=0.9cm, text width=2.2cm},
+  ue12ev/.style={ue12node, fill=red!12},
+  ue12msgn/.style={ue12node, fill=violet!12},
+  ue12pure/.style={ue12node, fill=green!10, rounded corners=8pt},
+  ue12exec/.style={-{Stealth[length=2.5mm]}, very thick, black!80},
+  ue12data/.style={-{Stealth[length=2mm]}, thick, blue!60!black}]
+  \node[ue12ev, text width=1.9cm] (ia) at (0,-0.0) {\textbf{IA\_Interact}\\{\scriptsize tasto
+    E}};
+  \node[ue12node, text width=1.5cm] (do) at (2.3,0) {\textbf{Do Once}};
+  \node[ue12node, text width=2.4cm] (vg) at (4.9,0) {\textbf{Validated Get}\\{\scriptsize
+    BPC\_RayInteract.\\Interactable}};
+  \node[ue12msgn] (msg) at (8.6,0) {\textbf{Interaction}\\{\scriptsize (Message) su
+    Interactable}};
+  \node[ue12node, text width=2.5cm] (rot) at (11.9,0) {\textbf{Set Actor Rotation}\\{\scriptsize
+    X, Y attuali; Z dal Look at}};
+  \node[ue12pure, text width=3.0cm] (look) at (11.9,-1.85) {\textbf{Find Look at
+    Rotation}\\{\scriptsize mia posizione $\rightarrow$ posizione di Interactable}\\
+    $\rightarrow$ \textbf{Break Rotator}: Z};
+  \node[ue12node, text width=3.5cm] (pre) at (8.0,-4.4) {\textbf{Set Interacting} = vero\\
+    \textbf{Disable Input}\\\textbf{Stop Movement Immediately}};
+  \node[ue12node, text width=2.8cm] (pm) at (12.0,-4.4) {\textbf{Play Montage}\\{\scriptsize
+    Mesh; Interact Press Button Montage}};
+  \node[ue12node, text width=3.5cm] (post) at (12.0,-6.8) {\textbf{Set Interacting} =
+    falso\\\textbf{Enable Input}\\\textbf{Reset} del Do Once};
+  \node[ue12pure, text width=1.9cm] (gpc) at (8.0,-6.8) {Get Player Controller};
+  \draw[ue12exec] (ia) -- (do); \draw[ue12exec] (do) -- (vg);
+  \draw[ue12exec] (vg) -- node[below, font=\scriptsize]{Is Valid} (msg);
+  \draw[ue12exec] (msg) -- (rot);
+  \draw[ue12exec] (rot.east) -- ++(0.35,0) -- ++(0,-3.15) -| (pre.north);
+  \draw[ue12exec] (pre) -- (pm);
+  \draw[ue12exec] (pm) -- node[right, font=\scriptsize]{On Completed} (post);
+  \draw[ue12exec] (vg.south) -- ++(0,-1.0) -| node[pos=0.25, above, font=\scriptsize]{Is
+    Not Valid: Reset} ([xshift=-3mm]do.south);
+  \draw[ue12data] (look) -- (rot);
+  \draw[ue12data] (gpc) -- (pre);
+  \draw[ue12data] (gpc) -- (post);
+\end{tikzpicture}
+\caption{L'interazione nel personaggio. Il personaggio non rifà la trace: legge la variabile
+Interactable del suo componente, invia il messaggio, si gira solo sull'asse Z verso
+l'oggetto, blocca l'input e suona il Montage; a Montage finito restituisce l'input e riapre
+il Do Once. Ricostruzione dalla lezione; la posizione esatta del Set Interacting e del
+Disable Input nella catena è dedotta dalle parole del docente.}
+\label{ue12:fig:player}
+\end{figure}
+
+\paragraph{Approfondimento: Do Once, Disable Input e la rotazione.} Romero e Sewell
+descrivono il \textbf{Do Once} nel capitolo 13 (\emph{Data Structures and Flow Control}):
+``il nodo Do Once esegue il pin di uscita una sola volta. Se viene attivato di nuovo, il pin
+di uscita non viene eseguito. Il pin di input Reset deve essere attivato per permettere al
+Do Once di eseguire di nuovo il pin di uscita.'' Il loro esempio è un'arma caricata, che si
+ricarica dopo 30 secondi con un timer che resetta il Do Once: lo stesso schema
+della lezione, con il Montage al posto del timer. Nel capitolo 15 il libro descrive
+\textbf{Enable Input} e \textbf{Disable Input}: ``definiscono se un actor deve rispondere agli
+eventi di input'', e ``hanno bisogno di un riferimento al Player Controller in uso''. Due
+note generali sull'engine. La prima: \emph{Disable Input} chiamato sul personaggio blocca
+gli eventi d'input di quel Blueprint (movimento, camera, salto), ma non ferma un movimento
+già in corso, cioè la velocità residua del Character Movement; per questo serve anche
+\emph{Stop Movement Immediately}, che azzera la velocità sul posto. La seconda: il
+\emph{Set Actor Rotation} è istantaneo, quindi il personaggio ``scatta'' verso l'oggetto. Per
+una rotazione morbida si può usare un \emph{RInterp To} nel Tick o una Timeline, come per le
+porte; e il template Third Person, che ha l'\emph{Orient Rotation to Movement} attivo, non
+contrasta la rotazione perché durante l'interazione il personaggio è fermo.
+
+% ---------------------------------------------------------------------
+\section{Il widget ``premi E''}
+\label{ue12:sec:widget}
+
+``Andiamo semplicemente a rendere tutto un po' più carino'': un piccolo widget che mostri il
+tasto da premere sopra l'oggetto.
+
+\paragraph{Gli asset della UI.} Il docente aveva messo nel materiale didattico una cartella
+di immagini per la UI, ``la UI asset''. Uno studente non l'ha trovata (``pensavo
+fosse sul Drive''): il docente controlla il Drive condiviso e i canali del Discord, scopre che
+non era stata caricata e la carica al momento, ``tanto pesa pochi kilobyte''. ``Estraetela e
+schiaffatela dentro Unreal'', nella cartella \textbf{UI}. Il trascinamento nel Content
+Browser a qualcuno dà ``fallimento''; il ``metodo abbastanza brusco, però va benissimo'' è
+copiare la cartella \emph{estratta} con il gestore dei file direttamente nella cartella
+\emph{Content/UI} del progetto. ``Adesso funziona.''
+
+\paragraph{WB\_InteractUI.} Nella cartella UI, un nuovo Widget Blueprint, classe User
+Widget: \textbf{WB\_InteractUI}. Nel Designer:
+\begin{enumerate}
+  \item un \textbf{Border}, con l'alfa del colore a \textbf{0}, ridimensionato a un
+        quadrato di circa \textbf{96 $\times$ 96} (``94 va bene anche''), e il
+        \textbf{Padding} tutto a \textbf{zero};
+  \item un secondo \textbf{Border} \emph{dentro} il primo;
+  \item le immagini: nel \textbf{Brush} di ciascun Border (``vedi che c'è il brush, apri il
+        brush'') si sceglie un'immagine del pacchetto, ``il panel che volete voi'' (ce ne
+        sono diversi, Panel 0, 1, 2, 3, 5\dots). Dopo una correzione (``questo è il
+        contrario, scusate''), il Border esterno prende \textbf{Panel Border 5}, con l'alfa a
+        \textbf{1} e la tinta \textbf{nera}, e quello interno \textbf{Panel 5};
+  \item un \textbf{Text} con la lettera \textbf{E}, con \emph{Horizontal Alignment} e
+        \emph{Vertical Alignment} al \textbf{centro}, e la dimensione del \textbf{font} a
+        35, poi 40--45 (``una bella E'').
+\end{enumerate}
+``Piccola cosa, ragazzi, prima non l'ho fatto fare a mano'': la dimensione dei Border si può
+impostare anche con precisione, dall'\textbf{Image Size} del Brush (96 $\times$ 96).
+
+\paragraph{Il widget che contiene la barra della vita.} Una studentessa crea un nuovo
+widget, ma aprendolo trova le barre della vita e della stamina, e non riesce a modificarle.
+Rifacendo la creazione insieme, la causa emerge: nella finestra di scelta della classe aveva
+preso un widget esistente come genitore (``anteprima widget praticamente ti dà
+un'anteprima dei widget che già ci sono''), cioè il suo HUD; il nuovo widget ne
+\emph{ereditava} il contenuto, in sola lettura. ``È buona prassi fare quello tutto in
+alto'', \textbf{User Widget}.
+
+\paragraph{L'immagine che non si vede.} Un'altra studentessa ha il bordo esterno che non
+compare. Il docente controlla tinta, alfa, Image Size, Padding, \emph{Content Opacity}: ``è
+a 1, va bene così''. ``Perdonami, purtroppo non saprei dire'': si cancellano i Border e si
+rifanno, ``basta funzionare''. Rifatti, funzionano.
+
+\paragraph{Il widget nell'oggetto.} In BP\_InteractableTest, il componente \textbf{Widget}:
+\begin{itemize}
+  \item \textbf{Space}: \textbf{Screen}, non World, ``in modo tale che ci sia una specie di
+        2D, quindi relativo allo schermo, non al mondo'';
+  \item \textbf{Draw Size}: \textbf{100 $\times$ 100}, ``un po' più piccolo'';
+  \item \textbf{Widget Class}: WB\_InteractUI.
+\end{itemize}
+In Play, il quadratino con la E ``scala con lo schermo'', ma, se non lo si nasconde,
+``rimane per sempre''.
+
+\paragraph{Mostrare e nascondere.} Nel grafo di BP\_InteractableTest:
+\begin{itemize}
+  \item \textbf{Event BeginPlay} $\rightarrow$ \textbf{Set Hidden in Game} sul Widget, con
+        \emph{New Hidden} \textbf{attivo}: nascosto da subito;
+  \item \textbf{Event Interaction Start} $\rightarrow$ Set Hidden in Game,
+        \textbf{disattivo}: ``allora la faccio apparire'';
+  \item \textbf{Event Interaction End} $\rightarrow$ Set Hidden in Game, \textbf{attivo}.
+\end{itemize}
+Il docente prova anche un'idea per l'Event Interaction (nascondere il widget, un
+\textbf{Delay} di un secondo, mostrarlo di nuovo), ma la toglie: ``questo potrebbe dare
+errori, ragazzi'', perché il Delay ``va in contrasto'' con Start ed End (se lo sguardo si
+sposta durante il secondo d'attesa, il Delay rimostrerebbe un widget che l'End ha appena
+nascosto). ``Lascialo così per adesso.''
+
+\paragraph{La spunta al contrario.} Una studentessa vede la E anche quando non guarda il
+cubo: ``allora vuol dire che hai sbagliato l'Hidden in Game''. ``Il tick è positivo sull'End
+e negativo sullo Start'', ``e anche positivo sul Begin Play''. Dopo la correzione resta un
+dubbio, poi chiarito: all'inizio della prova la camera stava già inquadrando il cubo da una
+posizione strana, e il widget era giustamente visibile. ``Non lo vedo più. Perfetto,
+ragazzi.''
+
+\paragraph{Approfondimento: il Widget Component.} Il \textbf{Widget Component} mostra un
+Widget Blueprint attaccato a un actor. In \textbf{World} space il widget è un piano nel
+mondo 3D: ha prospettiva, può essere coperto da altri oggetti, si rimpicciolisce con la
+distanza, ed è adatto a schermi diegetici (un terminale, un cartello). In \textbf{Screen}
+space il widget è disegnato sopra l'immagine, sempre rivolto alla camera, con una dimensione
+costante in pixel, e segue sullo schermo la posizione proiettata del componente: è la scelta
+tipica per i suggerimenti ``premi E'' e per le barre della vita sopra i nemici. La
+\textbf{Draw Size} è la risoluzione in pixel a cui il widget viene disegnato. Per nascondere
+il suggerimento, l'alternativa a \emph{Set Hidden in Game} è \emph{Set Visibility} sul
+componente; il risultato è lo stesso. Funzionamento generale dell'engine.
+
+% ---------------------------------------------------------------------
+\section{Un esempio: la luce che si accende}
+\label{ue12:sec:luce}
+
+\paragraph{L'idea.} ``Sappiate che tutti gli oggetti che create'', se implementano
+l'interfaccia, ``avete già un qualcosa che vi identifica se state iniziando
+un'interazione'', se la state finendo, ``e la tipologia di interazione''. Le funzioni
+costruite per i bottoni nelle lezioni passate ``possiamo traslarle sul nostro
+interactable'': ``un diverso modo di interagire e di attivare le cose''. Con Davide si
+vedranno ``anche delle piccole cose di modeling'': si può modellare un pulsante, dargli
+BPI\_InteractionRay, ``e a quel punto magari potete chiamare l'ascensore''. ``Cosa succede se
+interagisco? Ci metto quello che voglio: ci metto un timer, ci metto una cosa, accendo una
+luce.''
+
+\paragraph{Velocissimo.} ``Facciamo velocissimo'', in BP\_InteractableTest. Dall'Event
+Interaction si toglie il Print String, e:
+\begin{enumerate}
+  \item una variabile del tipo dell'attivabile luce, la classe figlia di BP\_Activable delle
+        lezioni sul pulsante (``la Point Light'', \textbf{BP\_ActivableLight}; la
+        trascrizione dice ``BP Activables'' e ``inter light''), con i suoi eventi
+        \textbf{Activation} e \textbf{Deactivation};
+  \item un \textbf{Flip Flop}: ``questo fa A, poi fa B, poi fa di nuovo A: fondamentalmente
+        gioca su due'';
+  \item su \textbf{A}, \textbf{Activation} della luce; su \textbf{B},
+        \textbf{Deactivation};
+  \item la variabile va resa modificabile nell'istanza e collegata alla luce del livello
+        (``però gli dobbiamo dare quale light'', ``dammi la light, dammi questa'').
+\end{enumerate}
+``Abbiamo acceso la luce e la rispegniamo.'' ``Questo è un esempio, ragazzi'': ``qualsiasi
+actor può essere separato dagli altri con la sua specifica interazione'', e ``quello che la
+identifica già ce l'abbiamo''.
+
+\paragraph{Approfondimento: Flip Flop nel libro.} Romero e Sewell (capitolo 13): ``ogni volta
+che un nodo Flip Flop viene eseguito, alterna fra due pin di uscita, A e B''; ha anche un
+output booleano \emph{Is A}, vero quando sta eseguendo A. Con una nota importante: ``il Flip
+Flop non funziona correttamente dentro una funzione, perché ha una variabile interna che
+viene cancellata quando la funzione finisce'', e quindi dentro una funzione esegue sempre A.
+Lo stesso vale per il Do Once. È il motivo per cui, nella lezione, il Flip Flop sta
+nell'Event Graph dell'oggetto e il Do Once nell'Event Graph del personaggio, mentre la
+funzione LookForInteractions, che non deve ricordare nulla fra un frame e l'altro (lo stato
+è nella variabile Interactable, che è del componente), può essere una funzione.
+
+% ---------------------------------------------------------------------
+\section{La chiusura del corso}
+\label{ue12:sec:chiusura}
+
+``Ci sono domande, ragazzi? Domande su tutto il corso, in generale.'' Il docente chiede
+anche un \textbf{feedback} sul corso, ``adesso o dopo, tranquillamente sul server''. La
+risposta di uno studente, scherzosa: ``tutto chiaro, tutto bellissimo, incredibile''. ``Sono
+contento.''
+
+Per il futuro, anche ``per chi guarda in differita'': ``se avete un problema, state facendo il
+Big One, eccetera, buttate il vostro problema sul server: sia alunni sia professori
+provvederanno a rispondervi e darvi una mano''. ``Se ci sono ultime cose che volete dire,
+ragazzi, ditele ora, o effettivamente questa volta tacete per sempre.'' E il congedo: ``vi
+ringrazio per la vostra attenzione, vi ringrazio per aver partecipato al corso. Spero che i
+vostri progettini possano prendere vita per tutte le cose che poi andrete a fare in Unreal.
+Per benino, ricordatevi di \textbf{validare sempre} molte variabili.'' ``Da questo punto in
+poi'' le lezioni continuano con Davide. ``È stato un piacere.''
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.7cm}p{3.0cm}p{2.9cm}p{4.4cm}@{}}
+\toprule
+\textbf{Asset o variabile} & \textbf{Dove} & \textbf{Tipo, valore} & \textbf{A che serve} \\
+\midrule
+M\_Menu & mappe & Empty Level & la mappa del menu \\
+WB\_Menu & UI & Widget Blueprint & il menu con i due bottoni \\
+Button\_StartGame, Button\_QuitGame & WB\_Menu & Button, 300 $\times$ 80 & gioca; esci \\
+CameraActor & M\_Menu & Camera Actor & la vista fissa del menu \\
+GameMode Override & World Settings di M\_Menu & Game Mode base & niente personaggio nel menu \\
+ThirdPersonMap & mappe & livello & la mappa aperta da Play Game \\
+BPC\_RayInteract & Blueprints, Components & Scene Component & traccia gli interagibili \\
+CameraComponent & BPC\_RayInteract & Camera Component (ref.) & la camera del proprietario \\
+DistanceTrace & BPC\_RayInteract & Float, 300 & la lunghezza del raggio \\
+Interactable & BPC\_RayInteract & Actor (ref.) & l'interagibile guardato ora, o vuoto \\
+Scene & BPC\_RayInteract & Scene Component (ref.) & solo per il trucco del Select \\
+InteractionTrace & Project Settings & Trace Channel, Ignore & il canale delle interazioni \\
+BPI\_InteractionRay & Blueprints, Components & Blueprint Interface & Start, End, Interaction \\
+BP\_InteractableTest & Blueprints & Actor (Cube, Widget) & l'oggetto di prova \\
+IA\_Interact & Input & Input Action, Pressed e Released & l'interazione, tasto E \\
+Interacting & BP\_Bot2 & Boolean & vero durante l'interazione \\
+Interact Press Button Montage & animazioni del bot & Anim Montage & l'animazione dell'interazione \\
+WB\_InteractUI & UI & Widget Blueprint, 96 $\times$ 96 & il suggerimento ``E'' \\
+Widget (componente) & BP\_InteractableTest & Screen, 100 $\times$ 100 & mostra WB\_InteractUI \\
+Light & BP\_InteractableTest & BP\_ActivableLight (ref.) & la luce accesa e spenta \\
+\bottomrule
+\end{tabular}
+\caption{Gli asset e le variabili della giornata, con i nomi usati dal docente (BPC\_RayInteract
+è, nel progetto del docente, BPC\_RayInteract1; il nome della variabile della luce è
+incerto).}
+\label{ue12:tab:asset}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{5.4cm}p{8.6cm}@{}}
+\toprule
+\textbf{Sintomo} & \textbf{Causa e rimedio} \\
+\midrule
+La barra della stamina scende solo al rilascio & manca la Call E\_UpdateStamina in
+StaminaDeduction: c'era solo in RegainStamina \\
+Il secondo bottone incollato non compare & è sovrapposto al primo (controllare la
+Hierarchy); oppure aggiungerne uno nuovo dalla Palette \\
+L'immagine copre i bottoni & è in fondo alla Hierarchy, cioè disegnata sopra: trascinarla
+prima dei bottoni \\
+Il personaggio compare dietro il menu & GameMode Override nelle World Settings della
+mappa del menu: Game Mode base \\
+Si vede la pallina (Default Pawn) & spostare il Player Start fuori dalla camera \\
+La camera del menu non si usa & Set View Target with Blend dal Get Player Controller (non
+dal Camera Manager), con la referenza alla camera \\
+Errore su Add to Viewport & il Target è Self: collegare il Return Value del Create Widget \\
+Il cursore non si vede & Set Show Mouse Cursor nell'Event Construct, con la spunta attiva \\
+Nel menu ci si muove ancora & Set Input Mode UI Only nell'Event Construct \\
+Il Select non accetta Self (o la camera) & il Select prende il tipo del primo collegamento:
+mettere prima una variabile Scene Component, poi cancellarla \\
+In Play non si vede il raggio & LookForInteractions non chiamata nell'Event Tick; Draw
+Debug Type a None \\
+InteractionTrace non compare nella trace & compilare dopo aver creato il canale \\
+Il raggio ignora il cubo & la mesh non blocca InteractionTrace (default Ignore): Block \\
+L'evento dell'interfaccia non si trascina & non è Blueprint Callable: implementarlo come
+evento (doppio clic o Implement Event) \\
+Hit Actor non si collega a Interactable & Interactable di tipo sbagliato: Actor, Object
+Reference \\
+Si interagisce una sola volta & il Do Once non viene resettato (On Completed e Is Not
+Valid) \\
+Il Montage non parte & manca la Mesh nell'In Skeletal Mesh Component \\
+Il nuovo widget contiene le barre dell'HUD & creato con l'HUD come genitore: scegliere User
+Widget \\
+Il bordo del widget non si vede & causa non trovata; rifare i Border \\
+La E si vede quando non si guarda & spunte di Set Hidden in Game invertite: attivo nel
+Begin Play e nell'End, disattivo nello Start \\
+Trascinare la cartella UI dà ``fallimento'' & copiare la cartella estratta in Content/UI dal
+gestore dei file \\
+La BPI si apre senza grafo & doppio clic sulla funzione in My Blueprint \\
+\bottomrule
+\end{tabular}
+\caption{I problemi incontrati durante la lezione, con la causa e il rimedio.}
+\label{ue12:tab:errori}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabular}{@{}p{5.8cm}p{8.2cm}@{}}
+\toprule
+\textbf{Nodo, asset o impostazione} & \textbf{Che cosa fa} \\
+\midrule
+New Level: Empty / Basic & livello vuoto; con luce e cielo già pronti \\
+Widget Blueprint (User Widget) & l'asset dell'interfaccia: Designer e Graph \\
+Button: Style (Normal, Hovered, Pressed) & i colori del bottone nei tre stati \\
+Hex sRGB / Hex Linear & il codice del colore, da copiare \\
+Text dentro un Button & l'etichetta del bottone, figlia del bottone \\
+Image: Color and Opacity (alfa) & la trasparenza dell'immagine \\
+Hierarchy (ordine) & l'ultimo elemento è disegnato sopra \\
+Anchors / Position / Alignment / Size & ancora; scostamento; pivot; dimensioni \\
+Open Level Blueprint & il Blueprint del livello corrente \\
+Create Widget / Add to Viewport & crea il widget; lo mostra \\
+World Settings: GameMode Override & la Game Mode per questa mappa \\
+Default Pawn / Player Start & la sfera della Game Mode base; dove nasce il Pawn \\
+Camera Actor / Directional Light & una camera nel livello; il sole \\
+Create a Reference to (actor) & la referenza a un actor del livello nel Level Blueprint \\
+Set View Target with Blend & cambia la camera del Player Controller \\
+Event Pre Construct / Construct & alla costruzione nel Designer; alla costruzione in gioco \\
+Set Show Mouse Cursor & mostra o nasconde il cursore \\
+Set Input Mode UI Only / Game Only & l'input va solo all'interfaccia; solo al gioco \\
+On Clicked (Button) & l'evento del clic su un bottone \\
+Quit Game & esce dal gioco (in editor, chiude il Play) \\
+Open Level (by Name) & apre una mappa dal nome \\
+Blueprint Interface & solo dichiarazioni di funzioni, in sola lettura \\
+Class Settings: Implemented Interfaces & aggiunge un'interfaccia a un Blueprint \\
+Interaction Start / End / Interaction (Message) & i messaggi dell'interfaccia \\
+Event Interaction Start / End / Interaction & la loro implementazione nell'oggetto \\
+Actor Component / Scene Component & componente senza / con Transform \\
+Get Owner & l'actor che possiede il componente \\
+Get Component by Class & il primo componente di una classe (non l'array) \\
+Sphere Trace By Channel & una sfera lungo un segmento: Radius, Draw Debug Type \\
+Get World Location / Get Forward Vector & posizione nel mondo; direzione davanti \\
+Select (wildcard) & sceglie fra due valori; il tipo è quello del primo collegato \\
+Is Valid (pura) / Validated Get & il riferimento esiste?; Get con le due uscite \\
+Not Equal (!=) & vero se i due valori sono diversi \\
+New Trace Channel (Ignore / Block) & un canale di collisione personalizzato \\
+Break Hit Result: Hit Actor & l'actor colpito \\
+Does Object Implement Interface & l'oggetto implementa l'interfaccia? \\
+Event Tick & a ogni frame \\
+Print String: Text Color & il colore del messaggio \\
+Input Action (Pressed, Released) / IMC & l'azione e il tasto (E) \\
+Do Once (Reset) & esegue una volta, finché non si resetta \\
+Set Actor Rotation / Get Actor Rotation & imposta; legge la rotazione dell'actor \\
+Find Look at Rotation / Break Rotator & rotazione per guardare un punto; i suoi tre assi \\
+Create AnimMontage / Play Montage & un Montage da un'animazione; lo suona (On Completed) \\
+Disable Input / Enable Input & toglie; restituisce l'input all'actor \\
+Stop Movement Immediately & azzera il movimento del personaggio \\
+Border: Brush, Padding, Image Size & il riquadro con immagine; margine interno; dimensione \\
+Widget Component: Space, Draw Size, Widget Class & un widget attaccato a un actor \\
+Set Hidden in Game (New Hidden) & nasconde o mostra un componente \\
+Delay & aspetta prima di proseguire \\
+Flip Flop & alterna fra le uscite A e B \\
+\bottomrule
+\end{tabular}
+\caption{I nodi, gli asset e le impostazioni della dodicesima lezione.}
+\label{ue12:tab:nodi}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Il designer usa Unreal per \textbf{prototipare} le meccaniche e verificare che
+        funzionino; il progetto d'esame degli anni successivi è un \textbf{pezzo da
+        portfolio}. \textbf{Less is more}: il giocatore impiega molto più tempo di chi
+        ha progettato il gioco per capirne ogni elemento.
+  \item Il menu vive in una \textbf{mappa a parte} (Empty Level), con un \textbf{Widget
+        Blueprint} (User Widget) creato e mostrato nel \textbf{Level Blueprint} (Create
+        Widget, Add to Viewport con il Return Value).
+  \item Nel Designer: Canvas Panel, bottoni con l'\textbf{ancora} al centro e
+        l'\textbf{Alignment} per impilarli, un \textbf{Text} dentro ogni bottone, i colori
+        di \textbf{Normal}, \textbf{Hovered} e \textbf{Pressed} nello Style (copiabili con
+        il codice Hex), e l'ordine della \textbf{Hierarchy} per mettere un'immagine
+        dietro (l'ultimo elemento sta sopra).
+  \item Niente personaggio nel menu: \textbf{GameMode Override} con la Game Mode base
+        (Default Pawn) e Player Start fuori campo. La vista fissa: un Camera Actor e
+        \textbf{Set View Target with Blend}, dal \textbf{Player Controller}.
+  \item Nell'\textbf{Event Construct} del widget: \textbf{Set Show Mouse Cursor} (con la
+        spunta) e \textbf{Set Input Mode UI Only}. Sui bottoni, \textbf{On Clicked}:
+        \textbf{Quit Game}; \textbf{Set Input Mode Game Only} e \textbf{Open Level (by
+        Name)}.
+  \item Una \textbf{Blueprint Interface} è un intermediario (``un volo di linea''): solo
+        nomi di funzioni, in sola lettura. Chi la implementa (Class Settings,
+        Implemented Interfaces) decide che cosa fare; chi non la implementa ignora i
+        messaggi.
+  \item Un \textbf{Blueprint Component} isola una funzionalità da aggiungere a qualunque
+        actor. L'\textbf{Actor Component} non ha posizione; lo \textbf{Scene Component}
+        ha un Transform. Il componente trova il suo actor con \textbf{Get Owner} e la
+        camera con \textbf{Get Component by Class}.
+  \item \textbf{BPC\_RayInteract}: a ogni frame (\textbf{Event Tick}) una \textbf{Sphere
+        Trace} (Radius 5) dalla posizione del componente, lungo il Forward Vector della
+        camera (o del componente, se la camera non c'è) per 300 unità, sul canale
+        \textbf{InteractionTrace} (Ignore di default, Block sugli interagibili).
+  \item Il \textbf{Select} prende il tipo del primo collegamento: per scegliere fra la
+        camera e Self, prima una variabile \emph{Scene Component}, poi la si cancella (la
+        ``mandragata'').
+  \item La variabile \textbf{Interactable} ricorda l'oggetto guardato: se cambia,
+        \textbf{Interaction End} sul vecchio, Set, \textbf{Interaction Start} sul nuovo;
+        se non si guarda niente di interagibile, End e svuota. Sempre con il
+        \textbf{Validated Get}.
+  \item Nel personaggio: \textbf{IA\_Interact} (tasto E), \textbf{Do Once}, il messaggio
+        \textbf{Interaction}, \textbf{Set Actor Rotation} con il solo \textbf{Yaw} da
+        \textbf{Find Look at Rotation}, \textbf{Disable Input} e \textbf{Stop Movement
+        Immediately}, \textbf{Play Montage}, poi Enable Input e \textbf{Reset} del Do Once
+        (anche quando non c'è nulla da interagire).
+  \item Il suggerimento ``E'': un \textbf{Widget Component} in \textbf{Screen} space,
+        nascosto nel Begin Play e mostrato e nascosto da Interaction Start ed End con
+        \textbf{Set Hidden in Game}.
+  \item Ogni oggetto può dare la sua risposta all'interazione: per esempio un
+        \textbf{Flip Flop} che chiama Activation e Deactivation di una
+        \textbf{BP\_ActivableLight}. Flip Flop e Do Once non vanno dentro le funzioni.
+  \item La raccomandazione finale del corso: \textbf{validare sempre} le variabili.
+\end{itemize}

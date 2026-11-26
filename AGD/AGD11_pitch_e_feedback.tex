@@ -1,0 +1,1897 @@
+% =====================================================================
+%  Analog Game Design, lezione 11 — Il pitch dei progetti di gruppo.
+%  Una lezione senza slide e senza lezione frontale: i tre gruppi del
+%  corso presentano in tre minuti l'idea del gioco che svilupperanno
+%  fino a dicembre, e i tre docenti (Daniele, Beatrice e Ruggero) fanno
+%  domande, si ritirano a discutere in privato e poi restituiscono i
+%  feedback. In apertura, l'attesa e le regole del pitch. Poi i tre
+%  pitch, ciascuno con le sue domande: Murder Memory (escape room
+%  investigativa da tavolo a squadre), La Peste (party game a ruoli
+%  segreti ispirato alla Maschera della Morte Rossa), un gioco di ruolo
+%  in solitario deck building, roguelike e journaling. Dopo la camera
+%  di consiglio: la premessa ai feedback (indicazioni, non consigli; il
+%  regolamento di massima per il 6 novembre), la domanda di Tiziana su
+%  che cosa sia un regolamento in una escape room, i feedback gruppo
+%  per gruppo con i casi studio assegnati, il legame tra obiettivo e
+%  agency, il perché dei tre minuti, i giochi "generalisti". Infine le
+%  domande aperte: scrivere il gioco per chi lo gioca senza di voi, la
+%  curse of knowledge, la vergogna delle idee, e una lunga discussione
+%  su roguelike, RNG e narrativa modulare (partire dalle emozioni, non
+%  dai perk; le meccaniche come metafore; l'ortogonalità).
+%  Fonte: trascrizione dell'undicesima lezione (AGD11) del corso breve
+%  di Analog Game Design, seconda edizione: una lezione online di circa
+%  tre ore, lunedì 12 ottobre 2026, condotta da Daniele con Beatrice e
+%  Ruggero.
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Analog Game Design", undicesimo
+%  capitolo (numerazione propria 2.11). Nel file principale del libro,
+%  subito dopo il capitolo 2.10:
+%
+%    \input{AGD/AGD10_ux_design_e_paragame}
+%    \input{AGD/AGD11_pitch_e_feedback}
+%
+%  Tutte le etichette di questo capitolo hanno il prefisso "a11:"
+%  (a11:cap:..., a11:sec:..., a11:fig:..., a11:tab:...). Il capitolo è
+%  autonomo: non contiene \ref verso altri capitoli.
+%  Le figure e le tabelle sono ricostruzioni schematiche di quanto
+%  detto a voce (la lezione non ha slide dei docenti), non copie delle
+%  slide dei gruppi. Dove la trascrizione è troppo rovinata per
+%  ricostruire un dettaglio (un nome di gioco, chi sta parlando), il
+%  capitolo lo dice invece di inventarlo.
+% =====================================================================
+
+\chapter[Il pitch dei progetti di gruppo]{Il pitch dei progetti di gruppo: tre
+giochi, tre minuti, e i feedback di chi li dovrà giocare}
+\label{a11:cap:pitch}
+
+Questa è l'\textbf{undicesima lezione} del corso di \textbf{Analog Game Design}, ed è
+diversa da tutte le precedenti. ``Non abbiamo slide, non abbiamo una lezione, nel senso
+di lezione frontale'': oggi è il giorno del \textbf{\emph{pitch}}, quello che Ruggero, a
+fine della lezione sul paragame, aveva dato per certo come ``il 12'', che ``sta nella
+pietra''. I tre gruppi di lavoro del corso presentano in \textbf{tre minuti} l'idea del
+gioco che svilupperanno fino a dicembre; dopo ogni presentazione i docenti fanno
+qualche minuto di domande, poi il gruppo esce dalla stanza virtuale e i docenti
+discutono in privato. Quando tutti e tre i gruppi hanno presentato, la seconda metà della
+lezione è dedicata ``solo ai feedback, esclusivamente ai feedback''.
+
+I tre progetti sono molto diversi tra loro. Il primo, \textbf{\emph{Murder Memory}}, è
+una \emph{escape room} investigativa da tavolo in cui due squadre, la polizia e un
+indiziato che ha perso la memoria, risolvono enigmi in parallelo fino a un
+interrogatorio finale. Il secondo, \textbf{\emph{La Peste}}, è un \emph{party game} a
+ruoli segreti, di deduzione e \emph{bluff}, ambientato nel ballo della \emph{Maschera
+della Morte Rossa} di Edgar Allan Poe: a ogni rintocco dell'orologio si balla, ci si
+scambiano le carte e la malattia si diffonde. Il terzo è un \textbf{gioco di ruolo in
+solitario}, \emph{deck building}, \emph{roguelike} e di \emph{journaling}: si
+sopravvive il più a lungo possibile tenendo in equilibrio corpo, mente e status
+sociale di un personaggio, e alla fine della partita resta la sua storia, da scrivere.
+
+I feedback sono franchi, e i docenti lo dicono subito: non saranno ``consigli'' ma, dove
+l'esperienza dice che un gruppo si sta infilando in un ``ginepraio troppo grosso per il
+periodo di tempo che avete'', \textbf{indicazioni} precise (``non fate questo, fate
+questo''). I temi che ritornano per tutti e tre i gruppi sono pochi e molto concreti:
+\textbf{convergere} su un'idea e uno \emph{scope} realizzabili, \textbf{scrivere il
+regolamento} (``il vostro gioco lo devono poter giocare altre persone che non sono
+voi''), collegare l'\textbf{obiettivo} di chi gioca a ciò che fa \textbf{turno per
+turno}, partire dalle \textbf{emozioni} e non dai bilanciamenti, e usare i
+\textbf{casi studio} come strumenti di \emph{problem solving}, non come modelli da
+copiare. Ogni gruppo riceve una lista di giochi da studiare, in tutto più di quindici
+titoli (tabella~\ref{a11:tab:reference}). L'ultima parte della lezione, aperta alle
+domande, diventa una lunga discussione su \emph{roguelike}, generazione casuale e
+narrativa modulare, temi che due dei docenti praticano per mestiere.
+
+La lezione è \textbf{online}, su Zoom, e si tiene \textbf{lunedì 12 ottobre
+2026}\footnote{La data è quella fissata nella lezione precedente (``il 12 sta nella
+pietra'', e ``lunedì'' sono i \emph{pitch}). In questa lezione Daniele ricorda che
+Gianmarco ``di solito lunedì arriva un'ora dopo per motivi di lavoro''.}, presumibilmente
+dalle 17 alle 20 come le altre: Daniele, che arriva ``da sei ore di lezioni'', ne fa
+``altre tre di fila'' e a fine serata parla della sua ``nona ora''. La conducono insieme
+i tre docenti del corso: \textbf{Daniele}, che scandisce i tempi, fa partire il timer e
+gestisce la sala d'attesa; \textbf{Beatrice} (``Bea''); e \textbf{Ruggero}. Gli studenti
+sono divisi in tre gruppi: \textbf{Tiziana}, \textbf{Angelo} e \textbf{Lorenzo L.}
+(\emph{Murder Memory}); \textbf{Tancredi}, \textbf{Gianmarco} e \textbf{Lorenzo}
+(\emph{La Peste})\footnote{Nel corso ci sono due Lorenzo, e la trascrizione li
+distingue solo in un punto, quando Daniele presenta il primo gruppo come ``Tiziana,
+Lorenzo L. e Angelo''. L'altro Lorenzo è nel gruppo di Tancredi e Gianmarco (``io sono
+con Gianmarco e Lorenzo'', dice Tancredi). Il capitolo scrive ``Lorenzo L.'' per il
+primo e ``Lorenzo'' per il secondo.}; \textbf{Giordano}, \textbf{Nicola} e
+\textbf{Rita} (il \emph{roguelike} in solitario)\footnote{Il nome di Rita è storpiato in
+``Verità'' (``Giordano, Nicola, Verità'') e in ``Piano'' (``Rita, Piano e Nicola''); il
+contesto e un successivo ``ha ragione anche Rita'' lo rendono sicuro.}.
+
+Tre avvertenze di lettura, le stesse dei capitoli precedenti. La prima: la trascrizione è
+automatica e storpia moltissimi nomi. Ruggero diventa ``Ruger'', ``Rugger'',
+``Brugger'' e ``Rugg''; \emph{Murder Memory} diventa ``Merd Memory'', ``Mordor
+Memory'', ``Marder Memory'' e ``Mordere Memory''; \emph{Lupus in Tabula} è ``Lupus in
+Fabula'', ``l'Opus in Fabula'' e ``l'upus in tabula''; \emph{Slay the Spire} è ``Slade
+of Spire'', ``Slade Spire'', ``Zade Spyder'' e ``As Lady Spire 2''; \emph{Reigns} è
+``Rains'', ``Rain'' e ``Reins''; \emph{The Quiet Year} è ``The Quiet Ear'', ``White
+Tier'', ``quai tier'' e ``quietire''; \emph{Inhuman Conditions} è ``In Human
+Condition'', ``Unicondition'' e ``Non è un Condition''; Tabletop Simulator è ``Temporal
+Simulator'' e ``Voltoltor Simulator''. Dove la ricostruzione è sicura, o molto probabile,
+il capitolo usa la forma corretta e lo segnala in nota la prima volta; dove non lo è,
+riporta la forma della trascrizione e lo dice. La seconda: con tre docenti e dieci
+studenti che parlano spesso uno sull'altro, la trascrizione quasi mai segnala chi sta
+parlando, e in più punti ripete due volte la stessa frase (un artefatto del
+riconoscimento vocale, che il capitolo ignora). Il capitolo attribuisce le frasi quando
+il contesto lo rende chiaro (chi viene chiamato per nome, chi dice ``io sto creando un
+\emph{roguelike}'', chi ha scansionato un libro) e resta generico altrimenti. La terza:
+le slide dei gruppi non sono nella trascrizione; il capitolo ricostruisce i giochi da ciò
+che i gruppi dicono a voce, nelle presentazioni e nelle risposte.
+
+\paragraph{Come leggere questo capitolo.} I tre progetti sono descritti per come sono
+stati presentati il 12 ottobre: idee in fase embrionale, con parti ``ancora da
+definire'' che i gruppi stessi segnalano. Il capitolo non le completa e non le corregge:
+riporta le domande che i docenti fanno, le risposte, e poi i feedback. Le figure
+ricostruiscono gli schemi che emergono dal discorso (la procedura del \emph{pitch}, il
+round della \emph{Peste}, il legame tra obiettivo e \emph{agency}, il calendario fino a
+dicembre); le tabelle riassumono i progetti e i casi studio. Qua e là, dei paragrafi di
+\textbf{approfondimento} collegano la lezione ai libri di game design di riferimento
+(soprattutto \emph{The Art of Game Design} di Jesse Schell e \emph{A Theory of Fun} di
+Raph Koster) e a qualche nozione di psicologia della comunicazione; sono segnalati come
+tali e non fanno parte della lezione.
+
+Il percorso del capitolo segue quello della lezione:
+\begin{enumerate}
+  \item l'attesa, la logistica e le \textbf{regole del \emph{pitch}} (sezioni
+        \ref{a11:sec:attesa} e~\ref{a11:sec:regole});
+  \item i tre \emph{pitch}, ciascuno con le sue domande: \emph{Murder Memory},
+        \emph{La Peste}, il \emph{roguelike} di \emph{journaling} (sezioni
+        da~\ref{a11:sec:murder} a~\ref{a11:sec:roguelike});
+  \item dopo la camera di consiglio, la \textbf{premessa ai feedback} e la domanda su
+        \textbf{che cos'è un regolamento} (sezioni \ref{a11:sec:premessa}
+        e~\ref{a11:sec:regolamento});
+  \item i \textbf{feedback} gruppo per gruppo, con i casi studio (sezioni
+        da~\ref{a11:sec:fbmurder} a~\ref{a11:sec:reference});
+  \item le \textbf{domande aperte}: il regolamento come strumento di test, la
+        \emph{curse of knowledge}, la vergogna delle idee (sezioni
+        \ref{a11:sec:testing} e~\ref{a11:sec:vergogna});
+  \item la discussione su \textbf{\emph{roguelike}, RNG e narrativa modulare}, e la
+        chiusura (sezioni da~\ref{a11:sec:rng} a~\ref{a11:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'attesa: una ``quotina di ansia''}
+\label{a11:sec:attesa}
+
+I primi a collegarsi sono Angelo, Nicola, Lorenzo e Rita; Beatrice e Ruggero sono già
+in stanza. Daniele ``arriva un attimino in ritardo perché sta chiudendo un'altra
+lezione''. La prima domanda è quella di sempre, ``come state? come vi sentite oggi?'', e
+la risposta di uno studente riassume l'umore della classe: ``leggermente preoccupato
+per il \emph{pitch}, ma se no tranquillo''. ``Anch'io, è normale'', gli risponde
+Beatrice: ``ogni presentazione ha una quotina di ansia''. Lei, dice, è ``molto curiosa''
+e ``abbastanza fiduciosa che usciranno bellissimi \emph{pitch}'': ``non preoccupatevi,
+siamo proprio in ascolto anche per darvi una mano dove possiamo''. Poi va a prendere
+``il mio quadernino di appunti, così mi segno le cose''.
+
+In attesa dei ritardatari, i docenti aprono come al solito lo spazio per le domande,
+magari di chi ha recuperato la lezione precedente. Uno studente la sta finendo di
+recuperare: ``è una figata pazzesca''. Ruggero conferma che ``sulla questione del
+paragame c'è tantissimo da dire'' e spera che abbia dato ``qualche spunto''. Poi spiega
+la logistica, che ``già dovreste sapere'': niente slide e niente lezione frontale; ``oggi
+vediamo i vostri \emph{pitch} e dedichiamo il tempo a ciascun gruppo''. Si corregge
+subito dopo un lapsus (``dedichiamo il gruppo a ciascun tempo. Chi può dirlo? Qualcuno
+finirà nell'800, qualcuno finirà nel 2000''). L'idea è di dare ai gruppi dei feedback
+``in base anche al vostro \emph{pitch}''.
+
+Arriva Daniele, accolto con un ``grazie in fanfare'': viene ``da sei ore di lezioni''
+(``e invece adesso guarda, ne fai altre tre di fila''; ``Madonna, Daniele, ci lasci le
+penne. Non svenire''). È lui a segnare le presenze. Arriva Tiziana, poi Tancredi. Mentre
+manda ``due messaggi di lavoro'', Daniele dà un consiglio organizzativo: decidete ``dietro
+le quinte'' l'ordine di presentazione dei gruppi, altrimenti lo sceglieranno i docenti.
+Un vincolo c'è già: il gruppo di \textbf{Gianmarco}, Tancredi e Lorenzo va lasciato per
+ultimo, perché Gianmarco il lunedì arriva circa un'ora dopo per lavoro (``tra una
+quarantina di minuti massimo''). Un altro vincolo arriva da una studentessa del primo
+gruppo, che deve staccarsi dieci minuti prima per prendere il treno delle otto: il suo
+gruppo, se i compagni sono d'accordo (``Sì, sì, va bene''), può andare per primo. E
+così si fa: ``iniziamo voi''.
+
+Nel frattempo, il silenzio. ``Avremo l'\emph{horror vacui}'', scherza Ruggero: ``se
+nessuno fa domande, io non so gestire. Daniele, cosa devo fare? Come faccio?''. Mancano
+soltanto Giordano e Gianmarco; Daniele chiede di avvisarlo se entrano mentre i gruppi
+presentano, così da non perdere le loro presenze.
+
+C'è un ultimo intoppo tecnico, quello di ogni lezione online: la condivisione dello
+schermo da un Mac (``il problema sempre del Mac per le autorizzazioni''). Daniele
+sospetta un aggiornamento di Zoom (``e l'aula è diversa, tra l'altro: voi non ve ne
+rendete conto, ma è un'aula differente''), ma alla fine la presentazione del primo
+gruppo parte, in modalità ``presenta'', a schermo intero, con le frecce della tastiera
+per andare avanti.
+
+% ---------------------------------------------------------------------
+\section{Le regole del \emph{pitch}}
+\label{a11:sec:regole}
+
+Prima di cominciare, Daniele ripete ``bene le regole del \emph{pitch} di oggi''
+(figura~\ref{a11:fig:procedura}).
+
+\begin{itemize}
+  \item \textbf{Tre minuti.} Daniele fa partire un timer, conta ``3, 2, 1, via'', e il
+        gruppo spiega ``tutto''. Chi va oltre non viene interrotto (``vi faccio
+        finire''), ma alla fine si sentirà dire se è andato ``troppo lungo'' o ``troppo
+        corto'', ``perché comunque sapevate che più o meno il tempo era quello''. Il
+        tempo è uguale per tutti: ``non possiamo dare la possibilità a ogni team di
+        avere più tempo rispetto agli altri. Altrimenti, è un casino''.
+  \item \textbf{Due o tre minuti di domande} da parte di Daniele, Ruggero e Beatrice
+        (``comunque quanto tempo ci mettono'').
+  \item \textbf{La sala d'attesa.} Il gruppo esce da Zoom e rientra: Daniele ha
+        attivato la sala d'attesa. I tre docenti si prendono ``qualche appunto in
+        privato di confronto, senza essere registrati'', e poi riammettono tutti.
+        Quando una studentessa chiede se la sala d'attesa sia ``una stanza che c'è
+        veramente'', la risposta è che è ``l'anticamera'' di Zoom, dove però non si
+        può parlare: chi vuole chiacchierare nel frattempo ha un canale vocale
+        ``Analog Game Design'' sul Discord del corso.
+  \item Si fa così per tutti i gruppi. La parte dei \emph{pitch} ``di solito dura
+        un'ora, un'ora e mezza''; poi ``vi diamo i feedback e vi diamo anche dei
+        consigli su cosa fare, perché poi dovrete svilupparle, 'ste robe''.
+  \item \textbf{Il materiale.} Dopo ogni presentazione il gruppo condivide in chat il
+        link alle slide (``Condividi'', ``chiunque abbia il link'', copia, incolla) e
+        carica tutto nella cartella \emph{project work} del proprio gruppo.
+\end{itemize}
+
+Il primo gruppo avverte che improvviserà (``non ci siamo preparati sulla
+presentazione''). Nessun problema, ma conviene che parli una persona sola, se ne ha una
+che ``sa tutto quanto''; gli altri intervengono se manca qualcosa. Le domande dei
+docenti, durante il primo \emph{pitch}, si allungano: alla fine il primo gruppo occupa
+venti minuti, e Daniele stabilisce per gli altri ``venti minuti più o meno a team''.
+Nessun feedback a caldo, nemmeno per chi deve andarsene prima: i docenti vogliono prima
+``vedere il livello di tutti'', ``cosa hanno prodotto tutti''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a11step/.style={draw, thick, rounded corners=3pt, minimum height=1.2cm,
+               text width=2.3cm, align=center},
+  a11priv/.style={draw, thick, dashed, rounded corners=3pt, fill=gray!15,
+               minimum height=1.2cm, text width=2.3cm, align=center},
+  a11arr/.style={-{Stealth[length=3mm]}, thick}
+]
+  \node[a11step] (a) {\textbf{Pitch}\\3 minuti\\a timer};
+  \node[a11step, right=0.6cm of a] (b) {\textbf{Domande}\\2--3 minuti\\dei docenti};
+  \node[a11priv, right=0.6cm of b] (c) {\textbf{Sala d'attesa}\\appunti dei\\docenti, non
+    registrati};
+  \node[a11step, right=0.6cm of c] (d) {\textbf{Rientro}\\e prossimo\\gruppo};
+  \draw[a11arr] (a) -- (b);
+  \draw[a11arr] (b) -- (c);
+  \draw[a11arr] (c) -- (d);
+  \draw[a11arr, rounded corners=4pt] (d.south) -- ++(0,-0.7) -| node[pos=0.25, below,
+    font=\footnotesize]{per ognuno dei tre gruppi (circa 20 minuti a gruppo)} (a.south);
+  \node[a11step, below=1.9cm of c, text width=5.2cm, fill=gray!5] (f)
+    {\textbf{Seconda metà della lezione}\\feedback di gruppo, feedback di classe,
+     domande aperte};
+  \draw[a11arr, dashed] (d.east) -- ++(0.4,0) |- (f.east);
+\end{tikzpicture}
+\caption{La procedura del \emph{pitch} come la descrive Daniele. I feedback non arrivano
+a caldo: i docenti li danno solo dopo aver visto tutti e tre i gruppi.}
+\label{a11:fig:procedura}
+\end{figure}
+
+\paragraph{Approfondimento: il \emph{pitch} come prova di comunicazione.} Il formato
+non è arbitrario, e Daniele lo spiegherà più avanti (sezione~\ref{a11:sec:fbpeste}):
+tre minuti sono più o meno il tempo che un editore o un passante in fiera concede a
+un'idea. Ma il \emph{pitch} è anche il primo momento in cui il gioco esce dalla testa del
+gruppo e arriva a qualcuno che non c'era quando è stato pensato. Schell, in \emph{The Art
+of Game Design}, dedica a questo passaggio un capitolo intero (``The Designer Gives the
+Client a Pitch''), con l'idea di fondo che presentare un gioco serve anche a chi lo
+presenta: costringe a scegliere che cosa, del gioco, conta davvero. Le domande dei docenti che seguono ogni \emph{pitch} di questa lezione
+sono, in gran parte, la verifica di questo: che cosa faccio, io che gioco, in questo
+momento?
+
+% ---------------------------------------------------------------------
+\section{Primo \emph{pitch}: \emph{Murder Memory}}
+\label{a11:sec:murder}
+
+Il primo gruppo è quello di \textbf{Tiziana}, \textbf{Lorenzo L.} e \textbf{Angelo}.
+Presenta Tiziana, con l'accordo dei compagni, che interverranno se lei dimentica
+qualcosa. Beatrice è ``già curiosissima di questo \emph{Murder Memory}'', e quando
+lascia scappare un ``ho visto che è un gioco di carte'' viene fermata: ``non ci si
+spoilera''. ``3, 2, 1, via.''
+
+\subsection{Il \emph{pitch}}
+
+\emph{Murder Memory} è ``una \emph{escape room} investigativa da tavolo'' (``ci siamo
+dimenticati di precisare questa cosa, ma sarà da tavolo''). Chi gioca si trova coinvolto
+in una \textbf{festa nella villa di un ricco proprietario}, durante la quale uno degli
+invitati viene ucciso. Il principale indiziato è un altro invitato, che ha perso i sensi
+e si sveglia \textbf{senza memoria}.
+
+È un gioco \textbf{competitivo e cooperativo} insieme: due squadre si affrontano per
+arrivare alla verità entro un \textbf{tempo limitato}, cooperando al loro interno.
+\begin{itemize}
+  \item Una squadra interpreta l'\textbf{indiziato} che ha perso la memoria. Non ricorda
+        chi è né che cosa sia successo; potrebbe essere l'assassino e non saperlo. Si
+        nasconde dalla polizia mentre cerca la verità, il che lo rende ancora di più il
+        principale indiziato. ``Enigma dopo enigma'' deve scoprire chi è e svelare il
+        mistero: ``è davvero lui il colpevole, o è solo un'altra vittima?''. Ogni
+        giocatore della squadra potrebbe interpretare \textbf{un aspetto diverso della
+        stessa persona}: è una cosa ``ancora da definire'', perché il gruppo non sa
+        ancora se riuscirà a realizzarla in concreto.
+  \item L'altra squadra interpreta i \textbf{poliziotti}, chiamati dal proprietario.
+        Seguono le indagini, cercano indizi e interrogano gli invitati e il
+        proprietario della villa, anche a proposito dell'indiziato che non riescono a
+        trovare.
+\end{itemize}
+
+La struttura è una \textbf{successione lineare di enigmi}, che guida ciascuna squadra
+alla risoluzione finale; la risoluzione prevede un \textbf{confronto diretto} tra le due
+squadre, attraverso un \textbf{interrogatorio}. Il gruppo vorrebbe diversificare il più
+possibile gli enigmi della successione, così da far partecipare più giocatori.
+L'obiettivo dell'indiziato è scoprire la verità su se stesso e su ciò che è successo;
+quello dei poliziotti, trovare il colpevole.
+
+L'obiettivo del gruppo, come designer, è ``esprimere noi stessi ed esplorare nuove
+tipologie di gioco'', fondendo elementi investigativi e di gioco di ruolo con la
+struttura dell'\emph{escape}; e ``non ci dispiacerebbe pubblicarlo''. Le
+\textbf{emozioni} che vogliono suscitare sono \textbf{incertezza}, \textbf{scoperta},
+un'esperienza \textbf{adrenalinica}, \textbf{sorpresa} e \textbf{ansia}. Chiude una
+battuta (``prenotatevi per provarlo, nessuno vi picchierà'') e la presentazione dei
+membri del gruppo, ognuno con un nome da personaggio\footnote{La trascrizione riporta
+``siamo Lorenzo, la Pomarda, Angelo, Tenente Colombo e io, Tiziana Carabayt'': almeno
+``Tenente Colombo'' è chiaramente un soprannome scherzoso a tema investigativo; le
+altre parole non sono ricostruibili con sicurezza.}.
+
+Tempo: \textbf{tre minuti e quattordici secondi}. ``Direi che siamo comunque in
+\emph{time}'', commenta Daniele: con un po' più di velocità ci sarebbero stati
+tranquillamente.
+
+\subsection{Le domande}
+
+\paragraph{Come si vince?} Daniele parte con un apprezzamento e un dubbio. ``Lato
+emotivo, molto bene'': le emozioni sono chiare. ``Lato meccanico, ho un po' di dubbi.''
+Non è chiaro se il gioco abbia un \textbf{\emph{endgame} predefinito}, cioè se a livello
+meccanico si vinca o si perda (``com'è che so se ho vinto o se ho perso?''), o se vada
+``nella direzione più RPG'', in cui conta non chi vince ma ``avere un epilogo
+strutturato''.
+
+\paragraph{Chi risolve gli enigmi?} Un'altra domanda, più pragmatica, arriva dai docenti
+insieme: le squadre sono due, ma gli enigmi chi li risolve? Insieme? Una squadra sola
+mentre l'altra aspetta? (``Hanno due serie diverse.'') Il punto, chiarisce chi chiede, è
+che non è chiaro ``che cosa faccio, in base al ruolo in cui sono'', e con quale obiettivo
+personale al tavolo. Gli studenti non sapevano se dovessero entrare in questo dettaglio
+nel \emph{pitch}; la risposta dei docenti è: se la risposta c'è, ditela; se non c'è,
+``non generatela adesso''.
+
+La risposta c'è. Gli enigmi procedono \textbf{in contemporanea}, con lo stesso tempo per
+entrambe le squadre. I poliziotti hanno tutte le informazioni se riescono ad arrivare
+alla fine del loro percorso; l'indiziato, arrivando alla fine del suo o il più vicino
+possibile, ottiene informazioni su se stesso. \textbf{Allo scadere del tempo} le due
+squadre si confrontano: i poliziotti fanno all'indiziato delle domande ``ovviamente
+previste'', e l'indiziato saprà rispondere più o meno correttamente a seconda di quanto
+ha scoperto. Se non sa chi è, ``rischia di rimanere un po' così'' su certe domande:
+può inventarsi le risposte, ma rischia di non essere coerente. Ne nascono diversi esiti
+(tabella~\ref{a11:tab:esiti}).
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{5.6cm}p{7.4cm}@{}}
+\toprule
+\textbf{Situazione allo scadere del tempo} & \textbf{Esito (come descritto nel
+\emph{pitch})} \\
+\midrule
+Entrambe le squadre arrivano alla fine del percorso & ``vincono entrambi'': i
+poliziotti hanno gli elementi per capire chi è il vero colpevole, e l'indiziato sa
+rispondere \\
+I poliziotti arrivano alla fine, l'indiziato no & vincono i poliziotti: l'indiziato non
+risponde correttamente alle domande e viene arrestato \\
+L'indiziato ottiene le informazioni su di sé & l'indiziato vince: risponde correttamente
+e viene scagionato \\
+\bottomrule
+\end{tabular}
+\caption{Gli esiti dell'interrogatorio finale di \emph{Murder Memory}, come li descrive
+Tiziana rispondendo alle domande. Il gruppo li presenta come idea ancora aperta.}
+\label{a11:tab:esiti}
+\end{table}
+
+\paragraph{Quanti giocatori?} Daniele ha ``due domande molto brevi''. La prima: per
+quanti giocatori è il gioco? Minimo due, uno per squadra; il gruppo pensava a un massimo
+di \textbf{quattro per squadra}. Si interpretano solo i membri delle squadre? Sì: gli
+invitati sono \textbf{NPC}. La seconda domanda, a Daniele, sfugge (``la sto perdendo?
+Arrivo''); Beatrice lo rassicura (``è normale, poi tornano le domande mentre si
+parla'') e prende la parola.
+
+\paragraph{L'indiziato vuole scagionarsi o sapere la verità?} Beatrice ha ``tantissime
+domande'' e ne seleziona alcune. La prima: la squadra dell'indiziato ha più lo scopo di
+scagionarsi o di ricostruire la verità? Deve scoprire la verità su se stesso, risponde
+Tiziana: scoprendo chi è, può affrontare i poliziotti. Beatrice chiede allora conferma
+di un punto di design: si parte dall'idea che l'indiziato \textbf{non è colpevole}?
+Corretto: non è colpevole, ``però non lo sa''.
+
+\paragraph{Le sfaccettature dell'indiziato.} La seconda domanda di Beatrice riguarda le
+``varie modalità di essere'' dell'indiziato, una per giocatore. Come funzionerà? Il
+dubbio di Beatrice è più ampio: ``avete tanta carne al fuoco''. Enigmi, \emph{drive}
+narrativi, una storia raccontata in più versioni, una polizia che non è una persona sola.
+``Non vi sto invitando per forza a ridurre lo \emph{scope}'', ma ``è bene che abbiate una
+direzione e una motivazione per tutte le scelte che prendete''. L'idea dell'indiziato
+interpretato da una squadra intera le piace molto, ma non capisce che cosa farà lei,
+giocando l'indiziato, oltre al lavoro di ricerca con le altre parti di sé: e quando
+dovrà scagionarsi, come funzionerà? ``Compileremo una scheda, oppure parleremo con la
+polizia?''. La risposta: la \textbf{mente divisa} era un'ipotesi iniziale, ``quasi
+necessaria'' per giustificare più persone che fanno un'unica persona, ma non
+obbligatoria, perché ``è nostra intenzione semplificare, non complicarci la vita''.
+
+\paragraph{``Dovete spoilerare''.} A questo punto il gruppo ammette che manca una parte,
+taciuta apposta ``perché non volevamo spoilerare''. La reazione dei docenti è immediata:
+``Dovete spoilerare. Non siamo giocatori''. Al \emph{pitch} i docenti sono come un
+\emph{publisher} a cui si propone un gioco: se non gli si dicono le cose importanti,
+``noi come facciamo?''. ``Non lo sapevamo. Scusate.'' ``Tutto bene. Dici tutto adesso.''
+
+Il retroscena è questo. Il \textbf{proprietario} della villa è un \textbf{appassionato di
+enigmi} ed è lui \textbf{l'assassino}: ha ucciso uno degli invitati per costruire tutta
+la messa in scena, ``fondamentalmente per divertirsi''. È lui a far perdere la memoria
+all'indiziato, facendogli bere qualcosa. L'indiziato si sveglia in un punto in cui non è
+visto, si accorge che è successo qualcosa (c'è la polizia) e va subito in agitazione:
+non ricorda chi è, e se gli fanno una domanda non saprà cosa rispondere. Mentre si
+nasconde trova \textbf{un oggetto che gli è familiare}, e da lì parte la serie degli
+enigmi. Ha la sensazione di essere \textbf{guidato}, pilotato, che ci sia qualcosa che
+non torna, ma ``non è il momento'' di chiederselo. Dall'altra parte, il proprietario
+chiama i poliziotti e si diverte anche alle loro spalle: li guida attraverso altri
+enigmi, con cui ricostruiscono le informazioni sugli invitati e, attraverso gli invitati,
+sull'indiziato che non trovano. ``Scusa, no, è importantissimo'', commentano i docenti.
+
+\paragraph{Storia prefatta o emergente?} Daniele fa un'ultima domanda, ``molto
+semplice'': il gioco ha una \textbf{storia prefatta}, definita, che i giocatori stanno
+solo scoprendo? Non è una storia emergente? Sì, è prefatta.
+
+\paragraph{I giochi più vicini.} Poi tocca a Ruggero, con una domanda ``apparentemente
+dal nulla'', le cui ragioni verranno dette dopo: nella fase di ricerca e sviluppo, quali
+sono i giochi più vicini al vostro? Ruggero ne ha già ``due segnati qua'' che ``devono
+uscire fuori da questa risposta''. Non è un indovinello, precisa: se i giochi citati dal
+gruppo coincidono con i suoi, bene; se sono molto diversi, ``allora ci sono altri
+problemi'', perché vuol dire che i docenti hanno capito un'altra cosa. Daniele allarga
+la domanda: non serve un gioco unico che spieghi tutto il progetto, che ibrida generi
+diversi ed è in gran parte sperimentale (``è molto chiaro quello che ci state
+proponendo''); bastano ``un po' di ispirazioni'', e la ricerca e sviluppo ``può essere un
+film, può essere una canzone''.
+
+Tiziana racconta l'origine dell'idea: il gruppo ha scelto la proposta di Lorenzo L., un
+personaggio che perde la memoria e cerca di ricostruirla, e poi l'interesse comune per
+le scelte, per l'\emph{escape} e per gli elementi investigativi. Lei ha cercato giochi
+simili ``e non ho trovato niente''; ha giocato investigativi e qualche \emph{escape}, ma
+non si è ispirata a nessuno in particolare (``se ci volete dare qualche indicazione,
+siamo contenti''). Aggiunge un'idea sua sul formato: dare i percorsi ``in modalità
+busta'', con buste da aprire che contengono il testo scritto; ma nel gruppo c'è chi ha
+un'idea diversa. ``Quello lo svilupperete dopo''. Lorenzo L., invece, un riferimento ce
+l'ha: quando aveva proposto la perdita di memoria, gli era venuto subito in mente un
+titolo della serie \textbf{\emph{Hidden Games}}, in cui tutti hanno perso la memoria,
+tutti indagano e uno di loro è l'assassino: \emph{Freddo come il
+ghiaccio}\footnote{Così nella trascrizione (``Freddo come il ghiaccio. Bravissimo,
+Lorenzo''). \emph{Hidden Games} è una serie di giochi investigativi in scatola; il
+titolo esatto del caso citato non è verificabile dalla trascrizione.}. ``Bravissimo,
+Lorenzo.'' Angelo, a parte le \emph{escape room} giocate (``non particolarmente
+tante''), non ha riferimenti: è proprio questo che lo ha spinto ad avvicinarsi al genere.
+
+Sono passati venti minuti, ed è arrivato Gianmarco. Daniele riassume per lui la
+procedura (presentazione, domande, sala d'attesa, feedback alla fine) e manda il primo
+gruppo in sala d'attesa.
+
+% ---------------------------------------------------------------------
+\section{Secondo \emph{pitch}: \emph{La Peste}}
+\label{a11:sec:peste}
+
+Visto che Gianmarco è arrivato, il secondo turno tocca al suo gruppo: \textbf{Tancredi},
+\textbf{Gianmarco} e \textbf{Lorenzo}. Presenta Tancredi. Prima di partire, però, c'è un
+equivoco da chiarire: il gruppo ``non si era orientato per i tre minuti''. Aveva capito
+che il \emph{pitch} fosse ``una cosa un po' più lunga'', e ha preparato una struttura ``un
+po' più cicciotta'', poi riadattata con alcune slide in appendice. ``Sapevate quanto tempo
+ci davamo?'' ``Noi avevamo trenta minuti.'' Daniele si chiede se sia stata colpa sua, ma
+ricorda di essere stato chiaro: ``i \emph{pitch} erano da tre minuti, tre o quattro minuti
+di solito''. Gli studenti stessi trovavano strano un \emph{pitch} così lungo (``come idea
+avevamo tutti in mente un \emph{pitch} che fosse una roba molto veloce''). Il materiale in
+più non va buttato: ``tenetelo da parte, che servirà''. E il gruppo, alla fine, sta nei
+tre minuti: ``bravissimi''.
+
+\subsection{Il \emph{pitch}}
+
+Il gioco si chiama \textbf{\emph{La Peste}} ed è ambientato nel racconto \emph{La
+maschera della Morte Rossa} di Edgar Allan Poe (``ce la posso fare''). È un \textbf{party
+game a ruoli segreti}, di \textbf{deduzione e \emph{bluff}}. Uno degli invitati del ballo
+rappresenta la malattia, che il gruppo chiama \textbf{Pestilenza}, e il suo obiettivo è
+espandersi. A ogni \textbf{rintocco dell'orologio} (scandito da un piccolo timer, che
+definisce i round) ci si mette a \textbf{ballare}: durante il ballo i giocatori si
+scambiano le carte, e in base alle carte che si hanno in mano alla fine del turno si è
+sani o malati. Dopo il ballo c'è la \textbf{fase sociale}, ``quella un po' più caciarona
+da \emph{party game}'', in cui ci si accusa e si cerca di capire chi si è ammalato e chi
+no.
+
+I \textbf{pilastri} del gioco sono tre: la \textbf{dualità segreta} tra Pestilenza e
+Medico, che si combattono senza che nessuno sappia chi sono; la \textbf{malattia che si
+espande}; la \textbf{deduzione e il \emph{bluff}}. Le \textbf{emozioni} principali sono
+l'\textbf{incertezza} (non sapere bene i ruoli), l'\textbf{ansia} e la
+\textbf{preoccupazione}, e l'\textbf{inclusione}: i giocatori malati \textbf{non vengono
+eliminati}, come invece ``ogni tanto succede nei giochi di questo tipo''. Il formato è da
+\textbf{5 a 8 giocatori}, per circa \textbf{30 minuti} (``ancora un po' da decidere'').
+
+I ruoli sono tre (tabella~\ref{a11:tab:ruoli}). Il \textbf{setup} è a \textbf{buste},
+come in \emph{Secret Hitler}\footnote{Nella trascrizione ``Secret Teaser'', poi
+``Secreti Hitler''.}: ogni busta è già preparata in base al numero di giocatori e
+contiene le carte di chi la riceve. Il gioco si sviluppa in \textbf{sette round}, il
+numero dei rintocchi (``va ancora sistemato''); ogni round ha tre fasi: il
+\textbf{ballo}, in cui ci si scambiano le carte; la \textbf{risoluzione}, in cui in base
+alle carte che si hanno ``succedono cose'' (``tendenzialmente ti ammali''); la
+\textbf{fase sociale}, la discussione. Alla fine si guardano le \textbf{condizioni di
+vittoria} (figura~\ref{a11:fig:round}).
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.4cm}p{4.6cm}p{6cm}@{}}
+\toprule
+\textbf{Ruolo} & \textbf{Carte iniziali} & \textbf{Obiettivo e comportamento} \\
+\midrule
+Pestilenza & una carta \emph{peste}, che trasmette la malattia, e una carta vuota &
+l'unico che parte malato; vuole contagiare tutti \\
+Medico & due \emph{talismani}, che proteggono dalla malattia (``non ti fa ammalare'') &
+combatte la Pestilenza senza farsi riconoscere \\
+Cortigiani & solo carte vuote (\emph{invito}) & finché sono sani giocano con il Medico;
+quando si infettano passano dalla parte della Pestilenza e vogliono far infettare
+tutti \\
+\bottomrule
+\end{tabular}
+\caption{I ruoli della \emph{Peste} come presentati al \emph{pitch}. Le carte vuote,
+nella descrizione del \emph{setup}, si chiamano ``invito''.}
+\label{a11:tab:ruoli}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a11ph/.style={draw, thick, rounded corners=3pt, minimum height=1.2cm,
+             text width=2.6cm, align=center},
+  a11arr/.style={-{Stealth[length=3mm]}, thick}
+]
+  \node[a11ph, fill=gray!10] (s) {\textbf{Setup}\\buste preparate per numero di
+    giocatori};
+  \node[a11ph, right=1.0cm of s] (b) {\textbf{Ballo}\\si scambiano le carte};
+  \node[a11ph, right=0.7cm of b] (r) {\textbf{Risoluzione}\\sani o malati, in base alle
+    carte in mano};
+  \node[a11ph, below=1.3cm of r] (f) {\textbf{Fase sociale}\\accuse, discussione,
+    deduzione};
+  \node[a11ph, right=1.0cm of f, fill=gray!10] (v) {\textbf{Fine}\\condizioni di
+    vittoria};
+  \draw[a11arr] (s) -- node[above, font=\footnotesize]{rintocco} (b);
+  \draw[a11arr] (b) -- (r);
+  \draw[a11arr] (r) -- (f);
+  \draw[a11arr] (f.west) -| node[pos=0.25, below, font=\footnotesize]{prossimo
+    rintocco (7 in tutto)} (b.south);
+  \draw[a11arr, dashed] (f) -- node[above, font=\footnotesize]{dopo il
+    7\textsuperscript{o}} (v);
+\end{tikzpicture}
+\caption{Il ciclo di gioco della \emph{Peste} come descritto al \emph{pitch}: sette
+round, uno per rintocco dell'orologio, ciascuno con ballo, risoluzione e fase sociale.
+Il numero di round è ancora da sistemare.}
+\label{a11:fig:round}
+\end{figure}
+
+Il \textbf{target} è pensato per una serata in cui il gioco viene ``intavolato'' da una
+persona, magari ``quella un po' più giovane'', fan di questa categoria di giochi:
+l'appassionato di \emph{Lupus in Tabula}, che non conosce \emph{La Peste} ma sicuramente
+la apprezzerà, perché il genere gli piace. Accanto a lui, due target più
+\emph{casual}: chi non ha mai giocato e si sta avvicinando ai giochi da tavolo per la
+prima volta, e chi ``subisce il gioco'', perché non sapeva che quella sera si sarebbe
+giocato.
+
+Tempo: \textbf{due minuti e cinquantotto secondi}. Tancredi aggiunge una cosa che stava
+nelle slide in appendice: una \textbf{variante interpretativa}, che al gruppo piacerebbe
+molto, perché potrebbe aiutare a sdrammatizzare, ma che rischia anche di rendere il
+gioco ``un po' più caotico''.
+
+\subsection{Le domande}
+
+Daniele chiede, come sempre, il link alle slide e il caricamento nella cartella
+\emph{project work} (``c'è tutto, sia la versione \emph{full} che la versione tagliata'').
+Poi la prima domanda, ``la mia classica'': quali titoli di riferimento avete osservato?
+``Secret Hitler e Lupus in Tabula: quelli sono già ovvi.'' Non sono nelle slide, ma ce
+ne sono vari.
+
+\paragraph{I cortigiani possono difendersi?} Beatrice fa una domanda ``forse prematura'':
+il Medico ha due carte per difendersi; i cortigiani, se si beccano la carta peste, hanno
+qualche arma? Per ora no. Il Medico, anzi, potrebbe essere immune: va testato quanto è
+forte. Si potrebbe dargli una sorta di protezione propria, ``come se avesse già un
+talismano per sé''. E c'è un'altra meccanica a cui il gruppo ha pensato: se un giocatore
+si ritrova con \textbf{due talismani}, \textbf{diventa anch'esso un Medico}. Ne nasce una
+tensione interessante: c'è chi non vuole cedere il proprio talismano per paura, ``però
+meno lo fai girare, meno aiuti i compagni'', e così, senza volerlo, aiuta la Pestilenza
+a espandersi. ``Molto bene.''
+
+\paragraph{Si può giocare senza componenti?} Ruggero, per ora, non ha domande. Daniele
+ne fa una ``fuori dai denti'': questo gioco si potrebbe intavolare senza nessuna
+componente materiale, come un \emph{Lupus in Tabula} di base, o il gruppo pensa a un
+formato speciale? Le carte servono, risponde il gruppo, insieme a una scatola e a dei
+componenti. E una versione da LARP, in costume? Ci hanno ragionato, ma l'idea è giocarlo
+al tavolo, seduti, con le carte.
+
+\paragraph{Le buste.} Ultima domanda di Daniele: come si gestiscono le buste nel
+\emph{setup}? Ogni busta conterrà la carta ruolo e le carte di gioco (``talismano,
+talismano, peste, invito, invito, invito''). Manca ancora la parte su come comporre le
+buste a seconda del numero di giocatori, che ``cambieranno''. Beatrice ha altre domande,
+ma le terrà per la discussione privata dei docenti. Il gruppo va in sala d'attesa
+(``ci vediamo qua fra pochissimo'').
+
+% ---------------------------------------------------------------------
+\section{Terzo \emph{pitch}: un \emph{roguelike} di \emph{journaling} in solitario}
+\label{a11:sec:roguelike}
+
+Mentre gli altri rientrano arriva \textbf{Giordano}, che è stato aggiornato sulla
+struttura della lezione dai compagni ``mentre stavo tornando a casa''. Il suo gruppo,
+con \textbf{Nicola} e \textbf{Rita}, è l'ultimo. Presenta Nicola, che condivide l'intero
+schermo e avverte: ``a differenza degli altri'' il gruppo ha raccolto tutto ``all'interno
+di una singola slide''. ``Non c'era l'obbligo di più slide, non ti preoccupare.''
+
+\subsection{Il \emph{pitch}}
+
+Il gioco è un \textbf{gioco di ruolo in solitario} e un \textbf{\emph{deck building
+game}}. A differenza di molti giochi che vanno su approcci da librogame (``pagina X,
+pagina Y''), il gruppo ha voluto creare un \textbf{\emph{loop} di gioco rigiocabile},
+adatto a due tipi di persone: chi vuole avvicinarsi al gioco di ruolo da solo, ``con la
+comodità di casa sua, senza avere paura delle altre persone''; e il giocatore di ruolo
+``molto avanzato'', che vuole facilitare la \textbf{creazione del proprio personaggio}
+attraverso una storia dinamica.
+
+Le ispirazioni dichiarate sono \emph{Slay the Spire} e \emph{Reigns}: ci si trova di
+fronte a delle \textbf{situazioni}, si risponde con delle \textbf{carte} e si devono
+tenere in equilibrio alcune \textbf{statistiche della vita} del personaggio, per esempio
+lo \textbf{stato fisico} del corpo, lo \textbf{stato della mente} e lo \textbf{status
+sociale}. Il giocatore è uno solo. Il gioco è pensato per essere \textbf{facilmente
+espandibile} con nuovi ``settori'': la prima versione ha un'\textbf{ambientazione
+moderna}, in cui si interpreta ``X persona, senza genere, per essere inclusivo verso
+chiunque''.
+
+All'inizio si fa la prima pescata di carte, che assegna al personaggio dei
+\textbf{tratti casuali}: il personaggio può essere irascibile, con certi bonus e malus in
+certe situazioni, oppure può avere la malaria, con altri bonus e malus. Bisogna
+\textbf{sopravvivere} e andare ``il più possibile lontano'', fino a quando una delle
+barre si esaurisce. La morte può essere \textbf{fisica} (il corpo non ce la fa più,
+magari perché il personaggio è stato ``un fumatore incallito per tutto il tempo''),
+\textbf{mentale} (impazzisce) o \textbf{sociale} (``non riesce più a sopportarsi
+all'interno del mondo''). L'ambientazione è moderna, ma il sistema è pensato come
+\textbf{\emph{setting agnostic}}: ``l'obiettivo è stato il \emph{loop} di gioco''.
+
+Chi gioca può anche non affrontare il lato narrativo, ma sarebbe ``desiderato'', perché
+l'obiettivo è incitare al \textbf{\emph{journaling}}: quando la partita finisce, con la
+morte del personaggio, si ha già la sua storia scritta, e si può fare
+\emph{journaling} dal punto di vista narrativo, oppure usarla per imparare a fare una
+\emph{run} migliore e arrivare più lontano.
+
+Sui \textbf{componenti}: carte personalizzate, ma se stamparne ``un numero gigantesco''
+dovesse essere un problema, il gruppo pensa di usare un \textbf{mazzo di carte
+francesi}, in cui seme, valore e carta determinano se si tratta di una situazione, di un
+evento o di una carta da giocare. I tratti sono casuali all'inizio, e altre carte si
+aggiungono durante la partita. ``Fine.''
+
+Tempo: \textbf{tre minuti precisi}.
+
+\subsection{Le domande}
+
+Ruggero aveva già ``elencato i giochi ispirati'' e non ha domande, ma ha ``un po' di cose
+su cui sto ragionando''. Lascia la parola a Beatrice e a Daniele.
+
+\paragraph{Quali emozioni?} Beatrice cercava nella slide le emozioni e non le ha trovate.
+La risposta del gruppo: la \textbf{curiosità} di sapere che cosa c'è dopo, di andare
+avanti, e la \textbf{competizione} con se stessi, il portare ``uno \emph{score} sempre
+migliore'': ``alla fine è un \emph{roguelike}, l'obiettivo è cercare di andare sempre più
+lontano''. L'emozione di fondo è la curiosità, anche quella di provare altre emozioni,
+che dipendono da ciò che accade al personaggio. Beatrice precisa: quindi le emozioni che
+si troveranno nelle carte non sono ancora definite? No. ``Avete una sorta di emozioni
+\emph{overall}, però poi dovete ancora fare il design delle emozioni.'' Il gruppo
+spiega che voleva lasciare spazio all'esplorazione di qualsiasi situazione, grazie alla
+casualità: una \emph{run} con un personaggio ``depresso, malato, rovinato'' durerà
+pochissimo, e l'emozione, immedesimandosi, sarà quella di una vita fallimentare; se
+invece ``è andato tutto quanto \emph{gold}'', può essere soddisfacente. È la curiosità
+di sapere come andrà la prossima volta, e di ``giocare la migliore mano possibile''. ``Un
+po' come la citazione che si dice nella vita: tu non decidi le tue carte, decidi come
+giocartele.''
+
+\paragraph{Quante carte, quante storie?} Daniele chiede una proiezione: quante carte, di
+che tipo, con un esempio di carta evento e di carta personaggio. La stima è
+\textbf{tra 50 e 56 carte}, più o meno un mazzo di carte francesi. ``Ma con queste 56
+carte, quante storie volete narrare?'' Con l'approccio ``alla francese'', risponde il
+gruppo, una carta può avere significati diversi a seconda della situazione in cui viene
+pescata. In alternativa ci sarebbero due mazzi: le \textbf{carte evento}, situazioni che
+accadono (``perdi tot, ottieni tot, pesca tot carte'', oppure ``le due prossime pescate
+sono forzate''), e le \textbf{carte da giocare}: una passiva negativa che non si può più
+togliere, una disponibilità economica che permette di superare una certa situazione al
+prezzo di un sacrificio, ``come in \emph{Reigns}'', in cui si sacrifica un lato per
+guadagnarne un altro. ``Questo lo do nei feedback'', annota Daniele.
+
+\paragraph{\emph{Journaling} e meccaniche.} L'ultima domanda di Daniele: c'è una
+connessione tra le risorse da tenere in equilibrio, le carte e il \emph{journaling}?
+Oppure il \emph{journaling} è lasciato al giocatore, che dopo ogni partita deve farlo da
+sé, senza che le meccaniche lo incitino direttamente? Al momento, la seconda. Ma il
+gruppo precisa poco dopo che la questione non è ancora decisa: ``se l'obiettivo iniziale
+era incitare al \emph{journaling}, dovremmo inserirlo anche nelle meccaniche''; in questa
+fase embrionale, però, voleva prima capire se l'idea andasse bene, senza entrare troppo
+nel merito. Chi vuole approfondire trova nel materiale il link alla lavagna Canva del
+gruppo, usata per far venire le idee e costruita con lo strumento suggerito da Beatrice,
+``modificandolo un po'''; il gruppo la aggiornerà con il numero di ore da dedicare a
+ogni cosa, una volta stabilito.
+
+\paragraph{Chi ha giocato un \emph{journaling RPG}?} Ruggero, che sta zoomando sulle
+lavagne del gruppo (``se mi vedete \emph{puzzling} non è perché non sto capendo''), fa
+una sola domanda: chi di voi ha giocato dei \emph{journaling RPG}? Nicola ha giocato
+pochi librogame, ma nessun \emph{journaling RPG}; quello che ne ha giocati di più è
+Giordano, che ha messo tra le ispirazioni \emph{Apothecaria}\footnote{Nella
+trascrizione ``apotecare''. \emph{Apothecaria} è un gioco di ruolo in solitario di
+\emph{journaling}, in cui si interpreta un'erborista che cura gli abitanti di un
+villaggio.}, il gioco da cui il gruppo era partito.
+
+Il gruppo esce. I docenti vanno ``per l'ultima volta in camera caritatis'' (cioè in
+camera di consiglio) e danno appuntamento a ``una decina di minuti, un quarto d'ora''.
+
+% ---------------------------------------------------------------------
+\section{Prima dei feedback: indicazioni, non consigli}
+\label{a11:sec:premessa}
+
+Si rientra alla spicciolata. Lorenzo L. resta qualche minuto in ``\emph{joining}'' (``è
+sempre Zoom''), e Daniele aspetta che ci sia, visto che i feedback andranno in ordine di
+gruppo. ``Come vi sentite?'' ``Normale, sembrava quando esce la commissione della tesi di
+laurea.''
+
+\paragraph{Grazie, e su che cosa sarete valutati.} Daniele apre con un ringraziamento:
+``non è normale arrivare a questo punto di un corso breve e impegnarsi a produrre
+qualcosa con altre persone che avete conosciuto al momento''. Chi ha fatto molte slide e
+chi ne ha fatta una sola, ``non importa'': conta che si veda il lavoro di pensiero. I
+feedback riguarderanno \textbf{l'idea}, non il modo in cui è stata presentata. Il
+\emph{pitching} non è materia di questo corso breve, e oggi non verrà valutato; ma Ruggero
+gli ha riferito che la classe vorrebbe una lezione sul \emph{pitching}, e ``se la volete
+veramente tanto, ve la posso aggiungere''.
+
+\paragraph{Indicazioni forti.} Poi il punto più importante della premessa. I gruppi hanno
+poco tempo per sviluppare le idee, e dove l'esperienza dei docenti dice che ``il
+ginepraio dove vi siete infilati è troppo grosso per il periodo di tempo che avete'', i
+feedback saranno puntuali: ``non fate questo, fate questo''. ``Ascoltate questi feedback,
+introiettateli. Questi non sono consigli. Questo è: fate questa cosa in questo modo.''
+Altrimenti, dice Daniele con un'immagine, il rischio è di arrivare alla fine dei due
+mesi ``che avete raccolto l'uva dalle vigne, che è buonissima, ma magari non era il
+motivo per cui eravate qui''. Non è un trattamento speciale: succede ``ogni anno'', a ogni
+gruppo, perché l'obiettivo di tutti è che i gruppi \textbf{finiscano il loro gioco}.
+
+\paragraph{Imparare dal fallimento, ma fino a un limite.} Arrivare a fine corso con un
+gioco ``che magari non è il massimo, un po' zoppo'' va bene: da un prodotto finito in tre
+mesi, anche se non funziona, si impara moltissimo (``io quel prodotto lì magari non era
+funzionale, non era bellissimo, però ho imparato molto''). Ma c'è un limite: i docenti
+devono tutelare i gruppi dalla possibilità di ritrovarsi ``tra le mani una patata
+bollente che va oltre il limite dell'imparo dal fallimento'', una cosa così grande che
+non c'è proprio il tempo di dedicarle. Su quei punti arriveranno indicazioni puntuali;
+poi consigli, definizioni, e qualche cosa ``che più o meno tutti i gruppi hanno bisogno
+di sentirsi dire'': feedback di gruppo e feedback di classe.
+
+\paragraph{Il regolamento di massima.} Infine, il calendario
+(figura~\ref{a11:fig:calendario}). I docenti rivedranno la classe \textbf{in aula il 6
+novembre}. Da qui ad allora i gruppi devono sviluppare l'idea (``non la possibilità: si
+spera che lo facciate davvero'') e arrivare con un \textbf{regolamento di massima}:
+``non impaginato, non imbellettito, senza disegni'', ma un documento con le regole che
+permetta di giocare il gioco, e che sia la base da migliorare con le lezioni di novembre.
+I docenti vogliono poterlo leggere, immaginare di provarlo e valutare com'è strutturato
+il gioco. Il regolamento si consegna \textbf{una settimana prima della \emph{review}},
+così i docenti avranno una settimana per leggerlo e preparare i feedback. ``Il
+regolamento per il 6 deve esistere. Non bello'': anche perché il \textbf{9 novembre} c'è
+la lezione sul regolamento e sul \emph{playtest}, e Daniele non si aspetta che i gruppi
+sappiano già, prima di quella lezione, ``cose che non abbiamo ancora detto''. Una
+correzione e una novità: il tutoraggio in calendario non è il 6 ma \textbf{il 7
+novembre}, e i docenti stanno valutando di \textbf{anticiparlo} di un paio di settimane,
+lasciando comunque ai gruppi il tempo di lavorare.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a11ev/.style={draw, thick, rounded corners=3pt, text width=2.3cm, align=center,
+             minimum height=1.3cm, fill=white},
+  a11arr/.style={-{Stealth[length=3mm]}, thick}
+]
+  \draw[a11arr] (0,0) -- (14.6,0);
+  \foreach \x/\lab in {0.8/12 ottobre, 4.2/fine ottobre, 7.6/6--7 novembre,
+                       10.8/9 novembre, 13.6/dicembre}{
+    \fill (\x,0) circle (2.5pt);
+    \node[below=4pt, font=\footnotesize] at (\x,0) {\lab};
+  }
+  \node[a11ev, above=0.5cm] at (0.8,0) {\textbf{\emph{Pitch}}\\feedback e casi
+    studio};
+  \node[a11ev, above=0.5cm] at (4.2,0) {tutoraggio\\(forse anticipato)\\flusso di gioco
+    chiaro};
+  \node[a11ev, above=0.5cm] at (7.6,0) {\textbf{regolamento di massima}\\di nuovo in
+    aula};
+  \node[a11ev, above=0.5cm] at (10.8,0) {lezione su\\regolamento e\\\emph{playtest}};
+  \node[a11ev, above=0.5cm] at (13.6,0) {gioco\\finito (o quasi)\\e testato};
+\end{tikzpicture}
+\caption{Il calendario dei progetti di gruppo come emerge dalla lezione. Le date sono
+quelle dette a voce; il tutoraggio del 7 novembre potrebbe essere anticipato, e Beatrice
+chiede che il flusso di gioco sia chiaro già entro fine ottobre. Il regolamento si
+consegna una settimana prima della \emph{review}, perché i docenti possano leggerlo.}
+\label{a11:fig:calendario}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Che cos'è un regolamento (anche in una \emph{escape room})}
+\label{a11:sec:regolamento}
+
+Prima dei feedback, Tiziana fa una domanda che accende la discussione: ``per esperienza,
+negli \emph{escape} e negli investigativi non c'è un vero e proprio regolamento'', c'è
+un'introduzione a come si gioca. ``Io non ho mai trovato, in un investigativo, un
+regolamento.''
+
+I docenti cominciano a rispondere in due contemporaneamente, finché Daniele interviene
+(``una persona per volta, perché sennò è un casino nei feedback''; ``hai ragione,
+Daniele''); e si premura di chiarire il tono: ``ci stiamo scaldando, ma non siamo
+arrabbiati per la domanda. Hai fatto benissimo a farla''.
+
+\paragraph{Il regolamento dice che cosa puoi fare e che cosa no.} Beatrice concede il
+primo punto: in una \emph{escape room} il regolamento è molto più piccolo che in un
+gioco da tavolo. Ma delle regole ci sono sempre, anche solo un'introduzione al gioco,
+come negli \emph{Hidden Games} citati dal gruppo. Il regolamento è ``la cosa che dice al
+giocatore che cosa può fare e che cosa no''. In una \emph{escape room} fisica, per
+esempio, ne fanno parte: se hai bisogno di una mano puoi trovare aiuto schiacciando un
+pulsante o chiedendo a voce; non strappare i cavi elettrici; non rompere niente. Anche le
+indicazioni \textbf{logistiche} e peculiari del gioco sono regolamento: ``non andare su
+internet''; per giocare servono carta, penna e il sito dedicato, oppure carta, penna e
+le dodici buste; se si è in sette ci si muove in un modo, se si è in otto in un altro;
+``non aprite tutte le buste subito''; prima la pagina 1, poi la pagina 2. Mettere in
+ordine ``che cosa direte alla persona giocante per farla giocare'': questo, per i
+docenti, è il regolamento. E scriverlo ha un effetto collaterale prezioso: ``quando
+immaginate cosa dire alla persona giocante, iniziano a mettersi in ordine un po' di
+cose'', a cominciare dal flusso di gioco.
+
+\paragraph{Un gioco ibrido ha bisogno di un regolamento adeguato.} Daniele aggiunge un
+punto rivolto a Tiziana: il gioco presentato dal suo gruppo ``non è solo un \emph{murder
+party}'', ma una combinazione di più cose. Se un prodotto ibrido contiene parti che
+hanno bisogno di regole, allora ``servirà un regolamento adeguato''. Fa un esempio che
+non c'entra con il gruppo: un'esperienza LARP di \emph{murder party} con degli
+\textbf{NPC}, persone che non sono giocatori e nemmeno attori, magari reclutate sul
+momento, ma che devono fare cose specifiche. Anche a loro vanno date regole e
+indicazioni; e probabilmente l'organizzatore avrà un regolamento per tutte le persone
+che organizzano la serata. ``Non soffermatevi solo all'esperienza che avete di quello che
+c'è là fuori'': chi lo fa rischia di fare qualcosa di molto simile a ciò che esiste già,
+mentre il proprio gioco potrebbe avere bisogno di cose sue.
+
+\paragraph{``Fare design è il contrario di fare tradizione.''} Daniele cita una frase che
+attribuisce a Ruggero (``non so se l'hai detta, Ruggero, la frase'') e che sostiene
+``terribilmente'': \textbf{fare design è il contrario di fare tradizione}. Se là fuori ci
+sono \emph{murder party} senza regolamento, o con regolamenti brevi, non importa: può
+darsi che il vostro abbia bisogno di un regolamento più strutturato. ``Fate quello che
+serve al gioco, e non quello che serve al mondo là fuori.''
+
+\paragraph{Il faro: lo devono poter giocare altre persone.} Il principio che deve fare da
+``faro nel vostro cervello'' è uno: il gioco ``lo devono poter giocare altre persone che
+non sono voi, che non hanno parlato con voi, che non vi conoscono''. Tutti i componenti
+della ``scatola metaforica'' consegnata a un gruppo di persone devono essere
+\textbf{comprensibili}, \textbf{organizzabili} o \textbf{facilitabili}. Vale per i giochi
+senza facilitatore (un \emph{Unlock!}, un \emph{Exit}, un \emph{Hidden Games}, una
+scatola che si apre e si gioca in gruppo, ma con le indicazioni su che cosa fare) e vale
+per una \emph{escape room} fisica: se la si consegna pronta a qualcuno, quel qualcuno
+dovrà facilitarla. Dovrà sapere come si risolvono gli enigmi, come si struttura il gioco,
+come si procede, quanto dura, se c'è un timer o se metterlo.
+
+\paragraph{``Do not let the player see this''.} A conferma, Daniele racconta di aver
+visto qualche mese prima il \textbf{documento di \emph{licensing}} di una \emph{escape
+room} americana, solo fisica: i giocatori ``vengono buttati dentro'' e risolvono dei
+misteri. Chi compra la licenza eredita, insieme alla stanza da ricostruire, un
+regolamento scritto dagli autori, che i giocatori non devono vedere: in alto, ``in
+grosso, in rosso'', c'è scritto \emph{Do not let the player see this}. Chi organizza
+l'\emph{escape room} deve però leggerlo, anche perché contiene elementi di
+\textbf{\emph{safety}}: ci sono pulsanti, elettricità, cose da montare. ``Ricordatevi il
+benessere del vostro gioco.''
+
+\paragraph{Approfondimento: il regolamento come interfaccia.} La discussione riprende in
+forma diversa un tema della lezione sul paragame: il regolamento è parte dell'interfaccia
+tra chi gioca e l'ecosistema di regole, e per chi gioca le regole del gioco
+\emph{coincidono} con ciò che riesce a ricavare dal regolamento e dai componenti.
+Nelle \emph{escape room} commerciali questo strato è spesso ``invisibile'' ai giocatori
+perché lo porta il \emph{game master}, ma esiste comunque, ed è scritto per qualcun
+altro. In termini di Schell, un gioco ha sempre un \emph{pubblico} multiplo: chi gioca,
+chi spiega, chi organizza; e ognuno ha bisogno della sua porta d'ingresso.
+
+% ---------------------------------------------------------------------
+\section{Feedback a \emph{Murder Memory}: convergere}
+\label{a11:sec:fbmurder}
+
+Daniele propone di dividersi i gruppi tra docenti, ma Ruggero preferisce di no (``ho un
+po' di cose da dire su ogni team''), e si procede gruppo per gruppo, con tutti e tre che
+intervengono. Comincia Daniele.
+
+\paragraph{Fare convergenza.} Per come è stata presentata l'idea, il gruppo ha bisogno di
+``fare un po' di \textbf{convergenza}'' (chi non l'ha vista può riguardare la dispensa
+che Daniele ha preparato su questo). Il gruppo ha fatto ``tantissimo'' lavoro di ricerca
+e sviluppo e ha tante idee, ma deve convergere ``in un'idea coerente unica''. Gli
+elementi sono molti: la persona che ha perso la memoria (``che ci avete detto che state
+ancora discutendo''), la polizia, il miliardario che ha invitato gli ospiti, ``che è
+importante anche quello da sviluppare''. Il suggerimento forte: nelle prossime due
+settimane rivedere gli appunti di ricerca e sviluppo e ``cercare una quadra per far
+incastrare tutte queste cose''.
+
+\paragraph{Pochi enigmi, una direzione.} Due consigli ``fortissimi''. Primo: piuttosto
+che fare tanti enigmi, concentrarsi su un paio. Secondo: piuttosto che unire tante
+tipologie di prodotto (una \emph{escape room}, che però è anche un \emph{murder party},
+che però è anche un gioco da tavolo), sceglierne una sola, o ibridare solo piccole
+componenti. ``Scegliete una direzione ben precisa'', poi pulite l'idea, selezionate e
+\textbf{descrivete attentamente il flusso di gioco}. Soprattutto per \textbf{chi
+organizza} il gioco, più ancora che per chi partecipa: deve sapere come viene giocato,
+che cosa si gioca e quando, chi fa che cosa, se ci sono facilitatori o no. ``State
+attenti allo \emph{scope}, perché fare un prodotto del genere da qua a dicembre non è
+semplicissimo.''
+
+\paragraph{Semplificare non è la soluzione: scegliere sì.} Daniele precisa: questo non
+significa che semplificare sia ``meno sforzo'', né che semplificare sia la soluzione.
+``Fare design a volte significa anche capire cosa tenere, cosa non tenere. Non è
+semplificare: a volte è scegliere.'' E \emph{Murder Memory} ``ha delle idee forti'': a
+Daniele, per esempio, l'idea di protagonisti che sono parti di un'unica persona ``non è
+dispiaciuta'', e nemmeno quella dei poliziotti. Ma anche lì bisogna decidere ``qual è il
+cuore del vostro prodotto''.
+
+\paragraph{Tre casi studio.} Ruggero ha tre giochi, uno per ciascuna delle parti del
+progetto, e li scrive in chat ``così non vi perdete i nomi''.
+\begin{itemize}
+  \item \textbf{\emph{Voices in My Head}}: un gioco da tavolo ``semi-cooperativo, un po'
+        come il vostro'', in cui una persona interpreta il \textbf{pubblico ministero} in
+        un processo e tutte le altre interpretano \textbf{aspetti della personalità
+        dell'imputato}, con obiettivi diversi tra loro, a volte cooperativi e a volte
+        competitivi. È la direzione da guardare se il gruppo vuole affinare l'indiziato
+        con più personalità.
+  \item \textbf{\emph{Inhuman Conditions}}\footnote{Nella trascrizione ``In Human
+        Condition''. \emph{Inhuman Conditions} è un gioco per due persone, a tempo, in
+        cui un investigatore interroga un sospettato per capire se è un umano o un
+        robot.}: ``forse il gioco più bello che conosco su un \textbf{interrogatorio}
+        poliziesco''. Ha un'ambientazione molto alla \emph{Blade Runner}, ma ``non fatevi
+        ingannare dal \emph{setting}'': è un poliziotto che cerca di capire la vera
+        identità di chi ha davanti, con una \textbf{metafora meccanica} ``molto, molto,
+        molto bella'' di che cosa una persona fa nel proprio turno, passo dopo passo.
+  \item \textbf{\emph{Fino a prova contraria}}\footnote{Nella trascrizione ``fine prova
+        contraria''; la ricostruzione del titolo è probabile ma non certa, e la parola
+        che segue (``è praticamente il [\ldots] da tavolo'') non è leggibile.}: forse,
+        ``visto a ombrello'', il più utile per capire come rendere fluido
+        (\emph{streamline}) tutto il processo. È un investigativo con enigmi, con un caso
+        da risolvere passo per passo, e con un'interazione ``quasi a ping pong'' tra la
+        difesa (chi gioca fa l'avvocato, e cerca di portare elementi dalla parte
+        dell'imputato) e il pubblico ministero, che cerca di farlo condannare. ``In
+        questo ping pong si crea una frizione interessante.''
+\end{itemize}
+I regolamenti di tutti e tre, aggiunge Ruggero, si trovano liberamente online; altrimenti
+ci sono dei \emph{playthrough}. Visto che uno dei compiti è scrivere il regolamento, è
+utile anche guardare \textbf{come questi giochi comunicano il regolamento}.
+
+\paragraph{A che cosa servono le \emph{reference}.} Ruggero chiarisce una cosa che vale
+per tutti i casi studio della serata.
+\begin{enumerate}
+  \item ``Non correte a modificare il gioco come le \emph{reference}.'' Non è a questo
+        che servono: servono ``ad aprirvi la mente, o chiudervi la mente, e darvi
+        soluzioni a problemi''.
+  \item Quando i docenti danno una \emph{reference}, non vogliono che il gioco del gruppo
+        si avvicini a quella \emph{reference}: vogliono che la si usi come spunto per fare
+        \textbf{\emph{problem solving}} quando ci si trova davanti a problemi importanti.
+  \item E servono a capire \textbf{qual è il cuore del proprio gioco}. Sapere se il
+        proprio gioco si avvicina più a un riferimento o a un altro aiuta a chiarire
+        ``qual è la cosa che il vostro gioco deve fare meglio, tra tutte le varie
+        sfaccettature''. Per un gioco ibrido, ``questo è molto importante''.
+\end{enumerate}
+
+\paragraph{Il flusso di gioco entro fine ottobre.} Beatrice parla al gruppo (``ragazze,
+Tiziana, Angelo, Lorenzo'') con franchezza: è ``molto curiosa'' di provare il gioco, e ciò
+che il gruppo ha presentato è ``estremamente interessante''; ma la spaventa molto per i
+tempi. Per questo, senza averlo concordato con i colleghi (``mi sento di dirla qua''),
+chiede al gruppo di avere \textbf{entro fine ottobre} un \textbf{flusso di gioco chiaro}.
+Più che un regolamento vero e proprio, i docenti vogliono che il gruppo si impegni a
+descrivere il gioco dall'inizio alla fine a una persona che non ne sa niente e che deve
+capire che cosa succede in tutte le fasi. Il timore è che, avendo aperto ``tante
+sperimentazioni, tante ibridazioni'' (``che ci caricano tutti, perché è molto
+interessante''), il gruppo non riesca a concludere in tempo. Anche le \emph{reference}
+di Ruggero sono ``tanto lavoro'': l'invito è a partire dal regolamento e guardare le
+\emph{reference} in parallelo, ``spulciandole''. Ai docenti non interessa la perfezione:
+``sarebbe il top'' un gioco finito e testabile, ma ora serve mettere le idee su carta,
+``perché ci serve un flusso di gioco che ora noi non vediamo, anche se siamo molto
+carichi''. Le \emph{reference} aprono tutte le porte che il gruppo ha aperto, ``ma
+probabilmente non riuscirete davvero ad aprirle tutte entro dicembre''. Meglio
+\textbf{scegliere una porta} per iniziare, e vedere che cosa succede.
+
+\paragraph{Pensate al gioco come a qualcosa di testabile.} Daniele riprende un punto di
+Beatrice e lo estende a tutti: i gruppi dovranno testare il gioco, e non da soli, ma
+\textbf{con persone che non lo conoscono}. ``Più il gioco lo create semplice da capire
+per chi non lo conosce, più vi semplificate la vita.'' E chiede a tutti di non prendere i
+feedback ``onesti e diretti'' come distruttivi: a lui \emph{Murder Memory} è piaciuto
+molto, il nome, il \emph{concept}, la divisione in personalità, che gli ha fatto pensare
+a tantissimi giochi di ruolo. Ma senza onestà nei feedback di design si rischia di
+entrare in un ginepraio, e di non capire come replicare il processo fuori dal corso.
+E questo è ciò che gli preme di più: che si finisca o no il gioco entro dicembre
+(``ognuno di noi ha i suoi impegni di lavoro''), i gruppi devono poter \textbf{replicare
+lo stesso processo}, e meglio, anche in futuro.
+
+\paragraph{Il libro di Beatrice.} Manca ancora la \emph{reference} di Beatrice, che il
+gruppo le ricorda. È la scansione, in PDF, di un libro intitolato \textbf{\emph{Murder
+Party}}. Beatrice non sa se sia la direzione giusta per il gioco, ma darà al gruppo
+un'impostazione per la parte investigativa, quella di gruppi di persone che indagano
+sulla stessa storia. Contiene una traccia di gioco completa, con una meccanica specifica
+che potrebbe aiutare: \textbf{ogni personaggio ha dei segreti che a un certo punto è
+costretto a rivelare}. ``In una mezz'oretta vi leggete tutta la traccia.'' Lo caricherà
+nella cartella condivisa.
+
+\paragraph{Migliorare, non stravolgere.} Daniele chiude con una raccomandazione che vale
+per tutti: ci si rivede al tutoraggio, prima del 7 novembre; nelle prossime due
+settimane bisogna convergere verso un prodotto. Ma ``non stravolgete i vostri prodotti
+per i feedback che vi diamo''. I prodotti vanno migliorati: ``\emph{Murder Memory} deve
+rimanere \emph{Murder Memory}, la vostra idea, la vostra visione, migliorata e più
+focalizzata su quello che volete davvero realizzare''. Lorenzo L. ringrazia.
+
+\paragraph{Approfondimento: divergere, convergere, scegliere.} Il lessico di Daniele
+(``convergenza'', ``una quadra'', ``scegliere una porta'') è quello del modello a
+\emph{double diamond} del design: una fase di divergenza, in cui si aprono più strade
+possibile, seguita da una fase di convergenza, in cui le si chiude fino a una sola. I tre
+gruppi sono esattamente nel punto di passaggio; \emph{Murder Memory} è quello che ha
+diverso di più. La precisazione ``non è semplificare, è scegliere'' è importante: un
+gioco convergente non è necessariamente più semplice, ma ogni sua parte serve lo stesso
+cuore. È ciò che Schell chiama la \emph{lente dell'esperienza essenziale}: decidere quale
+esperienza si vuole creare, e chiedersi per ogni elemento se la serve.
+
+% ---------------------------------------------------------------------
+\section{Feedback a \emph{La Peste}: obiettivo e \emph{agency}}
+\label{a11:sec:fbpeste}
+
+``Passiamo alla \emph{Peste}.'' Daniele parte da ciò che è chiaro: il flusso, l'idea
+generale. È un gioco \emph{sui generis} di un genere che esiste già, e ``tutti noi almeno
+una volta abbiamo giocato a \emph{Lupus in Tabula} o a \emph{Werewolf}'', o a una loro
+variante.
+
+\paragraph{Le parti vaporose.} ``Attenzione alle parti vaporose anche per voi.''
+Scrivere il regolamento, le procedure, che cosa succede, è importantissimo anche per
+questo gruppo. Daniele aggiunge due avvertenze. La prima: inserire nel gioco \textbf{le
+proprie emozioni}, ciò che il gruppo vuole dire, perché altrimenti si rischia di
+restare ``veramente troppo attaccati alla \emph{reference}''; serve la propria
+originalità. La seconda: attenzione al \textbf{bilanciamento} dei ruoli, a che cosa fanno
+nel passarsi le carte, a quante carte ci sono (``ma questo l'avete già detto''). La
+buona notizia: ``teoricamente, con un po' di lavoro, questo è un gioco abbastanza
+\emph{in scope} per la \emph{deadline} di dicembre''. Basta non perdersi e convergere
+bene verso le emozioni e le esperienze che si vogliono generare, ``con la vostra
+inventiva'' (``non invettiva'', si corregge, ``anche se la peste medievale l'invettiva un
+po' me la richiama'').
+
+\paragraph{Quattro casi studio.} Ruggero ne ha quattro, e dice due righe su ciascuno.
+\begin{itemize}
+  \item \textbf{\emph{Human Punishment}}: forse il più vicino a ciò che il gruppo vuole
+        fare. L'ambientazione è diversa (è un gioco \emph{cyberpunk}), ma
+        meccanicamente fa qualcosa di molto simile. Ruggero precisa che non lo considera
+        un buon gioco, ``per varie ragioni che non vi dirò'', ma contiene cose che
+        possono aiutare.
+  \item \textbf{\emph{Trade on the Tigris}}\footnote{Nella trascrizione ``Trident
+        Tigris''.}: un gioco molto diverso, di negoziazione e scambi mercantili. Ha però
+        una meccanica sulle carte che può ispirare: le carte hanno \textbf{aspetti
+        pubblici} e \textbf{aspetti segreti} di informazione, e ogni negoziazione si porta
+        dietro gli uni e gli altri. Può dare ``un po' di spezie'' al gioco.
+  \item \textbf{\emph{Inhuman Conditions}}, di nuovo, ma per ragioni diverse da quelle
+        del gruppo precedente: qui interessa come gestisce il ruolo degli
+        \textbf{androidi}, quelli che non devono farsi scoprire, e come assegna loro
+        \textbf{regole di gioco specifiche}. Secondo Ruggero quella parte arricchirebbe
+        molto lo strato di \emph{world building} e narrativo della \emph{Peste}.
+  \item \textbf{\emph{Deception: Murder in Hong Kong}}: per regolamento e flusso di gioco,
+        ``forse il \emph{social deduction} mio preferito e più pulito'', un ``gioiello di
+        pulizia'' come struttura, più ancora di \emph{Secret Hitler}, \emph{The
+        Resistance} e \emph{Avalon}, gli altri derivati di \emph{Werewolf}. Esiste anche
+        in uno o più moduli su Tabletop Simulator, come \emph{Inhuman Conditions} e molte
+        delle altre \emph{reference}.
+\end{itemize}
+Il motivo dell'ultimo è una domanda. L'organizzazione della \emph{Peste} ha ancora delle
+aree ``un po' vaporose, un po' nebulose'': quanto sono nebulose perché \emph{Lupus in
+Tabula} è nebuloso in molte cose, e quanto perché il gruppo non le ha ancora definite?
+``Il mio consiglio è: non lasciate le nebulose, andate a definirle.''
+
+\paragraph{Un \emph{goal} chiaro, per ogni ruolo.} Beatrice ``risottolinea'': in questa
+fase la cosa importante è cercare \textbf{un \emph{goal} molto chiaro}. Daniele la
+ringrazia (``ne abbiamo discusso anche io e te'') e precisa: il \emph{goal} delle varie
+parti del gioco, perché ci sono la Pestilenza, i cortigiani, vari ruoli. Deve essere
+chiaro a chi gioca qual è l'obiettivo, perché gioca e che cosa vuole ottenere; ``non
+solo tematico, ma anche meccanico''.
+
+\paragraph{``Chiaro in termini filosofici''.} A questo punto Gianmarco alza la mano, con
+un'obiezione franca: a lui l'obiettivo sembrava sufficientemente chiaro, ``semplice e
+chiaro''. I malati devono infettare tutti; i sani devono evitarlo. La risposta di
+Ruggero è una delle frasi chiave della serata: ``È chiaro \textbf{in termini filosofici}.
+Ma noi non siamo te, non conosciamo il gioco turno per turno. Quindi la domanda è:
+\textbf{nel mio turno}, io, per perseguire il mio obiettivo, \textbf{che cosa devo
+fare}?''. Gianmarco riformula: ``quindi è collegare l'\emph{agency} al \emph{goal}''.
+Esatto: bisogna connettere chiaramente la parte ``a lungo termine, filosofica'' con la
+parte ``momento per momento'': che cosa posso fare, che cosa faccio
+(figura~\ref{a11:fig:goal}). Per vedere come si fa, di nuovo, \emph{Deception},
+\emph{Trade on the Tigris} e \emph{Human Punishment}. E il discorso, aggiunge Ruggero,
+vale anche per gli altri gruppi.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a11lvl/.style={draw, thick, rounded corners=3pt, minimum height=1.2cm,
+              text width=4.6cm, align=center},
+  a11q/.style={font=\footnotesize\itshape, text width=4.2cm, align=left},
+  a11arr/.style={-{Stealth[length=3mm]}, thick}
+]
+  \node[a11lvl, fill=gray!10] (g) {\textbf{Obiettivo (\emph{goal})}\\a lungo termine,
+    ``filosofico''\\es.\ ``la Pestilenza deve contagiare tutti''};
+  \node[a11lvl, below=1.6cm of g] (a) {\textbf{\emph{Agency}}\\momento per momento\\che
+    cosa posso fare, nel mio turno?};
+  \draw[a11arr, dashed] (g.south) -- node[right, font=\footnotesize, text width=3.6cm]
+    {il collegamento che deve essere chiaro a chi gioca} (a.north);
+  \node[a11q, right=0.8cm of g] {chiaro a chi ha progettato il gioco};
+  \node[a11q, right=0.8cm of a] {chiaro solo se le regole dicono che cosa fare, turno per
+    turno (``cosa faccio se becco la Pestilenza?'')};
+\end{tikzpicture}
+\caption{Obiettivo e \emph{agency}: la distinzione nata dalla domanda di Gianmarco. Un
+obiettivo può essere chiarissimo ``in termini filosofici'' senza che chi gioca sappia
+che cosa fare nel proprio turno per perseguirlo.}
+\label{a11:fig:goal}
+\end{figure}
+
+Daniele ringrazia Gianmarco per la domanda (``hai fatto benissimo''): è lo stesso tema
+del \emph{goal}. Il gruppo ha in mente una cosa, i docenti ne hanno capito un'altra. Il
+\emph{goal} finale è chiaro: la peste si deve diffondere, per chi la diffonde; il
+cortigiano non vorrebbe essere colpito. Ma il cortigiano, che cosa può fare e che cosa
+no? Qual è la sua direzione?
+
+\paragraph{Registrarsi mentre si spiega il gioco.} Beatrice propone, ``inventandolo
+adesso'', un esercizio che può servire anche agli altri gruppi: \textbf{registrare un
+file audio} in cui si spiega il gioco dall'inizio alla fine, come lo si spiegherebbe a un
+amico, che deve capire che cosa succede in ogni fase e che cosa fa ogni persona.
+``Nella vostra testa magari è chiarissimo'', ma da fuori manca qualcosa, oppure si usa
+una parola e chi ascolta ne capisce un'altra. ``A me non è arrivato chiaro che cosa
+faccio se becco la Pestilenza.''
+
+\paragraph{La parte interpretativa.} Tancredi riapre il tema della variante
+interpretativa, su cui il gruppo ha fatto ``molto ping pong'' (``prima c'era, poi non
+c'era''). In un gioco così ha senso, come coinvolgimento? Ci sono giochi da guardare? Sì,
+risponde Ruggero: \emph{Inhuman Conditions} è nella lista apposta, perché è un
+\emph{social deduction} con una parte interpretativa ``molto, molto, molto forte'',
+``forse il picco'' dell'interpretazione meccanizzata. Dura davvero dieci minuti, c'è un
+timer, e se ne possono giocare sei o sette partite di fila, anche su Tabletop Simulator.
+La parte interpretativa ``ci può stare'', ma se c'è \textbf{non deve essere nebulosa}
+come in \emph{Lupus in Tabula}, dove è ``un po' \emph{free for all}'', ``lasciata
+nell'etere'', mentre altri giochi la meccanizzano e la integrano molto bene. Per
+Ruggero è un valore aggiunto ``solo se non è lì per caso'': ``dovete prendere delle
+decisioni da design: se la volete, la mettete; se non la volete, non la mettete''. Se
+invece è una cosa che ``può esserci o non esserci, in base a chi gioca e vuole'', allora
+``non è più il vostro gioco. È il gioco di chi gioca. Io voglio il vostro gioco''. (Più
+tardi, nella discussione aperta, Ruggero dirà al gruppo di non perderla: è una parte
+ibrida, ``se è molto interessante, sarebbe un peccato perderla''.)
+
+\paragraph{Perché tre minuti.} Prima di passare all'ultimo gruppo, Daniele spiega il
+formato del \emph{pitch}, che a qualcuno era sembrato troppo stretto. ``Non vi è arrivata
+una parte del \emph{pitch}? Facevamo il \emph{pitch} da venti minuti: vi sarebbe arrivato
+di più? No, saremmo stati più confusi'': più tempo ci si mette, più si confondono le
+persone. E nell'industria raramente si ha tanto tempo. Chi ha fatto lo standista in fiera
+lo sa: bisogna ``beccare le persone e farle sedere al tavolo in meno di tre minuti'', in
+trenta secondi. Un \emph{publisher}, se va bene, dedica a un gioco tre, quattro, cinque
+minuti. Un gioco deve poter essere presentato in poco tempo (online ci sono ``tanti meme''
+su chi spiega le regole all'infinito), e \textbf{riassumere le regole in poco} è anche una
+\textbf{cartina di tornasole}: un modo per vedere se funzionano.
+
+\paragraph{Approfondimento: obiettivi e azioni.} La distinzione tra \emph{goal} e
+\emph{agency} ha un nome classico nella teoria del game design: Schell la tratta con le
+lenti degli \emph{obiettivi} e delle \emph{azioni}, e la sua domanda guida è proprio
+quella di Ruggero: le azioni che il gioco mette a disposizione permettono di perseguire
+l'obiettivo, e chi gioca lo capisce? Nei \emph{social deduction} il problema è acuto,
+perché metà dell'informazione è nascosta: il giocatore deve sapere che cosa fare anche
+senza sapere chi ha davanti. È il motivo per cui Ruggero insiste su \emph{Deception}, che
+dà a ogni ruolo un'azione concreta per ogni fase.
+
+% ---------------------------------------------------------------------
+\section{Feedback al \emph{roguelike}: focalizzare}
+\label{a11:sec:fbroguelike}
+
+L'ultimo gruppo è quello di Rita, Giordano e Nicola. Daniele parte ``dalle cose molto
+interessanti'': un \textbf{\emph{roguelike} di \emph{journaling} con le carte} ``è molto
+interessante'', ``apre delle cose fenomenali''. Però, ``e questo è proprio un consiglio:
+dovete fare questa cosa'', \textbf{bisogna focalizzarlo}.
+
+\paragraph{Cinquantasei carte non bastano per fare tutto.} Con la possibilità di fare
+``qualsiasi cosa'' con 56 carte, il gruppo sta \textbf{sottovalutando la quantità di RNG}
+(generazione casuale) necessaria. Daniele parla per esperienza diretta: sta creando
+``un \emph{card game story-driven roguelike} da tavolo''; ``è il mio lavoro nella vita'',
+``vivo di combinazioni, di quantità di carte da mettere, di come incastrare la
+narrativa''. E assicura che il lavoro richiesto da un gioco non focalizzato è molto più
+di quanto il gruppo pensi.
+
+\paragraph{Che cosa vuol dire focalizzato.} Vuol dire decidere \textbf{che cosa
+raccontare} con il gioco e \textbf{che cosa si gioca}, anche a livello di emozione. Il
+gruppo ha parlato di curiosità, ``ma la curiosità non può essere vagamente la curiosità
+di giocare un'altra partita''. Daniele gioca ``avidamente'' l'\emph{early access} di
+\emph{Slay the Spire 2}, e prova curiosità; ma è ``una curiosità specifica, in un
+ambiente specifico, in un \emph{setting} specifico, con un gioco specifico''. Quindi:
+``non tenete generico questo gioco, focalizzatelo, fate un \emph{emotion driven} molto
+più diretto''.
+
+\paragraph{\emph{Emotion driven} non vuol dire un'emozione sola.} Vuol dire il
+\textbf{ventaglio di emozioni} che si vogliono creare con le meccaniche. Anche il gioco
+di Daniele è costruito in modo \emph{emotion driven}, e ``mi ha risolto un fracco di
+problemi'', perché lavorare così costringe a chiedersi: che cosa voglio che il giocatore
+senta da queste meccaniche? E il \emph{roguelike}, dice, è ``proprio un caso studio
+fenomenale'' sull'\emph{emotion driven}.
+
+\paragraph{Legare \emph{journaling} e carte.} Il secondo consiglio: mettere \textbf{un
+legame più forte tra \emph{journaling} e \emph{card game}}. Esistono giochi in cui le due
+parti sono separate e funzionano; ma per questo gioco, secondo i docenti, sarebbe molto
+originale trovare un meccanismo per cui il gioco di carte \textbf{spinge direttamente}
+al \emph{journaling}, con momenti in cui dice: adesso scrivi. È l'aspetto di ibridazione
+e di sperimentazione che rende interessante il progetto.
+
+\paragraph{Carte personalizzate.} Sull'RNG, se il gioco è focalizzato, 56 carte possono
+bastare, che siano carte personalizzate (``con Tabletop Simulator le potete fare'') o un
+mazzo da poker. Il gruppo chiede se possa realizzare le carte \emph{ad hoc}: ``se
+focalizziamo di più, sì, assolutamente''. E Daniele annuncia che dirà ancora qualcosa su
+\emph{Reigns}, perché è un suo caso studio: ``lo conosco come le mie tasche, so tutta la
+RNG di quel gioco. C'è da spaventarsi, ragazzi, su quell'RNG''.
+
+\paragraph{L'anti-\emph{selling point}.} Ruggero aggiunge una cosa a ciò che ha detto
+Daniele. Nella slide del gruppo, i \emph{selling point} erano: l'approccio, lo strumento,
+la modularità, il sistema agnostico rispetto all'ambientazione. ``Quello, per me, è
+l'\textbf{anti-\emph{selling point}}.'' Il vero \emph{selling point} era il
+\textbf{sottotitolo}: ``\emph{deck builder, roguelike, journaling}''. ``Quello era il
+`cavolo, 'sta roba può essere interessantissima'. Il \emph{setting agnostic} è il
+`'sta cosa mi fa scappare'.'' I casi studio che il gruppo stesso aveva segnato
+(\emph{Apothecaria}, \emph{Psychonauts}\footnote{Così nella trascrizione; non è chiaro se
+il gruppo intendesse il videogioco omonimo o un altro titolo dal nome simile.},
+\emph{Playlist for the End of the World}, \emph{Reigns}, \emph{Slay the Spire}) non sono
+agnostici, nessuno: per ognuno si sa che emozione vuole dare. ``Voi state prendendo quei
+casi studio, che sono interessantissimi, togliendo le cose che per loro sono
+interessanti.''
+
+\paragraph{Il gioco che fa tutto non esiste.} Focalizzando, ``a livello di \emph{vibes}''
+sembra di perdere qualcosa, delle possibilità; ma ``è la normale convergenza'': per forza
+di cose, convergendo, qualcosa si perde. ``Il gioco che fa tutto non esiste. Se volete
+fare un gioco che fa tutto, non fate nessun gioco, e arrivate alla fine del corso senza
+niente.''
+
+\paragraph{Sette casi studio.} Poi i casi studio, ``preparatevi perché sono tanti'': erano
+tre, poi quattro, e ora sono di più di quando ne ha parlato con i colleghi in privato.
+``Dobbiamo mettere una regola per limitare i casi studio'', protesta Daniele; ``non c'è
+la regola sui limiti di casi studio di Ruggero. Daniele, sei fregato'' (``ho trovato un
+\emph{bug}''; ``è troppo tardi'').
+\begin{enumerate}
+  \item \textbf{\emph{Reigns}, il gioco da tavolo}: esiste davvero\footnote{È
+        \emph{Reigns: The Council}, citato più avanti in chat.}. Come l'hanno fatto? Che
+        cosa fa il gioco da tavolo rispetto al videogioco? È analogico, quindi più vicino
+        a ciò che fa il gruppo.
+  \item \textbf{\emph{Cult Poker}}\footnote{Così nella trascrizione; il titolo non è
+        verificabile.}: un \emph{roguelike} di \emph{journaling} in solitario che usa
+        fisicamente un mazzo di carte da poker e chiede di \textbf{scrivere sulle
+        carte}, modificandole partita dopo partita. ``Mi sembra molto, molto, molto
+        utile al vostro gioco.''
+  \item \textbf{\emph{Dorfromantik}, il gioco da tavolo}\footnote{Nella trascrizione
+        ``Dorf Romantic''.}, non il videogioco. Sembra non c'entrare niente, ma ha un
+        componente che è una piccola \textbf{mappa} con cui il gruppo di gioco continua a
+        interagire partita dopo partita: ci si scrive sopra, e si sbloccano cose future,
+        con la dinamica tipica delle \emph{run} dei \emph{roguelike}. Lo fa in modo
+        analogico, ``molto \emph{smooth}, molto semplice da spiegare''; ed è ``un gioco
+        da tavolo bellissimo''.
+  \item \textbf{\emph{Austerity}}: un gioco da tavolo in solitario che esiste solo in
+        \emph{print and play}, gratuito, da stamparsi a casa. È un gestionale cittadino,
+        ``diciamo \emph{roguelike}'', super focalizzato sulla \textbf{gestione delle
+        risorse}, che tematizza ``molto forte''.
+  \item \textbf{\emph{Dead Cells}, il gioco da tavolo}\footnote{Nella trascrizione ``Dead
+        Cell'' e ``Del Cell''.}. Il gruppo aveva messo \emph{Slay the Spire}, che ha
+        anche una versione analogica; quella di \emph{Dead Cells} ne è molto vicina: un
+        \emph{deck builder roguelike} con delle \emph{run}, che fa cose molto
+        interessanti. Ma è ``al confine'' di ciò che serve al gruppo: ``guardatelo solo
+        se avete la disperazione più totale nel cuore''. A Ruggero è piaciuto moltissimo,
+        ma potrebbe far deragliare il progetto.
+  \item \textbf{\emph{The Quiet Year}}, per i \emph{prompt}, le tabelle, gli eventi, e
+        per come rende ``estremamente narrativo'' un mazzo di carte da poker in termini
+        di \emph{journaling}. Esiste un'edizione italiana; Ruggero la nomina per onestà
+        intellettuale (``mi sembra disonestà intellettuale non dire che esiste''), ma
+        non la comprerebbe né la consiglierebbe mai, per ragioni di paragame che chi ha
+        seguito la lezione precedente può intuire guardandola. ``Ma non apriamo questo.''
+  \item Un \textbf{documentario} di venti o trenta minuti, di cui Ruggero non dice
+        niente: ``se lo aprite, vedete i primi cinque secondi, già avete capito perché vi
+        serve''.
+\end{enumerate}
+
+\paragraph{Daniele: provateci.} Daniele riprende la parola. Primo punto: ``avete visto
+quanto eravamo entusiasti tutti quanti'' del \emph{deck building roguelike} in
+solitario con \emph{journaling}; lui vorrebbe giocarlo, perché adora i \emph{roguelike}. Non è che l'idea non
+sia arrivata: è che ``sappiamo per esperienza che farlo generico è problematico''. Daniele
+ha studiato attentamente l'RNG di \emph{Reigns}, il videogioco, ``perché è fondamentale:
+è una pietra miliare della \textbf{narrativa combinatoria}. E la narrativa combinatoria,
+ragazzi, è complicatissima da fare''. ``Però provateci, provateci.'' Il consiglio è di
+fare carte personalizzate, di guardare bene \emph{Cult Poker} e le altre \emph{reference}
+in cui girare una carta genera eventi che \textbf{modificano le risorse}, come aveva
+detto Nicola nel \emph{pitch}. E di non sottovalutare la cosa importante di
+\emph{Reigns}, che ``molti sottovalutano'': l'\textbf{\emph{agency}}. La carta non si
+limita a modificare le risorse: \textbf{dà una scelta}, andare da un lato o dall'altro.
+``Secondo me può essere fattibile''; ma bisogna stare molto attenti alla parte di
+universalità.
+
+\paragraph{I giochi ``generalisti'' sono focalizzati.} Daniele aggiunge un'osservazione
+che può sembrare strana: perché un prodotto che può fare tutto non sarebbe coerente con
+il mercato, con la vendita? Esistono, soprattutto tra i giochi di ruolo, i cosiddetti
+\textbf{generalisti}, come \emph{GURPS} e \emph{Fate}, che negli anni hanno avuto ``il
+loro discreto successo''. Ma attenzione a un pregiudizio dovuto al modo in cui vengono
+presentati: quei giochi \textbf{sono focalizzati}, solo che la loro focalizzazione non è
+sul genere o su ciò che si vuole narrare, ma su un'altra cosa.
+\begin{itemize}
+  \item L'esempio ``canonico'' italiano è \textbf{\emph{Not the End}}. Si può
+        interpretare qualsiasi personaggio, in qualsiasi scenario, ma il gioco dichiara
+        il suo fuoco: \textbf{eroi che dicono ``questa non è la fine, io non morirò
+        qui''}, gesta eroiche di un certo tipo. Il sistema a \emph{token} ha una sua
+        texture narrativa e una sua struttura di regolamento, ed è proprio questo che ha
+        venduto: qualunque cosa si giochi, ci saranno sempre dei punti cardine.
+        Ma per il gruppo Daniele sconsiglia la ``soluzione alla \emph{Not the End}'':
+        nei mesi a disposizione c'è troppo poco tempo. Meglio focalizzare il gioco come
+        \emph{The Quiet Year} o \emph{Austerity}.
+  \item Gli autori di \textbf{\emph{Fate}} volevano focalizzare il prodotto sul gameplay
+        e sui tipi di narrazione possibili, tanto che i personaggi di \emph{Fate}
+        (terza edizione) sono \textbf{proattivi}: non sono personaggi che possono
+        ``tirarsi la zappa sui piedi''. Non c'è il fallimento critico in cui ``mi è caduta
+        la spada sul piede e mi sono fatto male'', e il manuale lo ripete più volte.
+\end{itemize}
+La lezione è generale: i sistemi che cercano di fare tutto rischiano di non fare niente,
+e i giocatori magari non capiscono nemmeno a che cosa serva il gioco. Anche i sistemi
+generali di successo ``danno una loro direzione'': ``siamo generali, puoi farci quello
+che vuoi; ma se vuoi fare questo tipo di esperienza, ci siamo noi''.
+
+\paragraph{Tutto su Tabletop Simulator.} Ruggero ha controllato nel frattempo: \emph{The
+Quiet Year}, \emph{Austerity} e il gioco da tavolo di \emph{Reigns} sono tutti
+disponibili nel \emph{workshop} di Tabletop Simulator.
+
+\paragraph{La curiosità porta in posti confusi.} Beatrice non ha niente di particolare
+da aggiungere, ma risottolinea, come per il gruppo precedente, la parte di
+\textbf{\emph{emotional design}}: ``la curiosità come emozione primaria, secondo me, vi
+porta in posti confusi''. Bisogna ragionare molto sulle emozioni da dare alla persona
+giocante, e su come dargliele.
+
+\paragraph{Il rischio del librogame.} Uno studente del gruppo ringrazia (``gli spunti che
+mi ha dato Ruggero sono una figata'', compreso il documentario, utile ``anche in futuro'')
+e fa una domanda sulla focalizzazione: anche la narrativa deve essere più focalizzata? Il
+gruppo aveva paura di scivolare in una sorta di ``libro troppo libro e poco
+\emph{game}''. La risposta: c'è ``un grosso spettro'', e focalizzare la narrativa non vuol
+dire diventare un librogame. Ruggero cita un titolo che alcuni giocano dicendo ``è un
+librogame''\footnote{Nella trascrizione ``Miriam Farah''; il titolo non è
+ricostruibile.}, con cui non è d'accordo: ha componenti più guidate, ma non somiglia
+affatto a un librogame. Lo spettro è come quelli visti nelle lezioni precedenti; e
+\textbf{\emph{The Quiet Year}} sta lì proprio per rispondere a questo dubbio: è
+focalizzato, narrativo, ``e non è per niente un librogame''. ``Io credo che tutti voi
+dobbiate giocarlo almeno una volta'', dice Ruggero: in un corso più lungo sarebbe stato
+obbligatorio. Daniele, che l'aveva giocato tempo prima, conferma: anche con le carte da
+poker ``è fenomenale'', ``ha delle intuizioni fantastiche. Che tu dici: ma si può fare
+questa cosa con un gioco? Si può fare''.
+
+\paragraph{Approfondimento: la narrativa combinatoria.} \emph{Reigns} è un esempio
+classico di narrativa combinatoria: un mazzo di carte-evento, ciascuna con due scelte che
+spostano quattro indicatori, e una partita che finisce quando uno di essi va a zero o al
+massimo. La struttura è identica, nelle linee generali, a quella proposta dal gruppo
+(barre del corpo, della mente e dello status, morte quando una si esaurisce). La
+difficoltà di cui parla Daniele sta nel numero di combinazioni: con poche decine di
+carte, ogni carta deve avere senso dopo quasi qualsiasi altra, e ogni combinazione
+deve produrre una storia leggibile. È per questo che i docenti chiedono di fissare
+prima \emph{che cosa} raccontare: un \emph{setting} e un ventaglio di emozioni
+preciso restringono le combinazioni che contano, e rendono il lavoro gestibile.
+
+% ---------------------------------------------------------------------
+\section{I casi studio della serata}
+\label{a11:sec:reference}
+
+La tabella~\ref{a11:tab:reference} riassume tutti i giochi e i materiali che i docenti
+hanno assegnato ai gruppi, con il motivo per cui sono stati scelti. Come ripete Ruggero,
+``i casi studio che vi ho dato non sono \emph{task}, non sono obblighi'': non vuole schede
+riassuntive né report (``sono per voi''), e vanno usati per fare \emph{problem solving},
+non come modelli.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.1cm}p{3.6cm}p{7.6cm}@{}}
+\toprule
+\textbf{Gruppo} & \textbf{Caso studio} & \textbf{Perché} \\
+\midrule
+\emph{Murder Memory} & \emph{Voices in My Head} & un imputato interpretato da più
+persone, come aspetti della sua personalità; obiettivi a volte cooperativi, a volte
+competitivi \\
+ & \emph{Inhuman Conditions} & l'interrogatorio: la metafora meccanica di che cosa si fa
+nel proprio turno \\
+ & \emph{Fino a prova contraria} (titolo incerto) & un caso da risolvere passo per passo,
+con il ping pong tra difesa e accusa; come rendere fluido il processo \\
+ & \emph{Murder Party} (libro, scansione di Beatrice) & una traccia completa; ogni
+personaggio ha segreti che a un certo punto deve rivelare \\
+\midrule
+\emph{La Peste} & \emph{Human Punishment} & il più vicino meccanicamente, in un
+\emph{setting} \emph{cyberpunk} (``non un buon gioco'', ma utile) \\
+ & \emph{Trade on the Tigris} & carte con aspetti pubblici e segreti di informazione \\
+ & \emph{Inhuman Conditions} & regole specifiche per i ruoli nascosti (gli androidi); la
+parte interpretativa meccanizzata \\
+ & \emph{Deception: Murder in Hong Kong} & il \emph{social deduction} più pulito, per
+regolamento e flusso di gioco \\
+\midrule
+\emph{Roguelike} di \emph{journaling} & \emph{Reigns: The Council} & come il gioco da
+tavolo traduce il videogioco; scelta binaria e risorse \\
+ & \emph{Cult Poker} (titolo incerto) & mazzo da poker, carte su cui si scrive partita
+dopo partita \\
+ & \emph{Dorfromantik} (gioco da tavolo) & una mappa su cui si scrive e che sblocca cose
+tra una partita e l'altra \\
+ & \emph{Austerity} & \emph{roguelike} in solitario, risorse fortemente tematizzate;
+\emph{print and play} gratuito \\
+ & \emph{Dead Cells} (gioco da tavolo) & \emph{deck builder roguelike} a \emph{run}, la
+progressione tra una \emph{run} e l'altra; ``al confine'' \\
+ & \emph{The Quiet Year} & \emph{prompt}, tabelle, eventi; un mazzo da poker reso
+narrativo; non è un librogame \\
+ & un documentario (20--30 minuti) & non detto: ``dai primi cinque secondi capite perché
+vi serve'' \\
+\bottomrule
+\end{tabular}
+\caption{I casi studio assegnati ai tre gruppi, con le ragioni date dai docenti. Più
+avanti, nella discussione aperta, si aggiungono \emph{The Zone}, \emph{Lovecraftesque}
+e altri titoli (sezione~\ref{a11:sec:rng}).}
+\label{a11:tab:reference}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Domande aperte: scrivere il gioco per chi lo gioca senza di voi}
+\label{a11:sec:testing}
+
+Finiti i feedback di gruppo, si passa alle domande generali. La prima novità è
+logistica: secondo i docenti è meglio \textbf{anticipare un tutoraggio a fine ottobre}.
+Ruggero non ci sarà, ``però io e Bea probabilmente dovremmo farcela'', dice Daniele.
+
+\paragraph{Che cosa si può già testare?} Tancredi chiede del \emph{testing}: ci sono cose
+a cui conviene già cominciare a pensare, dei test che si possono già fare, un modo di
+strutturarsi, prima della lezione dedicata? Nessuno pretenderà che i gruppi sappiano
+qualcosa sul \emph{playtest} prima di quella lezione, risponde Daniele; ma ``se vuoi un
+po' di \emph{foreshadowing}'', il consiglio più utile è quello già dato: \textbf{iniziate
+a ragionare sul regolamento}. ``Non ve l'abbiamo detto a caso.'' Avere una procedura
+dall'inizio alla fine, messa per iscritto, aiuta moltissimo quando si va a testare il
+gioco.
+
+\paragraph{Il test dell'amico.} ``Scrivete il gioco non per voi, ma per chi lo deve
+giocare senza di voi.'' Daniele propone un test mentale: immaginate di prestare il gioco
+a una persona amica, senza poterglielo spiegare, ``per qualunque motivo''. È in grado
+questa persona di giocarlo dall'inizio alla fine senza chiedervi niente? ``Se la
+risposta è sì, siete già messi molto, molto bene.''
+
+\paragraph{Il panino con la marmellata.} Per rendere l'idea, Daniele racconta ``un meme
+bellissimo'': un genitore ingegnere, che fa anche giochi da tavolo, chiede ai figli di
+scrivergli la procedura per preparare un \textbf{panino con la marmellata}, e poi la
+segue \textbf{alla lettera}\footnote{Nella trascrizione ``il pallino alla marmellata''.
+Il video a cui Daniele si riferisce è con ogni probabilità la \emph{Exact Instructions
+Challenge}, diventata virale online, in cui un padre esegue alla lettera le istruzioni
+scritte dai figli per preparare un panino con burro d'arachidi e marmellata.}. A un
+certo punto i figli hanno scritto ``mettere il coltello dentro il contenitore'', e lui lo
+mette al contrario, dalla parte del manico, perché non c'era scritto di metterlo dalla
+parte della lama. ``Non dico che dovete arrivare a quel livello'', ma il principio è
+quello.
+
+\paragraph{Leggere ad alta voce, pensare ad alta voce.} Quando il regolamento sarà
+buono (``non subito, non all'inizio, ma quando vi sentite confidenti''), Daniele consiglia
+di farlo leggere a un amico, a qualcuno, \textbf{senza dire niente}: stare ad ascoltarlo
+e chiedergli di dire ad alta voce i ragionamenti che fa. ``Cavolo, noterete tantissime
+cose che voi avete dato per scontato.'' È un \emph{bias}, e ha un nome, che qualcuno
+scrive subito in chat (``bravissima''): la \textbf{\emph{curse of knowledge}}\footnote{Nella
+trascrizione ``Course of Knowledge''.}, la ``maledizione della conoscenza''. È il
+\emph{bias} che si forma quando una persona ha addosso troppa conoscenza di qualcosa, e
+spiegandola dà per scontate cose che per lei lo sono, ma per chi ascolta no.
+
+\paragraph{Prima ancora: mettere ordine alle proprie idee.} Beatrice aggiunge che i
+motivi per cominciare subito a lavorare al regolamento sono due, e il primo viene
+``prima ancora di capire come andiamo a parlare alle persone giocanti'': scrivere
+\textbf{mette ordine alle idee}. I gruppi sono in una fase molto embrionale, e stendere
+le idee dà chiarezza su quali sono i \textbf{buchi}, le \textbf{incongruenze}, le cose che
+mancano, prima di arrivare a capire come raccontarlo bene. ``Iniziamo anche a raccontarlo
+male'': già immaginare di raccontarlo a qualcun altro, per Beatrice, è lo \emph{step}
+necessario in questa fase, e servirà poi anche per il regolamento vero. ``In questa fase
+vi serve proprio avere il flusso di gioco, e iniziare a capire come raccontarlo. È quello
+che mette ordine al flusso di gioco.''
+
+\paragraph{Approfondimento: la maledizione della conoscenza.} L'espressione \emph{curse of
+knowledge} viene dall'economia comportamentale (Camerer, Loewenstein e Weber, 1989), ed è
+diventata famosa con un esperimento di Elizabeth Newton (1990): a una persona si chiede
+di tamburellare con le dita il ritmo di una canzone nota, e di stimare quante persone la
+riconosceranno. Chi tamburella, che ``sente'' la melodia nella testa, prevede che la
+riconoscerà circa una persona su due; in realtà la riconosce circa una persona su
+quaranta. Il regolamento di un gioco è lo stesso tamburellare: chi lo ha scritto ``sente''
+il gioco che ha in testa, e non si accorge di quanto manca sulla pagina. Il test della
+lettura a voce alta, senza intervenire, è il modo più economico per misurare la
+distanza.
+
+% ---------------------------------------------------------------------
+\section{Il \emph{pitch} visto da dentro: la vergogna delle idee}
+\label{a11:sec:vergogna}
+
+\paragraph{Che cosa ``attizza'' chi ascolta.} Daniele torna sul \emph{pitch}. Il corso non
+ha una lezione dedicata (``ma ripeto: se la volete, troviamo un buco''), ma c'è una cosa
+importantissima da imparare quando si presenta un'idea, anche se le prime volte non viene
+perfetta: \textbf{osservare che cosa accende le persone che ascoltano}. Spesso una cosa
+che per chi presenta è un'idea minore, data quasi per scontata, è quella per cui chi
+ascolta dice ``wow, che fichissima questa cosa''.
+
+\paragraph{La vergogna delle idee.} Daniele dà un nome al fenomeno opposto: la
+\textbf{vergogna delle idee}. La vede molto nella narrativa, e gli \emph{editor} la
+conoscono bene quando ricevono \emph{pitch} di libri: si hanno idee forti, ma non ci si
+crede fino in fondo, e allora le si chiude dentro un'``impalcatura'' che cerca di
+convincere gli altri che il lavoro è stato fatto. I gruppi stessi, magari, hanno idee
+``fichissime'' dentro il loro \emph{pitch}, e faticano a vedere che sono le più forti; le
+avvolgono in un ``involucro'' che nasce solo dal voler fare bella figura, presentare bene,
+fare bene. ``Invece dovete tirar fuori queste idee.'' Il primo esempio è già venuto dalla
+serata: il sottotitolo del terzo gruppo, ``\emph{deck builder roguelike journaling}'',
+era il vero \emph{selling point}, e stava sotto il titolo, quasi nascosto.
+
+\paragraph{Non è andato tutto male.} Se dopo il \emph{pitch} si ha la sensazione che sia
+``andato tutto male'', Daniele invita a non spaventarsi: i gruppi si sono impegnati,
+hanno dimostrato tutto, ``siete arrivati con qualcosa''. In altri corsi ci sono team che
+il giorno del \emph{pitch} aprono il microfono e dicono: ``ma noi in realtà non abbiamo
+niente''.
+
+\paragraph{Come vi sentite?} Beatrice propone di usare il tempo rimasto, dopo le domande,
+per sentire come è andata per gli studenti: com'è stato il \emph{pitch} ``a livello
+emotivo'', e come si sentono dopo i feedback. Daniele, che ha visto i \emph{pitch} degli
+anni passati, è netto: ``siete andati bene, e vi assicuro che se non andava bene anche
+solo un gruppo lo sapevate. Quindi non temete''. Ammette che i docenti possono essere
+``un po' duri'' (``questo è un problema mio, probabilmente''): ma se vedessero ``come mi
+segno io i feedback sui miei prototipi'', con ``proprio gli insulti grossi verso di me'',
+saprebbero di essere ``sulla cresta del mondo''.
+
+\paragraph{Domande in chat.} Intanto, qualcuno ha chiesto in chat i titoli esatti: il
+gioco da tavolo di \emph{Reigns} è \textbf{\emph{Reigns: The Council}}; c'è
+\emph{Austerity}; e per \emph{The Quiet Year}, di cui esistono ``mille moduli'', basta in
+realtà il PDF del gioco e una \textbf{lavagna condivisa}\footnote{Segue nella trascrizione
+un riferimento non ricostruibile (``fai tutti l'ha fatto quello, Reins De Caos'').}.
+Giordano saluta e lascia la lezione.
+
+\paragraph{Lavorare con sconosciuti.} Uno studente del terzo gruppo risponde alla domanda
+di Beatrice: è stato ``molto utile e interessante'' lavorare in gruppo, e confrontarsi con
+persone sconosciute, ``anche di età mista'', che hanno punti di vista molto diversi sulle
+stesse cose pur essendo interessate alle stesse cose. E la lezione di oggi è stata
+``superfiga'': avere tutti e tre i docenti insieme e poter fare domande a tutti è ``una
+cosa preziosissima''. Il gruppo è felice che l'idea abbia in parte ``agganciato'' i
+docenti, e cercherà di ``assorbire come delle spugne'' le indicazioni. ``Speriamo di
+farvelo giocare.'' ``Io vorrei giocare'', risponde Daniele.
+
+\paragraph{La stima che sale.} Daniele condivide con il gruppo ``la vostra futura
+condizione di designer di \emph{roguelike card game}'': ci sono ``delle cose toste''
+(``fatelo compatto, mi raccomando''), ma il genere dà ``tante soddisfazioni'', perché
+mettere insieme cose così complesse, quando ci si riesce, è incredibile. E vale anche per
+\emph{Murder Memory} e per \emph{La Peste}: quando si riesce a mettere insieme più cose e si
+vedono giocatori che magari non giocano esattamente come si aveva in mente, ``ma il 70\%
+delle cose sono lì'', ``la stima che ti sale''.
+
+\paragraph{Non perdete la parte interpretativa; scolpite.} Ruggero riprende due punti. Alla
+\emph{Peste}: non vorrebbe che il gruppo perdesse la parte interpretativa, e ha messo
+\emph{Inhuman Conditions} tra i casi studio proprio per quella, ``perché quella è una
+parte ibrida'': ``se è molto interessante, sarebbe un peccato perderla''. A \emph{Murder
+Memory}: ci sono ``tante cose molto interessanti, seppure ancora un po' nebulose'', e se il
+gruppo riesce ad affinare e a ``tagliare questa scultura'' può uscirne ``tanta bella
+roba''.
+
+\paragraph{Parlate tra di voi.} Poi una precisazione e un invito. I casi studio ``non sono
+\emph{task}, non sono obblighi'': Ruggero non vuole schede riassuntive né report (``non
+sono per me quei \emph{task}. Sono per voi''). E ora che ogni gruppo ha visto i giochi
+degli altri, i gruppi dovrebbero \textbf{parlare tra loro} e farsi domande a vicenda:
+``non siete entità separate''.
+
+% ---------------------------------------------------------------------
+\section{\emph{Roguelike}, RNG e narrativa modulare}
+\label{a11:sec:rng}
+
+L'ultima mezz'ora diventa una discussione sul terzo progetto, che tocca temi su cui due
+dei docenti lavorano per mestiere: Daniele sta sviluppando un \emph{roguelike} narrativo
+di carte, e fa ``design di narrativa da tanti anni''.
+
+\subsection{\emph{Dead Cells} o \emph{Slay the Spire}?}
+
+Uno studente del terzo gruppo chiede a Ruggero perché abbia consigliato il gioco da
+tavolo di \emph{Dead Cells} invece di quello di \emph{Slay the Spire}, che lui possiede e
+potrebbe spiegare in fretta ai compagni. Se non si è giocato nessuno dei due, risponde
+Ruggero, \emph{Dead Cells} ``è fatto meglio''; ma in realtà molte cose che fa \emph{Dead
+Cells} le fa anche \emph{Slay the Spire}. Ciò che interessa è la parte delle \emph{run},
+il \textbf{miglioramento \emph{meta}} tra una \emph{run} e l'altra (``Hai presente? Quello,
+esatto''), e vedere come lo fa. Ma è ``un di più'': \emph{Dorfromantik} fa la stessa cosa
+``in uno \emph{scope} che potete fare anche voi''. Non per capacità, precisa, ma per i
+tempi del corso: giochi come \emph{Dead Cells} e \emph{Slay the Spire} da tavolo sono fuori
+dallo \emph{scope} del progetto.
+
+\paragraph{Due anni per un gioco da tavolo.} Daniele porta un esempio di scala: il gioco
+da tavolo di \emph{Cyberpunk}, che non ha aspetti \emph{roguelike} ma ne ha di narrativi,
+coesi con le meccaniche, ha richiesto due anni di sviluppo; ``e voi non avete due anni per
+questo gioco. Contenetevi, per non andare in \emph{burnout}''. Ci sarà una lezione
+sull'RNG, ma ogni volta che c'è casualità il lavoro è ``mostruoso'': la combinatoria e la
+modularità narrativa ``sono veramente complesse''. Per dubbi, soprattutto il terzo gruppo
+può scrivergli in privato, per mail o su Telegram (``scriveteci sempre in privato, questo
+vale sempre''): ha molta esperienza di questi giochi, e gli piacciono molto.
+
+\subsection{Da dove si comincia? Non dai \emph{perk}}
+
+\paragraph{La domanda di Nicola.} Nicola si definisce ``un gigantesco fan dei
+\emph{roguelike}'' e della casualità, tra i primi giochi che ha amato, soprattutto nei
+videogiochi. Non sapendo programmare (``tuttora sono un po' una chiavica''), si costruiva
+le meccaniche nella testa, per capire come funzionavano, giocando per esempio a
+\emph{Pixel Dungeon}, ``il più basico \emph{roguelike}'', ``il classicone''. Per lui è uno
+dei generi più soddisfacenti anche per chi lo progetta: il designer stesso non sa che cosa
+gli uscirà durante la \emph{run}, e si trova a ``sbattere la testa contro le meccaniche''
+che ha costruito. Il suo blocco è sull'approccio: finora ha fatto design di
+\emph{roguelike} e di RNG narrativa solo su basi già costruite. Da dove si parte? Prima la
+meccanica ``basilarissima'', ``il succo, le ossa'', e poi qualche carta, qualche
+\emph{perk}? ``Non so come approcciarmi alla cosa.''
+
+\paragraph{Ruggero: \emph{The Quiet Year}.} Ruggero risponde con il suo approccio (``prendilo
+con le pinze''): affrontare il problema da un altro punto di vista. Dei casi studio, il
+più utile per Nicola è \textbf{\emph{The Quiet Year}}. Daniele è d'accordo.
+
+\paragraph{Daniele: si parte dalle emozioni.} ``Quando si fa un \emph{roguelike}, anche
+videoludico, \textbf{non si parte dai \emph{perk}}.'' L'anno precedente un gruppo gli aveva
+portato un \emph{roguelike} con i \emph{perk}, tutta la tabella, tutto il bilanciamento:
+``io l'ho cassata e ho detto: voi adesso ripartite dalle emozioni che volete generare,
+perché i \emph{perk} e i bilanciamenti sono l'ultima cosa''. Nella modularità narrativa ci
+sono concetti molto complessi, e un caso studio come \emph{The Quiet Year} li spiega meglio
+di quanto potrebbe fare lui. Paradossalmente, è più semplice fare questo tipo di
+ragionamento nei giochi analogici che nei videogiochi: i giochi procedurali come
+\emph{Caves of Qud}\footnote{Nella trascrizione ``Caves of Could''.} sono ``molto, molto
+complessi''.
+
+\paragraph{La narrativa prima della modularità.} Ciò che serve sempre, quando si vuole
+fare modularità narrativa, è \textbf{avere ben chiara la narrativa prima di renderla
+modulare}. Daniele fa un esempio ``alla \emph{Quiet Year}'': un gioco combinatorio in cui,
+girando delle carte, si raccontano le avventure di un \textbf{sub} in un mare abitato da
+\textbf{creature cthulhoidi}. Le emozioni sono particolari: la scoperta, la curiosità, ma
+anche il terrore, il timore, e la voglia di proseguire; e l'\emph{agency} può basarsi sul
+\textbf{rischio}: rischiare di più per scoprire di più, ma anche per morire, o rischiare
+di meno e tornare indietro. Con una narrativa così, Daniele non parte dai pezzi e dalla
+modularità, ``perché è difficile''. Si chiede piuttosto: \textbf{se finisco una partita di
+esempio, che partita è?} Che tipo di esempi voglio? Sicuramente una partenza in cui il sub
+scende e comincia a vedere cose strane; dei momenti in cui il sovrannaturale aumenta; certe
+cose che vanno avanti. Solo dopo si costruiscono i pezzi
+(figura~\ref{a11:fig:modulare}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a11st/.style={draw, thick, rounded corners=3pt, minimum height=1.3cm,
+             text width=2.5cm, align=center},
+  a11arr/.style={-{Stealth[length=3mm]}, thick}
+]
+  \node[a11st, fill=gray!15] (e) {\textbf{1. Emozioni}\\il ventaglio da generare};
+  \node[a11st, right=0.55cm of e] (p) {\textbf{2. Partita di esempio}\\che storia esce da
+    una partita?};
+  \node[a11st, right=0.55cm of p] (m) {\textbf{3. Moduli e risorse}\\coerenti con le
+    emozioni};
+  \node[a11st, right=0.55cm of m] (b) {\textbf{4. Perk e bilanciamento}\\affinano
+    un'emozione già scelta};
+  \draw[a11arr] (e) -- (p);
+  \draw[a11arr] (p) -- (m);
+  \draw[a11arr] (m) -- (b);
+  \node[below=0.45cm of b, text width=3cm, align=center, font=\footnotesize]
+    {l'ultima cosa, non la prima};
+  \node[below=0.45cm of e, text width=3cm, align=center, font=\footnotesize]
+    {qui si parte};
+\end{tikzpicture}
+\caption{L'ordine di lavoro che Daniele propone per un \emph{roguelike} narrativo. Chi
+parte dai \emph{perk} rischia, dice, di progettare ``la gestione delle offerte
+dell'Ipercoop''.}
+\label{a11:fig:modulare}
+\end{figure}
+
+\paragraph{\emph{The Zone}.} È esattamente l'approccio usato per \textbf{\emph{The Zone}},
+un gioco di ruolo narrativo ``fichissimo'', giocabile gratuitamente online: è
+\emph{Annihilation} fatto gioco di ruolo. Si gioca con i \textbf{tarocchi}, senza dadi, e
+ha ``delle fichissime meccaniche di \textbf{frasi rituali}'': si pronunciano delle frasi
+che attivano delle meccaniche, ``favoloso''. Il designer, racconta Daniele, lo spiega in
+alcune interviste: voleva avere un'ipotesi di come potesse essere la narrazione, basata
+sia sul romanzo sia sul film; aveva un'idea di come potesse essere una partita, e da lì
+ha costruito le modularità. In \emph{The Zone} si sa fin dall'inizio che sopravviverà
+\textbf{una sola persona}: tutti i personaggi muoiono prima del finale tranne uno, e ci
+sono meccaniche con cui chi muore resta nella partita. Alcuni passi della narrazione sono
+sempre uguali, altri cambiano grazie ai tarocchi, da luogo a luogo, e tutto si basa sulla
+narrazione delle persone. ``È bellissimo quel gioco, ragazzi!'' È un gioco \emph{sui
+generis}, come \emph{The Quiet Year}. Spiegano la stessa cosa sulla modularità narrativa
+anche \emph{Lovecraftesque} e \emph{Bleak Spirit}\footnote{Così nella trascrizione; il
+secondo titolo non è verificabile.}, che secondo Daniele si giocano meglio senza carte.
+
+\paragraph{Le risorse vengono dopo.} Nel caso del terzo gruppo c'è anche una
+\textbf{modularità di risorse}. Il consiglio resta lo stesso: pensare a una struttura di
+partita di esempio, e da lì decidere \textbf{quali tipi di risorse} avere, coerenti con
+le emozioni da generare. Il bilanciamento si fa dopo, i \emph{perk} si fanno dopo. ``I
+\emph{perk} servono ad affinarti un'emozione che hai già scelto. Se parli dei \emph{perk}
+ma non dell'emozione al cuore, i \emph{perk} rischiano di essere la gestione delle offerte
+dell'Ipercoop.''
+
+\paragraph{Le \emph{build}.} Lo stesso vale per le \emph{build}, aggiunge Daniele, che gioca
+molto l'\emph{early access} di \emph{Slay the Spire 2} (``non è ancora bilanciato, ma è
+fighissimo''). Per creare le \emph{build}, molto spesso i designer non partono dalle carte
+ma da che cosa vogliono che la \emph{build} faccia, quali emozioni deve dare, che cosa
+deve generare; poi ne fanno una lista, e a ogni voce associano delle carte. \emph{Perk},
+elementi meccanici e il resto vengono \textbf{dopo le emozioni}. Anzi, spesso le
+\emph{build} \emph{meta} nascono dal basso, da chi gioca, non da chi progetta.
+
+\subsection{Le meccaniche sono metafore}
+
+\paragraph{Come si rompe la prima barriera?} Nicola accetta che i \emph{perk} vengano dopo,
+ma chiede come rompere ``la prima barriera'': partendo da un'emozione da trasmettere, come
+si arriva alla prima meccanica? Gli viene in mente di introdurre \textbf{personaggi
+giocabili}, come in \emph{Slay the Spire}, ciascuno con i propri \emph{perk}, le sue
+\emph{build}, le sue carte e i suoi \emph{set}: una scelta di tipologia, che non gli era
+venuta prima e che potrebbe aiutarlo a ``sbattere contro la parete''. La domanda è: che
+cosa faccio, come designer, cioè quale meccanica permette di trasmettere una narrativa,
+visto che ``una narrativa dettata dalla casualità è un casino, a meno che non forzi con
+una linearità di sottofondo''?
+
+\paragraph{Non un cacciavite: una metafora.} La risposta di Ruggero è una delle frasi della
+serata: ``Non pensare alle meccaniche come a un cacciavite o a un martello. \textbf{Le
+meccaniche sono metafore}: tutte sono metafore''. Metafore di interazioni: tra persona e
+persona, tra persona e oggetto, tra persona e luogo. ``Ragiona in termini di: come
+metaforizzo questa emozione?'' Il caso studio girato al gruppo, ``specialmente il
+documentario, che sembra quello messo lì a caso, ma non è a caso'', fa capire al volo
+quante cose si possono fare con i componenti che si hanno, lavorando \emph{emotion
+driven}. E poi: ``non sei da solo, siete in un gruppo di tre''.
+
+\paragraph{Scegliere e incatenare.} Nicola conviene: si voterà, si userà ``il metodo di
+Beatrice'', e ne usciranno. Basta scegliere uno, due, tre punti da cui partire; quale sia
+la narrativa principale è, secondo lui, abbastanza secondario: una volta scelta, il resto
+si incastrerà ``a catena''. ``Essendo in tre, credo che ce la possiamo fare.''
+
+\paragraph{Non innamoratevi del prototipo.} Un docente interviene ``con un solo
+consiglio'': ``a voi non deve piacere il prototipo, deve piacere la versione finale''.
+Spesso, lavorando a un gioco, si vorrebbe già lo stato finale; ma per il prototipo
+``brutto, rotto, non ancora perfetto'' bisogna passarci. Il prototipo è una
+``piastrella'' sulla strada per la versione finale; con il \emph{playtest} i docenti
+daranno gli strumenti per affinarlo. ``Pensate per ora alla parte grezza. Di pulirla c'è
+sempre tempo.''
+
+\subsection{Giusto o sbagliato? Due livelli}
+
+\paragraph{La domanda di Nicola a Daniele.} Nicola ha un'ultima domanda, rivolta a Daniele,
+``la persona che più si è dedicata all'RNG'': ``forse è stupido come pensiero'', ma come si
+fa a sapere che una scelta è quella giusta? Iterare richiederebbe una quantità di tempo che
+il gruppo non ha.
+
+\paragraph{La risposta di Rita.} Risponde per prima Rita, compagna di gruppo: ``giusto e
+sbagliato non esiste''. Bisogna credere in una scelta fino in fondo, e allora
+``diventerà giusta'', perché credendoci si prenderanno le scelte giuste. E poi ci sarà la
+lezione sul \emph{playtest}.
+
+\paragraph{Vere entrambe, su due livelli.} I docenti danno ragione a tutti e due, su piani
+diversi. Quello che dice Nicola è molto vero \textbf{sull'RNG, e solo sull'RNG}: le
+tabelle, la matematica. Quello che dice Rita è vero per il resto, perché un gioco ``è
+molto di più della sola RNG''. Daniele, tornato in collegamento dopo una caduta della
+connessione (``ma alla nona ora va benissimo''), lo precisa: nell'RNG, cioè nella
+\textbf{tabella di bilanciamento delle meccaniche}, se non si decidono certe cose
+all'inizio dello sviluppo ci si perde in iterazioni senza senso. Ma questo non vale per lo
+sviluppo dell'intero gioco, in cui \textbf{l'iterazione è molto utile}. ``Attenzione a non
+usare i criteri dell'RNG per tutto il gioco, e i criteri di tutto il gioco sull'RNG''
+(tabella~\ref{a11:tab:livelli}).
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.2cm}p{4.9cm}p{4.9cm}@{}}
+\toprule
+ & \textbf{La tabella dell'RNG} & \textbf{Il gioco nel suo insieme} \\
+\midrule
+Che cos'è & tabelle, probabilità, bilanciamento delle meccaniche casuali & flusso,
+emozioni, regole, esperienza \\
+Come si procede & decidere certe direttrici all'inizio; altrimenti ``iterazioni che non
+hanno senso'' & iterare: provare, testare, correggere \\
+Chi ha ragione & Nicola (``come so che è la scelta giusta?'') & Rita (``giusto e
+sbagliato non esiste: credeteci'') \\
+Quando & dopo, quando il resto è chiaro (``non fatelo adesso'') & adesso \\
+\bottomrule
+\end{tabular}
+\caption{I due livelli della risposta alla domanda di Nicola: i criteri dell'RNG non
+valgono per tutto il gioco, e viceversa.}
+\label{a11:tab:livelli}
+\end{table}
+
+\paragraph{La narrativa è l'assassino del re.} Prima che la connessione cada, Daniele fa
+``un inciso'' sulla narrativa nei giochi (mentre un Lorenzo saluta e lascia la
+lezione\footnote{``Ciao Lorenzo, ok? Buona giornata a tutti, buona serata.'' È
+verosimilmente lo studente che aveva avvisato di dover andare via prima per prendere il
+treno.}). In un'esperienza ludica serve comunque il \emph{gameplay}: la narrativa non va
+in secondo piano, ma ``la narrativa senza un gameplay non è un gioco''. La sua formula:
+``se il \emph{gameplay} è il re, \textbf{la narrativa è l'assassino del re}''. Oppure: è
+come il bassista in una band, di cui magari si pensa che non serva, ``ma se lo togli lo
+senti che manca''. Metterla ``secondariamente, separatamente, successivamente'' non la
+depotenzia. E la narrativa esiste anche dove non la si immagina: \emph{Candy Crush} ha un
+team di \emph{narrative designer}. Se ce l'ha un gioco così semplice, la narrativa è
+sicuramente importante; ma è secondaria rispetto al \emph{gameplay}, e ``secondario non
+vuol dire in ombra, non vuol dire minore''.
+
+\paragraph{Le risorse oltre i giochi.} Mentre Daniele è disconnesso (``internet è
+crollato''), Ruggero ricorda a Nicola che ci sono anche risorse che non sono giochi, come
+il video consigliato, e che i casi studio non sono stati messi a caso: \emph{Austerity} è
+molto meccanico, ma \emph{The Quiet Year} è il più utile.
+
+\paragraph{I giocatori come vantaggio.} Al rientro, Daniele aggiunge una cosa che può
+risolvere molto del problema: \textbf{l'RNG di un gioco da tavolo è diversa da quella di
+un videogioco}, perché in un gioco da tavolo ``avete un vantaggio in più: avete i
+giocatori''. \emph{The Quiet Year} lo mostra bene: quando la randomizzazione è troppo
+elevata, si può trasformarla in ``una serie di domande e di risposte'' affidate a chi
+gioca. Ruggero lo ferma scherzando (``non spoilerare \emph{The Quiet Year}''), ma Daniele
+precisa che sta dicendo \emph{che cosa} fa, non \emph{come}.
+
+\paragraph{L'ortogonalità.} Sull'RNG, comunque, i gruppi non devono preoccuparsi: li
+aiuteranno i docenti al tutoraggio. Daniele promette un \emph{workshop} che si chiama
+\textbf{ortogonalità}: ``è complicato, ma se ve lo faccio fare io'' in un quarto d'ora si
+trovano \textbf{le direttrici dell'RNG della tabella} e si risolvono le cose. Per ora, la
+priorità è capire che cosa si vuole creare a livello narrativo, anche come metafora di
+meccaniche; dalle meccaniche come metafore, e dalle emozioni, si può creare una
+narrativa. Altrimenti, ``è come fare un rosone decoratissimo della finestra, ma non c'è
+ancora il muro''.
+
+\paragraph{Rimandare la paura.} Un docente condivide con Nicola ``la paura, il timore e il
+dramma'' dell'RNG, ``ma proprio perché lo condivido, non fatelo adesso. Fatelo dopo'':
+magari alla fine lo si risolve con delle tabelle di probabilità trovate online. È una
+preoccupazione che si può rimandare. Ora bisogna concentrarsi sul \textbf{concetto di
+\emph{roguelike}}: guardare gli esempi, come ha detto Ruggero, e dire ``un
+\emph{roguelike} dovrebbe fare questo, questo e quest'altro''; e poi: noi come vogliamo
+farlo? Dove vogliamo andare? Che storie vogliamo raccontare? Che emozioni?
+
+\paragraph{Approfondimento: ortogonalità.} Il \emph{workshop} non viene descritto, ma il
+termine ha un senso preciso nel design dei sistemi: due variabili sono \emph{ortogonali}
+quando si possono modificare l'una indipendentemente dall'altra, e ciascuna produce un
+effetto distinguibile. In un mazzo di carte-evento come quello del terzo gruppo, le
+``direttrici'' sono gli assi lungo cui le carte variano (per esempio quale barra toccano,
+in che verso, con quale intensità, con quale rischio). Se gli assi sono pochi e
+indipendenti, la tabella si può costruire in modo sistematico, coprendo le combinazioni
+che servono; se sono molti e intrecciati, ogni carta nuova cambia l'equilibrio di tutte le
+altre. Schell parla di questo con la lente dell'\emph{eleganza}, Koster quando descrive i
+giochi come sistemi di pattern da imparare: in entrambi i casi, meno dimensioni ben scelte
+valgono più di molte dimensioni confuse.
+
+% ---------------------------------------------------------------------
+\section{Chiusura: la nona ora}
+\label{a11:sec:chiusura}
+
+``Ragazzi, abbiamo superato.'' Il tempo è finito, e Daniele deve staccare: ``è la mia nona
+ora di lezione''. ``Vai a letto, vai a letto.'' Gli studenti ringraziano (``grazie,
+grazie davvero''); ``figurati, mi siete trattenuti voi''. Beatrice ha appena scansionato
+il libro \emph{Murder Party} per il gruppo di \emph{Murder Memory}, e lo metterà nella
+cartella condivisa entro la sera stessa: ``ce l'avete già da domani''. ``Ciao ragazzi,
+buona serata. Ciao ciao.''
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Il \textbf{\emph{pitch}} dura \textbf{tre minuti}, seguiti da qualche minuto di
+        domande; i feedback arrivano solo dopo aver visto tutti i gruppi. Tre minuti non
+        sono pochi: più tempo confonde, e in fiera o davanti a un \emph{publisher} non se
+        ne ha di più. Riassumere le regole in poco è una \textbf{cartina di tornasole}.
+  \item Al \emph{pitch} \textbf{bisogna ``spoilerare''}: chi ascolta non è un giocatore ma,
+        come un \emph{publisher}, deve sapere le cose importanti.
+  \item I tre progetti: \textbf{\emph{Murder Memory}} (escape room investigativa da
+        tavolo a due squadre, polizia e indiziato senza memoria, interrogatorio finale),
+        \textbf{\emph{La Peste}} (\emph{social deduction} sul ballo della \emph{Maschera
+        della Morte Rossa}, sette rintocchi, malati che non vengono eliminati), un
+        \textbf{\emph{roguelike} di \emph{journaling} in solitario} con carte e tre barre
+        (corpo, mente, status).
+  \item I feedback sono \textbf{indicazioni, non consigli}, dove c'è il rischio di una
+        ``patata bollente'' troppo grande per il tempo del corso. Ma i giochi vanno
+        \textbf{migliorati, non stravolti}.
+  \item Entro il \textbf{6--7 novembre} serve un \textbf{regolamento di massima}: non
+        impaginato, senza disegni, ma che permetta di giocare. Anche le \emph{escape
+        room} hanno un regolamento (che cosa si può fare e che cosa no, la logistica,
+        la \emph{safety}); un gioco ibrido ha bisogno del \emph{suo}. ``Fare design è il
+        contrario di fare tradizione.''
+  \item \textbf{Convergere}: pochi enigmi, una direzione, il flusso di gioco descritto
+        per chi organizza. ``Non è semplificare: a volte è scegliere.''
+  \item \textbf{Obiettivo e \emph{agency}}: un \emph{goal} chiaro ``in termini
+        filosofici'' non basta; chi gioca deve sapere che cosa fare \textbf{nel proprio
+        turno} per perseguirlo.
+  \item Una meccanica opzionale ``in base a chi gioca'' rende il gioco ``il gioco di chi
+        gioca''. Le scelte di design vanno prese.
+  \item \textbf{Focalizzare}: il gioco che fa tutto non esiste. Il \emph{setting
+        agnostic} è un anti-\emph{selling point}; anche i giochi ``generalisti''
+        (\emph{Fate}, \emph{Not the End}) sono focalizzati su qualcosa.
+  \item \textbf{\emph{Emotion driven}}: un ventaglio di emozioni specifiche, non una
+        curiosità generica. Nei \emph{roguelike} narrativi si parte dalle emozioni e da
+        una \textbf{partita di esempio}; i \emph{perk} e il bilanciamento vengono per
+        ultimi. \textbf{Le meccaniche sono metafore.}
+  \item I \textbf{casi studio} servono a fare \emph{problem solving} e a capire il cuore
+        del proprio gioco, non a copiare; non sono compiti.
+  \item Scrivere il gioco \textbf{per chi lo gioca senza di voi}: il test dell'amico, il
+        panino con la marmellata, la lettura ad alta voce contro la \textbf{\emph{curse
+        of knowledge}}. Scrivere il regolamento serve prima di tutto a \textbf{mettere
+        ordine alle idee}.
+  \item La \textbf{vergogna delle idee}: le idee più forti spesso sono quelle che chi
+        presenta nasconde. Osservare che cosa accende chi ascolta.
+  \item \textbf{RNG e gioco intero} hanno criteri diversi: sulle tabelle bisogna decidere
+        presto, sul resto si itera. L'RNG si rimanda; nel gioco da tavolo ``avete i
+        giocatori''. ``La narrativa è l'assassino del re.''
+\end{itemize}

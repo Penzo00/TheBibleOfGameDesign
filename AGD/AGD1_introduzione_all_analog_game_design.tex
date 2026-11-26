@@ -1,0 +1,2568 @@
+% =====================================================================
+%  Analog Game Design, lezione 1 — Introduzione al corso: docenti,
+%  metodo, project work, figure dell'industria e primo glossario
+%  Fonte: trascrizione della prima lezione (AGD1) del corso breve di
+%  Analog Game Design, seconda edizione: una lezione online su Zoom di
+%  circa tre ore, di pomeriggio, tenuta insieme dai tre docenti "cuore"
+%  del corso (Daniele, Ruggero e Beatrice), con nove iscritti, una
+%  pausa di una decina di minuti, molte slide e una breve dimostrazione
+%  dal vivo di Tabletop Simulator.
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Analog Game Design", primo capitolo
+%  (numerazione propria 2.1). Nel file principale del libro:
+%
+%    \part{Analog Game Design}
+%    \renewcommand{\thechapter}{2.\arabic{chapter}}
+%    \setcounter{chapter}{0}
+%    \input{AGD/AGD1_introduzione_all_analog_game_design}
+%
+%  (Con hyperref conviene aggiungere anche
+%  \renewcommand{\theHchapter}{agd.\arabic{chapter}} nella parte, per
+%  evitare ancore duplicate con i capitoli 1, 2, ... di Game Design.)
+%  Tutte le etichette di questo capitolo hanno il prefisso "a1:"
+%  (a1:cap:..., a1:sec:..., a1:fig:..., a1:tab:...). Il capitolo è
+%  autonomo: non contiene \ref verso altri capitoli.
+%  Le figure sono ricostruzioni schematiche di quanto i docenti spiegano
+%  a voce e con le slide, non copie delle slide.
+% =====================================================================
+
+\chapter[Introduzione all'Analog Game Design]{Introduzione all'Analog Game
+Design: il corso, le figure dell'industria e un primo linguaggio comune}
+\label{a1:cap:intro}
+
+Questa è la \textbf{prima lezione} del corso di \textbf{Analog Game Design},
+cioè di progettazione di giochi \emph{analogici}: giochi da tavolo, giochi di
+carte, giochi di ruolo da tavolo, giochi di ruolo dal vivo (LARP), giochi
+\emph{pervasivi} ed esperienze a evento. È un corso \textbf{breve}, di circa tre
+mesi (``da qui a dicembre''), separato dal corso di Game Design, e siamo alla sua
+\textbf{seconda edizione}. Come avvertono subito i docenti, è ``una giornata di
+introduzione'': si spiega come funziona il corso, chi sono i docenti, con quali
+metodi e con quale calendario si lavorerà, e ci si presenta a vicenda. ``C'è poco
+gioco analogico'', si scusano. Ma nella seconda parte la lezione comincia
+comunque a costruire un \textbf{linguaggio comune}: le figure professionali
+dell'industria del gioco analogico, la differenza tra \emph{game design} e
+\emph{game development}, la situazione del mercato italiano rispetto a quello
+estero, e un primo glossario di design (\emph{game} e \emph{play}, il framework
+MDA, le parole ``vietate'', il playtest e l'iterazione). Si chiude con lo
+strumento di settore per i prototipi digitali dei giochi da tavolo,
+\textbf{Tabletop Simulator}, e con una lunga sessione di domande.
+
+La lezione si svolge \textbf{online}, su Zoom, ed è condotta a più voci dai tre
+docenti principali del corso: \textbf{Daniele}, narrative designer, che guida la
+parte organizzativa; \textbf{Ruggero}, game designer, che guida la parte sui
+fondamenti e le domande finali; \textbf{Beatrice}, progettista di giochi
+pervasivi, che interviene soprattutto nella prima metà. Gli studenti iscritti
+sono \textbf{nove}; uno è assente e un altro arriva a lezione iniziata. Ci sono
+una pausa di una decina di minuti (si riprende alle 18:15) e, dopo le 19:15,
+un'ultima mezz'ora di domande con il solo Ruggero.
+
+Tre avvertenze di lettura. La prima: la trascrizione è automatica e storpia
+molti nomi propri, compresi quelli dei docenti e dell'accademia (``Dive'',
+``IVE'', ``Accademia Live'', ``Ai''); dove la ricostruzione è sicura, o molto
+probabile, il capitolo usa la forma corretta e lo segnala in nota; dove non lo
+è, riporta la forma della trascrizione e lo dice. La seconda: durante la pausa la
+trascrizione registra, ripetuta in loop per decine di righe, una frase senza
+senso che non ha nulla a che fare con la lezione, e che il capitolo ignora. La
+terza: in molti passaggi più docenti parlano uno dopo l'altro senza che la
+trascrizione segni il cambio di voce; il capitolo attribuisce le parole a chi le
+pronuncia quando il contesto lo rende chiaro (chi parla di sé, chi viene
+chiamato per nome, chi ``passa la parola''), e resta generico altrimenti.
+
+Quanto alla data, la lezione si colloca con ogni probabilità \textbf{nella prima
+metà di settembre del 2026}\footnote{La data non è mai detta. La si deduce da
+alcuni indizi: il form iniziale va compilato ``entro e non oltre il 15
+settembre''; i gruppi verranno annunciati il 25 settembre; le date del
+calendario (sabato 3 ottobre, lunedì 12 ottobre, sabato 7 e 14 novembre,
+venerdì 4 dicembre) cadono nei giorni della settimana indicati soltanto nel
+2026; un docente parla di un argomento ``molto complesso nel 2026''; e fa
+ancora molto caldo (``le temperature sono ancora indecenti''). È una
+deduzione, non un'informazione esplicita.}: i riferimenti a ``oggi'',
+``quest'estate'' e ``l'anno scorso'' vanno letti rispetto a quel momento.
+
+Il percorso del capitolo segue quello della lezione:
+\begin{enumerate}
+  \item l'avvio, i \textbf{docenti} e le \textbf{presentazioni} dei partecipanti
+        (sezioni da~\ref{a1:sec:avvio} a~\ref{a1:sec:partecipanti});
+  \item i \textbf{materiali} e gli strumenti del corso: il form, la cartella
+        condivisa, Discord (sezione~\ref{a1:sec:materiali});
+  \item lo \textbf{scopo} e il \textbf{metodo} del corso, le regole di
+        comportamento e il carico di lavoro (sezioni~\ref{a1:sec:scopo}
+        e~\ref{a1:sec:regole});
+  \item il \textbf{project work} e il \textbf{calendario} (sezione~\ref{a1:sec:project});
+  \item la regola sull'\textbf{intelligenza artificiale} e la lunga discussione
+        che ne segue (sezione~\ref{a1:sec:ia});
+  \item le \textbf{figure professionali} dell'industria del gioco analogico,
+        con un approfondimento su marketing e sales
+        (sezioni~\ref{a1:sec:figure} e~\ref{a1:sec:marketing});
+  \item la differenza tra \textbf{game design} e \textbf{game development}
+        (sezione~\ref{a1:sec:design-development});
+  \item il \textbf{mercato}: Italia ed estero (sezione~\ref{a1:sec:mercato});
+  \item i \textbf{fondamenti di design}: perché serve una terminologia comune,
+        \emph{game} e \emph{play}, il framework \textbf{MDA} (e il DPE), le
+        \textbf{parole vietate}, chi crea, chi gioca e chi facilita, il
+        \textbf{playtest} e l'\textbf{iterazione} (sezioni
+        da~\ref{a1:sec:terminologia} a~\ref{a1:sec:playtest});
+  \item \textbf{Tabletop Simulator} e il primo task (sezione~\ref{a1:sec:tts});
+  \item le \textbf{domande finali}: il tema del project work, il bilanciamento,
+        i ruoli nei team, la pubblicazione, il gioco di ruolo in Italia, le
+        \emph{house rule} di Monopoly, i giochi ``comunicati male''
+        (sezioni~\ref{a1:sec:domande-daniele} e~\ref{a1:sec:domande}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'avvio della lezione}
+\label{a1:sec:avvio}
+
+La lezione comincia con qualche minuto di attesa. ``Siamo in nove in classe'', e
+si aspetta che arrivino tutti; uno dei docenti scherza sul fatto che l'unica
+persona che arriverà ``sempre in ritardo di venerdì'' è Gianmarco. Mancano
+Giordano e Tiziana; Tiziana arriva, mentre la segreteria fa sapere poco dopo che
+Giordano non potrà esserci e vedrà la registrazione. Si aspetta anche Beatrice,
+la terza docente, che arriva a sua volta dopo pochi minuti.
+
+Nell'attesa, Daniele anticipa il programma della giornata e qualche
+informazione pratica:
+\begin{itemize}
+  \item oggi è una giornata di \textbf{introduzione}: come funziona il corso, chi
+        sono i docenti, le presentazioni degli studenti, le \textbf{metodologie}
+        e il \textbf{calendario}. Gli studenti avranno ``un fracco di domande'', e
+        alla fine della lezione c'è ``proprio uno slot apposta'' per le domande;
+  \item le lezioni sono \textbf{registrate}: di solito la registrazione viene
+        consegnata dopo circa \textbf{12--24 ore} sul profilo personale della
+        piattaforma dell'accademia, che va attivato con la segreteria (Tiziana,
+        già studentessa, probabilmente ce l'ha già);
+  \item i docenti ``cuore'' del corso sono tre (Daniele, Ruggero e Beatrice),
+        ``soprattutto Ruggero''; a loro si aggiungeranno tre docenti ospiti, per
+        meno ore, probabilmente una lezione a testa, ``tranne Marta, che avrà due
+        lezioni quest'anno''.
+\end{itemize}
+E una battuta sul caldo: ``spero che voi siate carichi, anche se le temperature
+sono ancora indecenti''. ``Carichi moderatamente, per quello che potete''.
+
+Poi Daniele condivide lo schermo (``non solo le slide, ma anche un po' di altre
+cose'') e apre ufficialmente il corso: ``benvenuti e benvenute nella seconda
+edizione del corso di Analog Game Design. Questa è la prima lezione''. Il
+percorso è di circa \textbf{tre mesi}, fino a dicembre, e durante il corso i
+docenti cercheranno di far provare agli studenti ``cosa significa fare Analog
+Game Design'' con un \textbf{project work}, un progetto di gruppo di cui si
+spiegheranno più avanti la struttura e le richieste.
+
+% ---------------------------------------------------------------------
+\section{I docenti}
+\label{a1:sec:docenti}
+
+``Anzitutto partiamo da delle presentazioni doverose''. Ognuno dei tre docenti
+principali si presenta con una slide che riporta i contatti e una selezione dei
+lavori fatti.
+
+\subsection{Daniele: narrativa, fiction e gioco di ruolo}
+
+\textbf{Daniele}\footnote{La trascrizione riporta ``Daniel Cusetto''; nel
+resto della lezione tutti lo chiamano ``Daniele''. Il cognome non è
+ricostruibile con certezza.} ha già conosciuto quasi tutti gli studenti, perché
+ha fatto loro il colloquio di ammissione. È \textbf{narrative designer}, o meglio
+\emph{game narrative designer}; insegna nell'accademia che ospita il
+corso\footnote{La trascrizione storpia il nome dell'accademia in molti modi
+(``Dive'', ``IVE'', ``Accademia Live'', ``Ai'', ``AIVA''). Con ogni probabilità
+si tratta dell'\textbf{AIV}, l'Accademia Italiana Videogiochi, che ha sede a
+Roma: lo fanno pensare i corsi triennali di game design e narrative design citati
+dai docenti e il fatto che una studentessa racconti di essersi trasferita a Roma.
+È una ricostruzione, non un'informazione esplicita; nel seguito il capitolo
+parla semplicemente dell'``accademia''.} ma lavora soprattutto come \textbf{brand
+advisor}. Nel corso si occuperà della parte di \textbf{gioco di ruolo},
+\textbf{narrazione} e \textbf{fiction}.
+
+I suoi contatti, ``in quest'ordine'', sono email, Telegram e Discord. Ci tiene a
+dare alcune indicazioni precise:
+\begin{itemize}
+  \item se si vuole avere la certezza di una risposta, bisogna scrivergli su
+        \textbf{Telegram}, perché lì ha tutti i suoi clienti;
+  \item Discord lo guarda di meno; l'\textbf{email} è per le cose ufficiali;
+  \item non bisogna contattarlo altrove: non su Facebook, non su LinkedIn, non su
+        Instagram, ``perché li vedo molto di meno''.
+\end{itemize}
+La slide mostra anche alcuni giochi, attività e brand su cui ha lavorato negli
+anni, ma non si dilunga: ``nel caso ne parleremo''.
+
+\subsection{Ruggero: game design e ricerca e sviluppo}
+
+\textbf{Ruggero} (spesso chiamato ``Ruger'') ha fatto il \textbf{game designer}
+per varie aziende e oggi è game designer e si occupa di \textbf{ricerca e
+sviluppo} per un'azienda del settore\footnote{La trascrizione dice ``per MS'';
+il nome dell'azienda non è ricostruibile con certezza. Più avanti Ruggero cita
+tra i giochi su cui ha lavorato il gioco da tavolo ufficiale di
+\emph{Cyberpunk}, \emph{Marvel United} e \emph{Status}, un gioco sulla
+geopolitica.}. Ha un background ``misto'': nel suo portfolio ci sono giochi da
+tavolo, giochi di ruolo, giochi analogici, LARP, videogiochi, giochi in realtà
+virtuale. Si occupa anche di \textbf{divulgazione} sul gioco e di analisi di
+\textbf{game studies} e game design. Più avanti, nelle domande finali, dirà di
+avere ``50 e più giochi prodotti e progettati'' e di insegnare da vari anni.
+
+Lo si può contattare liberamente via Gmail e Telegram, e cerca di rispondere
+\textbf{entro 24 ore}, salvo imprevisti o eventi: ``sentitevi in libertà di
+scrivermi se avete dubbi, senza problemi''. Quando arriva a parlare dei propri
+giochi, la slide mostra ``un mix di varie cose, dalle più famose alle meno
+famose'', ma Ruggero si imbarazza a presentarli, tra le risate dei colleghi.
+
+\subsection{Beatrice: i giochi pervasivi}
+
+\textbf{Beatrice} (``Bea'') si occupa di \textbf{giochi pervasivi}
+(\emph{pervasive games}). ``Se non li avete mai sentiti nominare, non
+preoccupatevi'': questo corso è ``uno dei pochi, forse l'unico in Italia'' che
+li racconta esplicitamente. Li si vedrà nelle prossime lezioni, ma la definizione
+di base è questa: i giochi pervasivi \textbf{utilizzano gli spazi e gli oggetti
+della vita quotidiana e li trasformano in spazi e oggetti di gioco}.
+
+Beatrice lavora come \textbf{freelance} e si occupa di diversi tipi di
+progettazione: lavora sia con le \textbf{aziende} sia con gli \textbf{eventi dal
+vivo}. La sua attività diretta si trova sotto l'etichetta \textbf{Minime
+Differenze}\footnote{La trascrizione riporta il nome dell'etichetta come
+``Minime Differenze'' e l'indirizzo del sito come ``mininedifferenze.com''; la
+grafia esatta del sito non è verificabile dalla trascrizione.}, mentre i lavori
+per le aziende sono ``sparpagliati'' sui siti delle varie aziende. Molte delle
+cose mostrate nella sua slide sono attività proposte al pubblico ``con un
+biglietto, con un gioco in formato evento'': un tema che si toccherà nel corso,
+per capire come \textbf{comunicare} i propri giochi in modo che siano
+comprensibili, accessibili per il pubblico e \textbf{vendibili}.
+
+Ammette un ``grosso limite'' con i messaggi: è un po' lenta a rispondere, ``ma
+rispondo sempre a tutto''. La si può contattare per email (cognome punto nome) o
+su Telegram. È ``molto curiosa di vedere cosa produrrete''.
+
+\subsection{I docenti ospiti}
+
+Daniele presenta poi i tre docenti che il corso avrà ``solo per alcune
+lezioni'', tutte verso \textbf{novembre}:
+\begin{itemize}
+  \item \textbf{Diego Ricchiuti}, direttore del corso di Game Design
+        dell'accademia, farà una lezione sull'\textbf{RNG} (\emph{random number
+        generation}, la casualità nei giochi): ``vi parleremo di RNG quando sarà
+        necessario. Comunque avrete una lezione con lui, sappiatelo'';
+  \item \textbf{Marta}\footnote{La trascrizione riporta il cognome come
+        ``Cercasassi''; la grafia non è verificabile.} farà \textbf{due lezioni
+        sul development}: quest'anno ``abbiamo deciso di fare doppietta'',
+        perché l'anno scorso il suo intervento è stato ``molto, molto utile'';
+  \item \textbf{Flavio}\footnote{La trascrizione riporta il cognome come
+        ``Mortarino'' e, più avanti, ``Mortalino'', e il nome della sua casa
+        editrice come ``Grampibert''; nessuno dei due è ricostruibile con
+        certezza.} farà la lezione di \textbf{game production}; è un editore, e
+        di solito partecipa anche alla tavola rotonda con gli editori della
+        giornata finale.
+\end{itemize}
+Le slide sono già online e gli studenti avranno accesso alla cartella condivisa:
+``non vi preoccupate di queste cose, ne parleremo a breve''. Ma prima di parlare
+del corso, ``vogliamo conoscere voi''.
+
+% ---------------------------------------------------------------------
+\section{Le presentazioni dei partecipanti}
+\label{a1:sec:partecipanti}
+
+Le domande per la presentazione sono semplici, da affrontare ``a turno, senza
+fretta, con calma'':
+\begin{itemize}
+  \item nome e occupazione (``se volete dirla'');
+  \item perché si vogliono fare giochi analogici, e a che livello: che cosa ha
+        portato lo studente al corso;
+  \item che tipo di esperienze o conoscenze si hanno già nell'ambito, se si è già
+        fatto qualcosa oppure no.
+\end{itemize}
+``Chi vuole partire senza nessun tipo di ritegno e di vergogne?''. Per far
+parlare gli studenti guardandoli, Daniele interrompe la condivisione dello
+schermo e ricorda lui le domande quando serve. Le presentazioni sono interessanti
+anche per i commenti dei docenti, che anticipano diversi principi del corso.
+
+\subsection{Tiziana}
+
+Tiziana fa l'\textbf{infermiera}, ma nella vita ha fatto molti lavori:
+impiegata, insegnante e ``tanti altri lavoretti''. Gioca ``da sempre'': il gioco
+fa parte anche della sua vita familiare, perché suo fratello fa il programmatore
+di videogiochi. Ha già \textbf{organizzato} giochi: una caccia al tesoro per far
+conoscere il territorio, due scene con un delitto (giochi con omicidio da
+risolvere), giochi per intrattenere le persone. Ha riscoperto di recente i giochi
+da tavolo, arrivando a \emph{Carcassonne} con famiglia e amici; poiché è
+difficile trovare persone con voglia di giocare nella propria cerchia ristretta,
+ha scoperto il mondo delle \textbf{associazioni} ludiche, ``e lì è stato
+un'esplosione'': prima in Veneto (è di Vicenza), poi a Roma, dove si è
+trasferita.
+
+Ha in mente un progetto ambizioso: far conoscere una certa realtà con la modalità
+del \textbf{gioco di ruolo}, o comunque proporre un gioco suo.
+
+\paragraph{Il commento: gli strumenti, non il gioco dei sogni.} Ruggero coglie
+l'occasione per un'avvertenza che vale per tutti, visto che molti studenti
+arrivano con idee già pronte. Nel corso si lavorerà a un progetto, ma
+l'obiettivo dei docenti è dare \textbf{strumenti} da applicare anche
+\emph{fuori} dal progetto, ai giochi che gli studenti vorranno fare un domani:
+``che non siano esercizi per il corso, ma per voi in primis''. Quindi: ``non
+rimaneteci male se non riuscirete a lavorare al vostro gioco dei sogni in questo
+corso''. Anche perché ``sarebbe impossibile, in due mesi, fare il gioco dei
+sogni''. Il corso darà invece la possibilità di fare un'esperienza ludica
+insieme e di imparare a replicarla sulle proprie idee: ``le idee non buttatele,
+anzi, il contrario: tenetele''.
+
+\subsection{Nicola}
+
+Nicola è uno \textbf{studente}. Sei mesi prima ha fatto un colloquio con Daniele
+perché stava valutando di passare all'accademia, e ha deciso, ``nel dubbio'', di
+cominciare da questo corso breve per capire come funziona la formazione;
+eventualmente si iscriverà al corso di game design vero e proprio. Gli interessa
+in particolare il lato dell'esperienza del giocatore, su cui è ``molto critico''
+(qui usa la parola ``divertimento'', e Daniele lo ferma con un ``ne parleremo'':
+è una delle parole che il corso vieta, come si vedrà nella
+sezione~\ref{a1:sec:parole-vietate}).
+
+Ha 21 anni ed è \textbf{giocatore di ruolo da circa otto}. Prima ancora di
+conoscere i giochi di ruolo si era creato un sistema tutto suo, ``pessimo,
+disgustoso, terribile'', un sistema a percentuale con il d100 ``terrificante'';
+poi ha scoperto i giochi di ruolo da tavolo, i classici (\emph{Dungeons \&
+Dragons}, \emph{Daggerheart}, \emph{Vampire}\footnote{La trascrizione riporta
+``DD'', ``Daggerart'' e ``Vampire'': quasi certamente \emph{Dungeons \&
+Dragons}, \emph{Daggerheart} e \emph{Vampire: The Masquerade}.}). Gioca anche a
+\textbf{card game} e ad altri giochi sociali, pur avendo sempre avuto difficoltà
+a trovare gruppi, ``avendo vissuto in un buco dimenticato dal mondo''. Come
+giocatore è ``l'eterno narratore'' del gruppo, quello che prepara la storia e si
+costruisce le regole. Come autore ha fatto soprattutto giochi su carta, ``perché
+sono incapace a programmare, per adesso''.
+
+Daniele osserva che il tema del giocatore e del suo rapporto con il gioco è ``un
+argomento importante'', anzi ``un vaso di Pandora enorme'' (espressione che
+tornerà molte volte nella lezione), e che il corso tratterà anche che cos'è
+l'analog game design in generale e quanti tipi di prodotti esistono.
+
+\subsection{Rita}
+
+Rita\footnote{Daniele la chiama prima ``Nino'' (probabilmente un errore della
+trascrizione) e poi la ringrazia come Rita.} ha 30 anni e si collega da una
+regione del Sud, dove ``ancora si muore di caldo''. Ha studiato
+all'\textbf{Accademia di Belle Arti di Napoli}, \textbf{design della
+comunicazione visiva}: si occupa dell'aspetto più imprenditoriale della
+progettazione artistica. Non volendo progettare per un'impresa (``fare loghi,
+robe del genere''), vorrebbe applicare la propria creatività alla realizzazione
+di giochi analogici.
+
+Non è una giocatrice di ruolo e non lo è mai stata: è una giocatrice
+\textbf{tradizionale}, cresciuta con Monopoly, la dama e giochi tradizionali
+cinesi. Ha già \textbf{idee, prototipi e progetti} realizzati, e vuole capire
+come renderli \textbf{prodotti per la vendita} e se questo è il campo adatto a
+lei; magari anche confrontarsi con i colleghi. La sua progettazione è orientata
+al \textbf{sociale} e all'\textbf{educativo}: ``responsabilizzare un po' le nuove
+generazioni su come sta andando il mondo e su come potrebbe andare, visto che è
+tutto nelle nostre mani''.
+
+\paragraph{Il commento: siate curiosi.} ``Pane per i tuoi denti'', le risponde
+Daniele, soprattutto per i LARP e i giochi pervasivi: ``vi apriremo un po' la
+testa da questo punto di vista''. E aggiunge un consiglio per tutti: ``siate
+curiosi'', perché imparare da altri ambiti dà moltissimo. Ognuno è lì per fare
+qualcosa di preciso, ``però siate aperti anche ad altre esperienze''.
+
+\subsection{Tancredi}
+
+Tancredi ha 21 anni e non ha ancora grande esperienza lavorativa: qualche
+``piccolo progettino'' che non è andato come voleva. Gli interessa il mondo dei
+giochi, digitali e non, con un approccio \textbf{educativo} e \textbf{sociale}.
+È arrivato soprattutto dai videogiochi, a cui gioca da quando era piccolo; ai
+giochi da tavolo si è avvicinato solo nell'ultimo anno, grazie a una realtà
+ludica, perché in famiglia ``non siamo molto da giochi''. Ha realizzato qualche
+piccolo videogioco con vari engine: prima quelli senza un vero linguaggio di
+programmazione, ``più a nodi'', poi qualcosa di più complicato, e ora sta
+lavorando a un piccolo prototipo.
+
+\paragraph{Il commento: niente di quello che vedrete è sprecato.} ``Non butterai
+via niente di analog game design'', gli risponde Daniele, ``perché il 99 per cento
+delle cose che vedremo si ritrovano quasi uno a uno nel mondo dei videogiochi''.
+Tanto che nei corsi triennali dell'accademia (anche in quello di narrative
+design, dove insegna Ruggero) il primo anno si parte dai \textbf{giochi da tavolo
+e di ruolo}, proprio per spiegare meccaniche più complesse che servono poi per i
+videogiochi. Ruggero aggiunge che vale anche il contrario: alcuni dei
+\textbf{framework} di game design che si vedranno nelle lezioni tecniche vengono
+dal videogioco e sono stati riapplicati all'analogico. ``Evitare la
+crossmedialità qui è impossibile''. Anzi, tutte le conoscenze ``mediatiche
+adiacenti'' (musica, letteratura, cinema) saranno utili.
+
+\subsection{Lorenzo Vergata}
+
+I Lorenzo in classe sono due; il primo a presentarsi è \textbf{Lorenzo
+Vergata}, 26 anni, \textbf{dottorando al Politecnico di Milano}. Gioca ai
+videogiochi da quando aveva due anni e mezzo, ma ha giocato al suo primo gioco da
+tavolo ``credo nove mesi fa''. Gli fa piacere sentire che molti in classe sono
+interessati ai giochi \textbf{sociali} ed \textbf{educativi}, un settore che
+interessa anche a lui e che ``può essere esplorato molto'', anche con qualche
+aiuto dell'intelligenza artificiale per esperienze più ricercate.
+
+Di esperienza nell'analogico dice di avere fatto ``il minimo sindacale''. Ma
+racconta che diciotto anni prima, da bambino, era ``più game designer di
+adesso'': prendeva un gioco e ne cambiava le regole, anche al biliardino (``no,
+ora introduciamo questa regola''). Gli piace sperimentare, creare regole e
+vedere che cosa accade in sé e negli altri. Soprattutto vorrebbe ``una chiave di
+lettura per poter rimanipolare la realtà'': tre settimane prima è stato a fare la
+\textbf{vendemmia in Francia} e ha visto tantissime dinamiche che potrebbero
+diventare un gioco da tavolo o un videogioco. Per esempio: finire contro un rovo
+pieno di semi che si attaccano ai vestiti lo rallentava nella raccolta
+dell'uva, mentre in un altro filare era più rapido. ``Si può fare pure una
+dinamica'', e vorrebbe gli strumenti per farne giochi.
+
+Arriva subito la battuta: una ``vendemmia gamificata'' da proporre in Oltrepò
+Pavese (``io sono dell'Oltrepò Pavese, quindi devo per forza bere vino'')\footnote{La
+trascrizione dice ``nell'altro papavese'' e non chiarisce chi pronunci la
+battuta.}. Daniele conferma che quest'anno il corso avrà ``tante cose sul
+sociale'': ``ci piace parecchio''.
+
+\subsection{L'altro Lorenzo}
+
+Il secondo Lorenzo (``secondo, ma non meno importante'') è uno \textbf{scrittore
+di racconti brevi} e sta scrivendo il suo primo romanzo. Gli è sempre piaciuto
+raccontare storie, e da più grande scriverle; gioca ai videogiochi ed è ``un
+amante delle storie e della cultura pop''. Negli ultimi anni è entrato nel mondo
+del \textbf{gioco di ruolo da tavolo} e vorrebbe unire le due passioni, le
+storie e il gioco di ruolo, magari facendone un lavoro; gli interessa anche lo
+\emph{strategic writing}. Daniele gli ricorda che ci sarà una lezione proprio
+sulla \textbf{fiction}.
+
+\subsection{Angelo}
+
+Angelo si collega senza videocamera dal lavoro: fa il \textbf{birraio} (in un
+piccolo birrificio in Brianza, a Bernareggio, come racconterà dopo la pausa) e,
+con il caldo, ``vi risparmio l'orrore''. Per molto tempo era convinto che i
+giochi da tavolo fossero solo i classici (Monopoly, Risiko) o i party game; poi,
+quattro o cinque anni fa, ha ``sbattuto la faccia'' contro giochi davvero
+appassionanti, con una specie di narrazione dietro che li rendeva ancora più
+coinvolgenti, e non ha più smesso. È uno che ``ha sempre un botto di idee, ma poi
+non mette in pratica assolutamente nulla'': cercava un corso che gli desse le
+basi e soprattutto lo \textbf{motivasse} a provare a fare qualcosa.
+
+\paragraph{Il commento: bisogna buttarsi.} Daniele racconta che anche l'anno
+prima un suo caro amico si era iscritto proprio per questo motivo. Il corso è
+breve, ma cerca di portare gli studenti ``da 0 a 100'' e di far realizzare un
+\textbf{prodotto} da presentare alla fine. Il punto è che i giochi ``bisogna
+farli, bisogna buttarsi''. E, venendo dalla narrazione, Daniele lo paragona allo
+scrivere: si scrive e si riscrive, e allo stesso modo si fa \textbf{playtest}, si
+rifà, si aggiorna. ``Non è che si fanno così''.
+
+\subsection{Gianmarco (dopo le slide)}
+
+Gianmarco arriva a lezione iniziata e si presenta più tardi, alla fine della
+prima parte, dopo che i docenti hanno chiuso le slide organizzative e la
+discussione sull'intelligenza artificiale (``Gianmarco, ti giuro, ti facciamo
+presentare''). Lavora nel \textbf{team di innovazione} di un'azienda italiana.
+Vuole fare giochi perché è una sua passione, che lo gratifica, e in passato ci ha
+provato ``in maniera scomposta''. Cerca un \textbf{metodo} e un confronto con
+persone più esperte: ``studiare solo dei manuali è molto sterile'', ``stare
+chiusi nel pertugio non aiuta'', ed ``essere autodidatta ha estremamente i suoi
+limiti''. Come esperienza è un giocatore e ha letto ``un po' di materiale, di
+blog, di manuali'', ``niente di rilevante''.
+
+Manca solo Giordano, che si presenterà alla lezione successiva.
+
+\paragraph{Uno sguardo d'insieme.} La classe è molto varia: un'infermiera,
+una designer della comunicazione visiva, un birraio, un dottorando, uno
+scrittore, un impiegato nell'innovazione, due studenti ventunenni. Alcuni
+vengono dal gioco di ruolo, altri dai giochi tradizionali, altri dai
+videogiochi; quasi tutti hanno scoperto i giochi da tavolo moderni da pochi anni
+o da pochi mesi. E almeno tre studenti dichiarano un interesse per i giochi
+\textbf{sociali} ed \textbf{educativi}. Come si vedrà nella
+sezione~\ref{a1:sec:scopo}, i docenti considerano questa varietà una risorsa.
+
+% ---------------------------------------------------------------------
+\section{I materiali e gli strumenti del corso}
+\label{a1:sec:materiali}
+
+Prima delle slide sul corso, Daniele sbriga un po' di ``clean up casalingo''.
+
+\paragraph{Il form iniziale.} C'è un \textbf{form} da compilare ``entro e non
+oltre il 15 settembre'': il QR code è nelle slide, e la segreteria lo ricorderà
+su Discord. Richiede circa 10--15 minuti; si può fare subito o in giornata, ``e
+ve lo togliete di torno''. È un form standardizzato per tutti i corsi (``non
+siamo io e Ruggero a farvi passare la tortura del test''), diviso in due parti:
+\begin{itemize}
+  \item una parte di \textbf{conoscenza del candidato}: quanto tempo si ha a
+        disposizione per il corso, come ci si organizza con il lavoro, che cosa
+        piace giocare. È la parte che interessa ai docenti, perché li aiuta a
+        organizzare le lezioni;
+  \item una parte di \textbf{test logico}, che i docenti non hanno scritto (``io
+        non sono responsabile del form'', ``no, no, nemmeno io'').
+\end{itemize}
+
+\paragraph{La cartella condivisa.} Tutti gli studenti vengono aggiunti alla
+cartella del corso su \textbf{Google Drive}, che si trova tra i file
+``condivisi con me''. Gli studenti ne sono \textbf{gestori dei contenuti} e
+possono caricarci quello che vogliono. Dentro ci sono:
+\begin{itemize}
+  \item le \textbf{attività in classe};
+  \item le \textbf{dispense};
+  \item i \textbf{materiali didattici}, con le slide (quelle della lezione sono
+        già lì);
+  \item le cartelle dei \textbf{project work} futuri;
+  \item i \textbf{task}, che ``saranno pochi, ma ci saranno'';
+  \item il \textbf{calendario studenti}, ``importantissimo'', con due schede: il
+        calendario delle lezioni e quello del project work.
+\end{itemize}
+
+\paragraph{Discord.} Il corso ha anche un \textbf{server Discord}, a cui tutti
+sono stati invitati; ci sono i docenti (Daniele, Ruggero, Diego e altri), che si
+possono taggare. Di solito è lì che la segreteria pubblica le informazioni, per
+esempio se una lezione ``dovesse per caso essere cancellata''. Nelle domande
+finali Ruggero aggiungerà che c'è un canale apposito per il corso, che gli
+studenti possono usare liberamente per organizzarsi tra loro.
+
+\paragraph{Le reaction di Zoom.} Durante le lezioni su Zoom si possono usare le
+\textbf{reaction} (il pollice in alto, il cuoricino, la mano alzata): un modo
+rapido per far capire ai docenti se si è capito, se si vuole intervenire. Nel
+frattempo arrivano i primi pollici.
+
+% ---------------------------------------------------------------------
+\section{Lo scopo e il metodo del corso}
+\label{a1:sec:scopo}
+
+La prima serie di slide (che Daniele, per un lapsus, presenta come ``cos'è il
+corso di pulire il pavimento di casa'') spiega che cosa il corso vuole fare e
+come.
+
+\subsection{Diventare autori analogici}
+
+Lo \textbf{scopo del corso} è fornire le competenze per \textbf{diventare autori
+analogici} e stimolare la creatività e l'\textbf{autorialità} di ciascuno: ``voi
+imparerete a diventare autori di giochi analogici''. La differenza tra
+\emph{game designer} e \emph{game developer} verrà chiarita più avanti (sezione~\ref{a1:sec:design-development}),
+ma la parola chiave qui è \emph{autorialità}: ``vogliamo voi, vogliamo le vostre
+idee''. Magari non si potrà usare l'idea del gioco della propria vita, ma si
+potranno portare nelle lezioni le proprie idee e le proprie sensibilità.
+
+Gli obiettivi elencati nella slide sono questi:
+\begin{itemize}
+  \item dare \textbf{maggiore consapevolezza nel design e nello sviluppo}. In
+        Italia, purtroppo, ``si fa design a volte in maniera non consapevole''.
+        Consapevole vuol dire avere almeno un'introduzione alle basi del design e
+        dello sviluppo, e fare le cose ``con metodo, con raziocinio, con
+        consapevolezza'';
+  \item fornire gli \textbf{strumenti essenziali} per un design consapevole;
+  \item stimolare la \textbf{sperimentazione} e la \textbf{trasversalità
+        mediatica}. Non si chiede di fare ``il \emph{Root} della situazione o il
+        \emph{Carcassonne} della situazione''\footnote{La trascrizione dice ``il
+        lumaven della situazione o il carcassone della situazione''; il primo
+        titolo non è ricostruibile con certezza. Il senso è chiaro: non si
+        chiede di rifare un grande classico del gioco da tavolo.}, ma un
+        project work \textbf{calibrato sulla durata del corso}, e però
+        \textbf{sperimentale} e ``assolutamente transmediale'';
+  \item portare \textbf{numerosi esempi} di tipologie di gioco, dall'analogico al
+        tavolo, al pervasivo ``e oltre''. Lo si vedrà nella lezione sui
+        \textbf{casi studio} del venerdì successivo: ``voi non avete idea di
+        quante cose esistono, bellissime, sconosciutissime e favolose''. Daniele
+        confessa che preparando e aggiornando le slide i colleghi gli hanno
+        mostrato cose che lui stesso non sapeva nemmeno che esistessero;
+  \item dare gli strumenti per \textbf{analizzare} i giochi altrui. Ruggero lo
+        sottolinea: se il corso riesce nel suo intento, gli studenti sapranno
+        non solo fare i propri giochi ma anche analizzare giochi già fatti, che è
+        ``una delle skill importanti anche nella parte di ricerca e sviluppo''.
+        Si vedranno casi studio e giochi pubblicati, sempre con l'obiettivo di
+        capire \textbf{che cosa fanno e perché lo fanno}, per poi fare meglio il
+        proprio lavoro;
+  \item imparare a \textbf{fare giochi insieme}. Esistono gli autori che lavorano
+        da soli (i \emph{solo developer}), ``ma sappiate che anche l'autore che
+        lavora da solo poi si deve interfacciare con il pubblico, con un editore,
+        magari con un editor, con un publisher''. ``Non lavorerete mai da soli'':
+        bisogna imparare a lavorare con gli altri.
+\end{itemize}
+
+\subsection{Un corso intersezionale}
+
+Il corso è \textbf{intersezionale}: \textbf{non ci sono lezioni dedicate a una
+singola tipologia di gioco}. Non ci sarà ``la lezione sul gioco da tavolo'',
+``la lezione sul gioco di ruolo'', ``la lezione sul gioco pervasivo''. Ci saranno
+lezioni su temi diversi, ciascuna pensata per essere utile a \textbf{tutte e tre
+le sfaccettature} del corso; alcune saranno più importanti per il gioco da
+tavolo, altre per il pervasivo, altre per il gioco di ruolo, ma nessuna sarà
+esclusiva. I docenti vogliono ``contaminazioni e applicazioni assolutamente
+trasversali''.
+
+\subsection{Un corso cross-generazionale}
+
+È anche un corso \textbf{cross-generazionale}: i gradi di esperienza di gioco
+quest'anno sono abbastanza allineati, ma le esperienze di vita, le età, le
+estrazioni sociali sono varie. ``Ed è un pro, non è un contro. Più diversificata
+è la classe, più imparate meglio anche voi''. La slide ha una piccola nota per
+fasce d'età:
+\begin{description}
+  \item[Under 30] Concentratevi sulla vostra \textbf{crescita}. Evitate di
+        confrontarvi con le persone più grandi che magari ``ce la fanno meglio''
+        in alcune cose.
+  \item[Over 30] Concentratevi sul \textbf{consolidamento}, ma siate
+        \textbf{umili}: i docenti diranno cose che faranno ``storcere il naso''.
+        ``Bisogna un po' reimparare per imparare'': bisogna sapersi adattare.
+\end{description}
+Ruggero contestualizza: lo dicono perché in passato hanno visto studenti che,
+essendo più adulti o avendo giocato di più, pensavano che l'esperienza
+\emph{di gioco} si trasformasse automaticamente in competenza \emph{di
+creazione} di giochi. Non è così. E non bisogna sottovalutare chi gioca meno:
+proprio perché gioca cose diverse, per risolvere un problema di design specifico
+``è una ricchezza incredibile avere qualcun altro che riesce a uscire dalla
+scatola''.
+
+\subsection{Un corso pratico e adattabile}
+
+Il corso è \textbf{pratico}: gli studenti si concentreranno su un progetto di
+gruppo, il \textbf{project work}, lavorando in team. Ed è \textbf{adattabile}: il
+programma è definito, ma ``si aggiorna sui vostri stimoli, priorità e
+necessità''. Se durante il corso i docenti vedono che serve più una cosa
+dell'altra, sono ``prontissimi'' a dare più spazio a un argomento invece che a
+un altro.
+
+\subsection{Inquiry-based learning: domandate}
+
+Il metodo è quello dell'\textbf{inquiry-based learning}, l'apprendimento basato
+sulle domande. Di solito le persone dicono ``ho una domanda, magari sarà
+stupida''. ``Non esistono domande stupide. Pensate che ci sia una domanda
+stupida? Fatela, alzate la mano''. Vanno bene anche le
+\textbf{provocazioni}: se qualcosa non torna, è meglio chiedere. La condivisione
+è fondamentale.
+
+I docenti danno \textbf{metodi, dati e conoscenze}, ma lasciano trovare le
+risposte agli studenti: ``vi lasciamo un pochettino annegare nel mare prima di
+darvi la soluzione, in modo tale che la possiate trovare da soli''. Di
+conseguenza \textbf{non ci saranno interrogazioni sulle definizioni}: interessa
+vedere \textbf{come} gli studenti applicano ciò che imparano. Se una
+definizione non viene in mente, non è un problema; l'importante è saperla usare.
+
+\subsection{Feedback, non valutazione}
+
+``Sì al feedback, no alla valutazione''. I docenti danno \textbf{feedback
+verbali}, anche sulle attività da fare a casa (i task, che non saranno tanti).
+Il corso è calibrato per \textbf{studenti lavoratori}: c'è un po' da lavorare
+fuori dalle lezioni, ma in modo calibrato.
+
+Il principio è \textbf{fallire oggi per imparare per il futuro}: \emph{fail
+forward}, \emph{fail to learn}. I docenti lasciano provare e fallire almeno una
+volta prima di dare la soluzione: ``il classico metodo Montessori, quello
+originale, non quello travisato''.
+
+\subsection{Le soft skill e i criteri di valutazione}
+
+Grande attenzione va alle \textbf{soft skill}: i lavori di gruppo, lo scambio
+propositivo, l'atteggiamento positivo, la propositività, la proattività.
+``Lavoro di gruppo'' non significa stare ogni giorno in sala studio con gli
+altri: va benissimo che un gruppo si organizzi dandosi priorità e tempi in base
+alla disponibilità di ciascuno. L'importante è \textbf{collaborare}, essere
+\textbf{professionali}, rispettarsi a vicenda, rispettare le idee proprie e
+altrui e lasciare spazio agli altri, perché i progetti ``non saranno solo
+vostri, saranno di tutte le persone del vostro gruppo''.
+
+La valutazione del project work non riguarda solo la \textbf{documentazione}
+prodotta, ma anche:
+\begin{itemize}
+  \item la \textbf{presentazione} finale;
+  \item l'\textbf{autovalutazione};
+  \item la \textbf{crescita personale};
+  \item l'\textbf{atteggiamento} tenuto nel corso.
+\end{itemize}
+Daniele cita: ``da ognuno secondo le sue capacità, a ognuno secondo i suoi
+bisogni''. Lavorare in gruppo non vuol dire che, in tre, ciascuno lavori
+esattamente il 33\% del tempo. Ai docenti serve piuttosto capire \textbf{chi fa
+che cosa} nel gruppo, e che il processo interno sia \textbf{trasparente}.
+
+\paragraph{Lavorare in cloud.} Per lo stesso motivo il consiglio è di
+\textbf{non lavorare in locale}, ma direttamente nelle cartelle condivise del
+project work e dei task. Si è liberi di fare altrimenti, ma lavorando in cloud
+si dà ai docenti la possibilità di vedere \emph{come} si lavora, il proprio
+``processo mentale''.
+
+% ---------------------------------------------------------------------
+\section{Le regole di comportamento e il carico di lavoro}
+\label{a1:sec:regole}
+
+Alcune slide sono di quelle che si ripetono in ogni corso (``\emph{repetita
+iuvant}'', storpiato per scherzo in ``ripetita Juventus'').
+
+\paragraph{Comportamento.} Prestare attenzione durante le lezioni; interagire;
+portare rispetto; essere proattivi; alzare la mano e fare domande.
+\textbf{Tolleranza zero} per pregiudizi, maleducazione, mancanza di rispetto,
+\emph{cheat} e scorciatoie. Daniele ammette che ``cheat e scorciatoie'' viene da
+altri corsi dove il tema è più importante, ma Ruggero lo ferma: ``non
+sottovalutate questa cosa'', perché implica anche \textbf{non far fare a ChatGPT
+i task}. Daniele ha una slide apposta, ``perché è un discorso molto complesso nel
+2026'' (sezione~\ref{a1:sec:ia}).
+
+\paragraph{Le lezioni sono intense.} Le lezioni possono essere \textbf{dense},
+``soprattutto le mie, sappiatelo: io sono logorroico'', avverte Daniele. Bisogna
+chiedere spiegazioni se serve, prendere appunti, rivedere le registrazioni. Le
+lezioni sono ``delle scintille'': modi per far esplorare i temi oltre le slide.
+``Andate oltre, se riuscite''.
+
+\paragraph{Il carico di lavoro.} Le regole sui task sono queste:
+\begin{itemize}
+  \item i task \textbf{sono per voi, non per noi};
+  \item se si ha poco tempo, è meglio farli rapidamente piuttosto che non farli:
+        ``provateci'';
+  \item i docenti cercano di non chiedere più di \textbf{un'ora o due a
+        settimana} oltre alle ore di lezione;
+  \item non tutte le lezioni avranno un task, e il \textbf{project work} è il più
+        importante di tutti.
+\end{itemize}
+
+\paragraph{I feedback dei docenti.} I feedback ``si guadagnano'' man mano che si
+reagisce bene: non bisogna aspettarsi ``dei papiri'' sui task. Se i docenti
+hanno voglia di dare feedback più ampi lo fanno, soprattutto se vedono che lo
+studente se li merita. Ad Analog di solito non ci sono task \emph{rejected}; ma
+se un docente rifiuta un task, vuol dire che si è fatto \textbf{meno del livello
+minimo} richiesto dal corso. I feedback possono non essere immediati: ``siate un
+pochettino impietositi dal fatto che siamo dei docenti''. E se un feedback non
+arriva, o se ne vogliono di più, bisogna scrivere, ``perché siamo tre esseri
+umani e quindi possiamo anche dimenticarci''.
+
+% ---------------------------------------------------------------------
+\section{Il project work e il calendario}
+\label{a1:sec:project}
+
+\subsection{Come funziona il project work}
+
+Una prima slide con le date del project work è da aggiornare (``perdonatemi il
+refuso''); Daniele la corregge al volo e rimanda alla slide successiva, più
+precisa. Il funzionamento è questo:
+\begin{itemize}
+  \item i \textbf{gruppi li formano i docenti}. Gli studenti sono nove, quindi si
+        faranno \textbf{tre gruppi da tre}: una dimensione pensata anche per il
+        fatto che molti sono studenti lavoratori, così da non ritrovarsi ``in due,
+        a esplodere'';
+  \item ogni gruppo deve prima preparare un \textbf{pitch} del proprio gioco, da
+        presentare in anticipo: un'idea, una bozza del gioco;
+  \item poi si lavora al gioco \textbf{nelle pause del corso}: da qui a dicembre
+        ci saranno due pause, quindi non ci sarà lezione tutti i lunedì e tutti i
+        venerdì;
+  \item ci saranno \textbf{review intermedie} con i \textbf{tutoraggi}, per lo più
+        il \textbf{sabato mattina}, dalle 11 alle 12, con Ruggero su Google Meet.
+        Servono ad aiutare i gruppi a portare avanti il project work.
+\end{itemize}
+
+\subsection{Il calendario delle lezioni}
+
+Il \textbf{calendario} è nel calendario studenti della cartella condivisa.
+Attenzione: le date \textbf{possono variare}. ``Il 90\% rimarranno così'', ma
+può capitare che, per motivi di lavoro, qualcuno stia male o non possa, o che
+``scompaia l'elettricità da tutte le città d'Italia''. E l'ordine delle lezioni
+può cambiare se i docenti vedono che agli studenti serve prima una lezione
+invece di un'altra.
+
+Ci sono \textbf{due pause importantissime}:
+\begin{itemize}
+  \item dal \textbf{13 ottobre al 5 novembre}: è il periodo delle grandi fiere
+        (\textbf{Essen} e \textbf{Lucca}\footnote{La trascrizione dice ``Essen,
+        Luca, Cose'': si tratta con ogni probabilità della fiera Spiel di Essen,
+        in Germania, e di Lucca Comics \& Games, che si tengono entrambe in
+        ottobre.}), ``un periodo un po' frenetico'', e cominciano anche i corsi
+        accademici, quindi la pausa permette ai docenti di respirare. Per gli
+        studenti è la pausa più importante: quasi un mese in cui sviluppare la
+        parte importante del gioco;
+  \item dal \textbf{24 novembre all'11 dicembre}, dopo qualche lezione a novembre.
+\end{itemize}
+
+E ci sono \textbf{due date da evidenziare}:
+\begin{itemize}
+  \item il \textbf{25 settembre}: nei primi 5--10 minuti della lezione (che per il
+        resto sarà tenuta da Beatrice) i docenti annunceranno i tre gruppi;
+  \item il \textbf{12 ottobre}: il \textbf{pitch} dei giochi, con l'idea
+        embrionale. Tra il 25 settembre e il 12 ottobre ogni gruppo prepara un
+        breve pitch in formato slide; quel giorno i docenti lo rivedono e danno
+        feedback: se il gioco va bene, se non va bene, come svilupparlo.
+\end{itemize}
+Dal 12 ottobre fino all'inizio di dicembre si sviluppa il gioco, con i
+tutoraggi: ``sfruttate questi momenti di pausa''.
+
+\subsection{Il calendario del project work}
+
+La slide successiva, ``reale e aggiornata'', riporta il calendario del project
+work (tabella~\ref{a1:tab:calendario} e figura~\ref{a1:fig:calendario}).
+``Per ora non pensate al project work: ci penserete dal 25 settembre in poi''.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{@{}lp{9.2cm}@{}}
+\toprule
+\textbf{Data} & \textbf{Che cosa succede} \\
+\midrule
+ven 25 settembre\footnotemark & lezione: annuncio dei gruppi e del
+\emph{mandate}, cioè di che cosa si dovrà fare \\
+sab 3 ottobre, ore 11 & prima review e tutoraggio con Ruggero (dopo una
+decina di giorni di lavoro) \\
+lun 12 ottobre & pitch del gioco durante la lezione \\
+13 ottobre -- 5 novembre & prima pausa: sviluppo del gioco \\
+sab 7 novembre & tutoraggio \\
+sab 14 novembre & tutoraggio \\
+24 novembre -- 11 dicembre & seconda pausa: sviluppo del gioco \\
+ven 4 dicembre, entro mezzanotte & consegna del gioco sul Drive (non c'è
+lezione) \\
+ven 11 dicembre & i giochi vengono visti a lezione \\
+14 dicembre & giornata finale, con la tavola rotonda con gli editori \\
+\bottomrule
+\end{tabular}
+\caption{Il calendario del project work come lo presenta Daniele. Le date
+possono variare.}
+\label{a1:tab:calendario}
+\end{table}
+\footnotetext{Daniele dice ``lunedì 25 settembre'', ma nel 2026 il 25 settembre
+è un venerdì; il giorno della settimana nella tabella è corretto di
+conseguenza.}
+
+\paragraph{Perché la consegna è il 4 dicembre.} Il 4 dicembre non c'è lezione:
+si deve solo consegnare il gioco, entro mezzanotte, sul Drive. La presentazione
+a lezione è l'11 dicembre, ma i tre docenti hanno bisogno di \textbf{una
+settimana} per rivedere il gioco in privato e valutare anche la
+\textbf{documentazione}; per questo la consegna non coincide con la
+presentazione. Che cosa voglia dire esattamente ``consegnare il gioco'' verrà
+spiegato più avanti.
+
+\paragraph{La giornata finale.} Il 14 dicembre c'è la \textbf{giornata finale},
+con una \textbf{tavola rotonda con gli editori}: di solito viene invitato Flavio,
+che è anche docente di game production, più qualche altro editore, ``vediamo
+quest'anno chi riusciamo a portarvi''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\footnotesize,
+    x=0.1cm,
+    evento/.style={draw, thick, rounded corners=2pt, fill=white,
+                   text width=1.8cm, align=center, inner sep=2pt},
+    pausa/.style={fill=gray!20, draw=gray!60},
+    tacca/.style={thick}
+  ]
+  % asse: giorno 0 = 25 settembre; 1 unità = 1 giorno
+  \draw[pausa] (18,-0.35) rectangle (41,0.35);
+  \draw[pausa] (60,-0.35) rectangle (77,0.35);
+  \node[font=\scriptsize\itshape] at (29.5,0.18) {pausa};
+  \node[font=\scriptsize\itshape] at (65,0.18) {pausa};
+  \draw[-{Stealth[length=2.5mm]}, thick] (-3,0) -- (85,0);
+  % eventi sopra
+  \draw[tacca] (0,-0.15) -- (0,0.9);
+  \node[evento, above] at (0,0.9) {25 set\\ gruppi e \emph{mandate}};
+  \draw[tacca] (17,-0.15) -- (17,2.2);
+  \node[evento, above, fill=gray!8] at (17,2.2) {12 ott\\ \textbf{pitch}};
+  \draw[tacca] (70,-0.15) -- (70,0.9);
+  \node[evento, above, fill=gray!8] at (70,0.9) {4 dic\\ \textbf{consegna}};
+  % eventi sotto
+  \draw[tacca] (8,0.15) -- (8,-0.9);
+  \node[evento, below] at (8,-0.9) {3 ott\\ tutoraggio};
+  \draw[tacca] (43,0.15) -- (43,-0.7);
+  \draw[tacca] (50,0.15) -- (50,-0.7);
+  \draw (43,-0.7) -- (50,-0.7);
+  \draw[tacca] (46.5,-0.7) -- (46.5,-0.9);
+  \node[evento, below] at (46.5,-0.9) {7 e 14 nov\\ tutoraggi};
+  \draw[tacca] (77,0.15) -- (77,-0.9);
+  \node[evento, below] at (77,-0.9) {11 dic\\ giochi a lezione};
+  \draw[tacca] (80,-0.15) -- (80,2.2);
+  \node[evento, above] at (80,2.2) {14 dic\\ giornata finale};
+\end{tikzpicture}
+\caption{Una linea del tempo del project work, ricostruita dalle slide (scala
+approssimativa: dal 25 settembre al 14 dicembre). Le bande grigie sono le due
+pause senza lezioni, in cui i gruppi sviluppano il gioco.}
+\label{a1:fig:calendario}
+\end{figure}
+
+Finita questa parte, Daniele apre alle domande: ``Domande sul calendario? Sulle
+slide che ho fatto? Considerazioni? Non abbiate timore, io non ci credo''. E la
+domanda arriva, sull'unico tema che aveva lasciato da parte.
+
+% ---------------------------------------------------------------------
+\section{L'intelligenza artificiale nel corso}
+\label{a1:sec:ia}
+
+\subsection{La slide di Daniele}
+
+Daniele aveva già presentato una slide che definisce ``importantissima''. ``Lo so
+che è paradossale, me ne rendo conto. Lo so che magari mi darete del luddista,
+dell'anti-tecnologia: non è così. Uso l'intelligenza artificiale per lavoro. Ma
+in questo corso, vi prego, \textbf{non usate l'intelligenza artificiale}''. La
+richiesta vale per le attività, per i task e \textbf{anche per la
+prototipazione}. Le ragioni:
+\begin{itemize}
+  \item ``voglio che siate voi a fare il gioco, voglio che siate voi a imparare a
+        farlo''. Daniele parla da utilizzatore: prima di ChatGPT, che ha smesso
+        di usare, oggi soprattutto di Claude, di cui ``si sottovaluta quanto
+        possa essere incerto, insicuro, impreciso, non all'altezza'';
+  \item nella game industry, \textbf{i publisher rifiutano automaticamente} i
+        pitch e i prototipi fatti con l'intelligenza artificiale. Daniele lo ha
+        visto di persona in ``tantissime pitch review'' quell'estate, anche al
+        \textbf{First Playable} di Firenze\footnote{La trascrizione dice ``First
+        Playboy a Firenze'': si tratta del First Playable, l'evento di business
+        dell'industria videoludica che si tiene a Firenze.}: anche nel mondo dei
+        videogiochi i publisher che vedono pitch o prototipi fatti con l'IA
+        ``rigettano automaticamente la build'', perché hanno ancora timore
+        dell'IA e delle sue possibili conseguenze;
+  \item ``non so come sarà il futuro'': non sa se bisognerà abituarsi a usarla
+        tutto il giorno. Non è ``totalmente contrario'', purché sia usata ``con
+        raziocinio''; secondo lui oggi, negli Stati Uniti, non lo è;
+  \item ma in un corso che si chiama \emph{Analog Game Design} gli studenti devono
+        saper fare i giochi da soli. In futuro, se vorranno farsi aiutare
+        dall'IA per essere più efficienti, saranno liberissimi di farlo; durante
+        il corso no, perché i docenti vogliono valutare \textbf{le loro
+        competenze e capacità}.
+\end{itemize}
+
+\subsection{La domanda: che cosa vuol dire usare l'IA in un gioco analogico?}
+
+La domanda di uno studente è precisa: che cosa si intende per ``task fatti con
+l'IA''? Qual è l'uso dell'IA in un gioco analogico?
+
+\paragraph{Ruggero: l'esperienza di chi valuta i prototipi.} Ruggero risponde
+dalla sua esperienza nel settore, dove riceve prototipi da valutare per
+un'eventuale pubblicazione. Distingue due usi:
+\begin{enumerate}
+  \item le \textbf{immagini generate}: illustrazioni, graphic design e così via.
+        Per molti publisher è ``un \emph{reject} immediato, proprio immediato'';
+  \item l'IA usata per il \textbf{regolamento}, per scrivere le regole e le
+        meccaniche. È più difficile da individuare, ma molti publisher se ne
+        accorgono comunque, perché le IA ``non sono ancora brave abbastanza da
+        creare un regolamento coeso meccanicamente e scritto con un senso per il
+        vostro gioco''. Quello che fanno è prendere parti di altri regolamenti,
+        elaborare le strutture che vedono nei regolamenti pubblicati e
+        riapplicarle. Ma molti giochi si prestano poco a un regolamento
+        strutturato come quello di altri, perché \textbf{ogni gioco è un
+        ecosistema meccanico a sé}. Il risultato sono regolamenti con
+        riferimenti non immediati, e soprattutto con \textbf{la stessa meccanica
+        descritta in modo diverso in pagine diverse}: due difetti che fanno
+        perdere tempo all'editore, e in questo caso ai docenti.
+\end{enumerate}
+Poi aggiunge un punto ``personale, soggettivo'': i docenti sono interessati a
+vedere il lavoro, la creatività, ``il frutto della vostra creazione''. E
+viceversa gli studenti vogliono i commenti dei docenti: ``immaginatevi se voi
+fate un gioco e noi vi diamo i commenti scritti con ChatGPT''. Altrimenti, dice
+ridendo, gli studenti fanno il gioco con ChatGPT, i docenti lo danno a ChatGPT
+per i commenti, ``e facciamo molto alla svelta''.
+
+\paragraph{Daniele: perché gli studenti usano l'IA.} Daniele racconta la sua
+esperienza con gli studenti, che secondo lui ricorrono all'IA in due momenti:
+\begin{enumerate}
+  \item quando vanno in \textbf{crisi}: in ansia da prestazione o per i tempi.
+        Cercano di risolvere il problema della propria disorganizzazione
+        facendolo risolvere all'IA, senza accorgersi che l'output è ``molto,
+        molto scarso'';
+  \item quando hanno l'impressione che l'intelligenza dell'IA sia
+        \textbf{migliore} di quello che scrivono loro, o di quello che c'è in
+        giro. Per Daniele è una ``mancanza di palato critico'': l'output dell'IA
+        sembra buono in superficie, ma quando si va nel dettaglio e ci si fa
+        delle domande ``di solito fa un po' di \emph{crumbling}'', si sbriciola.
+\end{enumerate}
+Lui usa Claude ogni giorno e ne conosce i limiti: ``non c'è nemmeno una frase
+che io copio direttamente''. Gli fa fare il lavoro più noioso, più ripetitivo e
+soprattutto \textbf{strutturato}, ``replicare delle cose come se fosse una
+macro''. Lo usa per il testo e per il codice, mai per le immagini: per motivi di
+\textbf{diritto d'autore}, e perché ha molti amici artisti ed è stufo di vedere
+il loro lavoro ``dilaniato'' dall'IA.
+
+Ammette che i docenti non possono controllare gli studenti; per questo
+``ve lo consiglio''. E riprende quella che definisce la cosa più bella detta da
+Ruggero (``ti ruberò la frase per il corso di narrative''): i docenti i feedback
+li danno di persona. Daniele a volte manda 30 minuti di audio a uno studente, o
+fa intere call per rivedere script, pitch e giochi: ``è il mio lavoro, mi piace
+farlo e voglio farlo io, quindi mi aspetto che lo studente lo faccia lui''. Come
+freelance, poi, è ``stufo marcio'' dei clienti che arrivano con qualcosa fatto
+con l'IA (``guarda che bello, pubblica questo''), perché il più delle volte il
+risultato è pessimo: non sanno come usarla. ``È anche una questione di
+competenza''.
+
+\paragraph{Il prototipo non deve essere bello.} Questo vale anche per il
+\textbf{prototipo}, su cui si tornerà nelle lezioni di prototipazione: in un
+prototipo non servono ``graficoni allucinanti''. Le grafiche bellissime fatte con
+l'IA spesso \textbf{peccano di user experience}: sembrano bellissime, ma quando
+il giocatore deve leggere la carta non capisce qual è il costo, qual è il
+potere, qual è l'effetto.
+
+\paragraph{Beatrice: si perde l'occasione di imparare.} Beatrice aggiunge due
+motivi che valgono ``al di là dei nostri credo''. Il primo: chi usa l'IA in
+sostituzione (per esempio per scrivere un testo, per accelerare i tempi o per
+trovare strategie) \textbf{perde la parte in cui può imparare}. Nel game design
+bisogna ``tenere insieme i pezzi'' di un regolamento, ma anche dell'esperienza
+dell'utente e di come trasmetterla; i passaggi necessari (creare il regolamento,
+creare le meccaniche, sperimentare, raccogliere i feedback) ``si capiscono solo
+vivendoli''. E si sta pagando un corso per imparare. Il secondo, sul piano
+editoriale: chi presenta a un editore un prodotto che ha come base l'IA rischia
+da un lato di non avere imparato abbastanza (e di ritrovarsi ``a piedi'' sul
+campo senza IA), dall'altro che l'editore se ne accorga, ed è un tema
+\textbf{reputazionale}. Ci sono editori ``più illuminati di altri'', quindi
+anche qui c'è un mercato da capire; ma i docenti preferiscono dire che cosa è
+più sensato per il mercato come lo conoscono.
+
+\paragraph{Ruggero: non abbiate paura del giudizio.} Ruggero vuole dare uno
+``spotlight'' a un punto detto da Daniele e rimasto ``semi-ignorato'': a volte
+l'uso dell'IA nasce dalla \textbf{paura del giudizio}, dal voler consegnare
+qualcosa di più pulito, più strutturato possibile. ``Vi giuro, non ve ne
+preoccupate''. Ruggero detesta i voti e non ragiona per voti; non valuterà
+nessuno per grafiche fatte a matita. Insegna da anni, ha avuto studenti con
+dislessia e discalculia: refusi ed errori non gli interessano, ``non è un corso
+di editing o di proofreading''. Gli interessa che le \textbf{meccaniche siano
+coerenti con lo scopo di design}. Immagini fatte a matita o con Paint ``non sono
+un problema, anzi, le preferisco'' rispetto all'``ennesima immagine fatta con
+ChatGPT o Midjourney''.
+
+\paragraph{Daniele: il pensiero critico, costo e qualità.} L'ultimo intervento
+è di Daniele, sul \textbf{pensiero critico}. Ragionando per assurdo (``un
+pensiero di Belzebù''), immagina che un domani l'IA venga usata ovunque. I suoi
+limiti, secondo lui, resterebbero due:
+\begin{description}
+  \item[Il costo] Tutti dicono che sta diminuendo e che diminuirà, ma non se ne
+        può essere sicuri al 100\%.
+  \item[La qualità] Cioè la capacità di leggere l'output. Se si dà un regolamento
+        a Claude o a ChatGPT chiedendo quali problemi ha, il modello risponde con
+        i problemi che, in percentuale, è più probabile che gli esseri umani
+        abbiano già individuato nei dati su cui è stato addestrato. Ne derivano
+        due problemi: se il problema del proprio gioco non è mai stato
+        individuato prima, il modello non lo vedrà; e viceversa può segnalare
+        problemi che il gioco non ha.
+\end{description}
+Fa l'esempio di Grammarly, che usa nella versione premium per rivedere i testi
+in inglese: spesso non accetta i suoi consigli, perché se vuole scrivere un
+dialogo di videogioco in \textbf{dialetto Cockney} londinese, lo deve scrivere
+in Cockney. Se Grammarly dice che è sbagliato, ``sei tu che non hai capito il
+motivo per cui voglio scrivere questo testo in Cockney''. La conclusione: prima
+di usare un'IA per un'attività bisogna sapere \textbf{che cosa si vuole
+ottenere}, qual è l'obiettivo, e quali \textbf{competenze} servono per valutare
+in modo critico se l'output di un qualunque LLM è davvero valido. Daniele non
+vuole dilungarsi oltre: è un argomento ``molto caldo'' per lui, che è anche
+scrittore e si sente dire da tutti ``ti sostituiranno''.
+
+Subito dopo si presenta finalmente Gianmarco (lo si è visto nella
+sezione~\ref{a1:sec:partecipanti}), e poi si fa una pausa di una decina di
+minuti. Daniele avverte che nella terza parte lui non ci sarà (alle sette e un
+quarto ha un impegno di lavoro), e lo stesso vale per Beatrice: la parte finale
+di domande e risposte sarà con il solo Ruggero, ``in ottime mani''.
+
+% ---------------------------------------------------------------------
+\section{Le figure professionali dell'industria analogica}
+\label{a1:sec:figure}
+
+Dopo la pausa (in cui si scopre che Angelo lavora in un piccolo birrificio in
+Brianza e si scherza sul rischio di un \emph{drinking game}, tra la birra e la
+vendemmia) la lezione riprende con le slide di Ruggero. ``Oggi è una lezione
+introduttiva'': gli argomenti si vedranno ``molto dall'alto'' e verranno
+approfonditi nelle lezioni successive. Ma servono già ora, per creare
+\textbf{l'inizio di un linguaggio condiviso}: ci sono termini che torneranno
+spesso, a cominciare da quelli del mercato e dell'industria del gioco
+analogico, un'industria ``molto varia, molto caotica, anche molto mutevole'',
+con tanti tipi diversi di giochi e altrettanti tipi diversi di entità che ci
+lavorano.
+
+\subsection{Una decina di etichette}
+
+I docenti hanno raccolto ``una decina di etichette'', cioè di \textbf{ruoli} che
+nell'industria sono o possono essere presenti. Due avvertenze:
+\begin{itemize}
+  \item nelle aziende più piccole \textbf{la stessa persona copre spesso più
+        ruoli}, per forza di cose. Sarà anche il caso degli studenti, che
+        lavoreranno in gruppi di tre e non di venti: è facile che ciascuno finisca
+        a fare più cose. I docenti ne terranno conto, e qui entreranno in gioco
+        anche competenze diverse dal game design (programmi di grafica,
+        illustrazione, impaginazione, layout, \emph{proofreading}\ldots);
+  \item Daniele precisa che \textbf{non si chiede agli studenti di diventare}
+        illustratori o altro. Ruggero concorda, ma aggiunge che è utile sapere
+        anche \emph{che cosa non è il proprio lavoro}. Se in un gruppo nessuno sa
+        illustrare, ai docenti va benissimo un prototipo che mostri dove vanno
+        le immagini: \textbf{placeholder}, concept, anche semplici box di testo
+        con scritto ``qui vorremmo un'immagine di\ldots''. ``È importante anche
+        sapere che cosa sapete fare e che cosa non sapete fare''.
+\end{itemize}
+La tabella~\ref{a1:tab:figure} riassume le figure; le sottosezioni seguenti le
+riprendono una per una, con i commenti dei docenti.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.3cm}p{9.6cm}@{}}
+\toprule
+\textbf{Figura} & \textbf{Di che cosa si occupa} \\
+\midrule
+Game designer & crea le regole alla base dell'esperienza: le meccaniche, come
+interagiscono tra loro e come chi gioca interagisce con esse \\
+Game developer & fa da ponte tra chi fa game design e il publisher: bilancia il
+prototipo, cura i modelli matematici, adatta il gioco (e il paragame) alle
+necessità del publisher \\
+Editor (proofreader) & revisiona e adatta i testi a partire dalla prima stesura
+del designer (correzione, linguaggio inclusivo\ldots) \\
+Publisher (editore) & pubblica e produce fisicamente il gioco; il suo marchio è
+sulla scatola o sulla copertina \\
+Sales e marketing & il lato commerciale: vendite (anche B2B) e comunicazione del
+prodotto \\
+Graphic designer & icone meccaniche, wireframe, UX: il lato funzionale degli
+elementi visivi \\
+Illustratore & le illustrazioni: il \emph{look and feel}, il world building, il
+``vibe'' del gioco \\
+Sensitivity reader (cultural consultant) & verifica l'accuratezza e la
+rappresentazione di un tema sensibile che il team non conosce \\
+Producer & coordina il progetto (quasi project management), parla con le
+tipografie, verifica che i materiali siano sostenibili economicamente \\
+\bottomrule
+\end{tabular}
+\caption{Le figure professionali dell'industria del gioco analogico presentate
+nella slide di Ruggero, in sintesi.}
+\label{a1:tab:figure}
+\end{table}
+
+\subsection{Game designer}
+
+Il \textbf{game designer} (o la game designer) è chi si occupa, ``sembra banale
+a dirlo'', di \textbf{creare le regole alla base dell'esperienza} che si vuole
+far arrivare. Vale per tutti i tipi di giochi, non solo per quelli analogici, e
+che cosa faccia concretamente in un progetto o in una serie specifica ``può
+mutare tantissimo''. Nell'analogico non verrà chiesto di programmare o di
+prototipare in digitale; verrà chiesto di \textbf{creare le meccaniche di
+gioco}, di capire \textbf{come le meccaniche si interfacciano tra loro} e
+\textbf{come le persone che giocano si interfacceranno con le meccaniche}.
+
+\subsection{Game developer}
+
+Il \textbf{game developer} (o la game developer) sarà l'argomento delle due
+lezioni di Marta. La parola \emph{development} è nota soprattutto
+dall'ambito videoludico, ma nell'analogico ha un significato molto specifico
+``che non c'entra niente con la programmazione'': il game developer è
+\textbf{un ponte tra chi fa game design e il publisher}. Di solito si occupa di
+\textbf{bilanciare il prototipo}, di curare i \textbf{modelli matematici}, di
+adattare il gioco e il \textbf{paragame}\footnote{La trascrizione dice ``il
+Wix, il paragame''. Il \emph{paragame} è, in termini generali, tutto ciò che
+accompagna il gioco senza esserne il sistema di regole (regolamento, scatola,
+materiali, comunicazione); i docenti lo tratteranno in una lezione dedicata, e
+qui il termine è solo citato.} alle necessità del publisher. La distinzione
+viene ripresa e approfondita nella sezione~\ref{a1:sec:design-development}.
+
+\subsection{Editor}
+
+L'\textbf{editor}, a volte chiamato \textbf{proofreader} a seconda dell'azienda,
+si occupa della revisione dei \textbf{testi}: non della stesura iniziale, perché
+di norma, data la scala dell'industria, è chi fa game design a scrivere un
+\textbf{primo draft}, e l'editor ci passa sopra. Non solo per correggere i
+refusi: spesso il suo lavoro è anche \textbf{adattare} i testi, per esempio
+renderli \textbf{gender neutral}. Se ne vedranno casi studio più avanti.
+
+\subsection{Publisher}
+
+Il \textbf{publisher}, o \textbf{editore}, è l'entità che nell'ambito
+commerciale \textbf{pubblica} giochi, giochi di ruolo o giochi da tavolo. È una
+figura ``più solidificata'' nel gioco da tavolo e nel gioco di ruolo da tavolo;
+\textbf{nell'ambito pervasivo non esiste proprio in questa forma}, come
+mostrerà Beatrice parlando dei casi studio. Se si compra un gioco da tavolo o un
+gioco di ruolo in un negozio, il marchio del publisher è di solito sul retro
+della copertina o sul fronte della scatola: è l'entità che, di solito,
+\textbf{produce fisicamente} il gioco.
+
+\subsection{Sales e marketing}
+
+L'ambito \textbf{sales e marketing}, a volte affidato a un'unica persona e a
+volte separato, riguarda il lato commerciale. In alcune aziende è interno al
+publisher, e si occupa di parlare con le fabbriche e le tipografie, di ``far
+quadrare i conti''. In altre realtà è completamente diverso, specialmente nel
+\textbf{B2B} o nei giochi \textbf{didattici} e \textbf{formativi}, di cui
+Daniele e Beatrice ``sapranno parlare meglio''. Il tema viene ripreso più avanti
+in dettaglio (sezione~\ref{a1:sec:marketing}).
+
+\subsection{Graphic designer e illustratore}
+
+Ruggero presenta insieme \textbf{graphic designer} e \textbf{illustratore}
+proprio perché sono ruoli molto diversi che si tende a far coincidere:
+\begin{itemize}
+  \item chi fa \textbf{graphic design} si occupa delle \textbf{icone meccaniche},
+        del \textbf{wireframing}, della \textbf{UX}: del lato \textbf{meccanico e
+        funzionale} degli elementi visivi, cioè di tutto ciò che serve
+        meccanicamente nel gioco, o anche alla sua ``qualità della vita'';
+  \item chi fa \textbf{illustrazione} si occupa dell'\emph{art}, delle
+        illustrazioni: copre il \textbf{look and feel}, la parte di
+        \textbf{world building} e il ``vibe'' che si dà al gioco.
+\end{itemize}
+
+\paragraph{Daniele: che cos'è la user experience.} Daniele interviene sulla
+\textbf{user experience}, ``importantissima per me'': ha un background da
+\textbf{layout artist} (impaginava magazine), un mestiere in cui la UX conta
+moltissimo. Per user experience non si intende solo l'\textbf{interfaccia
+grafica}, la UI, che anche nei videogiochi è disegnata da un artista. La UX è
+qualcosa che può fare anche il game designer: \textbf{disegnare l'esperienza del
+giocatore}, cioè ``il gesto, l'intenzione, l'intuito'' che stanno dietro
+l'aspetto visivo dell'interfaccia. Per fare UX non serve saper disegnare.
+L'esempio è quello della \textbf{porta}: se si progetta una porta, bisogna
+indicare all'utente come si apre, come si prende la maniglia; ``quella è user
+experience''. Il design della maniglia in sé, invece, è
+\textbf{interfaccia}.
+
+\paragraph{Un aneddoto sulle icone.} Ruggero aggiunge che molte persone che
+fanno \textbf{graphic design ben fatto non sanno illustrare}, e spesso vale il
+viceversa. Lo si nota quando le icone di un gioco sono bellissime ma non
+funzionali: andando a guardare i crediti, di solito si scopre che le icone le ha
+fatte la persona che ha fatto le illustrazioni. ``Comunque non andiamo adesso in
+questo, perché è un altro vaso di Pandora''.
+
+\subsection{Sensitivity reader}
+
+Il \textbf{sensitivity reader}, o \textbf{cultural consultant} a seconda del
+progetto, fa un lavoro di \emph{sensitivity reading} del gioco. È una figura
+molto usata nell'ambito \textbf{formativo e didattico}. L'esempio di Ruggero: se
+si fa un gioco per un ospedale su una malattia specifica, chi lo progetta non è
+un medico, ma il gioco deve essere \textbf{accurato} e \textbf{rappresentativo}
+delle dinamiche che quella malattia comporta. Serve una persona che conosca quel
+tema, anche se non sa che cosa sia il game design. Sono figure chiamate di
+solito \textbf{a progetto}, per giochi specifici, che compensano competenze che
+il team non ha ``per forza di cose, perché noi non sappiamo tutto''; e a volte,
+per lavoro, si devono fare giochi su temi che non si conoscono personalmente.
+
+\paragraph{Daniele: non è un censore.} Daniele segnala un problema italiano:
+alcune persone, anche online, hanno confuso il sensitivity reader con un
+\textbf{censore}, ``una persona che fa censura, soprattutto in materia di
+\emph{woke}''. ``Assolutamente non è così''. La parola \emph{sensitive} non
+significa che il pubblico sia sensibile a un tema, ma che \textbf{l'argomento di
+cui tratta il gioco è sensibile}. In un gioco sulla medicina, realistico o no,
+non si possono inserire imprecisioni. Per questo esistono i sensitivity reader
+``più disparati'': da quelli per la cultura indiana o afroamericana fino a quello
+su ``come si allevano gli gnu in Africa''. È una persona competente su un
+argomento che aiuta a essere \textbf{veritieri}. Certo, uno degli ambiti
+principali in cui si usano è quello culturale, ma ``non fate l'errore di pensare
+che siano dei censori''. Daniele ha lavorato con ``centinaia'' di sensitivity
+reader e nessuno gli ha mai detto ``non puoi scrivere questa cosa''. Di solito
+sono come degli \textbf{editor}: danno opzioni, mostrano i punti problematici,
+anche quelli di cui non ci si era nemmeno accorti.
+
+Ruggero conferma con un esempio di quando lavorava in \textbf{Danimarca} con
+l'\textbf{OMS}: giochi sul \textbf{diabete di tipo 2} nei bambini, per un target
+di ragazzi delle scuole medie. C'era un team dell'OMS specializzato nella
+comunicazione sul diabete, per garantire che il gioco fosse accurato e ne desse
+una rappresentazione adatta al target. Il sensitivity reader aiuta a rendere il
+gioco più accurato e ``più tematicamente coeso''.
+
+\subsection{Producer}
+
+Il \textbf{producer} è una figura a volte interna al publisher. In un progetto
+grande è la figura di riferimento, ``quasi'' un project manager. In un progetto
+piccolo si occupa spesso anche di parlare con le \textbf{tipografie} e di fare la
+\textbf{lista dei materiali}, per assicurarsi che i materiali non siano solo
+funzionali al gioco ma anche \textbf{economicamente sostenibili} da produrre:
+``magari è un gioco bellissimo, ma poi costa più di quanto potete permettervi, e
+nessuno vi comprerà mai un card game a 200 euro''.
+
+\subsection{Perché conoscere queste figure}
+
+Ruggero chiude la slide ``tornando a ombrello'': perché parlarne, se gli studenti
+sono lì per fare game design? Non solo per saper dare un \textbf{nome} alle
+figure. Non c'è niente di male a creare un gioco solo per sé; ma chi vuole fare
+giochi a livello lavorativo, perché li giochino altre persone, ``magari più
+persone possibile'', \textbf{si interfaccerà con queste figure}, e sapere che
+cosa fanno e come parlarci è parte importante del percorso. Nel corso se ne
+toccheranno diverse: il development con Marta, la produzione con Flavio, e
+lezioni sulla UX, sul paragame, sul graphic design. ``Abituatevi mentalmente:
+non siete in solitaria contro il mondo''.
+
+% ---------------------------------------------------------------------
+\section{Marketing e sales}
+\label{a1:sec:marketing}
+
+Arrivato all'angolo della slide con marketing e sales, Ruggero passa la parola
+ai colleghi: ``io è meglio che non mi fate parlare di marketing e sales'', anche
+per esperienze personali.
+
+\subsection{Beatrice: i giochi trattati come prodotti}
+
+Beatrice premette che le due voci sono in parte autoesplicative. Nel mondo
+capitalista in cui viviamo, i giochi sono ``strumenti molto potenti per fare
+\emph{n} cose'', ma sono trattati come \textbf{prodotti}, e il corso ragionerà
+anche in quest'ottica. Nel \textbf{marketing} delle industrie ludiche e
+videoludiche ci sono varie professionalità che gli studenti probabilmente già
+conoscono: dal \emph{copy} alla grafica, tutto ciò che riguarda il
+\textbf{vendere} il gioco o l'attività di gioco.
+
+Il lato \textbf{sales} è forse la distinzione meno nota. Come in tante aziende, è
+la parte che si occupa delle vendite \textbf{B2B}, cioè tra aziende: fare
+accordi per vendere prodotti ludici a diverse realtà, per esempio ai
+\textbf{distributori}, o a una casa editrice che vende alle librerie, che poi
+vendono al consumatore finale. Chi si occupa di sales nel mondo ludico capisce
+come vendere \textbf{alle aziende}. I due mondi si parlano spesso, e soprattutto
+nelle realtà piccole si trovano figure che fanno ``un po' sales, un po'
+marketing''.
+
+\subsection{Daniele: che cos'è (e che cosa non è) il marketing}
+
+Daniele il marketing si è trovato ``purtroppo'' a farlo, e lo fa anche per
+l'accademia. ``Purtroppo'' perché in Italia è mal compreso: molti lo
+identificano con l'\emph{advertisement} online. Non è così: il marketing è una
+\textbf{disciplina molto più antica}, e in Italia ``abbiamo molto dimenticato''
+come si fa il marketing tradizionale. Alcune cose da ricordare:
+\begin{enumerate}
+  \item \textbf{Il marketing non dice che cosa pubblicare, ma come pubblicarlo}.
+        Esistono, nei videogiochi e nei giochi da tavolo, realtà che fanno
+        prodotti \textbf{marketing driven}: l'esempio sono gli
+        \textbf{hyper-casual game} per smartphone, quelli con il personaggio che
+        va a destra e a sinistra e l'esercito che si allarga. Possono anche
+        guadagnare, ma ``sono un po' la morte della creatività''. Il marketing
+        ideale \textbf{prende un prodotto pensato da altri e gli dà le maggiori
+        chance di essere venduto}: cerca il pubblico ideale per il prodotto che
+        si ha, senza doverlo cambiare. Anzi, il mondo videoludico, e ludico in
+        generale, ``è lastricato'' di errori di dipartimenti marketing che hanno
+        cambiato completamente non il gioco, ma il modo in cui l'hanno
+        pubblicizzato, e il gioco è fallito.
+  \item \textbf{Usare strumenti del marketing non significa fare marketing}. Game
+        design e game development a volte usano strumenti che vengono dal
+        marketing (gli studenti ne vedranno con Beatrice, con Daniele e con
+        Marta).
+  \item \textbf{Il marketing è un gerundio}: si fa. È un'azione che si compie per
+        comunicare; la comunicazione è attiva, e il marketing è l'insieme delle
+        attività con cui si comunica il proprio gioco, dal \emph{copy} ai social.
+        Può includere il digital marketing, ``ma non è solo quello''.
+  \item \textbf{Il marketing esiste anche se si crede che non esista}. In Italia
+        molti non vogliono ``fare marketing'' perché lo associano al lucro. Ma
+        il marketing è \textbf{lo studio di come gli esseri umani comprano e
+        vendono}, ed è innato in noi: ci sono logiche di cui siamo vittime, e
+        ``anche se sei il bastian contrario, l'anticapitalista'', magari si
+        compra comunque su Amazon perché fa comodo. Sono meccanismi che
+        esistono, ``affascinanti anche, a volte''.
+\end{enumerate}
+Gli studenti non dovranno fare marketing, ma dovranno ricordare alcuni di questi
+concetti, soprattutto nelle lezioni con Marta, che tratta argomenti legati al
+marketing. E, chiude Daniele, come game designer e game developer ``per lo più
+speriamo che il marketing non ci rovini i giochi'', soprattutto nel videoludico.
+
+% ---------------------------------------------------------------------
+\section{Game design e game development}
+\label{a1:sec:design-development}
+
+Ruggero torna sulla distinzione più importante della slide, ``proseguendo con
+questa strada'':
+\begin{description}
+  \item[Game design] è chi \textbf{progetta l'esperienza} tramite la
+        \textbf{creazione delle meccaniche} di gioco.
+  \item[Game development] è chi fa \textbf{mediazione} tra la persona che scrive
+        il game design e la \textbf{casa editrice}.
+\end{description}
+
+\subsection{I red flag dei designer}
+
+Ruggero lo ripete perché lo vede ogni giorno nel suo lavoro: tra giochi
+pubblicati e prototipi, ne valuta ``quasi uno al giorno, se faccio un conto
+annuale'', e solo una minima percentuale arriva alla pubblicazione. Molte volte
+i \textbf{red flag} vengono proprio da designer che non hanno presente questa
+definizione, e che cominciano a mettere \textbf{clausole sulla non modifica del
+gioco}: il gioco deve restare com'è. ``Questa cosa è impossibile con un
+publisher, spesso''. Il publisher, per forza di cose, potrà chiedere di cambiare
+la grafica, di reimpaginare il regolamento, di cambiare i materiali perché
+troppo costosi: chiederà dei \textbf{compromessi}. E la persona che, all'interno
+del publisher, fa questo lavoro è il \textbf{developer}.
+
+Sta al designer capire \textbf{su che cosa del proprio gioco si può trovare un
+compromesso e su che cosa no}. Publisher diversi lavorano in modo diverso, e il
+designer ha sempre l'autorità di dire ``no, non voglio pubblicare questo gioco
+se queste sono le modifiche''. Ma deve sapere chi fa il lavoro di development,
+perché se il suo obiettivo è la \textbf{pubblicazione tradizionale} si
+interfaccerà con questa figura.
+
+\subsection{Daniele: una distinzione che manca al videogioco}
+
+Daniele sottolinea che questa distinzione è \textbf{tipica del mondo analogico}
+ed è ``molto interessante''. In Italia la parola \emph{developer} è diventata
+negli anni quasi un sinonimo di programmatore di videogiochi, o di chiunque
+lavori nel videoludico. Secondo lui c'entra anche il fatto che qualche anno fa
+il sito \textbf{Gamasutra} ha cambiato nome in \textbf{Game Developer}, e la
+parola è diventata un ombrello per tutte le professioni del videogioco. ``Mi fa
+un po' ribrezzo'': il game developer dovrebbe essere un ruolo di design, un
+designer che, come nell'analogico, fa \textbf{mediazione}. Nel videogioco i
+publisher hanno in effetti i loro developer interni, che adattano il gioco, per
+esempio alle console e ai loro kit di sviluppo. Ma la distinzione dovrebbe
+esistere anche nel videogioco, perché è ``difficilissimo'' avere la mentalità
+per fare le due cose insieme: chi fa design ha un focus che raramente si può
+sovrapporre a quello di chi fa mediazione.
+
+A Daniele piace la parola \emph{develop}, \textbf{sviluppare}, nel senso di
+prendere qualcosa che è stato progettato e \textbf{renderlo possibile nel mondo
+reale}. Ci sono progetti che hanno bisogno di uno sviluppo che ``polishi''
+l'esperienza: la semplifichi, la migliori, la renda comprensibile e la concluda,
+ma soprattutto la renda \textbf{stampabile} e \textbf{fruibile} per l'utente. La
+metafora crossmediale è quella della \textbf{fotografia}: chi sviluppa le
+fotografie non è chi scatta la foto, ma chi la rende visibile, anche
+fisicamente. ``È un po' retro come metafora, ma ci capiamo''. ``È vero, però è
+giusto'', conferma Ruggero.
+
+% ---------------------------------------------------------------------
+\section{Il mercato: Italia ed estero}
+\label{a1:sec:mercato}
+
+Il corso è in italiano e si svolge in Italia, ma bisogna conoscere anche il
+\textbf{mercato estero}: molti giochi progettati da autori italiani vengono
+pubblicati all'estero, e conoscere il mercato estero aiuta a capire come il
+proprio gioco può arrivarci, ``o viceversa, come non può arrivarci''. La
+tabella~\ref{a1:tab:mercato} riassume il confronto della slide.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{6.4cm}p{6.4cm}@{}}
+\toprule
+\textbf{Italia} & \textbf{Estero (soprattutto Europa)} \\
+\midrule
+il gioco è ancora visto come un'attività \textbf{infantile}, anche se la
+normalizzazione è in crescita &
+forte tradizione di gioco anche in un contesto \textbf{familiare adulto},
+soprattutto ``dalla Germania in su'' \\
+risposta \textbf{conservativa} sul tema ludico &
+\textbf{premi di prestigio} riconosciuti in tutto il mondo (Spiel des Jahres,
+As d'Or) \\
+forte focus sulla \textbf{localizzazione} di giochi stranieri &
+si cercano soprattutto giochi \textbf{originali} \\
+investimento \textbf{molto basso} sulla creazione di giochi originali interni;
+pochissimi designer assunti &
+\textbf{developer interni} pagati con un contratto (Francia, Germania,
+Danimarca\ldots) \\
+\bottomrule
+\end{tabular}
+\caption{Il mercato del gioco analogico in Italia e all'estero, secondo la
+slide di Ruggero e i commenti di Daniele.}
+\label{a1:tab:mercato}
+\end{table}
+
+\subsection{L'Italia}
+
+\begin{itemize}
+  \item In Italia il gioco è ancora visto come un'\textbf{attività infantile},
+        anche se la \textbf{normalizzazione} è in crescita. C'è ancora una forte
+        risposta \textbf{conservativa} sul tema ludico.
+  \item C'è un forte focus sulla \textbf{localizzazione} dei giochi stranieri: in
+        una qualunque ludoteca o negozio, molti dei giochi da tavolo e di ruolo
+        sono di publisher o designer esteri, pubblicati in italiano da publisher
+        italiani. (La localizzazione, cioè portare un titolo dall'estero in
+        Italia, esiste come funzione all'interno del publisher; Ruggero non l'ha
+        messa nella slide delle figure perché non è il focus del corso.)
+  \item C'è, ``purtroppo, preparatevi psicologicamente'', un \textbf{investimento
+        molto basso} sulla creazione di giochi originali interni alla casa
+        editrice. Pochissime case editrici italiane hanno designer interni pagati
+        a tempo pieno con contratto a tempo indeterminato. Daniele lo dice senza
+        mezzi termini: ``il mercato è molto piccolo, conosciamo praticamente
+        tutto il settore'', e le persone che in Italia fanno game design
+        analogico a tempo pieno con un contratto a tempo indeterminato ``sono
+        meno delle dita delle mie due mani''. Di solito la formula è quella del
+        \textbf{freelance}, del contratto, delle \textbf{royalty}. Chi va da un
+        publisher aspettandosi di essere assunto a tempo pieno come game
+        designer deve sapere che ``non siamo purtroppo ancora in quel tipo di
+        situazione''.
+  \item C'è però un contraltare: in Italia, soprattutto nel gioco di ruolo ma
+        anche nel gioco da tavolo, c'è stata molta \textbf{imprenditoria}, anche
+        grazie a \textbf{Kickstarter}, che ha aperto le porte ad altri sistemi
+        di \textbf{crowdfunding}. È un altro argomento, perché richiede un team,
+        un investimento e così via.
+  \item E gli autori non mancano, anzi: le occasioni di incontro tra autori
+        vedono ogni anno un aumento dei possibili autori\footnote{La trascrizione
+        dice ``i DAG a Parma''; il riferimento è probabilmente a IDEAG, il
+        circuito di incontri tra autori di giochi italiani, ma non è
+        ricostruibile con certezza.}. Bisogna ``sgomitare'' tra tanti autori,
+        che magari arrivano da esperienze molto diverse.
+\end{itemize}
+Ruggero precisa: l'investimento basso è ``dall'alto''. Le persone che fanno e
+vogliono fare giochi sono tantissime e in aumento; scarseggia l'investimento,
+sia dei publisher disposti a pagare stipendi sia dei \textbf{bandi} pubblici. I
+bandi esistono (Beatrice ne parlerà per i giochi pervasivi, che spesso si
+muovono in quella direzione, e Ruggero cita qualcuno che sta facendo un card
+game con un bando italiano, ``una cosa assurda, ma lo sta facendo''), ma sono
+una rarità, soprattutto rispetto all'estero.
+
+\subsection{L'estero}
+
+\begin{itemize}
+  \item L'estero (dipende dalla nazione, ma in generale il resto d'Europa) ha una
+        forte \textbf{tradizione di gioco} anche in un contesto \textbf{familiare
+        adulto}, soprattutto ``dalla Germania in su''.
+  \item Ha \textbf{premi di prestigio} riconosciuti in tutto il mondo, come lo
+        \textbf{Spiel des Jahres} tedesco e l'\textbf{As d'Or} francese\footnote{La
+        trascrizione dice ``lo Spield AR, la SDOR''.}.
+  \item Cerca soprattutto \textbf{giochi originali}. Lo si vede dal fatto che
+        molti autori italiani di giochi da tavolo pubblicano in Germania o in
+        Francia e \textbf{non vengono pubblicati in Italia}, ``che è tutto
+        dire''.
+  \item Ha \textbf{figure di development interne}: non è raro vedere publisher
+        francesi, tedeschi, danesi con developer pagati internamente, a
+        contratto.
+\end{itemize}
+``Poi la situazione è ancora più drammatica'', ammette Ruggero, ``ma per ora
+vogliamo tenere il morale un po' alto. È l'introduzione. Ci sarà tempo di andare
+nella tristezza''.
+
+Prima di proseguire, Ruggero insiste sulle domande: con lui si può interrompere
+anche mentre parla, alzando la mano con le reaction o semplicemente togliendo il
+microfono e chiedendo. ``Non mi offenderò mai, anzi, sarò felice di vedervelo
+fare e mi ricorderò positivamente di voi''.
+
+% ---------------------------------------------------------------------
+\section{Perché serve una terminologia comune}
+\label{a1:sec:terminologia}
+
+La serie di slide successiva è ``una piccolissima parte di fondamenti di
+design'' (``non spaventatevi, vi vedo che vi spaventate un po'\,''). Anche qui
+molti temi verranno ripresi in dettaglio, ma l'idea è arrivare alla prossima
+lezione con almeno un \textbf{glossario}, un \textbf{linguaggio condiviso}: se
+qualcuno dice \emph{game developer}, tutti sanno di che cosa sta parlando.
+
+Ruggero parte da una domanda, e precisa che non è retorica: \textbf{perché ci
+serve una terminologia comune?} Gli studenti rispondono:
+\begin{itemize}
+  \item Gianmarco, ``molto pragmatico'': perché bisogna lavorare in team e
+        capirsi. Vero, nel corso e anche fuori;
+  \item un'altra studentessa: per la \textbf{comunicazione}, tra di noi e con
+        tutti quelli che sono interessati nel settore. Vero anche questo:
+        conoscere i termini comuni permette di parlare con chi fa game design o
+        development nel dettaglio, nel tecnico, nello specifico.
+\end{itemize}
+Ruggero aggiunge altre due ragioni.
+
+\paragraph{Saper comunicare il proprio gioco.} La prima riguarda la
+\textbf{comunicazione del gioco} verso l'esterno. ``E lo dico non tirando acqua
+al mio mulino, ma anzi togliendola'': \textbf{non è spesso il buon game design
+a far diffondere un gioco}. ``Vorrei che lo fosse, sarebbe bellissimo, ma
+purtroppo non è così''. Ci sono giochi bellissimi che non sanno comunicare, che
+non sanno dire che cosa fanno, e che quindi è difficile, da fuori, trovare
+invitanti; e ci sono giochi mediocri dal punto di vista del design che si
+comunicano molto bene, e che quindi conoscono in molti. Saper parlare di quello
+che si fa è utile \textbf{a sé stessi}, in primis.
+
+\paragraph{Documentare per sé stessi.} La seconda è la \textbf{documentazione}:
+documenti di design, di brainstorming e così via. ``Sembrerà una battuta, ma
+provate a recuperare un documento di brainstorming una settimana dopo, se non
+avete scritto bene le cose che avete scritto''. Chi l'ha fatto sa già di che
+cosa si parla; ``chi non l'ha ancora vissuto, forse lo vivrà''.
+
+% ---------------------------------------------------------------------
+\section{Game e play}
+\label{a1:sec:game-play}
+
+La \textbf{prima, importantissima divisione terminologica} è quella tra
+\emph{game} e \emph{play}. In italiano c'è un problema: \textbf{gioco} e
+\textbf{giocare} hanno la stessa radice, mentre in altre lingue, tra cui
+l'inglese, sono due parole strutturalmente diverse:
+\begin{description}
+  \item[Game] il \textbf{gioco come artefatto}: il gioco come ecosistema di
+        meccaniche, come struttura di regole, come prodotto (``tra
+        virgolette''), come oggetto fisico.
+  \item[Play] l'\textbf{atto}, il verbo: le persone che giocano, l'approccio
+        fisico all'attività del gioco.
+\end{description}
+È importante perché gli studenti faranno \textbf{game design}; esistono anche
+ambiti di \emph{play design}, ma qui ``creerete giochi, non giocattoli''.
+
+\subsection{Giochi e giocattoli}
+
+Qual è la differenza? Uno studente risponde: \textbf{la presenza di regole}.
+Esatto: un gioco ha delle regole, un'attività di \emph{play} non
+necessariamente. Con un giocattolo si può fare \emph{play}: c'è chi gioca con i
+Lego, chi gioca a guardia e ladri o a nascondino al parco, e magari alcune di
+quelle regole sono ``più o meno semi-solidificate''. Ma il \emph{play} permette
+spesso un approccio non strettamente legato alle regole.
+
+Viceversa, \textbf{un game può esistere anche se nessuno lo sta giocando}. Se si
+prepara su un tavolo una scacchiera con i pezzi degli scacchi, chi passa e la
+vede riconosce il gioco degli scacchi, anche se nessuno sta giocando. Se invece
+si vedono dei bambini correre in un parco giochi, quei bambini \emph{stanno
+giocando}, ma non stanno giocando \emph{a un gioco} specifico. ``È importante
+separare questa cosa''; ci si tornerà, ``ma per ora abituatevi a questa
+differenza''.
+
+\paragraph{Approfondimento: giocattoli, giochi e regole.} La stessa distinzione
+è il punto di partenza del capitolo che Jesse Schell, in \emph{The Art of Game
+Design}, dedica alla definizione di gioco (\emph{The Experience Rises Out of a
+Game}). Schell nota che usiamo perfino un linguaggio diverso: ``un gioco è
+qualcosa a cui si gioca'' (\emph{a game is something you play}), ``un giocattolo
+è qualcosa con cui si gioca'' (\emph{a toy is something you play with}); e
+arriva a definire il giocattolo come ``un oggetto con cui si gioca''. Analizzando
+poi la definizione di gioco di Avedon e Sutton-Smith, ne ricava che ``i giochi
+hanno regole, i giocattoli no'', e che le regole sono uno degli aspetti
+\emph{definitori} del gioco, insieme alla volontarietà, agli obiettivi, al
+conflitto e alla possibilità di vincere o perdere. Schell osserva anche che
+molti giochi sono costruiti \textbf{sopra} un giocattolo (``una palla è un
+giocattolo, ma il baseball è un gioco''), e tra i suoi consigli di
+prototipazione c'è proprio \emph{Build the Toy First}: costruire prima il
+giocattolo, cioè qualcosa che sia già piacevole da manipolare, e poi il gioco
+intorno. È una lettura utile della distinzione di Ruggero: il \emph{play} può
+fare a meno delle regole, il \emph{game} no.
+
+% ---------------------------------------------------------------------
+\section{Il framework MDA (e il DPE)}
+\label{a1:sec:mda}
+
+\subsection{Meccaniche, dinamiche, estetiche}
+
+Un'altra terminologia fondamentale è quella del framework \textbf{MDA}
+(\emph{Mechanics, Dynamics, Aesthetics}; in italiano a volte ``MDE''). Viene da
+un \textbf{paper} nato nell'ambito del videogioco\footnote{È il paper di Robin
+Hunicke, Marc LeBlanc e Robert Zubek, \emph{MDA: A Formal Approach to Game
+Design and Game Research}, del 2004. Daniele aggiunge il paper alla cartella
+condivisa durante la lezione.}, che ha ``solidificato'' queste terminologie, e
+divide un gioco in tre aree:
+\begin{description}
+  \item[Meccaniche] le \textbf{regole per come sono scritte}. ``Ogni volta che
+        pescate un 2 fate dei punti'': quella è una meccanica.
+  \item[Dinamiche] l'\textbf{applicazione in tempo reale} delle meccaniche. La
+        dinamica è il giocatore che, pescando una carta, \textbf{spera} che esca
+        un 2. Quel processo non è una regola: ``il gioco non vi dice che dovete
+        sperare che esca un 2''.
+  \item[Estetiche] l'insieme di quello che il gioco vuole comunicare,
+        l'\textbf{esperienziale}.
+\end{description}
+
+L'esempio di Ruggero mette insieme le tre aree. In un gioco in cui pescare un 2
+fa fare punti (meccanica) e in cui quindi si spera che esca un 2 (dinamica),
+\textbf{che estetica si ottiene se nel mazzo di 100 carte c'è un solo 2? E se ce
+ne sono 50?} L'emozione di aver pescato \emph{l'unico} 2 del mazzo è
+completamente diversa da quella di pescarne uno sapendo che ce ne sono
+cinquanta e che è molto probabile trovarlo. Le regole sono quasi identiche; cambia
+l'esperienza.
+
+\subsection{Il falso amico: ``estetica''}
+
+Daniele avverte di non sottovalutare la parola \textbf{estetica}, che in italiano
+è un \textbf{falso amico}: sembra indicare la parte grafica, e invece non lo è.
+Si incontreranno designer che hanno studiato MDA e altri che non l'hanno
+studiato, e lo si capirà proprio da questo: i secondi diranno che le
+\emph{aesthetics} sono la grafica. Le \emph{aesthetics} sono la parte
+\textbf{esperienziale}: come nell'esempio di Ruggero, quello che lascia al
+giocatore aver pescato l'unico 2 del mazzo.
+
+\subsection{Il DPE: design, play, experience}
+
+Per gli italiani, aggiunge Daniele, è più facile capire l'MDA attraverso un
+altro paper, quello del \textbf{DPE}\footnote{È il framework \emph{Design, Play,
+Experience} di Brian Winn, proposto come estensione dell'MDA per i giochi
+educativi (\emph{serious games}). Anche questo paper viene aggiunto da Daniele
+alla cartella condivisa.}, che di fatto fa un parallelismo assegnando
+\textbf{design, play, experience}:
+\begin{itemize}
+  \item le \textbf{meccaniche} sono il lato \textbf{design};
+  \item le \textbf{dinamiche} sono il lato \textbf{play};
+  \item le \textbf{estetiche} sono l'\textbf{experience}, l'esperienza che riceve
+        chi gioca.
+\end{itemize}
+``Se vivete le \emph{aesthetics} come l'esperienza che vive chi sta giocando,
+state a postissimo''. In questo momento Beatrice lascia la lezione (``ciao,
+Bea''). I paper di MDA e DPE sono in inglese; chi vuole può dargli una lettura.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    blocco/.style={draw, thick, rounded corners=3pt, fill=gray!12,
+                   minimum width=3.2cm, minimum height=1.0cm, align=center},
+    dpe/.style={font=\footnotesize\itshape, align=center},
+    esempio/.style={draw, rounded corners=2pt, text width=3.3cm,
+                    align=left, font=\footnotesize, inner sep=4pt},
+    freccia/.style={-{Stealth[length=2.5mm]}, thick}
+  ]
+  \node[blocco] (m) at (0,0)   {\textbf{Meccaniche}\\ \footnotesize le regole scritte};
+  \node[blocco] (d) at (4.3,0) {\textbf{Dinamiche}\\ \footnotesize le regole in azione};
+  \node[blocco] (a) at (8.6,0) {\textbf{Estetiche}\\ \footnotesize l'esperienza};
+  \draw[freccia] (m) -- (d);
+  \draw[freccia] (d) -- (a);
+  \node[dpe, above=0.15cm of m] {DPE: \textbf{design}};
+  \node[dpe, above=0.15cm of d] {DPE: \textbf{play}};
+  \node[dpe, above=0.15cm of a] {DPE: \textbf{experience}};
+  \node[esempio, below=0.45cm of m] (em)
+    {``Ogni volta che peschi un 2 fai punti''};
+  \node[esempio, below=0.45cm of d] (ed)
+    {pescando, il giocatore \emph{spera} che esca un 2 (nessuna regola glielo
+     chiede)};
+  \node[esempio, below=0.45cm of a] (ea)
+    {un solo 2 su 100 carte: pescarlo è un evento;\\
+     50 su 100: è quasi scontato};
+  \draw[dashed] (m) -- (em);
+  \draw[dashed] (d) -- (ed);
+  \draw[dashed] (a) -- (ea);
+  % prospettive
+  \draw[freccia, gray] ([yshift=-0.3cm]em.south west) --
+    node[below, font=\footnotesize\itshape, text=black]
+    {il designer agisce sulle meccaniche}
+    ([yshift=-0.3cm]ea.south east);
+  \draw[freccia, gray] ([yshift=-1.2cm]ea.south east) --
+    node[below, font=\footnotesize\itshape, text=black]
+    {chi gioca incontra prima l'esperienza}
+    ([yshift=-1.2cm]em.south west);
+\end{tikzpicture}
+\caption{Il framework MDA con l'esempio del ``2'' usato da Ruggero, e la
+corrispondenza con il DPE suggerita da Daniele. Le due frecce in basso
+riassumono la lettura classica del paper: il designer costruisce le meccaniche
+per ottenere un'esperienza, mentre il giocatore parte dall'esperienza.}
+\label{a1:fig:mda}
+\end{figure}
+
+\paragraph{Approfondimento: le due direzioni dell'MDA e le otto estetiche.} Le
+frecce della figura~\ref{a1:fig:mda} riprendono un'idea centrale del paper
+originale, che la lezione non esplicita: designer e giocatore guardano il gioco
+da lati opposti. In \emph{Challenges for Game Designers}, Brenda Brathwaite e
+Ian Schreiber la riassumono così: i designer si chiedono quale estetica
+vogliono ottenere, definiscono le dinamiche che porterebbero a quella
+sensazione, e poi creano le meccaniche che producono quelle dinamiche. Lo stesso
+libro conferma l'avvertenza di Daniele sul falso amico: ``le \emph{aesthetics}
+non si riferiscono all'aspetto del gioco, ma alla risposta emotiva'' che il
+designer vuole suscitare. E offre esempi di dinamiche nel senso di Ruggero: in
+uno sparatutto i punti di \emph{spawn} sono una meccanica, mentre appostarsi
+accanto a uno di essi per colpire chi riappare (lo \emph{spawn camping}) è una
+dinamica; negli scacchi i movimenti dei pezzi sono meccaniche, mentre le
+aperture codificate sono dinamiche. Per dare un nome alle estetiche, il paper
+MDA propone una tassonomia, poi detta degli ``otto tipi di \emph{fun}'', che
+Schell riprende in \emph{The Art of Game Design} come \emph{LeBlanc's Taxonomy of
+Game Pleasures}: \textbf{sensazione}, \textbf{fantasia}, \textbf{narrativa},
+\textbf{sfida}, \textbf{compagnia} (\emph{fellowship}), \textbf{scoperta},
+\textbf{espressione} e \textbf{sottomissione} (il piacere di entrare nel
+``cerchio magico'' e lasciarsi andare a un passatempo). È un primo esempio di
+quello che i docenti chiedono con le parole vietate della prossima sezione:
+invece di dire che un gioco è ``divertente'', dire \emph{quale} esperienza
+offre.
+
+% ---------------------------------------------------------------------
+\section{Le parole vietate}
+\label{a1:sec:parole-vietate}
+
+``Attenzione, adesso qua triggeriamo delle persone''. Ruggero annuncia una regola
+che ``tornerà'': nel corso ci sono delle \textbf{parole vietate}. ``Non perché
+siamo dei censori''; il perché si vedrà in una lezione apposita, perché
+spiegarlo adesso richiederebbe un'ora. Ma Daniele vuole spiegarne ``un
+minimo''.
+
+\subsection{La regola}
+
+In \textbf{nessun materiale scritto} consegnato ai docenti, task compresi, sono
+accettate queste parole, né in inglese né in italiano:
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Inglese} & \textbf{Italiano} \\
+\midrule
+\emph{fun} & divertimento \\
+\emph{immersion} & immersione \\
+\emph{entertainment} & intrattenimento \\
+\bottomrule
+\end{tabular}
+\end{center}
+``Non li voglio neanche vedere''. Daniele lo ripete con un paragone: ``se mi fate
+i disegni con Paint, benissimo, top, fantastico, siamo ancora best friend. Se mi
+scrivete \emph{divertimento}, io sbrocco''. È una \textbf{regola dell'accademia}:
+negli stessi corsi triennali di narrative design e game design le parole sono
+vietate agli studenti per tre anni; ``per voi solo per tre mesi''. Daniele
+aggiungerebbe volentieri un quarto termine, \textbf{gamification}.
+
+\subsection{Perché}
+
+Il motivo approfondito lo darà Ruggero nella lezione apposita. Daniele dà il
+suo. Ruggero e Diego Ricchiuti sono molto contrari a \emph{fun} e a
+\emph{immersion}; lui ha aggiunto \emph{intrattenimento}. Sono \textbf{parole
+troppo passe-partout e troppo ambigue}:
+\begin{itemize}
+  \item \textbf{intrattenimento} in Italia è stata usata per anni come un modo
+        per \textbf{sminuire}: ``ma sì, tanto è un gioco solo di
+        intrattenimento, è un romanzo solo di intrattenimento''. Ma anche se un
+        prodotto è ``solo di intrattenimento'', non vuol dire che non ci si debba
+        lavorare con attenzione. E poi intrattenimento ``non significa niente'':
+        ci sono tanti modi in cui una cosa può intrattenere;
+  \item lo stesso vale per \textbf{fun}, e per \textbf{immersion}, che ha un
+        problema in più: è una parola passe-partout per cui si può dire che un
+        gioco è ``immersivo'' nel senso generale del termine, ma poi non si sa
+        davvero che cosa voglia dire, \emph{immersivo in che senso}.
+\end{itemize}
+
+L'obiettivo didattico è che gli studenti \textbf{vadano oltre queste parole}:
+``un po' come quando alle medie vi dicono smettetela di dire che tutto è bello,
+perché ci sono vari gradi di bello, ci sono altri modi di dire bello''. Bisogna
+\textbf{decostruirle}: quando si sta per usarle, chiedersi \textbf{che cosa si
+intende} con quella parola e cercarne una \textbf{più precisa}.
+
+Ruggero chiede, in uno dei ``rari casi'', di \textbf{non fare domande adesso} su
+questa regola: ogni anno arrivano domande e commenti, e ci saranno lezioni
+apposite di tre ore, con strumenti per capire il perché. Ma da subito gli
+studenti devono abituarsi a evitare questi termini, sia perché si spera che
+abbiano termini più precisi, sia perché queste parole ``portano con sé dei
+problemi agganciati'' che si vedranno. ``Non spaventatevi, non verrete sparati in
+un vicolo cieco di notte''.
+
+\paragraph{Una piccola gamification.} Il divieto va visto come uno
+\textbf{stimolo}, ``un po' come se stessimo gamificando la vostra esperienza'',
+una sorta di user experience delle lezioni. Imponendosi di non usare queste
+parole, si noterà come migliora la capacità di \textbf{descrivere i giochi} e le
+proprie esperienze ludiche, e di essere più precisi. È un invito a ``obbligarsi a
+essere più precisi e ad avere una mentalità più critica''. La lezione di
+Ruggero sull'\textbf{involvement}, promette Daniele, sarà ``fenomenale'' e
+``vi aprirà la testa''.
+
+\paragraph{Approfondimento: anche i libri faticano a definire il ``fun''.} La
+difficoltà che il divieto vuole far emergere è visibile anche nei testi di game
+design. Schell, in \emph{The Art of Game Design}, prova a definire il \emph{fun}
+e propone ``piacere con sorprese'' (\emph{pleasure with surprises}), ammettendo
+subito che è strano poter usare una parola per tutta la vita, sapendo con
+certezza che cosa significa, senza riuscire a esprimerla chiaramente quando
+qualcuno lo chiede; e invita a mettere alla prova la definizione con
+controesempi. La sua lente sul \emph{fun} (\emph{The Lens of Fun}) si limita,
+non a caso, a chiedere quali parti del gioco siano \emph{fun} e \emph{perché}.
+Anche \emph{immersion} ha molte letture: in \emph{21st Century Game Design},
+Bateman e Boon la descrivono, tra l'altro, come la capacità di ``perdersi''
+nel mondo artificiale presentato dal gioco, legata alla sospensione
+dell'incredulità e ai giochi di mimesi. Sono significati diversi sotto la stessa
+parola: proprio il motivo per cui, in un documento di design, conviene dire
+quale si intende.
+
+% ---------------------------------------------------------------------
+\section{Chi crea, chi gioca, chi facilita}
+\label{a1:sec:ruoli-esperienza}
+
+Un'altra distinzione importante è quella tra \textbf{chi crea}, \textbf{chi
+gioca} e \textbf{chi facilita}. Spesso, quando si fa un gioco, lo si fa provare
+di persona a chi gioca. Ma ``la norma dei giochi pubblicati non funziona così'':
+quando si pubblica un gioco non si vede chi lo compra e chi lo gioca, e non si
+sa se qualcuno, a casa propria con i propri amici, segue le regole alla lettera e
+interpreta correttamente quello che il designer aveva descritto. Quindi già in
+fase di progettazione bisogna tenere a mente \textbf{chi sta facendo game design
+e chi sta giocando}.
+
+E nei giochi a evento, nei giochi pervasivi, nei giochi di ruolo da tavolo e dal
+vivo (LARP) c'è un terzo pezzo del puzzle, ``importantissimo'': \textbf{chi
+facilita}. La domanda da farsi è: \textbf{il regolamento è scritto per chi gioca
+o per chi deve facilitare il gioco?} Bisogna abituarsi a pensare a tutte le
+persone coinvolte nell'esperienza.
+
+% ---------------------------------------------------------------------
+\section{Playtest e iterazione}
+\label{a1:sec:playtest}
+
+\subsection{Nessun gioco nasce perfetto}
+
+L'ultima voce del glossario è ``un'altra cosa importantissima'':
+\textbf{playtest} e \textbf{iterazione}. Il corso è \textbf{pragmatico}:
+``specialmente da parte mia'', dice Ruggero, non si vedranno teorie ``messe lì
+per fare accademia sul game design nelle nostre torri d'avorio''. Ci saranno
+teorie e framework, ma tutti estremamente pragmatici, perché l'obiettivo non è
+solo capire i giochi, ma \textbf{saperli fare e iterare}.
+
+Playtest e iterazione sono \textbf{inevitabili} nel game design, perché
+\textbf{nessun gioco nasce perfetto}, soprattutto perché le persone sono
+diverse: un gioco perfetto per una persona può essere incomprensibile per
+un'altra. Chi progetta giochi per altre persone deve capire, dopo averli fatti
+provare, \textbf{che cosa cambiare, che cosa sistemare, che cosa aggiungere, che
+cosa togliere}. Ci saranno lezioni su playtest, prototipazione, raccolta dei
+feedback, metodi etnografici. Ma bisogna abituarsi già ora all'idea che
+\textbf{non esiste la consegna definitiva}. A un certo punto i task vanno
+consegnati per forza di cose, ma, come diceva Daniele all'inizio, alla fine del
+corso gli studenti avranno un \textbf{prototipo}, ``che sarà un prototipo'', e
+gli strumenti per portare avanti il lavoro anche dopo.
+
+\subsection{L'aiuto dopo il corso}
+
+Non solo gli strumenti: anche l'aiuto dei docenti. Daniele racconta di aver
+portato a un editore, a Play\footnote{Probabilmente \emph{Play -- Festival del
+Gioco} di Modena; la trascrizione non permette di esserne certi.}, uno dei
+progetti realizzati l'anno precedente da due studenti, un gioco di ruolo in
+solitario (``un \emph{solo game} RPG molto, molto bello''). Se gli studenti
+vorranno trasformare il proprio lavoro in un prototipo vero e proprio, possono
+contattarlo: lo fa ``per lavoro, ma anche per passione''. Gestisce anche una
+community per aiutare i designer ``un po' depressi'' a rimettersi a progettare.
+
+Quindi: ``non sentitevi persi se durante la fase di iterazione vi sentite
+persi, è normale''.
+
+\subsection{Il dizionario comune e il production dictionary}
+
+Daniele riprende un punto detto ``benissimo'' da Ruggero e che secondo lui non è
+stato sottolineato abbastanza: il \textbf{dizionario comune} serve anche a
+\textbf{non perdersi} mentre si itera. Se da un'iterazione all'altra i
+documenti usano termini completamente diversi, e non c'è un dizionario di base,
+ci si perde.
+
+Nel videogioco, una delle primissime cose che un designer fa quando entra in
+un'azienda è il \textbf{production dictionary}: si annota, in un file privato,
+tutte le parole che usano i colleghi, per allinearsi al dizionario comune
+dell'azienda, perché lì su un prototipo possono lavorare anche cento persone.
+Nel gioco da tavolo non si fa molto, perché il mondo dell'analogico è
+``talmente più piccolo''; ma serve comunque imparare un \textbf{dizionario
+minimo}, dai docenti e dai professionisti. E il corso ne darà una parte,
+entrando nel dettaglio di alcuni termini e framework.
+
+\paragraph{L'esempio del feedback.} Perché serva, lo mostra un esempio. Si
+testa un gioco e ci si annota come feedback: ``questo gioco deve essere più
+divertente''. Che cosa vuol dire? Come lo si migliora? Quella frase non dà
+elementi utili. Se invece si scrive che deve essere \textbf{più adrenalinico},
+\textbf{più frenetico}, \textbf{più rilassato}, \textbf{più cozy}, o
+\textbf{più bilanciato matematicamente}, si sa dove andare a lavorare.
+
+\paragraph{Approfondimento: la regola del ciclo.} Il principio ``nessun gioco
+nasce perfetto'' ha un nome preciso in \emph{The Art of Game Design}: è la
+\textbf{Rule of the Loop}, la regola del ciclo. ``Più volte provi e migliori il
+tuo design, migliore sarà il tuo gioco''. Schell precisa che non è una lente,
+cioè un punto di vista, ma ``una verità assoluta'', senza eccezioni: ci saranno
+momenti in cui si cercherà di convincersi che ``questa volta il design è così
+buono che non serve testarlo'', e ogni volta se ne pagherà il prezzo. Ed è
+interessante la ragione per cui la regola pesa di più sul digitale: secondo
+Schell il tempo e il denaro necessari per provare e correggere un sistema sono
+molto maggiori nei videogiochi che nei giochi tradizionali. Per un gioco di
+carte o da tavolo, con il tempo per provarlo e cambiarlo più e più volte, il
+consiglio è semplicemente di farlo. Il gioco analogico è, da questo punto di
+vista, la palestra ideale dell'iterazione.
+
+% ---------------------------------------------------------------------
+\section{Tabletop Simulator}
+\label{a1:sec:tts}
+
+\subsection{Il software di settore}
+
+``Last but not least'': il corso usa un software, \textbf{Tabletop Simulator},
+che si compra su \textbf{Steam} e costa tra i \textbf{10 e i 20 euro} (``aspettate
+che vada in sconto, va in sconto ogni due per tre''). Daniele spiega perché:
+\begin{itemize}
+  \item è \textbf{il software di settore} del gioco da tavolo, quello che i
+        publisher usano per i prodotti digitali, interni ed esterni;
+  \item essendo su Steam, permette di fare \textbf{playtest} e di giocare con gli
+        amici di Steam. Daniele stesso sta testando lì il proprio gioco;
+  \item funziona anche su Mac: Windows o Mac, nessun problema.
+\end{itemize}
+Ci sarà una lezione apposita, di Ruggero, sulla creazione del proprio
+\textbf{modulo} di gioco.
+
+\paragraph{Che cosa non è.} Daniele chiarisce subito un ``fraintendimento
+gigantesco'', soprattutto per chi ha già esperienza: Tabletop Simulator
+\textbf{non richiede programmazione} e \textbf{non è un software per
+trasformare i giochi da tavolo in videogiochi}. È un software che
+\textbf{simula dei componenti fisici su un tavolo}: serve per giocare i board
+game in digitale. Simula anche la fisica: c'è perfino il comando per
+\textbf{ribaltare il tavolo} (``non usatelo ora'').
+
+\paragraph{La partnership mancata.} Da anni Daniele prova a fare una
+partnership con gli sviluppatori: due anni prima ha contattato l'azienda per
+acquistare delle chiavi per gli studenti, dato che il software si usa nei corsi.
+L'azienda ha risposto che non fa accordi commerciali. ``Credo sia la prima
+azienda nella mia vita che dice che non vuole che io le dia dei soldi''. Gli
+studenti dovranno quindi provare ad acquistarlo da sé; se i docenti riusciranno a
+darglielo, bene.
+
+\paragraph{La domanda di Gianmarco.} Gianmarco segue le lezioni da un computer
+aziendale ``super chiuso'', su cui non può installare Steam: deve usare Tabletop
+Simulator durante le lezioni? Ruggero risponde che per la lezione dedicata è
+meglio poter seguire e rifare in diretta. Ma il software non sarà richiesto
+necessariamente per il project work: un gruppo potrebbe fare un gioco pervasivo
+o un gioco di ruolo, non un gioco da tavolo. Essendo un software di settore, è
+comunque bene conoscerlo. Ruggero aggiunge che le versioni non ufficiali che
+circolano non permettono di giocare in molti, e quindi non servono per
+playtestare o giocare insieme.
+
+\subsection{Una dimostrazione}
+
+Daniele mostra il software aperto da Steam:
+\begin{itemize}
+  \item si può creare una partita \textbf{single player} o \textbf{multiplayer};
+        per giocare tra compagni si crea un server multiplayer e ci si aggiunge
+        come amici su Steam;
+  \item si dà al server un nome, un numero di giocatori, eventualmente una
+        password; creato il server, si apre la scelta dei giochi;
+  \item ci sono giochi gratuiti, giochi da acquistare (DLC, non obbligatori) e
+        soprattutto un \textbf{Workshop} ``ampissimo'', con decine di migliaia di
+        giochi caricati dagli utenti: ``se c'è un board game che conoscete,
+        quel board game è su Tabletop Simulator, giocabile dal Workshop''.
+        L'esempio mostrato è l'open beta ufficiale del gioco da tavolo di
+        \emph{Slay the Spire}\footnote{La trascrizione dice ``Slade Spire''.}:
+        molti publisher, per farsi pubblicità, mettono il proprio gioco in demo o
+        giocabile in digitale;
+  \item c'è un \textbf{tutorial} iniziale che spiega come muoversi sul tavolo;
+        con \emph{Esc} e \emph{Help} si trovano i comandi da tastiera.
+\end{itemize}
+
+\subsection{Il primo task}
+
+Il primo (e per ora unico) task è questo: \textbf{entro il 10 ottobre}, giorno
+della lezione di Ruggero su Tabletop Simulator, giocare \textbf{tre o quattro
+volte in totale}, online, tra compagni di corso o con amici. Non si tratta di
+imparare a creare moduli, ma di prendere la mano \textbf{lato giocatore}: aprire
+il software, impararne i comandi, giocare. ``Per me potete anche andare a
+prendere domino o mahjong'' (``mahjong è bellissimo tra l'altro'', aggiunge
+Daniele, che sta facendo un videogioco sul mahjong), o il pachisi o il go. Gli
+anni precedenti si chiedeva a ciascuno di proporre ai compagni un gioco da
+tavolo che apprezzava. È anche un modo per conoscersi. Ruggero spiega il
+perché: usarlo per giocare è facile e intuitivo, usarlo per creare moduli è più
+complesso; ma chi arriva al 10 ottobre avendo già aperto il software e giocato,
+troverà più intuitivo anche creare un modulo. E l'avvertimento: ``non riducetevi
+all'ultimo, non fate una partita il 9 sera''.
+
+\subsection{Tabletopia e altri vantaggi}
+
+Tancredi racconta di aver provato a caricare un suo gioco su
+\textbf{Tabletopia}. ``Questo è un vaso di Pandora'', risponde Daniele.
+Tabletopia è molto usato, ma secondo lui il suo strumento di creazione dei moduli
+è pessimo, ed è il motivo per cui la maggioranza dei moduli ufficiali dei
+publisher è su Tabletop Simulator. Tabletopia ha un vantaggio vero, è
+\textbf{gratuito}, ma ha scelte di ``qualità della vita'' poco felici.
+
+Tabletop Simulator ha invece un vantaggio ``fenomenale'' che si tende a
+sottovalutare: essendo su Steam, \textbf{il modulo si pubblica direttamente sul
+Workshop di Steam}; si possono invitare gli amici a iscriversi e giocare con
+loro, purché abbiano un account Steam. Rispetto ad altri software da imparare,
+costa ``tra i 10 e i 20 euro, ragazzi: si parla proprio di spiccioli''. ``Io con
+Tabletop Simulator ci ho playtestato la vita''.
+
+Altre caratteristiche utili:
+\begin{itemize}
+  \item si possono creare \textbf{moduli non elencati} (\emph{unlisted}),
+        perfetti da passare a un publisher prima che il gioco sia pubblicato:
+        non sono pubblici, e nessuno può rubare i materiali;
+  \item il software ha una grafica datata (``\emph{World Art 1998}'', scherza
+        uno dei docenti), ma lo stanno portando su \textbf{Unity} con molti investimenti
+        e aggiornamenti; ascolta la comunità e introduce funzioni utili anche per
+        chi fa design;
+  \item il suo server Discord è molto frequentato, e c'è un canale YouTube
+        dedicato solo al design di giochi di carte\footnote{La trascrizione ne
+        riporta il nome come ``Distraction Maker''; non è verificabile.} con un
+        server Discord dove si fanno playtest: il 99\% è su Tabletop Simulator;
+  \item molti editori, quando si propone loro un gioco da tavolo,
+        \textbf{chiedono se c'è un modulo per Tabletop Simulator}.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Le domande a Daniele: il tema del project work}
+\label{a1:sec:domande-daniele}
+
+Daniele ha ``un minuto'' per rispondere alle domande sul corso prima di dover
+andare. Uno studente chiede, ``giusto per curiosità'', se il project work avrà
+un tema o sarà libero.
+
+\begin{itemize}
+  \item C'è un \textbf{mandate}, che i docenti propongono ogni anno e
+        aggiornano leggermente; verrà presentato il \textbf{25 settembre}.
+        ``Non facciamo spoiler''. Conterrà quello che si chiede di fare e quello
+        che non si chiede: dei \textbf{must}, dei \textbf{must not} e dei
+        \textbf{nice to have}.
+  \item Verrà chiesto di lavorare su un'\textbf{idea originale} che non si è
+        portata al corso: originale nel senso di \textbf{creata apposta}, non
+        nel senso di ``mai vista prima''.
+  \item L'idea va \textbf{partorita insieme}. Altri anni alcuni studenti hanno
+        provato a imporre la propria idea al gruppo, ``e l'esperienza è stata
+        pessima per tutti''. Quindi: \textbf{non imponete le vostre idee, fate
+        brainstorming con gli altri}. Daniele, che fa ``molto spesso
+        brainstorming'', darà strumenti per farlo: nessuno arriverà impreparato
+        a quella lezione.
+\end{itemize}
+
+Ruggero aggiunge che il mandate è \textbf{abbastanza flessibile} perché tutti
+possano fare qualcosa che li interessi: ``l'ultima cosa che vogliamo è forzarvi a
+lavorare su qualcosa che non vi piace''. Bisogna lavorare su ciò che piace e per
+cui si ha uno stimolo personale, anche nella \textbf{tipologia} di gioco: nessuno
+sarà obbligato a fare un gioco di ruolo o un board game, e la lezione sui casi
+studio mostrerà quante forme diverse di gioco analogico il corso accetta.
+
+L'unica cosa da \textbf{non fare}, ``perché è contraddittorio per questo corso'',
+sono i \textbf{giochi grandi}: ``lo chiediamo per voi''. Niente progetti
+mastodontici\footnote{La trascrizione dice ``non fate delle cose da gnome'':
+probabilmente il nome di un gioco da tavolo molto grande e complesso, non
+ricostruibile con certezza.}, niente ``cose alla \emph{Dungeons \& Dragons}''.
+Si può fare un gioco di ruolo, ma con un'esperienza ``meno corposa'': ci sono
+tanti giochi di ruolo da 15 o 20 pagine, ``bellissimi, fichissimi'', che si
+possono leggere online. Il consiglio è farsi una cultura anche su
+\textbf{itch.io}, ``uno dei portali più importanti del gioco di ruolo
+internazionale'', di cui si parlerà anche nella parte di ricerca e sviluppo.
+
+Poi Daniele saluta (``noi ci vediamo venerdì a lezione'') e lascia la
+conduzione a Ruggero.
+
+% ---------------------------------------------------------------------
+\section{Le domande finali con Ruggero}
+\label{a1:sec:domande}
+
+\subsection{Le regole delle domande}
+
+Ruggero spiega che cosa vuol dire ``stare con lui''. Alla fine di ogni sua
+lezione ci saranno \textbf{almeno 20--30 minuti di domande} libere, \emph{free
+form}. Vuole che fare domande sia \textbf{normalizzato}: ``io gestisco malissimo
+l'\emph{horror vacui} e divento super cringe molto alla svelta se non ci sono
+domande in giro''. Sono benvenute le domande sulla lezione appena fatta, ma non
+solo: il corso è crossmediale, e anche le domande che vengono da
+\textbf{divagazioni}, da parti laterali, ``fatele''. Quello che sembra scontato o
+banale a uno studente può non esserlo per il docente, e viceversa; e può essere
+utile anche agli altri. ``Se vi sembrano stupide, fatele il doppio''. ``Magari
+sembro incazzato, ma vi giuro sono rilassatissimo. Non mordo, magari abbaio un
+po'\,''.
+
+\subsection{Come approcciarsi a Steam e Tabletop Simulator}
+
+Rita non ha mai usato né Steam né Tabletop Simulator e chiede come
+approcciarsi, e se c'è modo di mettersi d'accordo tra compagni su Discord, magari
+con un sondaggio sui giochi, per formare gruppi di gioco. Ruggero conferma: sul
+Discord dell'accademia c'è un \textbf{canale apposito per il corso}, ed è degli
+studenti. Lo possono usare per organizzarsi a giocare, per chiedere a un
+compagno di prestare un gioco, per domande tecniche (come si scarica, come si
+installa). ``Sarebbe proprio ideale che vi parlaste e vi organizzaste''.
+
+Anche perché, aggiunge con un ``piccolo spoiler'' (``nessuno vi ha detto
+niente''), se fossero i docenti a organizzare i gruppi di gioco, il task lo
+starebbero facendo loro. Bisogna \textbf{abituarsi a organizzare le sessioni di
+gioco}, perché arriveranno i task sul \textbf{playtest} e su come organizzarlo,
+e a quel punto si sarà ``meno disperati''. Sembra scontato, ma saper
+\textbf{organizzarsi per giocare in autonomia} ``vi sarà utilissimo come skill in
+questo settore, ve lo giuro''.
+
+\subsection{Il bilanciamento}
+
+Angelo confessa ``una paranoia grossissima'': ci saranno lezioni sul
+\textbf{bilanciamento}? ``Ma certo''. Sono proprio le lezioni di Marta sul
+development: il bilanciamento è di solito un tema che tocca \textbf{i developer
+più dei designer}. L'anno precedente c'era una sola lezione con Marta, e i
+docenti si sono resi conto che serviva andare ancora più a fondo: per questo
+quest'anno le lezioni sono due. ``Non è una paranoia, è una legittima domanda'':
+Ruggero insegna da anni, vede altri corsi, parla con altri docenti e studenti, e
+``mi incazzo spesso'' perché molti corsi di game design \textbf{non fanno
+bilanciamento}. I docenti volevano invece un corso che coprisse tutte le parti
+del game design: non solo l'idea del gioco, ma il bilanciamento, la produzione,
+i playtest, l'iterazione, la scrittura dei regolamenti.
+
+\subsection{Si può giocare con i docenti?}
+
+Una studentessa chiede se si può giocare con i docenti. Per motivi etici,
+durante il corso questo è limitato alle parti di \textbf{valutazione} dei giochi
+e di \textbf{tutoraggio}. Dopo il corso, ``nessun problema, almeno con me''.
+
+\subsection{Dove si trovano i giochi su Tabletop Simulator}
+
+Ruggero mostra dove si trovano i giochi: nella propria libreria di Steam, nella
+pagina di Tabletop Simulator, alla voce \textbf{Workshop}, dove ci sono ``più o
+meno 36.000'' giochi. Una studentessa scopre intanto che l'app di Steam per
+telefono è solo una \emph{companion app}: per registrarsi e giocare serve il
+PC.
+
+Per provare, chiede agli studenti un titolo:
+\begin{itemize}
+  \item \emph{Keep the Heroes Out}: non compare, ``non tutti i giochi ci sono,
+        perché molti publisher non li mettono''; forse, essendoci già una
+        versione del gioco su Steam, il modulo è stato tolto;
+  \item \emph{Magic: The Gathering}: ``almeno 50 moduli'', anzi ``123 pagine'';
+  \item \emph{Bang!}: tre moduli.
+\end{itemize}
+Bisogna fare attenzione: alcuni moduli sono in lingue specifiche (``magari il
+primo è in russo''), alcuni hanno già l'espansione, altri sono solo il gioco
+base. Conviene sfogliare e non fermarsi al primo risultato. E nel Workshop si
+trovano anche cose molto particolari: giochi fuori produzione, giochi vecchi,
+giochi ancora in prototipo.
+
+\subsection{I ruoli nei team e le dinamiche tra le persone}
+
+Uno studente torna sulla slide delle figure: nelle realtà piccole molti ruoli
+hanno ``il doppio o triplo cappello''. Quali ruoli restano distinti, e come si
+creano le sinergie tra persone con obiettivi diversi?
+
+Ruggero premette che l'ideale ``platonico'' è un ambiente di lavoro costruttivo,
+basato sulla fiducia e ``il più \emph{safe} possibile''; ma nell'industria non
+sempre è così, e le strutture variano moltissimo: alcuni publisher sono molto
+verticali, altri hanno ruoli già solidificati (se un publisher ha già i suoi
+developer e non sta crescendo, entrarci come developer è praticamente
+impossibile). ``Se prendiamo due aziende in Italia, vediamo due strutture
+interne completamente diverse''. Non esiste una scorciatoia per farsi assumere
+da un editore.
+
+Poi prende ``l'esempio più comune di tutti'', la media dei giochi da tavolo
+pubblicati (figura~\ref{a1:fig:relazioni}):
+\begin{itemize}
+  \item il \textbf{game designer} è una figura \textbf{esterna}, con un
+        \textbf{contratto a royalty} con il publisher;
+  \item la sua figura di riferimento è il \textbf{publisher} stesso, e la
+        conversazione designer--publisher è ``molto calda'';
+  \item se il publisher ha dei \textbf{developer}, il developer entra in questa
+        conversazione: designer e developer collaborano molto, e internamente
+        developer e publisher collaborano molto. Spesso, nei publisher piccoli,
+        è il publisher a fare le veci del developer;
+  \item \textbf{graphic design} e \textbf{illustrazione} tendono a parlare molto
+        con il publisher e \textbf{molto poco con il designer}. A meno che non si
+        tratti di uno studio indie molto piccolo, è difficile che il designer
+        sappia anche solo chi è l'illustratore prima che il gioco esca.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    ruolo/.style={draw, thick, rounded corners=3pt, fill=gray!12,
+                  minimum width=2.8cm, minimum height=0.9cm, align=center},
+    esterno/.style={draw, thick, dashed, rounded corners=3pt,
+                    minimum width=2.8cm, minimum height=0.9cm, align=center},
+    calda/.style={{Stealth[length=2.5mm]}-{Stealth[length=2.5mm]}, very thick},
+    tiepida/.style={{Stealth[length=2mm]}-{Stealth[length=2mm]}, thin, dashed}
+  ]
+  \node[esterno] (gd) at (0,0) {Game designer\\ \footnotesize esterno, a royalty};
+  \node[ruolo] (dev) at (5,1.4) {Developer\\ \footnotesize se c'è};
+  \node[ruolo] (pub) at (5,-1.4) {Publisher};
+  \node[ruolo] (art) at (10,-1.4) {Graphic designer\\ e illustratore};
+  \draw[calda] (gd) -- (dev);
+  \draw[calda] (gd) -- (pub);
+  \draw[calda] (dev) -- (pub);
+  \draw[calda] (pub) -- (art);
+  \draw[tiepida] (gd.south) to[bend right=25]
+     node[below, font=\footnotesize\itshape] {quasi nessun contatto} (art.south);
+  \node[draw, dotted, rounded corners=4pt, fit=(dev)(pub)(art), inner sep=8pt,
+        label={[font=\footnotesize\itshape]above right:interno al publisher (di solito)}] {};
+\end{tikzpicture}
+\caption{Le relazioni tipiche intorno a un gioco da tavolo pubblicato, secondo la
+risposta di Ruggero. Le frecce spesse indicano una collaborazione stretta e
+frequente; quella tratteggiata, un contatto quasi assente. Nei publisher piccoli
+il publisher fa spesso anche da developer.}
+\label{a1:fig:relazioni}
+\end{figure}
+
+\subsection{Fare da developer di sé stessi?}
+
+Rita chiede in chat se un designer può fare anche da developer del proprio
+gioco, o se Ruggero lo sconsiglia. In generale \textbf{lo sconsiglia}, per lo
+stesso motivo per cui si sconsiglia in altri media: i \textbf{darling}. Il
+designer ha delle meccaniche a cui è affezionato, e il developer a volte dovrà
+\textbf{tagliarle}; è molto difficile, se si è ``gestori di sé stessi'', tagliare
+cose che si vogliono nel gioco. ``È un po' come lasciare fare il lavoro di editing
+allo scrittore che ha già scritto il libro'': può rivedersi, certo, ma difficilmente
+cambierà cose che farebbe bene cambiare. Nelle lezioni con Marta si vedrà perché,
+e alla fine del corso ``non avrete dubbi nemmeno voi'' nel separare designer e
+developer.
+
+Ma tutto dipende dallo \textbf{scopo del progetto}: se si fa un gioco in tre,
+qualcuno quel lavoro deve farlo per forza, e magari il designer fa anche il
+developer, compensando con \textbf{più playtest}. ``Il mondo attuale e il mondo
+ideale sono due cose molto diverse, e lo vediamo non solo dai giochi ma dalla
+politica'', ma ``non entriamo in questo vaso di Pandora''.
+
+\subsection{Il ruolo indispensabile e la pubblicazione}
+
+Lo studente di prima ne trae una conclusione: senza game designer il gioco non
+esiste. ``Quello sicuramente''. Ma Ruggero coglie l'occasione per approfondire
+un punto che forse non era passato: \textbf{fare design di un gioco per
+pubblicarlo non è l'unica opzione possibile}. Un gioco non è ``meno gioco''
+se non è pubblicato da un editore. È legittimo mettere un gioco su itch.io in
+\textbf{print and play}, fare un gioco a evento senza venderlo, fare un
+\emph{murder party}, una escape room, un board game per una persona amica:
+``quell'esperienza lì non è meno gioco''. Dipende dall'obiettivo del progetto.
+
+Ruggero ha lavorato molto anche con le \textbf{scuole}, dove il publisher non
+esiste: è un gioco per le classi, e la figura più vicina è l'editoria scolastica,
+``che però non fa il publisher''. Ci sono compromessi diversi sulla materialità
+e su come il gioco si presenta, che si vedranno nella prototipazione e nei casi
+studio. Quindi l'unica figura che deve esserci sempre è \textbf{chi fa game
+design}, anche se magari non sa di chiamarsi game designer e non ha mai
+sentito parlare di game design: ``questo non la rende meno game designer''.
+
+\paragraph{Un libro consigliato.} Ruggero fa anche mentoring e gestisce gruppi
+di settore, e spesso gli chiedono che cosa leggere per imparare il game design.
+Non è il tipo che obbliga a leggere libri (``non vi obbligherò a leggere
+niente''), ma ce n'è uno che consiglia sempre, ed è il primo che ha scelto di
+leggere: \textbf{\emph{Rise of the Videogame Zinesters}} di \textbf{Anna
+Anthropy}\footnote{La trascrizione dice ``Anna Antrofi'' e ``Rise of the
+Videogames in Esters''.}. È un libro un po' datato, ma ancora reperibile; parla
+soprattutto di videogiochi, ma ``per l'80\%'' il contenuto si applica al gioco e
+al game design in generale. È un libro sulla \textbf{democratizzazione del gioco}:
+il gioco come strumento per parlare di sé e come \textbf{medium legittimo}. Come
+esistono film drammatici, tristi, intensi, possono esistere giochi su tematiche
+delicate, e se ne vedranno nei casi studio. Molti giochi fatti con questa
+direttiva non hanno un publisher, che tende a pubblicare ciò che dà un ritorno
+commerciale.
+
+\paragraph{Commerciale e personale.} ``Io spero che voi non farete giochi solo
+per scopo commerciale''. Certo, servono un tetto sulla testa, il cibo in
+tavola, un posto in cui dormire, e così si finisce per fare giochi che non sono
+il proprio gioco dei sogni. Spesso è un mix: Ruggero ha fatto giochi commerciali
+``per pagarmi l'affitto'' e giochi che voleva fare e su cui ha perso soldi,
+``sapendolo proprio che sarebbero stati un fallimento''. I giochi, come i libri e
+le canzoni, si fanno per molti motivi, e quelli commerciali di successo non sono
+più importanti degli altri. Tra i giochi della sua slide c'erano il gioco da
+tavolo ufficiale di \emph{Cyberpunk}\footnote{La trascrizione dice ``Cyberpunk
+del 1977'': quasi certamente un gioco legato a \emph{Cyberpunk 2077}.} e
+\emph{Marvel United}, su IP grosse e famose, ma anche giochi fatti di ``una
+candela e una busta su un tavolo''. E se gli si chiede quale preferisce in
+termini di contenuto, non sono quelli sui supereroi.
+
+\subsection{Il gioco di ruolo in Italia}
+
+Nicola, che è interessato soprattutto al gioco di ruolo e conosce già persone
+del settore, ha ``una leggera paura'': che chi studia game design finisca per
+fare il \textbf{freelance} a vita, ``perché non ci sarà mai un'occupazione per
+bene'', o il \textbf{copywriter}. Conosce un ragazzo che ha lavorato in quel
+mondo e che ora fa altro.
+
+Ruggero risponde che la maggioranza dei giochi nel suo portfolio sono giochi di
+ruolo, quindi il tema lo tocca da vicino, e che in Italia quello che dice Nicola
+``è semplicemente vero''. Molti publisher piccoli hanno una persona di
+riferimento che copre più ruoli: impagina, fa i playtest, fa un po' di
+development. È ``un settore economicamente completamente disastrato'', per
+motivi culturali che non apre: oggi in Italia è praticamente impossibile
+\textbf{vivere di giochi di ruolo}. Chi ci lavora lo fa nel tempo libero, al di
+fuori del lavoro principale, oppure coprendo molte altre cose: molti publisher
+italiani di giochi di ruolo pubblicano anche titoli esteri e localizzano, non
+fanno solo cose originali. ``È un grosso calderone''. Poi si ferma: ``questo è
+un \emph{rant}'', e ``i \emph{rant} tornano sempre'', ma non vuole che gli
+studenti escano dalla prima lezione ``con la disperazione nel cuore''. Ci sarà
+spazio per parlarne quando avranno gli strumenti per capirlo, ``per non farvi
+abbattere''.
+
+\subsection{Che cosa bisogna sapere già}
+
+Uno studente chiede se ci sono nozioni che dovrebbero già avere e che possono
+recuperare: per esempio, sente parlare di giochi ``German'' o ``American'' e non
+sa che cosa siano. Ruggero spiega l'organizzazione del corso:
+\begin{itemize}
+  \item le \textbf{prime due lezioni} sono di fondamenta. Questa era ``dall'alto'':
+        come è strutturato il corso, le tempistiche;
+  \item la \textbf{prossima lezione} è di tre ore di soli \textbf{casi studio},
+        ``a manetta, a raffica'', divisi per categorie e tipologie, con
+        ragionamenti su categorie e generi di gioco: lì si vedranno German,
+        American ``e anche altre più utili'';
+  \item nel resto del corso le terminologie specifiche sono inserite nelle
+        lezioni dedicate: il \textbf{paragame} nelle lezioni sul paragame, il
+        \textbf{modello matematico} nelle lezioni di Marta sul development.
+\end{itemize}
+Per ora agli studenti si chiede di sapere quello che si è visto oggi:
+meccaniche, dinamiche ed estetiche; le figure professionali, designer e
+developer; e soprattutto \textbf{game e play}.
+
+\subsection{Game e play: i quattro quadranti}
+
+``Specialmente \emph{game} e \emph{play}'', insiste Ruggero: è più difficile di
+quello che sembra, perché l'italiano non abitua a separare le due cose, ed è
+possibile averle usate per anni come sinonimi. Nella sua esperienza con chi si
+avvicina al design è ``uno dei punti più critici''. Spesso i commenti che si
+fanno sui giochi giocati sono commenti sul \emph{play} applicati al
+\emph{game}: ``il gioco non mi è piaciuto perché, giocando con Tizio, è successo
+questo''; ``il gioco mi sembra sbilanciato perché Tizio al tavolo ha fatto
+questo''.
+
+Separare \emph{game} e \emph{play} serve a capire quali giochi sono progettati
+bene e quali male, e soprattutto a riconoscere i \textbf{quattro possibili
+incroci} (figura~\ref{a1:fig:quadranti}): un gioco progettato bene che piace
+giocare; uno progettato male che non piace; uno progettato male che piace; uno
+progettato bene che non piace. ``Non è importantissimo in generale nella vita,
+ci sono cose più importanti'', ma per chi fa game design lo è: ``a volte vi
+chiederanno di lavorare su un gioco che non vi piace giocare, e quel gioco deve
+essere fatto bene lo stesso''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    cella/.style={draw, thick, minimum width=4.4cm, minimum height=1.9cm,
+                  text width=4.0cm, align=center}
+  ]
+  \node[cella, fill=gray!20] (a) at (0,0)     {\textbf{progettato bene}\\ e \textbf{mi piace} giocarlo};
+  \node[cella]               (b) at (4.4,0)   {\textbf{progettato bene}\\ ma \textbf{non mi piace} giocarlo};
+  \node[cella]               (c) at (0,-1.9)  {\textbf{progettato male}\\ ma \textbf{mi piace} giocarlo};
+  \node[cella, fill=gray!8]  (d) at (4.4,-1.9){\textbf{progettato male}\\ e \textbf{non mi piace} giocarlo};
+  \node[font=\footnotesize\itshape, above=0.15cm of a] {mi piace (\emph{play})};
+  \node[font=\footnotesize\itshape, above=0.15cm of b] {non mi piace (\emph{play})};
+  \node[font=\footnotesize\itshape, rotate=90, left=0.15cm of a, anchor=south]
+       {bene (\emph{game})};
+  \node[font=\footnotesize\itshape, rotate=90, left=0.15cm of c, anchor=south]
+       {male (\emph{game})};
+\end{tikzpicture}
+\caption{I quattro incroci tra la qualità del \emph{game} (come è progettato) e
+l'esperienza di \emph{play} (se piace giocarlo), descritti da Ruggero. Per un
+designer i quadranti ``scomodi'' sono i due fuori diagonale: un gioco può
+piacere pur essendo progettato male, e va saputo progettare bene anche un gioco
+che non piace.}
+\label{a1:fig:quadranti}
+\end{figure}
+
+\paragraph{La domanda di Tancredi.} Tancredi chiede conferma: il \emph{play}
+non è il ``giocare senza regole'', ma può essere anche il giocare a un gioco? Sì:
+il \emph{play} è l'\textbf{atto}, e può essere fatto con un \emph{game} o senza.
+E un \emph{game} può esistere senza che nessuno lo giochi: gli scacchi non sono
+meno scacchi perché in quel momento nessuno ci gioca. E se, giocando, una
+persona applica le regole in modo diverso? Allora \textbf{non si sta giocando
+quel gioco}.
+
+\subsection{House rule: il caso di Monopoly}
+
+Qui Ruggero fa un po' di \emph{foreshadowing} su una lezione di Daniele: il
+discorso degli \textbf{hack}, delle \textbf{house rule}, delle \textbf{mod},
+cioè di come modificare un gioco esistente. Il punto è che \textbf{un gioco
+modificato da una house rule è un altro gioco}: cambiando le regole cambiano
+necessariamente anche le \textbf{dinamiche} che ne derivano, e quindi
+l'esperienza. Si immagini \emph{Monopoly} in cui ogni turno si possa, volendo,
+prendere gratis dei soldi dalla banca: tutto il resto è identico, eppure il gioco
+cambia.
+
+E questo è talmente interiorizzato che ci sono regole che si applicano ``senza
+neanche rendercene conto''. Ruggero chiede quanto duri in media una partita a
+\emph{Monopoly}. Gianmarco: ``quattro ore''; altri: ``un pomeriggio''; un altro:
+``finché uno dei giocatori non aggiunge la regola: ora vince chi\ldots''. In
+realtà, \textbf{seguendo le regole scritte}, una partita non dura mai più di
+\textbf{un'ora e venti, un'ora e mezza}. La domanda che fa sempre, e la risposta
+è sempre la stessa: perché si pensa che \emph{Monopoly} duri tantissimo? Qual è
+la regola che nessuno rispetta?
+
+Uno studente indovina: \textbf{le aste}. Secondo il regolamento, se chi finisce
+su un terreno non lo compra, il terreno \textbf{va all'asta} tra i giocatori, e
+chiunque può aggiudicarselo. Molti invece giocano come se finire su un terreno
+desse solo la \emph{facoltà} di comprarlo o di metterlo all'asta\footnote{Più
+precisamente, nel regolamento ufficiale, se il giocatore che finisce su una
+proprietà libera decide di non comprarla, la banca la mette all'asta e tutti i
+giocatori possono fare offerte, compreso chi l'ha rifiutata. L'asta quindi non è
+una scelta del giocatore, ma la conseguenza obbligata del suo rifiuto.}. Con la
+regola applicata, di aste se ne fanno moltissime: all'ottavo turno ci sono già
+otto terreni assegnati, al ventesimo venti, la gente va in bancarotta
+velocissimamente e la partita dura un'ora e mezza. Anche le partite competitive
+di \emph{Monopoly}, nota Ruggero, durano un'ora e venti, un'ora e mezza.
+
+Uno studente obietta che giocava con le aste e durava comunque quattro ore.
+``Avete dei nemici con l'analisi paralisi'', ride Ruggero; e cita un'altra house
+rule tipica dell'infanzia: genitori che danno soldi per non far andare in
+bancarotta. Ma \textbf{la bancarotta è parte del gioco}: se la si toglie,
+\emph{Monopoly} non regge. Sul tema che \emph{Monopoly} vuole trattare, e sul
+suo antenato (\emph{The Landlord's Game}), ``non apriamo adesso un altro vaso di
+Pandora''.
+
+\paragraph{Approfondimento: Monopoly, la durata e le house rule nei libri.}
+L'esempio di Ruggero si ritrova quasi identico in \emph{The Art of Game Design}.
+Parlando del bilanciamento tra partite brevi e lunghe (\emph{Short vs. Long}),
+Schell scrive che \emph{Monopoly}, giocato secondo le regole ufficiali,
+``finisce spesso in circa novanta minuti'', ma molti giocatori trovano quelle
+regole troppo dure e le modificano, distribuendo premi in denaro e allentando i
+vincoli sull'acquisto delle proprietà: con l'effetto collaterale di far durare la
+partita molto di più, ``tipicamente tre ore, o anche di più''. Schell classifica
+le \textbf{house rule} come regole create dai giocatori in risposta a un
+difetto percepito dopo qualche partita. Anche \emph{Challenges for Game
+Designers}, nel capitolo sull'aggiungere e togliere meccaniche, parte dallo
+stesso gioco: il \emph{Parcheggio gratuito}, che per le regole originali non fa
+succedere nulla, mentre quasi tutti giocano con una house rule che dà un bonus a
+chi ci finisce sopra. Le due fonti confermano la lezione: una piccola regola
+cambiata cambia le dinamiche, e le dinamiche cambiano l'esperienza.
+
+\subsection{Il fine del game è il play?}
+
+Un altro studente commenta: va bene la distinzione, ma il fine del \emph{game} è
+il \emph{play}; quello che si vede è sempre l'effetto. Ruggero è d'accordo: di
+solito, se si fa un gioco, lo si fa per farlo giocare, come si scrive un libro
+per farlo leggere (anche se esistono, ed ``è già stato esplorato'', libri scritti
+per non essere letti e giochi per zero giocatori). Ma la distinzione serve a una
+cosa precisa: \textbf{separare, nel playtest, i feedback sul gioco dai feedback
+sul gruppo di gioco} e sulle sue dinamiche. Se una persona esce frustratissima da
+un playtest, non è necessariamente colpa del gioco; se una persona dice ``questo
+è il gioco migliore del mondo'', potrebbe non essere merito del gioco ma del
+gruppo. Capire a che cosa si riferisce un feedback serve a capire \textbf{dove
+iterare} il prototipo.
+
+Lo studente osserva che l'area è sfumata: alcuni giochi si basano proprio
+sull'avere le persone giuste al tavolo. Un gioco di \textbf{negoziazione} con
+giocatori abituati ai giochi ``multi-solitario'' diventa ingiocabile; e nei giochi
+a \textbf{economia chiusa} (cita \emph{Container}\footnote{La trascrizione cita
+anche un secondo titolo non ricostruibile (``Tokyo su Vigimarket'').}) un gruppo
+economicamente conservativo, che spende poco e non fa girare l'economia, fa
+durare la partita il doppio. Ruggero rilancia: e se il gioco dura il doppio,
+questa dinamica cambia la \textbf{percezione di peso} del gioco, le energie spese,
+quanto si è stanchi a fine partita. ``Tutto è collegato. \textbf{I giochi sono
+ecosistemi di meccaniche}, e cambiandone una, le altre cambiano di
+conseguenza''.
+
+\paragraph{La parola vietata, alla prova.} Lo studente aggiunge che ci sono giochi
+che ha trovato ``molto sbagliati, ma che mi divertono''. ``Attenzione: non si può
+dire \emph{divertimento}!'', lo ferma Ruggero; nelle presentazioni aveva lasciato
+correre, ``ma lì non vi avevo ancora letto la regola''. Lo studente ci prova:
+``giochi che poi voglio \textbf{rigiocare}'', anche se ``sono evidentemente
+sbagliati, rotti''. Ruggero apprezza, ma non vuole anticipare cose che meritano il
+loro tempo: se ne parlerà nelle lezioni sui framework e soprattutto in quella di
+\textbf{emotion design}, ``forse la mia lezione preferita del corso''. (Lo
+studente ammette che ``forse alla fine si gioca per quello, per l'emozione''.)
+
+\subsection{I giochi ``comunicati male''}
+
+L'ultima domanda corposa riprende un'affermazione di inizio lezione: ci sono
+giochi belli ma comunicati male. Qualche esempio? ``Mi basta girarmi per
+vederne 48'', risponde Ruggero indicando gli scaffali alle sue spalle. Più che
+titoli, elenca le \textbf{ragioni}:
+\begin{itemize}
+  \item \textbf{l'Italia localizza lentamente}. Basta guardare i premi del gioco
+        dell'anno in Italia: spesso vanno a giochi usciti due o tre anni prima in
+        Germania, Francia, Stati Uniti o Regno Unito, perché localizzare richiede i
+        suoi tempi. Il mercato italiano è quindi molto dipendente dall'estero,
+        ``molto impaurito'', e spesso aspetta che un gioco vada bene all'estero
+        prima di portarlo in Italia; e alcuni giochi ``perdono il treno'';
+  \item \textbf{il publisher originale chiude}: come si pubblica un gioco se non
+        c'è più l'azienda con cui fare un contratto? A Ruggero è successo più
+        volte;
+  \item \textbf{il dipartimento commerciale italiano non sa comunicare il gioco}:
+        si fa male un'edizione, la stampa vende pochissimo e non viene più
+        ristampata;
+  \item \textbf{la scala del mercato}: in Italia un gioco da tavolo di peso medio
+        (un \emph{eurogame}, un \emph{German}) che vende 1.500 copie ``è tanto'';
+        all'estero se ne vendono magari 10.000. Con 10.000 copie in inglese ci
+        sono i soldi per una campagna di comunicazione: un trailer, i
+        recensori, i tutorial online. In Italia tutto questo è ``ridotto all'osso'',
+        e la cosa si riflette su stampa e divulgazione: anche i canali per
+        informarsi su un gioco prima di comprarlo sono pochi (se ne parlerà nella
+        lezione su ricerca e sviluppo). Un gioco spesso non arriva al mercato non
+        perché sia brutto, ma perché l'editore non lo sa comunicare, ne fa poche
+        copie e va fuori produzione;
+  \item \textbf{il tempismo}: party game progettati nel 2019 e usciti nel 2020, in
+        pieno Covid, quando non si poteva giocare al tavolo, sono falliti tutti, e
+        gli editori ci hanno perso. ``Non potevano immaginarselo'';
+  \item \textbf{i temi caldi}: dopo l'invasione russa dell'Ucraina e la guerra in
+        Palestina, alcuni editori non pubblicano o non localizzano giochi
+        strategici e di guerra. Ruggero ha lavorato a \textbf{\emph{Status}}, un
+        gioco sulla geopolitica che tocca, tra gli altri temi, l'invasione russa
+        dell'Ucraina e il genocidio in Palestina, e alcuni editori che di
+        solito localizzano i loro giochi (per esempio il partner di riferimento in
+        Russia) non lo hanno localizzato per motivi politici.
+\end{itemize}
+Lo studente voleva capire che cosa voglia dire comunicare male: non metterci
+abbastanza energia, o comunicare una cosa per un'altra, ``come il trailer
+sbagliato, che poi vai al cinema e ti trovi un altro film''. ``È un mix'', e la
+domanda ``era complessa e meritava più spazio''.
+
+\subsection{I giochi di carte collezionabili e i saluti}
+
+L'ultima domanda (``posso rompere le balle un'ultima volta?'') riguarda i
+\textbf{giochi di carte collezionabili}: funzionano con le stesse regole dei
+giochi da tavolo? Se ne parlerà alla prossima lezione: è proprio il motivo per
+cui la lezione sui casi studio dura tre ore, perché ogni genere di gioco ha le
+sue dinamiche e le sue regole, e anche il modo di pubblicare cambia molto tra un
+TCG, un gioco di ruolo da tavolo, un LARP e un gioco pervasivo.
+
+Ruggero saluta: le email dei tre docenti sono all'inizio delle slide, la
+registrazione arriverà, ``ci si vede questo venerdì''.
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Il corso di \textbf{Analog Game Design} (seconda edizione) dura circa tre
+        mesi, fino a dicembre, ed è tenuto da tre docenti principali:
+        \textbf{Daniele} (narrative design, gioco di ruolo, fiction),
+        \textbf{Ruggero} (game design, ricerca e sviluppo) e \textbf{Beatrice}
+        (giochi pervasivi), con tre ospiti su RNG, development e game production.
+  \item Lo scopo è formare \textbf{autori analogici} consapevoli: strumenti da
+        usare anche fuori dal corso, non il ``gioco dei sogni''. Il corso è
+        \textbf{intersezionale} (nessuna lezione dedicata a un solo tipo di
+        gioco), \textbf{cross-generazionale}, \textbf{pratico e adattabile},
+        basato sulle \textbf{domande} (nessuna domanda è stupida), sul
+        \textbf{feedback} invece che sul voto e sul \emph{fail forward}.
+  \item Il \textbf{project work} si fa in tre gruppi da tre, formati dai docenti;
+        pitch il 12 ottobre, sviluppo nelle due pause, tutoraggi il sabato,
+        consegna il 4 dicembre, presentazione l'11 e giornata finale con gli
+        editori il 14. Si valutano documentazione, presentazione,
+        autovalutazione, crescita e atteggiamento.
+  \item \textbf{Niente intelligenza artificiale} nel corso: i publisher
+        rifiutano pitch e prototipi con immagini generate, i regolamenti scritti
+        dall'IA descrivono la stessa meccanica in modi diversi, e soprattutto chi
+        la usa perde l'occasione di imparare. Un prototipo può essere fatto a
+        matita.
+  \item Le \textbf{figure dell'industria}: game designer, game developer,
+        editor, publisher, sales e marketing, graphic designer, illustratore,
+        sensitivity reader (che non è un censore) e producer. Nelle realtà
+        piccole una persona copre più ruoli.
+  \item Nell'analogico il \textbf{game designer} progetta l'esperienza creando
+        le meccaniche; il \textbf{game developer} fa da \textbf{mediatore} con il
+        publisher (bilanciamento, modelli matematici, adattamenti). Pretendere
+        che il proprio gioco non venga modificato è un \emph{red flag}.
+  \item Il \textbf{marketing} non decide che cosa pubblicare ma come; è
+        un'azione, ed esiste anche se lo si ignora.
+  \item In \textbf{Italia} il gioco è ancora visto come infantile, il mercato
+        punta sulla localizzazione e investe poco su giochi e designer interni;
+        all'estero (soprattutto dalla Germania in su) ci sono tradizione adulta,
+        premi di prestigio e developer interni.
+  \item \textbf{Game} è l'artefatto (le regole, il sistema, l'oggetto);
+        \textbf{play} è l'atto di giocare. Si fanno giochi, non giocattoli.
+        Separarli serve a distinguere i feedback sul gioco da quelli sul gruppo
+        e a riconoscere i quattro incroci tra ``progettato bene/male'' e ``mi
+        piace/non mi piace''.
+  \item \textbf{MDA}: meccaniche (regole scritte), dinamiche (regole in azione),
+        estetiche (esperienza, non grafica); nel \textbf{DPE}: design, play,
+        experience.
+  \item \textbf{Parole vietate} in ogni materiale scritto: \emph{fun},
+        \emph{immersion}, \emph{entertainment} (divertimento, immersione,
+        intrattenimento). Bisogna trovare parole più precise.
+  \item Distinguere \textbf{chi crea, chi gioca e chi facilita}; nessun gioco
+        nasce perfetto: \textbf{playtest e iterazione} sono inevitabili, e un
+        \textbf{dizionario comune} aiuta a non perdersi.
+  \item \textbf{Tabletop Simulator} è il software di settore per giocare (non
+        creare videogiochi) i giochi da tavolo in digitale. Primo task: giocarci
+        tre o quattro volte entro il 10 ottobre.
+  \item Una \textbf{house rule} crea un altro gioco: \emph{Monopoly} con le aste
+        applicate come da regolamento dura circa un'ora e mezza.
+\end{itemize}
