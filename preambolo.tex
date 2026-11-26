@@ -1,0 +1,57 @@
+% Preambolo comune al libro completo (main.tex) e ai volumi autonomi (libro-*.tex).
+\usepackage[margin=1in]{geometry}
+%\usepackage[italian]{babel}, \usepackage[T1]{fontenc},
+\usepackage[utf8]{inputenc} \usepackage{booktabs}
+\usepackage{amsmath, amsfonts}
+\usepackage{graphicx}
+\usepackage{enumitem, url, siunitx, comment, booktabs}
+\usepackage[colorlinks=true, linkcolor=blue]{hyperref}
+
+\usepackage{amssymb, amsthm, algpseudocode}
+\usepackage{bm}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc, arrows.meta,positioning,calc,fit}
+
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{remark}{Remark}[chapter]
+\newtheorem{example}{Example}[chapter]
+\newtheorem{question}{Question}[chapter]
+
+
+% Indice: spazio piu' largo per i numeri lunghi (es. 0.9.10, 2.1.10.3)
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\l@chapter}{1.5em}{2.4em}{}{}
+\renewcommand*\l@section{\@dottedtocline{1}{1.5em}{3.3em}}
+\renewcommand*\l@subsection{\@dottedtocline{2}{4.8em}{4.3em}}
+\makeatother
+
+% ---------------------------------------------------------------------
+% Figure: le immagini tratte dalle slide e dalle dispense delle lezioni
+% ---------------------------------------------------------------------
+\usepackage{morefloats}
+\extrafloats{150}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.6}
+\renewcommand{\textfraction}{0.12}
+\renewcommand{\floatpagefraction}{0.7}
+
+% \slidefig{file}{didascalia}{fonte}{etichetta}
+% Inserisce una slide (o un collage di slide) con didascalia e fonte.
+\newcommand{\slidefig}[4]{%
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.92\textwidth,height=0.42\textheight,keepaspectratio]{#1}
+    \caption[#2]{#2 {\footnotesize\textit{(Fonte: #3.)}}}%
+    \label{#4}
+  \end{figure}}
+
+% ---------------------------------------------------------------------
+% Copertine dei volumi e delle parti
+% ---------------------------------------------------------------------
+\input{copertine}
