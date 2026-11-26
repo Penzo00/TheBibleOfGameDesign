@@ -1,0 +1,419 @@
+% =====================================================================
+%  Conferenze, Zagarolo (On The Road), giorno 2 — Intervista 2
+%  Il debito tecnico nei videogiochi
+%  Fonte: trascrizione automatica "Track 16". Intervista in italiano ad
+%  Andrea, direttore tecnico con oltre sedici anni di esperienza, con
+%  domande dal pubblico. La trascrizione è molto rovinata: nomi propri e
+%  termini tecnici sono ricostruiti e segnalati in nota.
+%  Etichette con prefisso "c3-2:". Nessun pacchetto aggiuntivo.
+% =====================================================================
+
+\chapter[Il debito tecnico]{Il debito tecnico: riconoscerlo, prevenirlo,
+gestirlo}
+\label{cap:c3-2-debito-tecnico}
+
+Dopo due giorni di interventi su carriera, publishing ed eventi, il moderatore
+annuncia un tema ``un po' più tecnico'': il \textbf{debito tecnico}, qualcosa che
+``prima o poi riguarderà tutti voi, in un modo o nell'altro''. Come si riconosce,
+come si previene, come si aggira, e che cosa cambierà con l'intelligenza
+artificiale. L'intervista è in italiano (con traduzione sullo schermo per gli
+ospiti stranieri). Il capitolo è organizzato così:
+\begin{enumerate}
+  \item l'ospite (sezione~\ref{sec:c3-2-ospite});
+  \item che cos'è il debito tecnico: tre categorie
+        (sezione~\ref{sec:c3-2-definizione});
+  \item un caso di studio: il porting di un sandbox in tre mesi
+        (sezione~\ref{sec:c3-2-rimworld});
+  \item Unreal Engine 5 e le tecnologie ``scintillanti''
+        (sezione~\ref{sec:c3-2-ue5});
+  \item riconoscere e contenere il debito (sezione~\ref{sec:c3-2-riconoscere});
+  \item le domande del pubblico: stime, IA, delega, scadenze, conseguenze umane,
+        metriche, cultura tecnica (sezione~\ref{sec:c3-2-domande}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'ospite}
+\label{sec:c3-2-ospite}
+
+\textbf{Andrea}\footnote{Il moderatore lo presenta come ``Andrea Sancio'', ma il
+cognome è incerto. Nella presentazione dice anche che lavora ``con Ziggler e
+Giurano'', con ogni probabilità una storpiatura di Zynga e Take-Two.} è un
+\textbf{direttore tecnico} con oltre \textbf{sedici anni di esperienza}. Oggi è
+direttore tecnico per il mobile presso \textbf{Take-Two/Zynga}\footnote{Nella
+trascrizione ``Teltu Zinga'' e ``Teltu''.}, nello studio di \textbf{Londra}, che si
+occupa di portare su mobile i progetti più importanti di Take-Two.
+
+In precedenza:
+\begin{itemize}
+  \item ha lavorato per tre anni in uno studio\footnote{La trascrizione riporta
+        ``da 10 di Zoom per 3 anni, a titoli narrativi, a moiti come
+        Masquerade'': lo studio non è ricostruibile; ``Masquerade'' fa pensare a un
+        titolo della serie \emph{Vampire: The Masquerade}.} su \textbf{titoli
+        narrativi};
+  \item è stato in \textbf{Double Eleven}\footnote{Trascritto ``della
+        Politeven'' e, più avanti, ``Dopo l'Ileven''.}, studio specializzato in
+        grandi \textbf{porting}, tra cui \emph{Red Dead Redemption} su
+        \textbf{Switch}, \emph{RimWorld}\footnote{Trascritto ``Dream World'',
+        ``Green World'' e ``il rimuovo''.} e lavori su \emph{Fallout 76}.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Che cos'è il debito tecnico}
+\label{sec:c3-2-definizione}
+
+Andrea definisce il debito tecnico come
+\begin{quote}
+la distanza tra il progetto che hai oggi e quello che avresti potuto avere.
+\end{quote}
+La sua immagine: quando si compra un vestito online, sulla modella è bellissimo;
+poi arriva a casa e non è affatto la stessa cosa. Quello è ``un progetto con tanto
+debito tecnico''.
+
+\subsection{Tre categorie}
+
+\begin{description}
+  \item[Debito strutturale.] Nasce da decisioni prese \textbf{prima ancora di
+        iniziare} il progetto: la \textbf{timeline} (``si fa in due anni''), il
+        \textbf{budget}, la composizione del \textbf{team}. Ognuna di queste
+        decisioni può generare debito tecnico, perché costringe a ricorrere a
+        scorciatoie quando qualcosa non va.
+  \item[Debito emergente.] Si è fatto tutto bene, ma \emph{durante} il lavoro
+        succede qualcosa. Un sistema elegante sulla carta, che funziona bene,
+        viene provato dai designer e risulta ``orribile''. Oppure arrivano
+        decisioni sul momento. Il classico, a metà tra strutturale ed emergente:
+        il gioco doveva essere single player e un giorno diventa
+        \textbf{multiplayer}. ``Un disastro, ovviamente.''
+  \item[Debito deliberato.] Non è sempre negativo: a volte il debito tecnico è
+        una \textbf{scelta}. Per esempio, per rispettare una milestone il team
+        decide di prendere delle scorciatoie. L'importante è che si crei un
+        \textbf{task} e che poi si torni a sistemare il problema.
+\end{description}
+
+\subsection{Il debito come prestito}
+
+In questo senso il debito tecnico è come un \textbf{prestito}: chiedere un prestito
+a una banca non è sempre negativo, può aiutare ad accelerare o a ottenere un
+risultato prima. Ma sul prestito si pagano gli \textbf{interessi}: se li paghi, va
+tutto bene; se non li paghi, o se intanto accumuli altro debito, sei nei guai.
+
+% ---------------------------------------------------------------------
+\section{Un caso di studio: il porting di un sandbox in tre mesi}
+\label{sec:c3-2-rimworld}
+
+\subsection{Una first playable impossibile}
+
+Il moderatore ricorda un progetto di Andrea: il porting di un \textbf{sandbox}
+molto complesso, \emph{RimWorld}, con una scadenza di \textbf{tre mesi} per la prima
+versione giocabile. Strutturalmente era quasi tutto in ordine: ottimo team, budget,
+timeline. Ma il contratto era stato firmato prima che arrivasse lui, con alcune
+scelte già prese per default\footnote{Il passaggio sulle parti del contratto è
+molto rovinato nella trascrizione (``il PAPOR era una grandissima azienda che
+all'epoca stava gestendo una piattaforma''); il senso generale è che il contratto
+era stato definito con un partner molto grande prima del coinvolgimento del
+direttore tecnico.}, e tra queste c'era una \textbf{first playable entro tre mesi}.
+
+Richieste del genere non sono rare. Il problema è che, quando si pensa a una first
+playable di tre mesi, si immagina qualcosa di semplice: un personaggio che corre,
+salta, due nemici che si muovono. Ma in un sandbox come \emph{RimWorld} si muove
+``un intero pianeta''. Ed era un gioco che arrivava già con \textbf{molto debito
+tecnico}: oggi famosissimo, era nato dal lavoro di un \textbf{singolo
+sviluppatore}, in \textbf{Unity}, violando moltissime \emph{best practice}. Una
+first playable in tre mesi avrebbe significato avere in tre mesi
+\textbf{il 99\% del gioco funzionante}, con un enorme spreco di tempo.
+
+\subsection{Rinegoziare il contratto}
+
+Andrea chiese di \textbf{rinegoziare} e convinse sia il management sia il cliente
+che fosse necessario cambiare i requisiti iniziali, per il bene del progetto. Fu,
+dice, ``una serie di fortunati eventi'':
+\begin{itemize}
+  \item c'era un rapporto di \textbf{fiducia};
+  \item Double Eleven era un'azienda \textbf{molto tecnica}, con un fondatore
+        tecnico: parlavano ``la stessa lingua'';
+  \item spiegò i problemi e le ripercussioni, e fu ascoltato quasi subito.
+\end{itemize}
+In un primo momento cercarono un compromesso (una versione semplificata per
+rispettare la scadenza), ma ogni strada portava a concludere che quella scadenza non
+era sostenibile. Alla fine il cliente capì: \textbf{non si spostò la pipeline}, si
+spostò solo una \textbf{milestone}. Cosa non frequente, ma ``fa parte del lavoro''.
+
+% ---------------------------------------------------------------------
+\section{Unreal Engine 5 e le tecnologie ``scintillanti''}
+\label{sec:c3-2-ue5}
+
+\subsection{Lo tsunami di Unreal Engine 5}
+
+Il moderatore chiede delle differenze tra \textbf{Unreal Engine 5} e il più
+collaudato \textbf{Unreal Engine 4}\footnote{Nella trascrizione ``Ariane Gin,
+Ariane Gin 5'' e ``MG4''.}. Per Andrea l'arrivo di UE5 è stato ``uno tsunami''. Chi
+lavora nel settore sa che è diventato un buon motore solo con la \textbf{versione
+5.6}. Ma un ottimo marketing aveva convinto tutti che con le nuove tecnologie si
+potesse fare qualunque cosa, e molti studi le adottarono subito. I problemi:
+\begin{itemize}
+  \item molte tecnologie erano \textbf{premature}, dichiaratamente
+        \textbf{sperimentali}: chi usa una tecnologia sperimentale sa già che
+        dovrà continuare ad aggiornarla, perché la cambiano ``sotto il naso'';
+  \item al rilascio c'era \textbf{pochissima documentazione};
+  \item gli studi costruirono subito mondi complessi facendo molte cose in modo
+        scorretto: intere città costruite \textbf{senza rispettare le griglie del
+        World Partition}\footnote{Trascritto ``Notteborg Partition''.}, oppure
+        piene di \textbf{luci} dinamiche troppo grandi.
+\end{itemize}
+Su uno di questi progetti Andrea ha passato \textbf{due anni} solo a
+\textbf{rifattorizzare}, ricreare e riottimizzare.
+
+\subsection{Quando adottare una nuova tecnologia}
+
+Le tecnologie nuove sono ``scintillanti'', ma una tecnologia appena uscita è di
+solito instabile; se lo sviluppatore stesso la dichiara \textbf{sperimentale}, è
+una \textbf{grossa red flag}. Andrea distingue tre casi.
+\begin{enumerate}
+  \item \textbf{Usarla} se è un \textbf{match perfetto} con ciò che serve al
+        gioco: svilupparla da sé richiederebbe moltissimo tempo e, con un budget
+        adeguato, conviene accettare il debito tecnico e sistemare le cose man mano
+        che escono le nuove versioni.
+  \item \textbf{Non usarla} quando non ha senso. Nello stesso progetto si era
+        deciso di usare per forza il sistema \textbf{Mass}\footnote{Trascritto
+        ``mascherate''. Si tratta con ogni probabilità del framework Mass di Unreal
+        Engine per simulare grandi folle.} per la \textbf{folla}; ma, girando per la
+        città, non c'erano mai più di 15--20 pedoni. ``Stavi usando un cannone''.
+        Con sistemi più semplici, più facili da gestire, non ci sarebbe stato
+        debito tecnico. Imparare una nuova tecnologia significa avere una o due
+        persone che sanno impostare un sistema molto diverso dal solito; se poi
+        quelle persone se ne vanno, nessuno sa come colmare il vuoto.
+  \item Spesso la scelta giusta è \textbf{la più conservativa}. Nel progetto
+        attuale, un porting su mobile molto complesso, nonostante gli ottimi rapporti
+        con Epic\footnote{Nella trascrizione ``la E''.}, che vorrebbe spingere molte
+        delle sue tecnologie, la sua prima decisione è stata usare tecniche
+        tradizionali: \textbf{lightmap} e illuminazione statica\footnote{Il
+        passaggio è rovinato (``abbiamo tutto all'estate, light maps, PC
+        statiche''); il senso è una scelta di tecniche statiche e consolidate al
+        posto di quelle più recenti.}. ``E alla fine avevo ragione'': il gioco gira
+        benissimo e le prestazioni sono ottime.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{Riconoscere e contenere il debito}
+\label{sec:c3-2-riconoscere}
+
+\subsection{I segnali}
+
+Capire che il debito c'è è già una buona cosa. I segnali tipici:
+\begin{itemize}
+  \item \textbf{la qualità peggiora} sempre di più: l'ingegnere sistema un bug e
+        ne nascono altri due. È l'esempio classico di debito tecnico;
+  \item \textbf{le stime esplodono}: chiedi ai programmatori quanto serve per una
+        feature che dovrebbe essere semplice, e la risposta è ``due settimane, due
+        mesi''. Significa che il codice è diventato complicato, che gli stessi
+        programmatori non lo capiscono più bene e \textbf{hanno paura di
+        toccarlo}, perché sistemando una cosa se ne rompe un'altra.
+\end{itemize}
+
+\subsection{Come contenerlo}
+
+Non è semplice, soprattutto con team molto grandi. Servono:
+\begin{itemize}
+  \item molta \textbf{attenzione} e molto \textbf{testing};
+  \item ottime \textbf{code review}, estese anche al resto del team;
+  \item un direttore tecnico \textbf{presente nel progetto}. Spesso un direttore è
+        più manageriale e meno coinvolto; Andrea cerca di esserci il più possibile:
+        gioca, guarda i bug, e se nota qualcosa che ``scatta'' lo dice e
+        insiste. Il suo lavoro è anche dare indicazioni puntuali (``sposta questa
+        cosa a destra, quest'altra a sinistra''), e paradossalmente fa la
+        differenza.
+\end{itemize}
+È anche un lavoro \textbf{politico e diplomatico}: all'inizio può esserci
+qualche attrito con gli altri reparti, ma quando si spiega chiaramente il problema
+e poi il gioco funziona meglio, il rapporto diventa ottimo. Il direttore tecnico
+non è quello che dice ``devi togliere, devi imbruttire la mappa'': deve
+\textbf{intercettare} i problemi prima che diventino gravi.
+
+% ---------------------------------------------------------------------
+\section{Le domande del pubblico}
+\label{sec:c3-2-domande}
+
+\subsection{Come stimare la timeline di un progetto nuovo?}
+
+Un partecipante, un po' manager e un po' sviluppatore, chiede come stimare i tempi
+di un progetto nuovo, per non cadere nel debito strutturale. Andrea: azzeccare
+completamente una timeline è molto difficile, anche perché spesso non dipende da
+te, ma dalle esigenze di chi arriva dopo, che cambia le richieste. Conta molto
+l'\textbf{esperienza del team}: se si è già fatto un progetto simile, si sa più o
+meno che cosa aspettarsi.
+
+Il suo metodo:
+\begin{enumerate}
+  \item tutta la \textbf{leadership} (tutti i direttori) si siede allo stesso
+        tavolo e butta giù una prima bozza di tutto ciò che il gioco potrebbe
+        avere: una \textbf{lista di feature} ordinate per priorità;
+  \item questa prima lista è \textbf{sempre sbagliata}, ``tantissimo'';
+  \item quando la lista viene \textbf{visualizzata} su una timeline ci si accorge
+        che non sta nei due anni disponibili, e si \textbf{taglia};
+  \item si taglia fino a ottenere una versione della timeline che si ritiene
+        \textbf{fattibile con il budget}, e si comincia a seguirla.
+\end{enumerate}
+
+\subsection{L'IA e il ``debito tecnico da IA''}
+
+Domanda: come vi state adattando all'IA? Nei grandi progetti rischia di creare più
+problemi che altro, mentre in quelli piccoli può essere utilissima.
+
+Andrea: l'IA \textbf{è qui per restare}, e consiglia a tutti, scettici o no, di
+\textbf{impararla}: ignorarla è come guardare l'onda dello tsunami che arriva. La
+sua azienda è in una fase di esplorazione e di forti investimenti. In alcune cose ci
+sono già grandissimi vantaggi, ma di solito sono le più semplici: lui, per esempio,
+non ha mai scritto documenti tecnici così belli\footnote{La trascrizione riporta
+``la faccio dei tech bellissimi'': probabilmente documenti tecnici (\emph{tech
+doc}).}. Al suo reparto di ingegneria dice: usatela, provatela, capite che cosa
+funziona e che cosa no.
+
+Ma aggiunge una \textbf{quarta categoria} alle tre della
+sezione~\ref{sec:c3-2-definizione}: il \textbf{debito tecnico da IA}. Molte aziende,
+anche grandi, stanno puntando sull'IA. Secondo lui ci sarà una grande
+\textbf{accelerazione iniziale}, con progetti che vanno velocissimi; ma quando 100 o
+200 persone usano l'IA ``con il pilota automatico'', a metà progetto ci si
+accorgerà che usarla costa sempre di più (il progetto è sempre più complesso, sempre
+più token, ``sempre più macello'') e che pochissimi capiscono davvero che cosa sta
+succedendo. Prevede quindi un'accelerazione seguita da un \textbf{passo indietro};
+i primi progetti ``faranno un macello'', poi si definiranno linee guida e si capirà
+come usarla.
+
+Il moderatore aggiunge un'immagine: l'universo di \textbf{Warhammer
+40.000}\footnote{Trascritto ``secco 40 per 40.000''.}, dove la tecnologia è gestita
+dallo ``spirito macchina'' e i sacerdoti la fanno funzionare con le preghiere,
+``i prompt della fede'': un debito tecnico gigantesco, e ``sembra che stiamo andando
+in quella direzione''.
+
+\subsection{Delegare quando si è più veloci da soli}
+
+Un programmatore che lavora su codice di gara\footnote{Il passaggio è molto
+rovinato; il partecipante sembra lavorare su software per gare o bandi.} confessa
+di non controllare sempre il codice che fa il \emph{commit}, e chiede come si
+gestisce la delega quando si sente di essere più veloci da soli, o di poter fare
+con l'IA ciò che si dovrebbe spiegare a qualcun altro.
+
+Andrea:
+\begin{itemize}
+  \item concentrare tutto su una persona crea un \textbf{single point of
+        failure}, già un problema di per sé;
+  \item con l'IA il rischio è non sapere più che cosa sta succedendo. Nelle code
+        review dice: siete liberi di usare l'IA, ma \textbf{se non sapete
+        spiegarmi che cosa fa il codice e perché, siete nei guai}. Accelerare e
+        delegare è giusto, ma bisogna sapere che cosa succede;
+  \item lui stesso usa moltissimo l'IA, anche per progetti personali, e si accorge
+        di finire in un \textbf{loop}: l'IA scrive codice, lui dà indicazioni, il
+        sistema migliora; poi bisogna farlo funzionare bene, far creare all'IA
+        migliaia di test per evitare regressioni, e tutto diventa
+        \textbf{sempre più lento} man mano che il progetto cresce. A un certo punto
+        ci si chiede se non sarebbe stato meglio avere due ingegneri.
+\end{itemize}
+``È una tecnologia pazzesca e diventerà sempre più potente; ma per ora usatela con
+\textbf{responsabilità}.''
+
+\subsection{Scadenze o sostenibilità tecnica?}
+
+Quando le scadenze produttive entrano in conflitto con la sostenibilità tecnica, a
+chi dare retta? È complicato, ed è anche un gioco politico. Nell'esperienza di
+Andrea:
+\begin{itemize}
+  \item con un \textbf{team unito} e con fiducia reciproca si cerca sempre di fare
+        la cosa giusta: i designer capiscono quando rinunciare a qualcosa e gli
+        ingegneri non si impuntano;
+  \item ammette un bias: gli \textbf{ingegneri} e i programmatori, che mettono
+        mano al codice e integrano il lavoro di tutti, sono quelli che conoscono il
+        progetto meglio; quando dicono ``se facciamo così saranno dolori e andremo
+        in ritardo'', vanno ascoltati. Ma a volte il reparto tecnico è troppo
+        fissato sulle proprie cose e grida ``al lupo'' quando il pericolo non c'è
+        ancora: serve buon senso;
+  \item dipende da \textbf{per chi lavori}. Con un cliente, se capisce va bene, ma
+        dopo certe scadenze il cliente può dire: voglio il prodotto, il budget era
+        questo. In un'azienda come Take-Two/Zynga conta il \textbf{track record}:
+        se hai lavorato bene, hai più flessibilità. Ma alla fine tutto si paga: ogni
+        mese in più su un progetto grande costa moltissimo, quindi \textbf{la
+        scadenza è sempre importante}.
+\end{itemize}
+
+\subsection{Le conseguenze umane}
+
+Quali sono le conseguenze umane di un debito tecnico eccessivo? Esattamente quelle
+che si immaginano: \textbf{crunch} e \textbf{burnout}. Lavorare a un progetto in cui
+il 90\% del lavoro è sistemare bug non è più divertente; da un lato lo stress,
+dall'altro l'azienda che, senza soldi, chiede di fare di più. Le persone si
+stressano, si deprimono, vanno in burnout, decidono di andarsene. Quasi tutti i
+progetti attraversano questa fase, e \textbf{come la si gestisce} può fare la
+differenza tra successo e fallimento. Anche perché conta il \textbf{costo totale}:
+si possono vendere milioni di copie e incassare 200 milioni, ma se il gioco ne è
+costato 190 il risultato non è un successo.
+
+\subsection{Si può misurare il debito tecnico?}
+
+Un partecipante chiede se esistono strumenti per tracciare e misurare il debito
+tecnico, manualmente o automaticamente\footnote{La domanda cita alcuni strumenti
+automatici in forma non ricostruibile (``l'IDN, i PINSEN'').}. Andrea: non esiste
+un sistema unico, ma ci sono molti \textbf{segnali}:
+\begin{itemize}
+  \item la \textbf{stabilità delle build} e la \textbf{continuous integration}:
+        quante build falliscono, quanti problemi ci sono;
+  \item le \textbf{analytics sulle prestazioni}: un peggioramento da una build
+        all'altra può essere segno di debito;
+  \item il QA che gioca di continuo: i problemi aumentano o diminuiscono?
+  \item i grafici di \textbf{Jira}\footnote{Trascritto ``Gira''.}: il numero di
+        bug, il delta, se crescono invece di calare; i task che richiedono sempre
+        più tempo.
+\end{itemize}
+Qui l'IA è molto utile: Andrea la sta già usando per il \textbf{triage della salute
+delle build}, ``e forse lo fa meglio di me''.
+
+\subsection{Le persone non tecniche danno peso al lato tecnico?}
+
+Ultima domanda: spesso chi non è tecnico non dà la giusta importanza al lato tecnico
+(``tanto in un modo o nell'altro si risolve''), soprattutto nelle aziende piccole e
+ancora di più con l'IA, vista come un ``tasto magico''.
+
+Andrea va fiero di riuscire spesso a \textbf{convertire} le persone,
+appassionandole alle prestazioni e al lato tecnico. Paradossalmente lavora più con
+gli \textbf{artisti} che con gli ingegneri, che una volta in carreggiata sanno che
+cosa fare. Il suo approccio:
+\begin{itemize}
+  \item far capire che rispettare i \textbf{budget tecnici} è un'opportunità: il
+        gioco può essere più bello, si possono avere mostri più potenti, più
+        elementi nella mappa;
+  \item pretendere \textbf{professionalità}: chi lavora a un gioco deve saper usare
+        i propri strumenti; non si può lavorare con chi ``ancora non sa fare un
+        commit su Perforce''\footnote{Trascritto ``fare un commento su per
+        forza''.}, perché è uno strumento che un professionista deve avere nella
+        cintura;
+  \item le prestazioni sono una \textbf{responsabilità di tutti}, non solo del
+        reparto tecnico;
+  \item dare \textbf{linee guida chiare} e budget facili da trovare, e creare
+        \textbf{tool} che mostrino subito se si sta facendo un buon lavoro: per
+        esempio, girando per la mappa, se il numero di \textbf{draw
+        call}\footnote{Trascritto ``numero di droghe''.} è troppo alto, la scritta
+        diventa gialla o rossa.
+\end{itemize}
+Non tutti si appassionano alle stesse cose, conclude, ma tutti devono mettere la
+propria responsabilità e professionalità, e il direttore tecnico deve rendere loro
+la vita più facile.
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Il debito tecnico è la distanza tra il progetto che si ha e quello che si
+        sarebbe potuto avere; può essere \textbf{strutturale}, \textbf{emergente}
+        o \textbf{deliberato}, e Andrea prevede un quarto tipo, \textbf{da IA}.
+  \item Come un prestito, il debito deliberato può aiutare, purché si paghino gli
+        interessi: creare un task e tornare a sistemare.
+  \item Requisiti contrattuali irrealistici vanno rinegoziati presto, spiegando
+        problemi e ripercussioni.
+  \item Le tecnologie sperimentali sono una red flag: usarle solo se sono un match
+        perfetto; spesso la soluzione più semplice e collaudata è la migliore.
+  \item Segnali: bug che si moltiplicano, stime che esplodono, paura di toccare il
+        codice. Rimedi: testing, code review, un direttore tecnico presente.
+  \item Con l'IA bisogna sempre \textbf{saper spiegare il codice}; evitare i
+        single point of failure.
+  \item Il debito eccessivo produce crunch e burnout; si misura indirettamente
+        (stabilità delle build, performance, bug) e si previene rendendo la
+        qualità tecnica una responsabilità di tutti, con strumenti chiari.
+\end{itemize}

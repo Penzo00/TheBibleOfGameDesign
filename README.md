@@ -8,6 +8,7 @@ Lezioni di Game Design (analogico e digitale), con elementi di Unreal Engine e i
 |---|---|
 | `main.tex` | File principale: preambolo, frontespizio, indice e `\input` di tutti i capitoli, divisi in parti |
 | `Seminari/` | Parte 0 – Seminari per il Game Designer (`GD0_*`) |
+| `Conferenze/` | Conferenze: GAMM di Roma, Checkpoint Festival (`CONF1_*`, capitoli C1.x) e On The Road a Zagarolo, giorno 1 (`CONF2_*`, C2.x) e giorno 2 (`CONF3_*`, C3.x); i file `*_0_*` introducono la parte e ciascun evento |
 | `UE/` | Parte 1 – Fondamenti di Unreal Engine (`UE1`–`UE16`) |
 | `AGD/` | Parte 2 – Analog Game Design (`AGD1`–`AGD16`) |
 | `Professioni/` | Parte 3 – Alcune professioni nel mondo videoludico (`AIV*`) |
