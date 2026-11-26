@@ -1,0 +1,42 @@
+\section{L'HUD: il giocatore deve vedere tutto}
+
+Nel C++ l'HUD è disegnato a mano (\texttt{APlatformerHUD}). In Blueprint si usa un \nodo{Widget Blueprint}, molto più comodo: si disegna nel Designer e si collegano i valori.
+
+\begin{ricetta}
+  \item \var{WBP\_HUD}: in alto a sinistra un \nodo{Vertical Box} con testi per vite (un'icona ripetuta tre volte), monete e timer; in basso tre \nodo{Progress Bar} (vita, carburante, batteria) e un testo per le casse; al centro un mirino (un \nodo{Image} piccolo) visibile solo in prima persona; un \nodo{Text Block} \var{Messaggio} per gli avvisi.
+  \item In \var{BP\_Eroe}, \nodo{Event BeginPlay} $\rightarrow$ \nodo{Create Widget} (\var{WBP\_HUD}, Owning Player: \nodo{Get Player Controller}) $\rightarrow$ \nodo{Add to Viewport}, e salvate il widget in \var{HUD}.
+\end{ricetta}
+
+\subsection{Le barre: binding}
+
+Selezionate la barra del carburante, \emph{Percent} $\rightarrow$ \emph{Bind} $\rightarrow$ \emph{Create Binding}. Si apre una funzione pura che UE chiama a ogni frame:
+
+\begin{bpgraph}
+\bpnode{f}{(0,0)}{bpcustom}{Get Percent Carburante}{-}{exec/}
+\bpnode{p}{\sotto{f}{0}{-0.4}}{bppure}{Get Owning Player Pawn}{-}{obj/}
+\bpnode{c}{\dxy{p}{f}{0.6}{0}}{bpcast}{Cast To BP\_Eroe}{exec/,obj/Object}{exec/,exec/Cast Failed,obj/As BP Eroe}
+\bpnode{d}{\sotto{c}{0}{-0.4}}{bppure}{Carburante / CarburanteMax}{obj/Eroe}{float/}
+\maxx{m1}{c,d}
+\bpnode{r}{\dxy{m1}{f}{0.6}{0}}{bpflow}{Return Node}{exec/,float/Return Value}{-}
+\bpexec{f-out1}{c-in1}\bpwire{obj}{p-out1}{c-in2}\bpwire{obj}{c-out3}{d-in1}\bpexec{c-out1}{r-in1}\bpwire{float}{d-out1}{r-in2}
+\end{bpgraph}
+
+Allo stesso modo la \emph{Visibility} della barra: \emph{Visible} se l'eroe ha il jetpack, \emph{Collapsed} altrimenti (un \nodo{Select} sull'enum \emph{ESlateVisibility}). Il testo delle casse: \nodo{Format Text} ``Casse: \{0\}/3'' oppure ``Ricarica\dots\ \{1\} s''.
+
+\subsection{Gli avvisi: eventi invece del binding}
+
+Il binding è comodo ma gira a ogni frame. Per le cose che cambiano di rado (un'abilità sbloccata, un messaggio) è meglio un evento:
+
+\begin{bpgraph}
+\bpnode{ev}{(0,0)}{bpcustom}{Custom Event: MostraMessaggio}{-}{exec/,text/Testo,float/Durata}
+\bpnode{t}{\dx{ev}{0.6}{0}}{bpfn}{Set Text}{exec/,obj/Messaggio,text/Testo}{exec/}
+\bpnode{v}{\dx{t}{0.6}{0}}{bpfn}{Set Visibility}{exec/,obj/Messaggio,enum/Visible}{exec/}
+\bpnode{an}{($(ev-nw|-v-se)+(1.2,-0.5)$)}{bpfn}{Play Animation}{exec/,obj/Anim: Comparsa}{exec/}
+\bpnode{rt}{\dx{an}{0.6}{0}}{bpflow}{Retriggerable Delay}{exec/,float/Durata}{exec/Completed}
+\bpnode{h}{\dx{rt}{0.6}{0}}{bpfn}{Set Visibility}{exec/,obj/Messaggio,enum/Hidden}{exec/}
+\bpexec{ev-out1}{t-in1}\bpexec{t-out1}{v-in1}\bpdraw[bpexecw] (v-out1) .. controls +(1.2,0) and +(1,0) .. ($(v-se)+(0.3,-0.25)$) -- ($(an-nw)+(-0.5,0.25)$) .. controls +(-1,0) and +(-1,0) .. (an-in1);\bpexec{an-out1}{rt-in1}\bpexec{rt-out1}{h-in1}
+\end{bpgraph}
+
+Il \nodo{Retriggerable Delay} riparte da capo se arriva un secondo messaggio prima che il primo sparisca: niente messaggi che si spengono troppo presto. Nel \nodo{Event Construct} del widget fate \nodo{Bind Event to OnAbilitaSbloccata} della Game Instance e chiamate \var{MostraMessaggio} da lì.
+
+\ninja{Il widget non deve \emph{mai} modificare il gioco: legge e mostra. Se un pulsante dell'HUD deve fare qualcosa, chiama una funzione dell'eroe o della Game Instance. Così potete cambiare tutto l'HUD senza rompere niente.}

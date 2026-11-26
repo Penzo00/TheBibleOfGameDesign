@@ -1,0 +1,2218 @@
+% =====================================================================
+%  Analog Game Design, lezione 10 — UX design e paragame. In apertura,
+%  l'attesa (le lezioni con Beatrice, i gruppi che cambiano idea a pochi
+%  giorni dal pitch) e due domande su Tabletop Simulator (prendere un
+%  mazzo intero, simulare le luci con gli script); poi la prima parte,
+%  sulla UX del gioco: la UX come strato tra chi gioca e l'ecosistema di
+%  regole, i quattro pilastri (immediatezza, efficienza, memorabilità,
+%  soddisfazione) con i loro esempi di icone e componenti, quante
+%  informazioni porta una carta, il wireframe che cambia durante la
+%  prototipazione, l'accessibilità (font per la dislessia, curb cut
+%  effect, daltonismo). Dopo la pausa, la seconda parte, sul paragame:
+%  l'esercizio del libro consigliato, dal paratesto al paragioco, e le
+%  aree progettabili (materialità, formato, regolamento, scatola,
+%  grafica e illustrazioni, interfaccia analogica, ambiente, audio,
+%  contesto, lingua, spazio urbano e ibridi digitali). Dopo la seconda
+%  pausa, una lunga serie di casi studio (da Cuba Libre a Meltdown) e
+%  la mezz'ora di discussione aperta: il font di Al Rashid, paragame e
+%  dinamiche, graphic design contro illustrazione, gli inserti e il
+%  setup, chi pensa al paragame in un progetto vero (Rhino Hero e The
+%  Cat and the Tower).
+%  Fonte: trascrizione della decima lezione (AGD10) del corso breve di
+%  Analog Game Design, seconda edizione: una lezione online di circa
+%  tre ore, condotta da Ruggero, con due pause (fino alle 18:00 circa e
+%  dalle 18:57 alle 19:05).
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Analog Game Design", decimo capitolo
+%  (numerazione propria 2.10). Nel file principale del libro, subito
+%  dopo il capitolo 2.9:
+%
+%    \input{AGD/AGD9_project_management_e_giochi_formativi}
+%    \input{AGD/AGD10_ux_design_e_paragame}
+%
+%  Tutte le etichette di questo capitolo hanno il prefisso "a10:"
+%  (a10:cap:..., a10:sec:..., a10:fig:..., a10:tab:...). Il capitolo è
+%  autonomo: non contiene \ref verso altri capitoli.
+%  Le figure e le tabelle sono ricostruzioni schematiche di quanto il
+%  docente spiega a voce e mostra con le slide, non copie delle slide.
+%  Dove la trascrizione è troppo rovinata per ricostruire un dettaglio
+%  (un nome di gioco, una misura), il capitolo lo dice invece di
+%  inventarlo.
+% =====================================================================
+
+\chapter[UX design e paragame]{UX design e paragame: l'interfaccia del gioco e
+tutto ciò che non è né regole né fiction}
+\label{a10:cap:paragame}
+
+Questa è la \textbf{decima lezione} del corso di \textbf{Analog Game Design}, e
+l'ultima prima del \emph{pitch} del 12 ottobre. Il suo tema è annunciato da Ruggero
+già nei primi minuti, con un entusiasmo che non nasconde: ``oggi, lezione sul
+paragioco. Quindi, sono carichissimo''. La lezione ha due metà. La prima è dedicata
+alla \textbf{UX} (\emph{user experience}) del gioco, ``una roba gigantesca'' che non
+riguarda solo il gioco analogico ma tutti i campi del design, e di cui il corso dà
+solo le basi: che cosa sta tra la persona che si siede al tavolo e l'ecosistema di
+regole, e quali sono i \textbf{quattro pilastri} di una buona UX
+(\textbf{immediatezza}, \textbf{efficienza}, \textbf{memorabilità},
+\textbf{soddisfazione}), mostrati con decine di icone e componenti di giochi veri, più
+o meno riusciti. Chiude la prima metà una parte sull'\textbf{accessibilità}. Ruggero
+la presenta come la parte di ``cose che magari già sapete''.
+
+La seconda metà, sul \textbf{paragame} (o \emph{paragioco}), è invece ``una delle mie
+parti preferite'', e ``sempre una parte delle lezioni abbastanza che spacca i
+cervelli''. Il paragame è l'estensione al gioco del concetto letterario di
+\emph{paratesto}: tutto ciò che di un gioco \textbf{non è regole e non è fiction}, ma
+incide sull'esperienza di chi gioca. Il materiale dei dadi, lo spessore delle carte,
+il numero di pagine del regolamento, la forma della scatola, il font, il tavolo su cui
+il gioco verrà apparecchiato, la musica, il contesto culturale, la lingua, la città.
+Dopo una carrellata delle aree progettabili, Ruggero mostra una lunga serie di
+\textbf{casi studio}, ``da giochi più regolari a cose più \emph{deranged}'': un
+wargame con sei brochure, un gioco di ruolo fatto solo di un mazzo di carte, un
+videogioco che chiede di stampare un manuale, una gru da mettersi in testa, delle
+tessere di ghiaccio da tenere in freezer. Il messaggio di fondo è uno, e Ruggero lo
+ripete in molte forme: niente di tutto questo è ``contorno''. Il paragame
+\textbf{incide sulle regole} e sull'esperienza, e chi progetta ``può lavorarci
+attorno'' solo se ci ragiona. Per questo, ai \emph{pitch} e alle revisioni, il
+docente chiederà ``tantissimi perché''.
+
+La lezione è \textbf{online} e la conduce da solo \textbf{Ruggero}, condividendo le
+slide. Si colloca con ogni probabilità \textbf{venerdì 9 ottobre 2026}\footnote{La
+data non è detta, ma è ricostruibile. Nella lezione su Tabletop Simulator Ruggero
+aveva indicato venerdì 9 ottobre come la data della lezione sul paragame. In questa
+lezione dice che il \emph{pitch} ``del 12'' è ``lunedì'', e in chiusura gli studenti
+si salutano con ``buon weekend''.}, dalle 17 alle 20 circa. Ci sono due pause: la
+prima, di dieci minuti, alla fine della parte sulla UX (``alle sei ci ritroviamo
+qua''); la seconda dalle \textbf{18:57} alle \textbf{19:05} (``ve ne do 8 per il numero
+tondo''), prima dei casi studio. All'inizio sono collegati, tra gli altri,
+\textbf{Tancredi} e \textbf{Gianmarco}; nel corso della lezione intervengono anche
+\textbf{Tiziana} e \textbf{Lorenzo}\footnote{La trascrizione non distingue tra i due
+Lorenzo del corso (Lorenzo Vergata e ``l'altro Lorenzo''); in un passaggio Ruggero
+chiama ``Tancredi, Lorenzo. Lorenzo'', il che fa pensare che siano presenti
+entrambi. Il capitolo scrive semplicemente ``Lorenzo''.}. Tiziana lascia la lezione
+verso la fine (``Ciao, Tiziana'').
+
+Tre avvertenze di lettura, le stesse dei capitoli precedenti. La prima: la
+trascrizione è automatica e storpia moltissimi nomi, a cominciare da quelli dei due
+argomenti della lezione. La UX diventa ``Wix'', ``l'usso'' e ``Wix design''; il
+paragame diventa ``paragain'', ``paraghino'', ``paraggio'', ``parachain'',
+``paragate'', ``paradigma'', ``paracadema'' e perfino ``guerra game''. \emph{Race for
+the Galaxy}, il gioco più citato della serata, è ``Restore the Galaxy'', ``Rescord
+Galaxy'', ``RIS4D Galaxy'', ``Risordiality'', ``Redsward Galaxy'', ``Days for the
+Galaxy'' e ``Risk for the Gala''. Dove la ricostruzione è sicura, o molto probabile, il
+capitolo usa la forma corretta e lo segnala in nota la prima volta; dove non lo è,
+riporta la forma della trascrizione e lo dice. La seconda: durante le due pause la
+trascrizione registra per decine di righe frasi senza alcun rapporto con la lezione,
+ripetute in loop (``grazie a tutti per l'attenzione che ci ha spiegato'', ``qual è la
+risposta che ci può essere?''), e subito dopo la seconda pausa qualche frase spuria
+(``la situazione di oggi è la migliore dal 2000'', ``otto orecchie''). Sono artefatti
+del riconoscimento vocale e il capitolo le ignora. La terza: gli studenti intervengono
+spesso senza che la trascrizione segnali chi parla; il capitolo li nomina quando il
+contesto lo rende chiaro e resta generico altrimenti.
+
+\paragraph{Come leggere questo capitolo.} La lezione è costruita quasi interamente
+su \textbf{immagini}: icone, carte, scatole, componenti, foto di giochi apparecchiati.
+Nessuna di queste immagini è nella trascrizione. Il capitolo ricostruisce ciò che
+Ruggero ne dice e, dove serve, descrive l'immagine a parole; quando un dettaglio
+dell'immagine non è ricostruibile, lo segnala. Le tabelle riassumono le liste (i
+quattro pilastri, le aree del paragame, i casi studio); le figure ricostruiscono gli
+schemi (il posto della UX tra la persona e il gioco, le tre aree sovrapposte di
+regole, fiction e paragame, il ventaglio di carte in mano). Le slide della lezione,
+dice Ruggero, sono già nella cartella condivisa del corso. Qua e là, dei paragrafi di
+\textbf{approfondimento} collegano la lezione ai libri di game design di riferimento
+(soprattutto \emph{The Art of Game Design} di Jesse Schell) e alla letteratura sul
+design dell'interazione e sul paratesto; sono segnalati come tali e non fanno parte
+della lezione.
+
+Il percorso del capitolo segue quello della lezione:
+\begin{enumerate}
+  \item l'attesa e due domande su Tabletop Simulator (sezioni \ref{a10:sec:attesa}
+        e~\ref{a10:sec:tts});
+  \item la \textbf{UX del gioco}: il suo posto nella \emph{pipeline} e i
+        \textbf{quattro pilastri}, ciascuno con i suoi esempi (sezioni
+        da~\ref{a10:sec:ux} a~\ref{a10:sec:soddisfazione});
+  \item quante informazioni contiene una carta, il \textbf{wireframe} che cambia
+        nel prototipo, l'\textbf{accessibilità} (sezioni da~\ref{a10:sec:informazioni}
+        a~\ref{a10:sec:accessibilita});
+  \item dopo la prima pausa, l'esercizio del \textbf{libro consigliato} e la
+        definizione di \textbf{paragame} (sezioni \ref{a10:sec:libro}
+        e~\ref{a10:sec:definizione});
+  \item le \textbf{aree progettabili} del paragame, una per una (sezioni
+        da~\ref{a10:sec:aree} a~\ref{a10:sec:pervasivo});
+  \item dopo la seconda pausa, i \textbf{casi studio} (sezione~\ref{a10:sec:casi});
+  \item la \textbf{discussione aperta} e la chiusura (sezioni
+        da~\ref{a10:sec:discussione} a~\ref{a10:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'attesa: il 12 ``sta nella pietra''}
+\label{a10:sec:attesa}
+
+Ruggero si collega con qualche minuto di ritardo (``pensavo di essere in ritardo'':
+c'è stato un cambio di aula, ``ma siamo in orario''), e il clima è quello di fine
+settimana. Si parla del caldo (``fa ancora troppo caldo per i miei gusti''), poi
+Ruggero chiede come siano andate le lezioni con Beatrice (``interessante'',
+``bene'') e come procedano i progetti di gruppo. Arrivano alla spicciolata gli
+studenti del \textbf{gruppo 2}, che hanno appena fatto ``un piccolo meeting'' e
+raccontano di aver \textbf{cambiato completamente} l'idea proposta. Ruggero non si
+scompone: ``è normale''. C'è tempo fino al 12, ``però il 12 sta nella pietra''. Uno
+studente, appena entrato, ammette di essere ``un po' incasinato col gioco'', e la
+risposta è la stessa: ``ma è normale''. Quando qualcuno, scherzando, teme che al
+\emph{pitch} i docenti ``sfasceranno'' le idee dei gruppi, Ruggero rassicura: ``no, non
+vi sfasciamo niente''.
+
+Ruggero aggiunge una promessa che riguarda direttamente il \emph{pitch}: la lezione
+di oggi è ``proprio fatta apposta'' per chi ha ancora ``qualche buco di dubbio''. In
+particolare la seconda parte darà ``delle idee intense'', che ``potrebbero portarvi a
+riparlare tra di voi di varie cose in gruppo''; ed è sicuro che ``questo porterà lunedì
+ad avere dei \emph{pitch} incredibili''.
+
+Come al solito, prima di cominciare apre lo spazio per ``domande, dubbi, consigli,
+insulti'', ``altrimenti stiamo qui in silenzio a osservare lo scorrere del tempo, e lo
+sapete che non fa piacere a nessuno''. E annuncia il tema: ``UX design e paragame''.
+Sulla prima parte, ``molte persone tra voi già sono sul pezzo'', perché la UX ``non è
+una cosa esclusiva del gioco da tavolo'' ma tocca tutti i campi del design; la seconda,
+invece, nelle edizioni passate è ``sempre una parte delle lezioni abbastanza che spacca
+i cervelli. Quindi, non vedo l'ora''.
+
+% ---------------------------------------------------------------------
+\section{Due domande su Tabletop Simulator}
+\label{a10:sec:tts}
+
+Una studentessa ne approfitta per due domande ``molto semplici'' su Tabletop
+Simulator, il software della lezione precedente\footnote{La trascrizione non dice chi
+fa le domande; dal contesto è una persona che sta lavorando a un gioco ``per conto
+mio'', fuori dal progetto di gruppo.}.
+
+\paragraph{Prendere un mazzo intero senza tenere premuto.} La prima domanda riguarda
+un fastidio pratico: per prendere un mazzo di carte intero, e non una carta sola,
+bisogna tenere premuto il tasto del mouse per un paio di secondi. C'è una scorciatoia?
+Ruggero ricorda prima quella per \textbf{pescare}: basta passare col mouse sopra il
+mazzo e, senza cliccare, premere sulla tastiera il \textbf{numero} di carte da pescare
+(``premo 5 e mi dà 5 carte in mano''). Ma la studentessa vuole \emph{spostare} il mazzo
+intero, e le capita spesso. ``Che io sappia, bisogna tenere premuto'', risponde
+Ruggero, che non ne ha mai avuto bisogno: se capita spesso, forse è ``più un problema
+di logistica di come il modulo è \emph{set up}'', e si risolve ``setappando il modulo
+bene''. Forse esiste un ``control-click'', ``non credo ci sia, ma chi può dirlo. Se lo
+scopri, dimmelo''.
+
+\paragraph{Simulare le luci.} La seconda domanda riguarda il gioco a cui la
+studentessa lavora: un gioco con un \textbf{lumino} che proietta un'ombra, giocato
+``tutto al buio''. Su Tabletop Simulator ha visto un modulo che simula le luci: si può
+fare? ``Serve script? Assolutamente, per forza.'' E Ruggero sconsiglia ``fortemente''
+di testare su TTS cose che lo richiedono: lì ``si apre il vaso di Pandora degli
+script'', una cosa impegnativa che il corso non copre perché usa \textbf{Lua} come
+linguaggio di programmazione, e fare ``delle lezioni di Lua apposta per dei casi
+limite'' non ha senso nel programma. La studentessa chiede se basti copiare l'asset di
+quel modulo. ``Puoi copiare l'asset se lo salvi'', ma dipende da come è stato
+costruito. Se chi l'ha creato è stato ``furbo'', lo script è dentro l'asset stesso; ma
+a Ruggero è capitato di trovare moduli con \textbf{script diffusi}, in parte in un
+componente e in parte in un altro: se se ne copia uno solo, ``si rompe tutto e non
+funziona''. Ruggero non conosce quel modulo: ``poi fare un po' di prove, sicuramente''.
+
+\paragraph{Approfondimento: perché il gioco ``al buio'' è un tema di questa lezione.}
+La domanda è più vicina all'argomento della serata di quanto sembri. Un lumino che
+proietta ombre su un tavolo buio è un elemento di \emph{paragame} (luce, materiali,
+ambiente) che diventa una meccanica: proprio il tipo di intreccio che Ruggero mostrerà
+con \emph{Nyctophobia}, \emph{Scandal in the Deep} e \emph{Meltdown}
+(sezione~\ref{a10:sec:casi}). Ed è anche un buon esempio del limite pratico del
+prototipo digitale: ciò che dipende dalla fisica e dalla percezione (la luce, il peso,
+la temperatura) si simula male in un software, e va provato sul tavolo vero.
+
+% ---------------------------------------------------------------------
+\section{La UX nel gioco: uno strato tra la persona e le regole}
+\label{a10:sec:ux}
+
+Ruggero condivide lo schermo e apre le slide: ``UX design e paragame'', una lezione
+``divisa più o meno in due'', con ``una pausa a metà'' (``non sarà tutta una
+mitragliata secca di cose''). La seconda parte sarà ``contemporaneamente un po' più
+intensa, ma anche un po' più \emph{relaxed} della prima. Lo so, mi direte: com'è
+possibile? Lo vedrete''.
+
+Si parte dalla UX, con una premessa: è ``una roba gigantesca'' e ``questo non è un
+corso di UX design''; la lezione si limita a dare ``delle basi su cui ragionare''. Gli
+esempi saranno quasi tutti di \textbf{giochi da tavolo}, e non per caso: è un genere
+che, più di altri, ``ha richiesto in passato un uso della UX fatto meglio'' rispetto,
+per esempio, a un gioco di ruolo, o a un LARP in cui ``non è detto che venga neanche
+usato il materiale stampato''.
+
+\subsection{Dove sta la UX}
+
+Il punto di partenza è una \emph{pipeline} che la classe ``dovrebbe già sapere'': una
+\textbf{persona} che vuole giocare, il \textbf{gioco} (l'ecosistema di regole) e
+l'\textbf{esperienza} che ne nasce. Il lavoro della UX ``sta qua in mezzo'': è ``un
+primo \emph{layer} tra la persona che si approccia al gioco e l'ecosistema di regole
+del gioco'' (figura~\ref{a10:fig:pipeline}). E ``spesso non ci si pensa, ma può essere
+un incredibile aiuto o un gigantesco ostacolo''. Si può avere un ecosistema di regole
+``lisciissimo, pulitissimo, fantastico'', in cui ``funziona tutto, bilanciato tutto'';
+``ma se a livello di interfaccia questa roba non arriva, non si riesce a giocare, non si
+riesce neanche a capire come giocare. Quel gioco finisce nel cestino''.
+
+Di qui la regola: quando si progetta un gioco ``non ragioniamo solo alle meccaniche
+del gioco, ma anche a cosa c'è davanti al gioco''. Che cosa c'è ``prima ancora delle
+questioni di meccaniche, delle regole, ma anche prima del manuale'': il regolamento in
+quanto oggetto, ``come sono fatte le carte, come il gioco è apparecchiato sul
+tavolo''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  box/.style={draw, thick, rounded corners=3pt, minimum height=1.1cm,
+              text width=2.5cm, align=center},
+  ux/.style={draw, thick, dashed, rounded corners=3pt, fill=gray!15,
+             minimum height=1.6cm, text width=2.6cm, align=center},
+  arr/.style={-{Stealth[length=3mm]}, thick}
+]
+  \node[box] (p) {\textbf{Persona}\\che vuole giocare};
+  \node[ux, right=0.9cm of p] (u) {\textbf{UX}\\icone, carte, regolamento,
+    tavolo apparecchiato};
+  \node[box, right=0.9cm of u] (g) {\textbf{Gioco}\\ecosistema di regole};
+  \node[box, right=0.9cm of g] (e) {\textbf{Esperienza}};
+  \draw[arr] (p) -- (u);
+  \draw[arr] (u) -- (g);
+  \draw[arr] (g) -- (e);
+  \node[below=0.35cm of u, text width=3.4cm, align=center, font=\footnotesize]
+    {``un incredibile aiuto\\o un gigantesco ostacolo''};
+\end{tikzpicture}
+\caption{Il posto della UX nella \emph{pipeline} persona--gioco--esperienza: un primo
+strato tra chi si avvicina al gioco e l'ecosistema di regole. Se questo strato non
+funziona, anche regole perfette non arrivano a chi gioca.}
+\label{a10:fig:pipeline}
+\end{figure}
+
+\subsection{I quattro pilastri}
+\label{a10:sec:pilastri}
+
+Per progettare la UX di un gioco, Ruggero dà ``quattro pilastri che è bene tenere a
+mente'': una buona UX ha \textbf{immediatezza}, \textbf{efficienza},
+\textbf{memorabilità} e \textbf{soddisfazione} (tabella~\ref{a10:tab:pilastri}). Le
+sezioni che seguono li vedono uno alla volta, ``nel dettaglio'', con esempi presi da
+giochi reali. Una precisazione vale per tutti gli esempi: ``non vi serve sapere questi
+giochi da dove arrivano''. Anzi, per alcune domande è meglio non conoscerli.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.6cm}p{5.4cm}p{5.2cm}@{}}
+\toprule
+\textbf{Pilastro} & \textbf{Che cosa vuol dire} & \textbf{Esempi della lezione} \\
+\midrule
+Immediatezza & si capisce subito il significato, con il minimo sforzo e senza
+confusione & spade e scudi sui dadi; il barile di petrolio; la corona d'alloro dei
+punti vittoria. Contro-esempi: \emph{Race for the Galaxy}, \emph{Argent} \\
+Efficienza & racchiudere un'azione complessa nel minor spazio possibile & l'icona
+``pesca una carta''; l'icona del punto vittoria; le icone di \emph{Race for the
+Galaxy} (poco immediate, ma molto efficienti) \\
+Memorabilità & restare in mente, così che a distanza di anni si ricordi ancora che
+cosa fa & il +4 di \emph{Uno}; il simbolo di ``tappare'' di \emph{Magic}; le icone di
+\emph{The Gallerist} \\
+Soddisfazione & ``bonus point'': interagire con la grafica e i componenti è piacevole,
+gratificante & il tracciato a frecce di \emph{Parks}; le carte trasparenti di
+\emph{Canvas}; le armi in miniatura di \emph{Tiny Epic Mechs} \\
+\bottomrule
+\end{tabular}
+\caption{I quattro pilastri di una buona UX secondo Ruggero, con gli esempi mostrati
+a lezione.}
+\label{a10:tab:pilastri}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Immediatezza}
+\label{a10:sec:immediatezza}
+
+Un elemento grafico è \textbf{immediato} quando ``comprendiamo subito il significato
+di quello che vuole fare, con il minimo sforzo e senza confusione''. Il contrario è
+chiaro: se vediamo una cosa e non capiamo che cosa fa, dobbiamo sforzarci, ci
+confonde, ``magari facendoci anche sbagliare le regole'', e allora ``quella roba lì è
+da buttare nel cestino''.
+
+\subsection{Un tiro di dadi}
+
+Il primo esempio è un \textbf{tiro di tre dadi} di un gioco che nessuno sa quale sia.
+Le facce uscite mostrano \textbf{due spade}, \textbf{uno scudo} e \textbf{un fulmine}.
+``Che cosa ci dice questo lancio di dadi?'' Le risposte arrivano subito: ``che siamo
+stati fulminati'', poi, più seriamente, ``due attacchi, una difesa, e il fulmine non
+saprei''. A livello di \emph{vibes}, è ``un lancio di combattimento, evidentemente'',
+``perché ci sono le spade, gli scudi'' (``diciamo, combattimento sotto la pioggia col
+fulmine'', scherza Ruggero). E in che tipo di gioco potrebbe stare? Uno studente pensa a
+qualcosa come \emph{Civilization}, la conquista di un territorio; un altro a un gioco
+fantasy, e cita un titolo che la trascrizione rende ``Cronache di Havel''\footnote{Con
+ogni probabilità \emph{Le Cronache di Avel} (\emph{Chronicles of Avel}), gioco fantasy
+cooperativo con combattimenti a dadi. Il gioco della slide, invece, non viene
+nominato.}.
+
+Il punto è che tutti hanno capito \textbf{immediatamente} che le spade sono attacco e
+lo scudo è difesa, e che il tiro è ``più aggressivo che difensivo''; e nessuno sa che
+cosa sia il fulmine. ``Ed è sempre così, quando io uso questo esempio.'' Spade e scudi
+sono usati ``in talmente tanti giochi'', a livello di \textbf{euristiche personali}, che
+si capiscono ``al volo anche se non sapete i dettagli di questo gioco'': non si sa come
+funzionano il combattimento, la difesa, la vita, ma si sa che due spade e uno scudo
+fanno un tiro aggressivo. Il fulmine, nel gioco, è \textbf{l'attivazione di
+un'abilità}, ma è ``un'icona poco adatta a fare questo'', perché nessuno l'ha
+riconosciuta come tale. Ed è normale: è molto più difficile trovare un'icona che
+rappresenti ``in generale un'abilità, che può essere potenzialmente qualunque cosa'',
+mentre spada e scudo sono di fatto delle \textbf{sineddoche}, ``delle metafore, in
+questo caso, di \emph{ti sto attaccando} o \emph{mi sto difendendo}''.
+
+\subsection{Quattro risorse}
+
+Il secondo esempio sono le icone di \textbf{quattro risorse}, in alto a destra nella
+slide. ``Chi è che sa da quale gioco vengono?'' Nessuno: ``best result'', perché la
+domanda ``crolla'' se si conosce già il gioco. Le icone riproducono i segnalini di
+legno delle risorse, con il loro colore e la loro forma. Che cosa rappresentano?
+
+Le risposte della classe sono istruttive. Uno studente va ``più sul colore che sulla
+forma'': il giallo è il grano, il grigio è la pietra, il marrone ``direi legno''.
+\textbf{Tancredi} vede nella quarta, color ottanio, il \textbf{petrolio}, ``perché mi
+sembra di qualche gioco che avevo provato''. Tiziana nota che ``la forma è
+contraddittoria'', non corrisponde al colore; e una studentessa confessa di vederci
+tutt'altro: ``una bara, una lapide, il lumino dove si mette il cero e una colonna che
+sorregge'', insomma un cimitero.
+
+Ruggero scioglie l'enigma partendo dalle due più semplici. Il \textbf{legno} ``nessuno
+lo sbaglia'': è a forma di tronco tagliato, nei limiti di un piccolo componente. Quella
+indicata come pietra è in realtà \textbf{metallo}, ma nel gioco non si confonde: il
+gioco è ambientato in un mondo \emph{dieselpunk}\footnote{La trascrizione dice ``in cui
+fai è site''. Le quattro risorse descritte (legno, metallo, grano e petrolio) e
+l'ambientazione dieselpunk con giganteschi macchinari sono quelle di \emph{Scythe}
+(Jamey Stegmaier, 2016), che è quasi certamente il gioco della slide.}, ``hai questi
+giganteschi macchinari, per costruirli ti serve metallo'', e quindi quello viene preso
+come metallo. Quello giallo confonde sempre chi non conosce il gioco, perché sembra
+``un sacchetto di qualcosa di giallo'': le due risposte possibili sono oro o grano, e
+qui è \textbf{grano}. E quello in cui ``non ci si sbaglia di solito'' è proprio la
+risorsa color ottanio: ``Tancredi l'ha detto giusto, è petrolio'', perché usa ``la
+colorazione dell'ottanio, che è il colore che culturalmente noi associamo alla benzina,
+al gasolio, al carburante''. È forse l'icona più riconoscibile di tutte, perché è un
+\textbf{barile di petrolio}. Il contesto, poi, conta: chi pensasse a un gioco come
+\emph{Concordia}, ambientato nel Mediterraneo antico, ``non ha senso che sia petrolio''.
+
+Ne esce un'osservazione in più: \textbf{non è solo la forma}; anche il \textbf{colore}
+può essere fondamentale per riconoscere un'icona. ``Se io vi facevo il tronco viola,
+non mi avreste detto legno. Se vi facevo il grano rosso, non mi avreste detto grano o
+soldi, mi avreste detto qualcos'altro.''
+
+\subsection{La corona d'alloro}
+
+Terza domanda: l'icona in basso a destra, una corona con un \textbf{3}. ``Tre punti
+vittoria.'' Perché? ``Perché c'è l'alloro.'' E perché l'alloro significa punti
+vittoria? Perché l'alloro è un premio, un riconoscimento; e la \textbf{corona d'alloro}
+``si è normalizzata, specialmente nei giochi da tavolo \emph{German}, negli Eurogame,
+come simbolo dei punti vittoria''. In centinaia di giochi la coroncina d'alloro
+rappresenta i punti, e chi trova un gioco con una corona d'alloro e un 3 sa che sono tre
+punti.
+
+Qui Ruggero fa una distinzione importante: \textbf{immediato non vuol dire immediato
+per chi non ha mai giocato}, ``a tutte le persone''. L'alloro è immediato per chi gioca
+abitualmente a giochi da tavolo, perché fa parte di un linguaggio condiviso. Poi,
+``chiaramente, la forza di un'icona forte è essere immediata anche per chi non ha
+giocato il gioco''.
+
+\subsection{Le icone che fanno il contrario}
+
+Ci sono però icone che fanno ``il contrario di quello che si dovrebbe fare di solito''.
+Le prime due della slide, ``che ci crediate o no, sono due icone diverse
+meccanicamente, che fanno due cose diverse''. Ruggero non dice che cosa fanno (``ho una
+sanità mentale da risparmiarmi''): vengono da un gioco che la trascrizione chiama
+``Gemoni''\footnote{Il titolo non è ricostruibile con sicurezza dalla trascrizione.},
+``bel gioco'', ma con ``molte icone molto simili'', come queste due, che hanno i colori
+praticamente invertiti e fanno cose diverse.
+
+Poi due icone di \textbf{\emph{Race for the Galaxy}}\footnote{La trascrizione lo
+storpia in quasi ogni occorrenza: ``Retribuzione'', ``Restore the Galaxy'', ``Rescord
+Galaxy'', ``RIS4D Galaxy'', ``Risordiality'', ``Redsward Galaxy'', ``Days for the
+Galaxy'', ``Risk for the Gala''. \emph{Race for the Galaxy} (Thomas Lehmann, 2007) è un
+gioco di carte di fantascienza celebre per la sua iconografia densa.}. Gianmarco, che
+lo conosce, viene escluso dalla domanda (``non lo chiederò a te, perché \emph{Race for
+the Galaxy} è una maledizione''). Il gioco ha questa proprietà: ``per chi non lo
+conosce, guarda le icone e pensa: questi sono pazzi, questo gioco non ha senso. Per
+chi lo conosce, queste icone sono le più leggibili del mondo ed è immediato capire che
+cosa fanno''. Ruggero prova a far indovinare la classe (``non do voti
+all'interrogazione sulle icone di \emph{Race for the Galaxy}, anche perché sarebbe un
+disastro per chiunque, \emph{me included}''), con un suggerimento: è un gioco
+fantascientifico.
+
+Sulla prima icona, Lorenzo prova ``annulla un comando'' (``ti sorprenderà sapere che
+non è così''), un altro ``cambio colore'' (``ti piacerebbe; non è un gioco facile come
+\emph{Uno}, questo''). Poi una studentessa tenta un'``archeologia ludica'': se ci sono
+carte di vari colori, forse scartando una carta di quel colore succede qualcosa da
+qualche altra parte. ``Un terzo l'hai beccata.'' Gianmarco completa: \textbf{scarti una
+carta e la usi come risorsa} da mettere su un \textbf{pianeta}, ``che è quella cosa
+tonda''.
+
+``Adesso che abbiamo decifrato parte del linguaggio'', la seconda icona riesce meglio.
+Uno studente: ``se hai tre carte blu, ottieni un esagono che non so cosa sia, e peschi
+una carta?'' ``Vicinissimo, non sai quanto.'' L'icona parla di carte blu, ma non di
+carte qualsiasi: di carte \textbf{usate come risorsa blu}, quelle appena viste. E non ne
+servono tre: il numero dice che si può fare \textbf{fino a tre volte} la cosa che
+segue, cioè ottenere un \textbf{esagono} (i punti, in questo gioco) e pescare una
+carta. Tradotto: ``posso usare da una a tre risorse per prendere da uno a tre punti e
+da una a tre carte''.
+
+Infine l'icona in basso al centro, che Ruggero non spiega: ``è un'icona per cui
+dovrebbero arrestare i graphic designer immediatamente''. Contiene, ``se non vado
+errato'', una specie di \textbf{talismano} di carta scritta, uno \textbf{scudo} e
+\textbf{due cappelli}, di cui uno in ombra. Viene da \textbf{\emph{Argent}}\footnote{
+\emph{Argent: The Consortium} (Trey Chambers, 2015), gioco di piazzamento lavoratori
+ambientato in un'università di magia.}: ``gioco bellissimo, icona illegale''. Che non
+sia immediata, ``vi rendete conto anche voi''.
+
+\paragraph{Approfondimento: convenzioni, affordance e linguaggi appresi.} Gli esempi
+di Ruggero corrispondono a una distinzione classica del design dell'interazione. Alcuni
+segni funzionano perché si appoggiano a \textbf{convenzioni} culturali molto diffuse
+(la spada per l'attacco, il colore ottanio per il carburante, l'alloro per la vittoria);
+altri richiedono di imparare un \textbf{linguaggio} specifico del singolo gioco, come le
+icone di \emph{Race for the Galaxy}. Donald Norman, in \emph{The Design of Everyday
+Things}, parla di \emph{significanti} (\emph{signifiers}) per indicare i segni che
+comunicano che cosa si può fare con un oggetto, e osserva che le convenzioni sono
+potenti proprio perché non vanno reimparate a ogni nuovo oggetto. Il limite che Ruggero
+indica (immediato ``per chi gioca'' non è immediato ``per tutti'') è lo stesso: una
+convenzione vale solo dentro la comunità che la condivide, e un gioco pensato per un
+pubblico nuovo non può darla per scontata.
+
+% ---------------------------------------------------------------------
+\section{Efficienza}
+\label{a10:sec:efficienza}
+
+Il secondo pilastro è l'\textbf{efficienza}: ``comunicare più informazioni insieme,
+alleggerendo l'aggregazione di informazioni''. Ruggero la spiega con ``due esempi
+diretti''.
+
+\paragraph{Pescare una carta.} La prima icona mostra un mazzo di carte. Che cosa fa?
+``Peschi.'' Perché? ``Perché c'è un mazzo di carte.'' Ma Ruggero insiste: che cosa si fa
+\emph{fisicamente}, ``a livello di propri atti fisici'', seduti al tavolo, per attivare
+questa icona? ``Rivelo la prima carta del mazzo, prendo la prima carta del mazzo, e
+poi\dots{} la metto in mano.'' Per chi gioca molto è una cosa semplicissima, ``solo
+perché abbiamo giocato tonnellate di giochi''. Ma l'atto in sé è complesso: c'è un
+componente che è un mazzo, che contiene tante carte; ne prendo la prima, la sollevo dal
+mazzo e la aggiungo alla mia mano, di cui ora fa parte. ``È un'azione complessa, e
+un'icona così ci riassume tutto questo processo.''
+
+\paragraph{Il punto vittoria.} Lo stesso vale per l'icona del punto vittoria vista
+prima. Che cosa si fa con un punto vittoria? ``Muoviamo la pedina.'' Se il gioco ha un
+tracciato dei punti, quell'icona, ``nella sua piccolezza'', dice: prendi la tua pedina
+dei punti vittoria e muovila avanti sul tracciato di tante caselle quanti sono i punti.
+
+``Sono esempi piccoli e banali. Non sottovalutate questa cosa qua.'' Ruggero ne ricava
+la definizione: un'icona efficiente \textbf{non} deve essere efficiente per chi non
+conosce il gioco; un'icona efficiente ``è in grado di racchiudere al suo interno
+un'azione complessa nel minor spazio possibile''. Ecco perché le due icone di \emph{Race
+for the Galaxy} sono un caso interessante: sono \textbf{molto poco immediate}, ma
+\textbf{molto efficienti}. In uno spazio piccolissimo danno tante informazioni e dicono
+molto bene che cosa fare, ``una volta che abbiamo decifrato l'alfabeto di \emph{Race for
+the Galaxy}''. I pilastri, insomma, sono indipendenti: un'icona può averne uno senza
+l'altro.
+
+% ---------------------------------------------------------------------
+\section{Memorabilità}
+\label{a10:sec:memorabilita}
+
+Terzo pilastro: una buona icona deve ``rimanere nella mente, in modo da facilitare il
+ricordo durante le partite successive''. Il criterio di Ruggero è concreto: ``se io gioco
+un gioco e poi lo rigioco cinque anni dopo, e so ancora che cosa fa quell'icona, quello
+è un buon gioco''.
+
+\paragraph{Il +4 di \emph{Uno}.} La prima carta della slide: che cosa fa? ``Pescare
+quattro carte.'' Chi pesca? Il giocatore successivo. Il gioco è \emph{Uno}. ``E quand'è
+che hai giocato l'ultima volta?'' ``Boh. Almeno un paio d'anni fa.'' Non ci si ricorda
+nemmeno quando, ma ci si ricorda che cosa fa la carta. Perché è una carta
+\textbf{memorabile}: ``quando ti viene giocata contro, bestemmie''. Giocarla, o subirla,
+dà ``un \emph{boost} emotivo tale'' che quello che fa diventa memorabile, ``quasi
+memetico''.
+
+\paragraph{Il simbolo di ``tappare''.} La seconda icona: dove nasce, che cosa chiede di
+fare? Una prima ipotesi (``invertire il turno'') è sbagliata; poi uno studente fa
+l'``ipotesi molto scontata'': \textbf{\emph{Magic: The Gathering}}. L'icona chiede di
+\textbf{tappare} la carta, cioè di \textbf{ruotarla di 90 gradi}: una carta tappata ha
+usato la sua abilità e non la si può riutilizzare nel turno. ``Quand'è l'ultima volta che
+hai giocato a \emph{Magic}?'' ``Cent'anni fa.'' Eppure ci si ricorda ancora che quel
+simbolo vuol dire ``prendi la carta e ruotala di 90 gradi''. Il motivo, qui, è diverso
+da \emph{Uno}: è che il simbolo è \textbf{pervasivo}, ``è ovunque''; chi ha giocato a
+\emph{Magic} l'ha incontrato per forza.
+
+\paragraph{Le icone di \emph{The Gallerist}.} Le ultime due icone sono riconosciute da
+uno studente, che ricorda il gioco ma non l'effetto: \textbf{\emph{The
+Gallerist}}\footnote{\emph{The Gallerist} (Vital Lacerda, 2015), gioco in cui si
+gestisce una galleria d'arte.}. La prima dà popolarità, la seconda soldi, in proporzione
+ai \emph{meeple} presenti: un punto ogni due \emph{meeple} di un colore (magenta, nel
+primo caso; marroni, nel secondo) oppure ogni \emph{meeple} bianco. ``Quindi, se ho
+quattro magenta e un bianco prendo tre; se ho otto magenta prendo quattro.'' Chi ha
+giocato a \emph{The Gallerist} se le ricorda, perché sono ``dappertutto in tutto il
+gioco''. E sono icone che, quando te le spiegano la prima volta, ``vi sparate''; ``ma
+dopo il primo turno nessuno va a riguardare nel regolamento che cosa fanno''.
+
+Dai tre esempi escono tre strade diverse verso la memorabilità: l'\textbf{emozione}
+(\emph{Uno}), la \textbf{pervasività} di un simbolo in tutto un sistema di gioco
+(\emph{Magic}), la \textbf{ripetizione} dentro una singola partita (\emph{The
+Gallerist}).
+
+% ---------------------------------------------------------------------
+\section{Soddisfazione}
+\label{a10:sec:soddisfazione}
+
+``Memorabili, immediate, efficienti: fantastico. Ma \emph{bonus point} se è anche
+\textbf{soddisfacente}'': se interagire con l'aspetto grafico, con la UX del gioco, è
+piacevole e gratificante. Tre esempi.
+
+\paragraph{Il tracciato di \emph{Parks}.} In \emph{Parks}\footnote{\emph{Parks}
+(Henry Audubon, 2019), gioco di escursioni nei parchi nazionali statunitensi.} il
+tracciato su cui ci si sposta con i propri pedoncini è composto da \textbf{tessere}, e
+ci si muove in una sola direzione, da sinistra verso destra. Le tessere hanno una forma
+quasi a \textbf{freccia}, sono ``un po' inclinate in modo che si incastrino'', formando
+una specie di nastro che indica la direzione. ``Potevano essere rettangoli? Sì, non
+cambia niente meccanicamente.'' Ma incastrarle in ordine, oltre a essere memorabile
+(perché ricorda la direzione), è anche ``molto soddisfacente''.
+
+\paragraph{I quadri di \emph{Canvas}.} In \emph{Canvas}\footnote{\emph{Canvas} (Jeff
+Chin e Andrew Nerger, 2021).} si compongono dei quadri con delle carte di
+\textbf{plastica semitrasparente}: ogni quadro è fatto di \textbf{tre strati}
+sovrapposti. Non solo gli elementi si combinano visivamente, ma anche il \textbf{nome
+del quadro} viene generato dalle carte giocate: alcune carte danno la prima parte del
+nome, altre la seconda.
+
+\paragraph{Le armi di \emph{Tiny Epic Mechs}.} L'ultimo è un gioco di \emph{mech} che
+combattono\footnote{La trascrizione dice ``Tiny Pic Max'': è \emph{Tiny Epic Mechs}
+(Scott Almes, 2019).}, in cui i \emph{meeple} entrano dentro delle piccole
+\textbf{armature di plastica}; e quando si cambia equipaggiamento, si mettono loro in
+mano ``le piccole armi e gli scudini''. ``Meccanicamente, non cambia niente'':
+l'equipaggiamento è comunicato anche dalle carte. Ma è molto soddisfacente, e ``ci
+ricordiamo al volo che cosa abbiamo in mano, perché fisicamente il nostro \emph{meeple}
+ce l'ha in mano'': un lanciagranate, uno scudo. E quando si cambia arma, si cambia non
+solo la carta, ma anche il pezzettino.
+
+\paragraph{Approfondimento: la soddisfazione come ``feedback'' fisico.} Schell, in
+\emph{The Art of Game Design}, dedica all'interfaccia un intero capitolo e insiste su un
+punto che questi esempi rendono evidente: un'interfaccia non serve solo a trasmettere
+informazioni, ma a dare a chi gioca la sensazione di \textbf{controllo} e un
+\textbf{feedback} piacevole a ogni azione. Nel videogioco si parla di \emph{juiciness},
+la ``succosità'' delle reazioni alle azioni del giocatore; nel gioco analogico lo stesso
+ruolo è svolto dal gesto fisico: l'incastro di una tessera, la sovrapposizione di un
+foglio trasparente, l'arma infilata nella mano di una miniatura.
+
+% ---------------------------------------------------------------------
+\section{Quante informazioni porta una carta?}
+\label{a10:sec:informazioni}
+
+Dopo una breve verifica (``stiamo andando lisci''), Ruggero pone una ``domanda da
+tenere conto sulla UX'': \textbf{quante informazioni stiamo usando?}
+
+Sulla slide ci sono due carte di due giochi di carte di fantascienza con un tema molto
+simile, la colonizzazione interplanetaria. Una è ancora di \emph{Race for the Galaxy}:
+``pensavate che fosse brutta solo l'icona. E invece anche il \emph{wireframe} della
+carta è molto brutto''. È un peccato, perché il gioco ``è bellissimo, incredibile'';
+Ruggero, che sembra fare \emph{dissing}, lo possiede nell'edizione completa, ``molto
+brutto da vedere, però glielo perdoniamo lo stesso, perché è molto bello da giocare''.
+L'altra è di \emph{Age of Galaxy}\footnote{Esiste un
+gioco con questo titolo (\emph{Age of Galaxy}), di tema e struttura compatibili
+con la descrizione.}. Quale delle due contiene più informazioni?
+
+Tiziana dice la seconda. Altri, tra cui Lorenzo e Gianmarco, la prima. Lorenzo, che
+guarda anche le icone, pensa che abbiano le stesse informazioni; e un altro studente
+osserva che la prima sembra averne di più solo perché è \emph{old school}: le schiaccia
+e le sposta sui bordi. È una domanda ``molto divisiva'', dice Ruggero, e lo è sempre:
+anche nelle lezioni passate, con classi più grandi, una parte risponde la prima e una
+parte la seconda. ``Le grafiche parlano a persone diverse'', e persone diverse
+percepiscono come più pesante l'una o l'altra. In termini di \textbf{funzionalità
+meccaniche}, però, le aree importanti sono le stesse.
+
+\subsection{L'icona capovolta}
+
+La carta di \emph{Race for the Galaxy} ha poi delle scelte particolari. Di fianco al
+nome c'è un'icona con un numero (il punto 3 dell'analisi della slide), ed è
+\textbf{capovolta}. Perché? Le ipotesi della classe: è qualcosa che si disattiva; la
+carta va tenuta coperta; ``devo girarmi la carta per sapere quanto do?'' La risposta è
+un'altra: ``è al contrario perché non è per noi, quell'icona. Serve agli avversari,
+serve ad altre persone dall'altra parte del tavolo. Loro devono sapere che cosa fa
+quell'icona, e quindi è girata verso di loro''.
+
+Ruggero ammette che si può ``voler male'' a \emph{Race for the Galaxy} ``in mille
+modi'': per esempio perché riporta tutte le fasi del turno (1, 2, 3, \$, 4, 5) di fianco
+alla carta, ``inclusi quelli che non abbiamo e che non ci interessano in questa
+carta''; o perché nel riquadro di testo ripete esattamente la stessa informazione
+dell'icona, ``ma via testo, rendendo quindi inutile l'iconografia''. ``Però in realtà,
+per l'utilizzo fisico della carta, \emph{Race for the Galaxy} è molto intelligente.''
+Le icone che sono per chi gioca la carta sono girate verso di lui, quelle per gli altri
+verso gli altri. E il \textbf{retro} della carta si può usare come materiale, come ha
+detto prima Gianmarco: le carte con il cerchio sono pianeti, e una carta a faccia in
+giù sotto un pianeta è una \textbf{risorsa} (arancione, in questo caso, perché il pianeta
+è arancione).
+
+Uno studente obietta: se l'informazione del testo è ridondante, le informazioni della
+carta sono cinque, non sei. No, risponde Ruggero: il \textbf{4} non indica solo che
+cos'è il testo, ma anche la \textbf{fase} del turno in cui si attiva. È la stessa
+informazione divisa in due parti, e sulla slide lui l'ha numerata separatamente
+``per sanità mentale'', perché due frecce sullo stesso punto erano illeggibili. Allo
+stesso modo, sulla carta di destra alcune voci sono accorpate (il punto 2), perché
+stanno nello stesso blocco, quello delle icone risorsa.
+
+\subsection{Una carta prima e dopo: il wireframe cambia}
+\label{a10:sec:wireframe}
+
+Il secondo esempio viene dal lavoro di Ruggero. È una carta di un gioco
+\emph{Cyberpunk}\footnote{La trascrizione dice prima ``Severpunk'', poi ``Cyberpunk'',
+e ``lo sapete già'', come se il gioco fosse già stato mostrato nel corso. Il titolo
+esatto non è ricostruibile dalla trascrizione.} su cui ha lavorato, ``nelle parti
+pre-andata in stampa'': a destra la versione finale, a sinistra le versioni precedenti.
+``Ignorate il numero di pistole, che è stato ribilanciato'': in termini di informazione,
+le carte sono rimaste praticamente uguali. Ma molte cose sono cambiate.
+\begin{itemize}
+  \item Uno \textbf{0} è sparito: ``tanto erano zero. Appesantiva senza motivo, e
+        quindi è volato via. Non ci serve saperlo: basta che non mettiamo niente''.
+  \item La dicitura \emph{starting} (carta iniziale) ha perso priorità, ``giustamente'',
+        ed è stata spostata sotto il titolo. Non solo: le carte iniziali hanno il
+        \textbf{nome in grigio}. Così, alla domanda ``come faccio a sapere se è una
+        carta iniziale, in mezzo al mazzo?'', la risposta è: dal nome grigio invece che
+        colorato.
+  \item È stata introdotta un'\textbf{iconografia} per \textbf{ridurre il testo}: i
+        testi delle prime versioni sono più lunghi di quelli delle ultime.
+  \item Alcune cose hanno ricevuto un nome di \emph{flavor} (Ruggero cita le
+        \emph{sticker condition}).
+\end{itemize}
+``La carta è la stessa.'' E questo è il tipo di ragionamento, e poi di test, che
+Ruggero si aspetta nella \emph{pipeline} di prototipo dei gruppi: ``le vostre icone, i
+vostri \emph{wireframe} cambieranno in corso d'opera, le cose verranno spostate. È
+giusto che voi partiate con un'idea di come devono essere messe le cose''. Ma con una
+raccomandazione netta: ``\textbf{io non voglio vedere carte belle, voglio vedere carte
+funzionali} nei primi stadi''. Il gruppo di lavoro di Ruggero ha testato con le prime
+carte ``per mesi'', e ``erano letteralmente bianche, con due linee, due scritte e due
+iconcine''. Non era un test di \emph{look and feel}; di questo si riparlerà nella
+lezione sul \emph{playtest}.
+
+\paragraph{Approfondimento: ridurre il testo, non le informazioni.} I tre interventi
+sulla carta \emph{Cyberpunk} (togliere ciò che vale zero, spostare in secondo piano ciò
+che conta meno, sostituire testo ricorrente con icone) sono i tre strumenti classici
+della \textbf{gerarchia visiva}. Nessuno di essi toglie informazioni utili: cambiano
+l'ordine in cui l'occhio le incontra e lo sforzo necessario per leggerle. Un'icona che
+sostituisce una frase ricorrente funziona però solo se è \emph{appresa}, e quindi va
+spiegata una volta e ripetuta in modo coerente; è lo stesso compromesso tra
+immediatezza ed efficienza visto con \emph{Race for the Galaxy}.
+
+% ---------------------------------------------------------------------
+\section{Accessibilità}
+\label{a10:sec:accessibilita}
+
+``Quando pensiamo alla UX, non dobbiamo pensare solo e unicamente alla parte di
+funzionalità meccanica, ma anche all'\textbf{accessibilità}'': quanto il gioco è,
+``come il nome fa intuire'', accessibile.
+
+\paragraph{Font per la dislessia.} Il primo esempio della slide è un \textbf{font per
+persone con dislessia}. Ce ne sono molti, ``anche gratuiti''; quello mostrato è
+gratuito per progetti non commerciali. Sono font che rendono più facile la lettura dei
+testi.
+
+\paragraph{Il \emph{curb cut effect}.} Poi una domanda: qualcuno conosce il
+\textbf{\emph{curb cut effect}}\footnote{La trascrizione dice ``curb effect''. Il nome
+corrente è \emph{curb cut effect}, ``effetto del marciapiede ribassato''.}? Non è legato
+ai font né alla grafica, è ``una cosa più a ombrello''. Il \emph{curb} è il
+\textbf{marciapiede}: quei marciapiedi che, in corrispondenza delle strisce pedonali,
+hanno ``la piccola salitina''. Perché ce l'hanno? Per permettere l'accesso alle persone
+in sedia a rotelle. Ma questo ha cambiato il marciapiede anche per tutti gli altri: per
+chi scarica i pacchi con il carrello, chi sale con la bicicletta, chi rientra in casa
+con un trolley, le persone più anziane, per cui un gradino potrebbe essere un pericolo.
+\textbf{Rendere una cosa più accessibile per qualcuno la rende più accessibile anche
+per tutte le altre persone.}
+
+\paragraph{Il daltonismo.} Il secondo strumento è un'app gratuita che Ruggero consiglia
+``caldamente'' di avere sul cellulare (lui ce l'ha su tutti i telefoni di lavoro):
+\textbf{Chromatic Vision Simulator}. Si fotografa il proprio prototipo, e l'app mostra
+l'immagine con la visione regolare dei colori e con le tipologie più comuni di
+\textbf{daltonismo}, facendo vedere se due colori diventano simili. Nell'esempio della
+slide, con la tritanopia\footnote{La trascrizione dice ``tritanotapia''.} il giallo e il
+rosa diventano molto simili, e in un'altra simulazione si confondono il verde e il
+rosso. ``Scegliere i colori non è solo roba di \emph{vibes}, \emph{mood}'': può rendere
+il gioco molto poco accessibile a chi è daltonico.
+
+Ruggero porta la sua esperienza: nel suo gruppo di gioco abituale c'è un amico
+daltonico, ``e ce ne accorgiamo subito se un gioco possiamo giocarlo insieme o non
+possiamo giocarlo''. E chiude con un avvertimento: ``non ha senso impedire a una
+persona daltonica di giocare un gioco da tavolo. Basta cambiare un colore, ragazzi,
+davvero. Non cadete in queste cose qua. Io li guarderò, i vostri giochi, con
+quest'app, quindi sappiatelo: usatela voi prima che la usi io su di voi''.
+
+\paragraph{Approfondimento: qualche numero e qualche regola pratica.} Il daltonismo
+congenito riguarda circa l'8\% degli uomini e lo 0,5\% delle donne di origine europea,
+con forme più comuni nella confusione tra rosso e verde (deuteranopia e protanopia,
+con le loro forme attenuate) e più rare nella confusione tra blu e giallo (tritanopia).
+In un gruppo di quattro-cinque persone, la probabilità che ci sia almeno una persona
+daltonica non è trascurabile. La regola pratica più diffusa nel design dei giochi è non
+affidare mai un'informazione \textbf{solo} al colore: accompagnarlo con una forma, un
+simbolo o un motivo (le carte con semi diversi, non solo colori diversi). È, di nuovo,
+un \emph{curb cut}: un simbolo in più aiuta anche chi gioca con una luce scarsa o chi
+guarda il tavolo dal lato opposto.
+
+\medskip
+Con questo la prima parte si chiude. ``Facciamo una pausetta'': dieci minuti, e
+``alle sei ci ritroviamo qua'' per il ``blocco grosso'' della lezione, con un invito a
+portare domande: ``non nascondetele''.
+
+% ---------------------------------------------------------------------
+\section{Dopo la pausa: il libro che avete consigliato}
+\label{a10:sec:libro}
+
+Al rientro nessuno ha domande, e Ruggero riassume il senso della prima parte: ``vi è
+comunque utile ragionare sulle icone, su che cosa comunicano le icone in generale, sul
+\emph{wireframe} delle carte'', anche per presentare le proprie carte. Poi passa alla
+``parte succosa'': il paragame.
+
+Comincia con un esercizio, in due tempi. Nel primo, ``non dovete rispondermi, dovete
+pensarci un attimo'', trenta secondi. Bisogna pensare a un \textbf{libro}, con due
+vincoli: deve essere un libro di \textbf{narrativa}, ``non un saggio'', e nel formato
+più tradizionale (``non un fumetto, non una graphic novel, non un libro illustrato. Un
+classico romanzo''); e deve essere un libro che è \textbf{piaciuto}, idealmente uno che
+si è \textbf{consigliato a qualcuno}. ``Non ditemi qual è.''
+
+Nel secondo tempo, invece, si risponde: \textbf{perché} l'avete consigliato? ``Non vi
+sto interrogando, davvero: è utile per capire quello che verrà dopo.'' Le risposte:
+\begin{itemize}
+  \item Uno studente lo consiglia di solito dentro una conversazione: ``si sta parlando
+        di qualcosa, e dico: ti consiglio questo, perché in questo punto c'è qualcosa di
+        molto interessante'', che dà ``un valore aggiunto, una conoscenza in più''. Ma
+        pensava a \emph{L'uomo che scambiò sua moglie per un cappello} di Oliver Sacks,
+        che è un saggio, ``è il confine''; Ruggero chiede di restare sulla fiction.
+  \item Un altro (Lorenzo, a quanto si capisce) consiglia un libro per il
+        \textbf{genere}: ``il genere a me piace'', e quello è un libro fatto bene per
+        quel genere. Fatto bene vuol dire: la \textbf{trama} è scritta bene, ``ha un
+        buon nesso'', i \textbf{personaggi} sono buoni, e si vede che c'è della
+        \textbf{cura} nella scrittura, ``la scelta delle parole, come sono formulate le
+        frasi''. Poi le \textbf{tematiche}, ``emozioni particolarmente scritte bene,
+        gestite bene''.
+  \item Un'altra lo consiglia ``per ciò che mi ha suscitato'': le \textbf{emozioni}
+        provate leggendolo, ``belle emozioni che può provare anche la persona a cui lo
+        consiglio''. Ruggero rilancia: ``magari sai che a un tuo amico piacciono i libri
+        che fanno piangere tantissimo, tu hai pianto tantissimo con un libro, e dici: sai
+        che qua butti fuori un fiume''.
+\end{itemize}
+
+Poi la domanda vera: ``quel libro lo avreste apprezzato anche scritto in \textbf{Comic
+Sans} a grandezza 60?'' Uno studente rivela il suo: \emph{Il club dei delitti del
+giovedì}\footnote{La trascrizione dice ``Il Club dei Detti del Giovedì''. È il romanzo
+giallo di Richard Osman (2020).}. In Comic Sans a corpo 60 ``vengono trenta miliardi di
+pagine'', ma forse ``ci starebbe meglio di \emph{Dracula}, come \emph{vibes}''; magari
+per un libro per bambini. E in \textbf{Times New Roman a corpo 6}? ``Non ci leggi, a
+corpo 6''; ``però ne sono andati in stampa, così'', e almeno ``si sprecano pochi soldi,
+perché sono pochissime pagine''. E se fosse stampato su \textbf{pagine nere, o con
+fondo rosso gotico}? ``Per \emph{Dracula} magari va anche bene''; ``terribile, ci lasci
+gli occhi''; ``il rosso sul nero fa malissimo''.
+
+È a questo punto che una studentessa chiede chiarimenti su che cosa sia il paragame, e
+un'altra persona fa notare a Ruggero che le slide non si vedono: ``non stai
+condividendo''. ``Ragazzi, sono pazzo.'' Ruggero ricondivide e ripercorre in un attimo
+le slide che aveva commentato a voce (il libro, il Comic Sans gigantesco, il font
+piccolino, il nero su rosso), scusandosi anche con chi vedrà la registrazione: per
+fortuna le sue slide ``non sono muri di testo, sono letteralmente a supporto di quello
+che sto dicendo''.
+
+Il senso dell'esercizio, intanto, è chiaro. ``Quando noi consigliamo un libro, è
+difficile che lo consigliamo per come il libro è stampato.'' Anzi, si dice proprio
+``non giudicare un libro dalla copertina''. Eppure la copertina, il font, la dimensione
+del font, il numero di pagine, il \textbf{formato} (tascabile o no, un mattone, un A4
+``ingestibile''), la copertina rigida o morbida \emph{cambiano l'esperienza di
+lettura}. Ruggero aggiunge altri casi.
+\begin{itemize}
+  \item Se le pagine fossero \textbf{talmente sottili da risultare quasi trasparenti}?
+        Qualche decennio fa è uscita un'edizione ``mammut'' di tutti i racconti di
+        \textbf{Lovecraft} in un unico volume di circa 1100 pagine, che per stare in un
+        solo libro aveva le pagine ``praticamente trasparenti'': ``impossibile leggerlo
+        alla luce del sole''.
+  \item Se le pagine fossero di \textbf{plastica}? ``Le posso leggere al mare, o nel
+        bagno.'' Per un libro per bambini, ottimo; per \emph{Dracula}, forse no.
+  \item E l'\textbf{ambiente} in cui si legge: in spiaggia, in treno, di notte sotto le
+        coperte. ``Il \emph{mood} dell'ambiente in cui stiamo, mentre stiamo
+        leggendo.''
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Che cos'è il paragame}
+\label{a10:sec:definizione}
+
+``Il \textbf{paragame} è un'intera area di design che \textbf{non è fiction}, \textbf{non
+è regole}, ma va a impattare l'esperienza'', e a volte si incrocia con quelle altre due
+aree. Un font particolare, magari ``che va sul fantasy medievale'', può aiutare a
+trasmettere la \textbf{fiction}, il \emph{world building}, il \emph{setting}. Ruggero lo
+spiega con l'analogia da cui nasce il termine: ``questo è il \textbf{paratesto}. Il
+paratesto nei libri, il paragioco nei giochi''.
+
+Quando la studentessa chiede di nuovo se il paragame sia ``la modalità con cui il gioco
+è realizzato fisicamente'', Ruggero precisa: è ``un termine che è l'estensione di
+paratesto''. Con paratesto, in letteratura, si intendono ``tutte quelle parti di un
+libro che non sono il suo contenuto, la sua fiction, ma sono tutte quelle parti di
+forma, di formato'': il font, la dimensione e il colore del testo, ma anche il
+\textbf{materiale}, lo spessore delle pagine, il formato del libro, la copertina rigida
+o morbida (``magari di quella morbida, con quell'effetto \emph{matte} e vellutato che
+amo tantissimo''). ``Sono tutti gli aspetti paratestuali, che sono di contorno.''
+Il paragame è la stessa cosa per i giochi: ``gli aspetti di paragame sono tutti quelli
+che ricoprono gli aspetti di un gioco che \textbf{non sono le regole e non sono la
+fiction}''.
+
+\subsection{I bordi sono zone grigie}
+
+Il paragame ``può sforare, chiaramente, perché i bordi non sono dei muri, sono delle
+zone grigie, non così definite'' (figura~\ref{a10:fig:aree}). L'esempio ``più diretto''
+sono i \textbf{librogame}. Qualcuno ne ha giocati? Sì: il più famoso, forse, \emph{Lupo
+Solitario}\footnote{La trascrizione dice ``un po' solitario''. \emph{Lupo Solitario}
+(\emph{Lone Wolf}, Joe Dever) è la serie di librogame più nota in Italia.}. Come
+paragame, i librogame sono libri: hanno una copertina, sono fatti ``come dei manuali,
+tendenzialmente''. Ma il loro \textbf{formato} va anche in base alle \textbf{regole},
+perché i paragrafi numerati sono le opzioni tra cui si sceglie. ``Non è un formato
+separato dalle regole, è un formato che va a intrecciarsi''; e il font scelto, le
+illustrazioni al loro interno, si intrecciano invece con la fiction.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small]
+  \fill[gray!12] (0,0) circle (2.1cm);
+  \fill[gray!12] (2.6,0) circle (2.1cm);
+  \fill[gray!12] (1.3,-2.2) circle (2.1cm);
+  \draw[thick] (0,0) circle (2.1cm);
+  \draw[thick] (2.6,0) circle (2.1cm);
+  \draw[thick, dashed] (1.3,-2.2) circle (2.1cm);
+  \node[font=\bfseries] at (-0.6,0.9) {Regole};
+  \node[font=\bfseries] at (3.2,0.9) {Fiction};
+  \node[font=\bfseries] at (1.3,-3.4) {Paragame};
+  \node[font=\footnotesize, align=center] at (1.3,0.75) {librogame\\(formato)};
+  \node[font=\footnotesize, align=center] at (-0.25,-1.55)
+    {\emph{Meltdown},\\\emph{Keep Talking},\\clessidra};
+  \node[font=\footnotesize, align=center] at (2.9,-1.55)
+    {\emph{Ironwood},\\\emph{Coffee Rush},\\font};
+  \node[font=\footnotesize, align=center, fill=white, inner sep=1pt]
+    at (1.3,-0.75) {\emph{Lift It}};
+  \node[font=\footnotesize, align=center] at (1.3,-2.75)
+    {scatola, inserto,\\spessore delle carte};
+\end{tikzpicture}
+\caption{Regole, fiction e paragame come tre aree con i bordi sfumati. Il paragame è
+ciò che non è né regole né fiction, ma si sovrappone spesso a entrambe. La posizione
+degli esempi riprende i commenti di Ruggero durante la lezione: \emph{Lift It} ``è al
+centro'', \emph{Ironwood} aiuta soprattutto la fiction, \emph{Meltdown} e \emph{Keep
+Talking and Nobody Explodes} soprattutto le meccaniche.}
+\label{a10:fig:aree}
+\end{figure}
+
+\paragraph{Approfondimento: Genette e le ``soglie'' del testo.} Il termine
+\emph{paratesto} viene dal critico francese Gérard Genette, che lo ha sistematizzato in
+\emph{Soglie} (\emph{Seuils}, 1987). Per Genette il paratesto è ciò che fa di un testo
+un libro e lo presenta al lettore: il titolo, il nome dell'autore, la copertina, le
+dediche, le prefazioni, le note, ma anche il formato, la collana, la tipografia. È una
+``soglia'' tra l'interno e l'esterno del testo, una zona di transizione che orienta la
+lettura. L'idea di applicare lo stesso concetto ai giochi (paragame, paragioco) è
+diffusa nei \emph{game studies}, dove il termine \emph{paratext} viene usato anche per
+tutto ciò che circonda un gioco (\emph{trailer}, recensioni, guide, comunità). Nella
+lezione di Ruggero il senso è più vicino a quello originale di Genette: le
+caratteristiche materiali e formali dell'oggetto-gioco.
+
+% ---------------------------------------------------------------------
+\section{Le aree del paragame}
+\label{a10:sec:aree}
+
+``Su quali aspetti del paragame possiamo lavorare? E qui abbiamo l'ondata di robe.
+Andiamo con calma: sono tante zone, ma sono sicuro che le vediamo tutte.'' La
+tabella~\ref{a10:tab:aree} le riassume; le sezioni seguenti le vedono una per una.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.1cm}p{5.4cm}p{4.7cm}@{}}
+\toprule
+\textbf{Area} & \textbf{Domande da farsi} & \textbf{Esempi della lezione} \\
+\midrule
+Materialità & di che cosa sono fatti i componenti? Serve un'app? Quanto sono spesse
+le carte? Clessidra o timer? & dadi di legno e di plastica; \emph{Lands of Galzyr} su
+tablet e telefono; carte \emph{blue core}; \emph{standee} \\
+Formato & come sono comunicati regole e testi? Che font, che dimensione, che misura
+della carta? & \emph{Bureaucracy} di \emph{Magic}; il \emph{200 Word RPG} \\
+Regolamento & quante pagine? Quanti libretti? Video, glossario, \emph{playthrough},
+\emph{play aid}? & \emph{Irish Gauge}; \emph{Root}; riassunto delle icone \\
+Scatola & dove andrà, nei negozi e a casa? & le vecchie scatole lunghe; la Kallax;
+\emph{Dobro} \\
+Grafica e illustrazioni & che cosa comunica l'aspetto visivo? Quante icone? &
+\emph{Master of Rules}; \emph{Rolling Stock Stars}; \emph{A Feast for Odin} \\
+Interfaccia analogica & com'è il \emph{wireframe}? Dove stanno le informazioni quando
+il componente è in uso? & la carta di \emph{Magic}; la plancia di \emph{The
+Gallerist}; le carte a ventaglio e i mancini \\
+Ambiente & dove si gioca? Quanto spazio serve? Che suoni, che vibrazioni? & il tavolo
+IKEA; il treno e l'aereo; \emph{Jenga} \\
+Audio & serve una colonna sonora? & \emph{Escape: The Curse of the Temple} \\
+Contesto & che cosa deve sapere chi gioca sul luogo e sulla cultura del gioco? &
+\emph{Jakarta Traffic}; \emph{This War of Mine} \\
+Lingua & il gioco dipende dalla lingua? & i giochi di Lacerda; \emph{Race for the
+Galaxy}; \emph{Magic} \\
+Spazio urbano e ibridi & la città, la stanza, il telefono come parte del gioco &
+\emph{Pac-Manhattan}; \emph{Vroom}; \emph{World of Yoho} \\
+\bottomrule
+\end{tabular}
+\caption{Le aree progettabili del paragame presentate a lezione, con le domande che
+suggeriscono e gli esempi usati da Ruggero. Inserti e \emph{setup}, discussi alla fine
+(sezione~\ref{a10:sec:inserti}), sono un'altra area della stessa famiglia.}
+\label{a10:tab:aree}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Materialità}
+\label{a10:sec:materialita}
+
+La prima area è la \textbf{materialità}: ``le proprietà fisiche degli elementi di
+gioco''. Legno, plastica, metallo. Prendiamo dei dadi classici di legno e dei dadi di
+plastica: che cosa cambia? ``Il rimbalzo, il rumore, la sensazione al tatto.'' Sono
+aspetti \textbf{cinestetici}, ``che assolutamente impattano''. Ma cambia anche altro,
+``perché nel paragame spesso ci sono anche degli \textbf{aspetti culturali}''. In un
+Eurogame, in un \emph{German}, si troveranno dadi di legno; in un \emph{American}, in un
+\emph{dungeon crawler}, dadi di plastica. (Se n'era parlato, ``vagamente'', nella
+lezione sui casi studio, a proposito dei componenti.)
+
+\subsection{Il digitale come materiale}
+
+Anche il \textbf{digitale} fa parte della materialità: se il gioco ha o richiede
+un'app, un cellulare, un tablet, ``quello è un aspetto di materialità da considerare''.
+Ruggero porta un esempio di un gioco che ha giocato, che la trascrizione chiama ``Lens
+of Galsy''\footnote{Con ogni probabilità \emph{Lands of Galzyr} (Snowbright Studio,
+2021), gioco d'avventura narrativo con app.}: ``molto carino, ma chiaramente pensato per
+un tablet''. L'app ha tanto testo e tante cose a schermo, e sul cellulare, molto più
+piccolo, ``non si vede niente''. ``L'app è la stessa, ma in base a dove lo stiamo
+giocando, quel gioco può diventare un incubo di accessibilità, o qualcosa invece molto
+più comodo da giocare.''
+
+\subsection{Le carte non sono tutte uguali}
+
+Quanto sono spesse le carte? Di che materiale sono? \emph{Blue core}, \emph{black
+core}, \emph{white core}? ``Le carte non sono tutte uguali. Vi sembrano uguali perché le
+usate da chi gioca, ma da produrre sono diverse.'' Quelle ``che si spaccano al volo'' si
+riconoscono subito, perché sono le più economiche: di solito quelle di giochi come
+\emph{Uno} o di giochi di carte ``più cheap da produrre'', in cui basta una pieghetta
+per rovinare una carta ``forever and ever''. Altri giochi usano il \emph{blue core} o il
+\emph{black core}; le carte di \emph{Magic}, per esempio, hanno il \emph{blue core}.
+
+Ruggero semplifica la struttura: di solito una carta da gioco ha \textbf{tre strati},
+lo strato con l'immagine sul fronte, quello con l'immagine sul retro, e in mezzo il
+materiale che ne determina, tendenzialmente, la \textbf{rigidità}. ``Poi è più
+complessa di così'', perché ci possono essere filigrane, texture e altro; ma la parte
+centrale dice che cosa succede quando la carta si piega, o quando la si mescola male.
+
+\paragraph{Le carte americane.} Una studentessa chiede delle carte da gioco americane,
+``quelle di tela'', come le \emph{Bicycle}, che in Europa si vedono poco: c'è un motivo
+per cui sono ``molto più fighe''? Sì: hanno una produzione che include \textbf{materiali
+plastici} nella loro texture, che le rende più resistenti e crea un \textbf{attrito}
+diverso. Sono carte che ``scivolano molto bene'' (``non ho più italiano, scusatemi''), e
+infatti sono usatissime negli spettacoli di prestigiazione, perché si possono manovrare
+velocemente, ``per chi le sa maneggiare; io no, di sicuro''. Le carte prodotte in Europa,
+invece, hanno di solito un attrito molto più alto, e sono ``non fantastiche'' da usare
+in modo ``sgaggio''.
+
+\paragraph{Europa, America, Cina.} Lo stesso vale per i dadi: l'America fa un uso
+abbondante di plastica nei giochi perché spesso produce in \textbf{Cina}, mentre
+tipografie, stamperie e aziende che producono carte in Europa hanno ``molto poco
+accesso'' a quei materiali. ``Quindi spesso siamo più forti nel legno e nella carta che
+nella plastica.'' È ``un vaso di Pandora che a voi interessa il giusto'': per i progetti
+del corso, quel tipo di finiture ``ve lo sognate, salvo pagare un bordello''. Ci sono
+alcune fabbriche che possono fare cose bizzarre, nell'Est Europa e in Repubblica Ceca,
+ma la maggior parte di chi produce stampa in Cina, oppure non usa quei materiali.
+
+\paragraph{Miniature e \emph{standee}.} Stesso discorso per le miniature o gli
+\textbf{\emph{standee}}, il cartoncino infilato in un piedistallo al posto della
+miniatura di plastica. In un \emph{American} è facile trovare la plastica; in un gioco
+prodotto e stampato in Europa, ``non trovate delle miniature di plastica'', perché non
+c'è praticamente nessuna azienda europea di giochi da tavolo che possa stampare in
+Europa la plastica a iniezione usata per le miniature; anche chi produce in Europa giochi
+con parti di plastica le fa stampare in Cina. Per questo molti giochi europei degli anni
+'90 e 2000, \emph{German} ed Eurogame, ``la plastica proprio la skippano'': se hanno
+delle figure, sono \emph{standee}.
+
+\paragraph{Approfondimento: che cosa fa davvero il ``core''.} Nella produzione di carte
+da gioco lo strato centrale (\emph{core}) ha due funzioni: dà rigidità e soprattutto
+rende la carta \textbf{opaca}, impedendo di vedere il fronte in controluce, cosa
+essenziale in qualunque gioco con informazioni nascoste. \emph{Blue core} e
+\emph{black core} sono nomi commerciali di cartoncini a più strati con un'anima
+colorata scura. Sulle carte americane del tipo \emph{Bicycle}, il cartoncino è in
+genere rivestito da una finitura goffrata e laccata (la cosiddetta \emph{air-cushion
+finish}) che riduce l'attrito; le carte \emph{interamente} di plastica (PVC o acetato)
+esistono, ma sono un prodotto diverso e più costoso.
+
+\subsection{Clessidra o timer?}
+
+``Occhio alla materialità, perché la materialità non va a impattare solo il paragame e
+basta.'' Il classico esempio di materialità che impatta anche le \textbf{regole} è la
+\textbf{clessidra}. Che differenza c'è tra un timer sul cellulare e una clessidra? Uno
+studente risponde: ``la tangibilità''. Sì, e soprattutto quella che si chiama di solito
+l'\textbf{informazione discreta}: con il timer si sa con precisione quando mancano un
+secondo, due, tre, quattro secondi. Con la clessidra no: si vede chiaramente quando è
+finita, ma ha ``quel pizzichino di incertezza che crea una tensione molto precisa che il
+timer non ha''. Entrambi creano tensione, adrenalina, frenesia, ma in modo diverso; e
+sapere quale dei due serve al proprio gioco ``non è così scontato''
+(tabella~\ref{a10:tab:clessidra}).
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3cm}p{5cm}p{5cm}@{}}
+\toprule
+ & \textbf{Timer (cellulare)} & \textbf{Clessidra} \\
+\midrule
+Informazione & discreta e precisa: si sa quanti secondi mancano & continua e
+incerta: si vede la sabbia scendere, ma non si sa con precisione quanto manca \\
+Tensione & c'è, ed è ``contata'' & c'è, con ``un pizzichino di incertezza'' in più \\
+Fiction & neutra, a meno di suoni scelti apposta & può essere diegetica (vedi il
+fiammifero di \emph{Scandal in the Deep}, sezione~\ref{a10:sec:casi}) \\
+Domanda da farsi & perché un timer e non una clessidra? & perché una clessidra e non
+un timer? \\
+\bottomrule
+\end{tabular}
+\caption{Timer e clessidra come scelta di materialità che incide sulle regole e sulla
+tensione di gioco.}
+\label{a10:tab:clessidra}
+\end{table}
+
+Qui Ruggero fa un annuncio che vale per il resto del corso: ``io ve lo ricordo, ve
+l'avevo già accennato, ve lo ripeto: quando vedremo i \emph{pitch}, ma anche i vostri
+progetti più avanti, nelle ultime lezioni, \textbf{io vi chiederò tantissimi
+perché}''. Perché avete scelto una cosa, perché l'avete fatta, perché l'avete decisa.
+``Se avete una clessidra e non un timer, io vi chiederò perché avete una clessidra e non
+un timer. Perché avete la plastica, la carta, e così via. Voi dovete dirmi il perché
+delle cose che fate.''
+
+% ---------------------------------------------------------------------
+\section{Formato}
+\label{a10:sec:formato}
+
+Il \textbf{formato} è il modo in cui sono comunicati, per esempio, regole e testi:
+frasi o icone? Che font? Quanto è alto, che dimensione ha? E la carta, com'è fatta,
+quanto è grande?
+
+\paragraph{\emph{Bureaucracy}.} Il primo esempio è una carta di \emph{Magic} ``volutamente
+fatta male'': \emph{Bureaucracy}, da una di quelle serie \emph{easter egg} (umoristiche)
+che \emph{Magic} pubblica ogni tanto\footnote{La trascrizione aggiunge un dettaglio
+sul simbolo dell'espansione che non è ricostruibile (``ha l'uomo rotto suonate come
+simbolo''). \emph{Bureaucracy} appartiene alle espansioni parodiche di \emph{Magic}, le
+cosiddette \emph{Un-set}.}. Per il testo è stato scelto un font piccolissimo (``mi
+sembra che fosse un corpo 5, o addirittura 6''), per renderlo ``un muro di testo
+oppressivo'': tematicamente coerente con il nome della carta.
+
+\paragraph{La misura delle carte di \emph{Magic}.} Qualcuno sa quanto sono grandi le
+carte di \emph{Magic}? ``Una dimensione da poker.'' In millimetri sono ``cifre
+bizzarre'', perché in realtà la misura è di \textbf{3,5 per 2,5 pollici}\footnote{La
+trascrizione riporta cifre storpiate (``88,4 per 69,5''). 3,5 per 2,5 pollici sono circa
+88,9 per 63,5 millimetri; la misura nominale indicata di solito per le carte di
+\emph{Magic} è 63 per 88 millimetri.}, ``in un sistema stupido americano di
+misurazione'' (``ormai l'ho detto, è troppo tardi''). E in quella dimensione non c'è
+tutto lo spazio che si vuole, perché una parte è dedicata all'\textbf{illustrazione}:
+lo spazio per il testo, con il font e la dimensione scelti, è ancora più ridotto.
+Questo non impatta solo il formato, ma anche le \textbf{regole}: ``una regola complessa
+sarà difficile da scrivere in quello spazio'', e quindi il formato costringe a scegliere
+regole che ci stiano dentro.
+
+\paragraph{Il \emph{200 Word RPG}.} Un caso estremo: il \emph{200 Word RPG}, una sfida
+in cui si scrivono giochi di ruolo completi in \textbf{200 parole}. Il paragame è il
+formato stesso delle 200 parole: ``ditemi voi se non vi impatta le regole, quel
+formato''.
+
+``Non prendete questa cosa qua come del contorno, come una cosa che è un di più.
+Questa roba qui vi va a impattare come voi create i giochi, e se lo sapete, potete
+lavorarci attorno.''
+
+% ---------------------------------------------------------------------
+\section{Regolamento}
+\label{a10:sec:regolamento}
+
+Il \textbf{regolamento} è un'area a sé. Quante pagine ha? Una o quaranta? Che cosa
+cambia? ``Se io vi dico: venite, c'è un party game, e tiro fuori un manuale da 60
+pagine, che cosa succede?'' Succede che nessuno lo gioca.
+
+\paragraph{\emph{Irish Gauge}: un caso positivo.} All'opposto, un caso ``incredibile'':
+\emph{Irish Gauge}\footnote{La trascrizione dice ``Irish Gouge'' e attribuisce il gioco a
+``Amable Holland'', più avanti ``Anne Blowland''. È \emph{Irish Gauge}, gioco
+ferroviario di Amabel Holland.}, un gioco economico ferroviario ``bellissimo'', di circa
+un'ora di partita, in cui si comprano azioni e si costruiscono ferrovie, con una
+complessità significativa sul tavolo, ``un gioco comunque bello intenso''. E il
+regolamento è \textbf{un singolo foglio di carta} ``che lascia zero dubbi dopo che lo si
+è letto''. ``Bellissimo, irraggiungibile forse.'' È una sorpresa positiva; il caso
+contrario (il party game da 60 pagine) è una sorpresa negativa che uccide il gioco.
+
+\paragraph{QR code e video.} Chi gioca spesso avrà notato che sempre più regolamenti
+hanno un \textbf{QR code} o un link a un video in cui le regole vengono spiegate.
+Perché? ``Non sappiamo più leggere'' è ``la versione più nichilista''. La risposta ``più
+banale e meno nichilista'' è che \textbf{le persone imparano in modi diversi}: un
+regolamento scritto in un certo modo può andare benone per una persona ed essere un
+disastro per un'altra.
+
+\paragraph{Più libretti per lo stesso gioco.} Alcuni giochi hanno più di un libretto di
+regole. \emph{Root}, per esempio, ha la \textbf{guida rapida} (il \emph{learn to play}),
+scritta come un regolamento da leggere al tavolo, e la \textbf{Legge di Root}, scritta
+come un \textbf{manuale tecnico}: paragrafi 1.1.1, 1.1.2, 1.1.3, 1.2.1 e così via, con
+glossario. ``Il gioco è lo stesso. Lo si impara a giocare in entrambi i modi, ma parlano
+a due persone completamente diverse.''
+
+\paragraph{I costi.} Ogni scelta ha un costo. Un regolamento in più costa la
+produzione di un regolamento in più, \textbf{a ogni copia} stampata. Il video è un costo
+diverso: lo si paga una volta, all'inizio, lo si mette online ``e quel video lì è lì''.
+``Se tu stampi 100 copie o ne stampi 10.000, il video non ti costa di più. Il
+regolamento sì.''
+
+\paragraph{Glossario, \emph{playthrough}, \emph{play aid}.} Altre domande: c'è un
+\textbf{glossario}? Un \emph{playthrough}? Un \emph{play aid}? E le icone, dove sono
+riassunte? Dove si trova di solito il riassunto delle icone? Due risposte, ``entrambe
+vere''. Tancredi: \textbf{nell'ultima pagina del regolamento}, usata spesso proprio per
+questo, perché si può tenere il regolamento girato sul tavolo e avere il riassunto
+davanti. Tiziana: in un \textbf{\emph{play aid}}, un cartoncino, magari uno a persona,
+con il riassunto delle icone. Quando l'uno e quando l'altro? Dipende da \textbf{quante
+icone} ha il gioco. In \emph{Race for the Galaxy} un riassunto a testa non esiste,
+``perché il riassunto delle icone di \emph{Race for the Galaxy} è così'' (e Ruggero
+mostra quanto è lungo). In giochi con cinque, sei, una decina di icone è facile avere
+una carta personale che le riassume, magari con il \textbf{flusso del turno} sul retro.
+
+\paragraph{Il \emph{playthrough} e l'\emph{actual play}.} Più avanti, su richiesta di
+uno studente (``Ruggero, non so se l'hai detto: il \emph{playthrough}?''), Ruggero torna
+sul punto. Il \textbf{\emph{playthrough}} è \textbf{una giocata descritta}. Molti giochi
+lo fanno spezzandolo in esempi: i classici esempi in cui ``Tizio e Caio fanno A, B, C,
+poi Tizio fa B e Caio piange perché ha perso la partita''. Questi esempi non sono solo
+un'applicazione delle regole: sono una descrizione di \textbf{che cosa fanno le persone
+al tavolo}. Alcuni giochi, soprattutto di ruolo, includono il cosiddetto \textbf{\emph{actual
+play}}: un'intera partita descritta, alternando le parti di \emph{roleplay} e quelle
+meccaniche (``Tizio tira e fa 18, quindi apre questa cosa; poi Caio dice questa cosa con
+il suo personaggio''). Dove si trovano\footnote{La trascrizione attribuisce la domanda a
+qualcuno che si rivolge a ``Pietro''; con ogni probabilità è un errore di trascrizione
+per ``Ruggero''.}? Sono ``comunissimi nei giochi di ruolo'': molti giochi di ruolo
+contemporanei hanno esempi di \emph{actual play}, di solito in fondo al manuale. Gli
+esempi sparsi nei regolamenti sono ``un'estrazione del \emph{playthrough}'', scritti con
+la stessa idea; il \emph{playthrough} vero e proprio è l'esempio di partita completa. Nei
+giochi da tavolo più commerciali è raro, ``perché le pagine dei regolamenti costano'', e
+una partita completa prende molto spazio. Rientra quindi soprattutto nei giochi di
+ruolo, che hanno già manuali da cento pagine e passa e non hanno il problema di stare
+sotto le 16 pagine, ``perché sennò la gente si spaventa'' davanti a un regolamento da
+20.
+
+% ---------------------------------------------------------------------
+\section{La scatola}
+\label{a10:sec:scatola}
+
+Nel formato rientra anche la \textbf{scatola}. Ruggero è convinto di averne già parlato
+(``non abbiamo mai parlato delle scatole? Secondo me no'') e la affronta con una
+domanda: come erano fatte le scatole del vecchio \emph{Risiko!} o del vecchio
+\emph{Monopoly}? ``Basse e lunghe.'' Perché? ``Ci stava il tabellone''; ``si impilavano''.
+La domanda, precisa Ruggero, non è che cosa c'era dentro, ma \textbf{dove doveva andare}
+la scatola: nei negozi di giocattoli e, a casa, dove venivano messi i giochi trenta,
+quarant'anni fa? Non nella libreria: \textbf{negli armadi}. ``Non era una questione
+estetica'': l'armadio è stretto e lungo, e la scatola doveva entrare lì.
+
+E oggi, dove vanno messi? In libreria. Quale libreria? La \textbf{Kallax}\footnote{La
+trascrizione dice ``Callax'' e, a tratti, ``Galaxy''.} dell'IKEA, ``la libreria più
+venduta del mondo''. Com'è fatta? ``\textbf{A cubi}.'' La scatola del vecchio
+\emph{Monopoly} lì dentro non entra (``puoi metterla in cima, certo''). Ma se oggi un
+editore vuole che il suo gioco entri ``nella libreria più venduta del mondo'', il gioco
+deve entrare in un cubo. ``È tutto qui. \textbf{Una scelta dell'IKEA ha deciso che le
+nostre scatole ora sono quadrate}.'' L'IKEA non ha convinto gli editori di niente: ``è
+una roba che viene naturale, perché tutta l'umanità è intrecciata. Le decisioni che
+prende qualcuno vanno a impattare qualcun altro''. Chi vuole che il proprio gioco sia in
+vista in libreria deve fare i conti con il cubo.
+
+Ruggero si concede qui una raccomandazione generale: ``se c'è una cosa che voglio che vi
+portiate via da questo corso, una cosa'' (``poi, se fate anche giochi dopo, belli,
+benissimo''), ``la cosa migliore per me, perché sono contento, ho fatto il mio lavoro,
+posso morire in pace'', è questa: \textbf{ragionate quando fate le cose}. ``Potete
+ragionare sulle cose quanto volete. Più ci ragionate, più avete aree operative su cui
+fare le cose.''
+
+\paragraph{Approfondimento: il ``formato Kallax''.} Il vano interno di una Kallax misura
+circa 33 per 33 centimetri, per una profondità di poco inferiore ai 39. Non a caso un
+gran numero di giochi da tavolo contemporanei di formato ``standard'' ha una scatola
+quadrata di circa 30 centimetri di lato: è il formato che sta in un vano in piedi o
+coricato, e che si impila bene. Molti editori lo indicano ormai esplicitamente tra i
+vincoli di progettazione della scatola, insieme al peso e ai costi di spedizione.
+
+% ---------------------------------------------------------------------
+\section{Grafica e illustrazioni}
+\label{a10:sec:grafica}
+
+``\textbf{Graphic design e illustrazioni sono due cose diverse}. Non confondete le
+cose.'' Le \textbf{illustrazioni} sono tendenzialmente l'\emph{art}: le immagini,
+gli sfondi, i personaggi, i luoghi, la parte di \emph{world building}. Il
+\textbf{graphic design} sono le icone, la UX. ``Non fate fare queste due cose alla
+stessa persona, sennò di solito viene una porcheria.''
+
+\subsection{Due edizioni, due destini}
+
+Sulla slide ci sono due scatole: una con un omino che tiene sopra di sé delle forme, e
+una con un'auto sotto un cielo stellato, una notte al neon. ``Sono lo stesso gioco'':
+\emph{Master of Rules}\footnote{Il titolo è quello della trascrizione e non è stato
+possibile verificarlo.}, ``un gioco bellissimo'', che nella sua edizione americana è
+uscito con la prima scatola. ``Vi sorprenderà sapere che in America non è andato per
+niente, nonostante sia un gioco incredibile. Qualcuno ha un'idea del perché?'' Le
+risposte sono impietose: ``fa schifo'', ``sembra quelli che trovi in edicola''. E
+dentro, dice Ruggero, ``è ancora più brutto''.
+
+Uno studente lo provoca: ``io ho dei giochi che hanno copertine orrende da 100 euro'':
+gli \textbf{Splotter}\footnote{Splotter Spellen, editore olandese noto per giochi
+molto pesanti e per una grafica spartana.}. Ruggero non lo nega, ma ribalta la
+domanda: la grafica degli Splotter ``è comprensibile perché la fanno così, ovvero perché
+non gliene frega niente''; ma ``sarebbero giochi peggiori con una grafica migliore?'' ``La
+risposta, nel tuo cuore, la sai: no.'' Le immagini danno un'esperienza, un \emph{look
+and feel}.
+
+Tiziana porta un caso concreto: un amico ha comprato \emph{Darwin's Journey}\footnote{
+La trascrizione dice ``Darvis Journey''.}, ``un gioco che secondo me è bellissimo'', e
+l'ha rivenduto, perché l'impatto grafico per lui è stato terribile: ``colori scuri sul
+marrone''. ``Non riusciva a vederlo.''
+
+Ruggero avrebbe potuto fare ``mille altri esempi'' di giochi usciti in due edizioni con
+grafiche diverse, ``una che va a picco e non la vedete più, e l'altra che invece diventa
+roba di culto''. Perché la grafica ha un impatto ``non solamente in termini di
+leggibilità, ma anche di \emph{vibes}''. Lui, personalmente, non ci fa caso: ``io mi
+gioco anche \emph{Rolling Stock Stars}'', che ``sembra fatto da marito e moglie su
+Excel''. Ma altre persone vedono quella grafica e dicono ``non giochiamo a \emph{Rolling
+Stock Stars}''. E finisce che ``il piccolo Ruggero'' lo gioca ``una volta ogni cinque
+anni, perché nessuno vuole giocarci''. La conclusione: ``un gioco può beneficiare
+dall'essere \textbf{non visivamente ostile} alle persone che lo vogliono giocare''.
+Un altro studente aggiunge, a proposito di grafiche difficili, \emph{Terraforming
+Mars} (``la carta con il cane''), e Ruggero si arrende: ``volete farmi stare male
+oggi''.
+
+\subsection{Il font, e quante icone}
+
+Anche il \textbf{font} rientra nella grafica, non solo nel formato: il font del titolo,
+il font dei contenuti. Ruggero cita un gioco che ha venduto ``proprio per il font che
+aveva'', e promette di mostrarlo dopo, perché ``ci vuole del tempo per elaborare''
+(lo farà nella discussione finale: è \emph{Al Rashid}, sezione~\ref{a10:sec:alrashid}).
+
+Ultimo punto della grafica: \textbf{quante e quali icone} avete? Sulla slide c'è \emph{A
+Feast for Odin}\footnote{La trascrizione dice ``Fist for Odin''. \emph{A Feast for
+Odin} (Uwe Rosenberg, 2016).}: ``quel gioco lì ha 50 azioni diverse. Non devo dirvi
+altro''. Ragionate sulle icone che avete.
+
+\paragraph{L'intervento di Tiziana.} Tiziana porta un esempio di segno opposto: ha
+giocato di recente a un gioco che la trascrizione chiama ``MNFR''\footnote{Il titolo
+non è ricostruibile dalla trascrizione.}, abbastanza complesso, con varie tipologie di
+azioni e una serie di cose che si succedono; ma le icone ``sono sempre quelle'', in
+numero limitato, e una volta capite ``te le ritrovi in tutte le salse, nelle varie parti
+e sezioni del gioco''. ``E questo aiuta molto.'' Ruggero concorda e cita di nuovo
+\emph{The Gallerist} (``bellissimo, un capolavoro''): sono giochi in cui, se si fa un
+buon lavoro sulle icone, il gioco ``non ti chiederà mai di andare a leggere il
+regolamento durante la partita''. Lui ha giocato di recente un Eurogame di designer
+giapponesi\footnote{La trascrizione dice ``Elder Tide degli stessi di Gisoji''; titolo
+e autori non sono ricostruibili con sicurezza.}, con un \emph{setting} un po' fantasy, in
+cui si costruiscono edifici su un'isola e ci si muove di porto in porto per vendere
+risorse: ``ha tante icone, ma dopo i primi cinque minuti, per tutte le altre due ore
+della partita, non abbiamo guardato il regolamento una singola volta, perché è tutto
+chiaro, tutto immediato''. Si torna ai pilastri: immediatezza, efficienza,
+memorabilità.
+
+% ---------------------------------------------------------------------
+\section{Interfaccia analogica}
+\label{a10:sec:interfaccia}
+
+La voce successiva è l'\textbf{interfaccia analogica}: ``si parla di
+\emph{wireframing}, di solito''. È la struttura nuda della carta, quelle linee che, in
+stampa, ``verranno abbellite da frame, cornici''. Ma il \emph{wireframe} è quello. ``Se
+vi chiedo di disegnarmi a occhi chiusi su un foglio una carta di \emph{Magic}, voi sapete
+come disegnarmela'': divisa a metà, al centro un rettangolino molto sottile, un
+rettangolo più grosso in alto, uno più grosso in basso. ``Quella parte lì è una parte su
+cui potete ragionare.''
+
+\subsection{La scatola in piedi: \emph{Dobro}}
+
+Anche la grafica della scatola è interfaccia. ``Se io prendo la scatola e la metto in
+verticale, posso leggere il titolo?'' C'è una ``diatriba'' che Ruggero non apre
+(``siete ancora persone sane di mente, non voglio rovinarvi la vita''): i giochi da
+tavolo si mettono in libreria in verticale o in orizzontale? Lui fa un mix, ma molte
+persone li mettono in verticale, e molte scatole non hanno il nome del gioco su tutti i
+lati: alcune lo hanno solo per il lungo, e in verticale il nome è storto. L'esempio
+positivo è \emph{Dobro}, di cui il suo gruppo ha rifatto la scatola per l'edizione
+italiana: un lato lungo con il nome in orizzontale, il lato opposto con il nome in
+verticale, e lo stesso sui due lati corti. ``Non importa come la mettete: un modo per
+trovarla con il nome che si vede da fuori lo trovate sicuramente.'' Mentre ``ho delle
+scatole in cui non si vede il nome, perché purtroppo non l'hanno messo su tutti i
+lati''. Quindi: \textbf{la grafica della scatola non va lasciata al caso}, ``perché è
+funzionale''. (``Mi sto arrabbiando, si vede, perché questa cosa mi fomenta.
+Purtroppo per voi.'')
+
+\subsection{Le opere sulla plancia di \emph{The Gallerist}}
+
+Una studentessa chiede di chiarire: l'interfaccia analogica è il discorso della scatola
+e della visibilità, o altro? Ruggero torna al \emph{wireframe}, ``cioè a come sono fatte
+le carte'', e porta l'esempio di \emph{The Gallerist}: si acquistano opere d'arte da
+esporre nella propria galleria, e la \textbf{plancia} personale raffigura la galleria.
+Le tre tessere delle opere esposte si sovrappongono perfettamente ai \textbf{muri
+disegnati sulla plancia}, ``andando letteralmente a mettere le opere in vista nella
+nostra galleria''. Non è casuale: hanno pensato la grafica in modo che aiutasse a capire
+che cos'è quel componente, e in modo che fosse anche soddisfacente. Di nuovo:
+soddisfazione, efficienza, memorabilità, immediatezza.
+
+\subsection{Dove stanno le informazioni quando le carte sono in mano}
+
+Un altro aspetto dell'interfaccia è \textbf{dove si piazzano le informazioni}. Con le
+carte da poker in mano, dove sono le icone? \textbf{In alto a sinistra}: quando le carte
+sono aperte a ventaglio, ciascuna copre buona parte di quella precedente, e l'angolo in
+alto a sinistra è ``la cosa più visibile'' (figura~\ref{a10:fig:ventaglio}).
+
+Tancredi apre una parentesi sui \textbf{mancini}: ``io da mancino, tutte le volte che
+apro le carte da poker, non vedo assolutamente niente''. Ruggero conferma (``ho degli
+amici mancini, e se avete un gioco che non pensa ai mancini lo sapete al volo, perché
+ve lo dicono''), e lo riconduce all'\textbf{accessibilità}: i mancini tengono in mano le
+carte come tutti, ``è solo che per natura il ventaglio lo fanno nell'altro verso''. Molti
+giochi per questo \textbf{duplicano} il seme della carta, mettendolo anche in alto a
+destra. In alcuni giochi è più complicato: quando l'angolo in alto a sinistra ospita
+icone meccaniche, come il costo, come in \emph{Race for the Galaxy} (``è il problema
+minore di questa carta, mi sento di dire''), duplicare vuol dire affollare ancora di più
+una carta già piena. ``Volete davvero duplicare le informazioni di questa carta
+dall'altro lato? Io non lo farei.'' Non sempre si può; ma ``è assolutamente una
+considerazione da fare''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize]
+  % mano destrorsa: ventaglio verso destra
+  \begin{scope}[shift={(0,0)}]
+    \foreach \a/\i in {24/1, 12/2, 0/3, -12/4, -24/5}{
+      \begin{scope}[rotate around={\a:(0,-2.6)}]
+        \draw[thick, fill=white] (-0.75,-1.6) rectangle (0.75,0.6);
+        \node[anchor=north west, inner sep=2pt] at (-0.75,0.6) {\textbf{\i}};
+        \node[anchor=north east, inner sep=2pt, text=gray] at (0.75,0.6) {\i};
+      \end{scope}
+    }
+    \node at (0,-2.4) {ventaglio ``destrorso''};
+    \node[text width=4.6cm, align=center] at (0,-3.0)
+      {restano visibili gli angoli in alto a \textbf{sinistra}};
+  \end{scope}
+  % mano mancina: ventaglio nell'altro verso
+  \begin{scope}[shift={(6.6,0)}]
+    \foreach \a/\i in {-24/1, -12/2, 0/3, 12/4, 24/5}{
+      \begin{scope}[rotate around={\a:(0,-2.6)}]
+        \draw[thick, fill=white] (-0.75,-1.6) rectangle (0.75,0.6);
+        \node[anchor=north west, inner sep=2pt] at (-0.75,0.6) {\textbf{\i}};
+        \node[anchor=north east, inner sep=2pt, text=gray] at (0.75,0.6) {\i};
+      \end{scope}
+    }
+    \node at (0,-2.4) {ventaglio ``mancino''};
+    \node[text width=4.6cm, align=center] at (0,-3.0)
+      {restano visibili gli angoli in alto a \textbf{destra}: serve l'indice
+      duplicato (in grigio)};
+  \end{scope}
+\end{tikzpicture}
+\caption{Le carte a ventaglio. L'informazione più importante va nell'angolo che resta
+scoperto; chi apre il ventaglio nell'altro verso, come molti mancini, vede l'angolo
+opposto, e per questo molti giochi duplicano il seme o l'indice in alto a destra.
+Schema illustrativo: l'ordine con cui le carte si sovrappongono dipende da come le si
+apre.}
+\label{a10:fig:ventaglio}
+\end{figure}
+
+Ruggero annuncia che su grafica e formato c'è ``un'altra cosa'', da riprendere dopo (lo
+farà con gli inserti, sezione~\ref{a10:sec:inserti}).
+
+% ---------------------------------------------------------------------
+\section{Ambiente}
+\label{a10:sec:ambiente}
+
+\textbf{Dove} giocheranno le persone al vostro gioco? Su un tavolo, a letto, per terra,
+in piedi? E \textbf{quanto spazio} prende il gioco? Qualcuno sa quanto spazio, al
+massimo, deve prendere un gioco da tavolo \emph{family} per quattro persone? ``La sapete
+nel vostro cuore, la risposta.'' Gianmarco: ``\textbf{il tavolo IKEA}''. ``Bravissimo,
+Gianmarco, è sempre quello.'' Il tavolo IKEA più venduto: cercate quanti centimetri
+misura. ``Se il vostro gioco non entra in quel tavolo, avete un grosso problema.''
+
+E se è un \textbf{party game}? Allora deve stare nel \textbf{tavolino da caffè}
+dell'IKEA, più piccolo, quello da divano, ``per un altro tipo di ambiente''. Se è un
+gioco \emph{pocket}, portatile, deve stare nei tavolini da caffè, in quelli del
+\textbf{treno}, in quelli dell'\textbf{aereo}. ``Quanto spazio prende il vostro gioco
+apparecchiato non è casuale. Non lasciate al caso quella roba'', altrimenti succede,
+come è capitato di vedere a Ruggero, di avere ``giochi in solitaria che prendono un
+tavolo per sei persone''.
+
+Il mezzo di trasporto ha poi un altro problema: il treno e l'aereo \textbf{si muovono}.
+Il gioco può starci come spazio, ma i componenti? Uno studente ricorda le
+\textbf{versioni magnetiche} di scacchi e dama, e una versione mini di \emph{Azul} con
+le tessere che si incastrano. E Ruggero aggiunge: \emph{Jenga} ci sta, come spazio, nel
+tavolino di un aereo. Perché nessuno ci gioca in aereo? ``Per le vibrazioni dovute al
+movimento.'' Appunto: ``l'ambiente non è solo spazio. L'ambiente è anche suoni, è anche
+vibrazioni, è un sacco di altre cose''.
+
+\paragraph{Approfondimento: misurare il tavolo.} Le misure dei tavoli più diffusi
+nelle case cambiano da modello a modello, ma un tavolo da cucina per quattro persone ha
+spesso un piano tra gli 80 per 80 e i 120 per 75 centimetri, e un tavolino da caffè è
+molto più piccolo (spesso intorno ai 90 per 55 centimetri). Il consiglio di Ruggero va
+preso alla lettera: misurare il piano reale di riferimento e fare un \emph{mock-up} del
+gioco apparecchiato a grandezza naturale, lasciando spazio per le mani, i bicchieri, le
+plance personali e i mazzi degli scarti. È uno dei test più economici che si possano
+fare con un prototipo.
+
+% ---------------------------------------------------------------------
+\section{Audio}
+\label{a10:sec:audio}
+
+Altra area progettabile: l'\textbf{audio}. Serve la musica nel vostro gioco? Alcuni
+giochi usano una \textbf{colonna sonora} per dare il tempo. L'esempio è \emph{Escape:
+The Curse of the Temple}\footnote{La trascrizione inciampa più volte sul titolo, e
+Ruggero stesso si corregge (``scusatemi, perché in tedesco\dots''). Il gioco è
+\emph{Escape: The Curse of the Temple} (Kristian Amundsen \O{}stby, Queen Games, 2012).}: un
+gioco in tempo reale in cui bisogna uscire dal tempio entro la durata della colonna
+sonora, ``sennò siete fritti''. E a intervalli la colonna sonora fa sentire dei
+\textbf{colpi di gong} che attivano eventi meccanici nel gioco. Quindi la colonna
+sonora non è ``solamente un timer, una grossa clessidra'': è un \textbf{elemento
+meccanico} che, con l'audio, fa altre cose. E fa anche \textbf{fiction}: dà elementi di
+\emph{world building}, certe \emph{vibes}. ``È chiaro che \emph{Escape} è molto Indiana
+Jones: non avete una colonna sonora techno IDM a palla.''
+
+% ---------------------------------------------------------------------
+\section{Contesto}
+\label{a10:sec:contesto}
+
+``Al \textbf{contesto} non ci pensa quasi mai nessuno, ma è molto importante'', perché
+informa il gioco, ``non solo in termini di \emph{world building}, ma anche in termini di
+che cosa vuole che voi facciate''.
+
+\paragraph{\emph{Jakarta Traffic}.} \emph{Jakarta Traffic}\footnote{Titolo come nella
+trascrizione.} è un gioco sul traffico di Giacarta, ``che è molto ostile'': si naviga il
+traffico per fare delle consegne, e molti elementi del gioco sono \textbf{culturali}.
+Spiegare le meccaniche a chi non sa come è fatta Giacarta, culturalmente, rende il gioco
+molto più complesso di quanto dovrebbe essere. Qui, secondo Ruggero, hanno fatto un
+buon lavoro: il manuale aiuta a capire il contesto, e hanno perfino creato una colonna
+sonora usando il traffico di Giacarta come \emph{sample}, per creare un certo
+\emph{mood}.
+
+\paragraph{\emph{This War of Mine}.} Ma il contesto non è solo \emph{setting}: può
+anche \textbf{informare le scelte}. Qualcuno conosce il gioco da tavolo di \emph{This War
+of Mine}\footnote{La trascrizione dice ``Diceworld Mine''.}? Qual è il suo contesto?
+``È una guerra, ma non mi ricordo se è una guerra vera.'' ``È a metà'': non è scritto
+apertamente, ma è palesemente l'\textbf{assedio di Sarajevo}. E soprattutto, non si
+giocano militari: si giocano \textbf{civili}. Se ci si approccia al gioco ``con tutto il
+bagaglio culturale dei giochi di guerra'', ci si aspettano cose che il gioco non può
+dare, perché ``non è un gioco di soldati in guerra: è un gioco in cui c'è la guerra, ma
+non è un gioco di guerra''. Queste cose si risolvono con un mix: in parte con testo,
+\emph{flavor} e \emph{world building}, in parte con il paragame, con i materiali.
+
+% ---------------------------------------------------------------------
+\section{Lingua}
+\label{a10:sec:lingua}
+
+Anche la \textbf{lingua} è un componente. Alcuni giochi sono \textbf{indipendenti dalla
+lingua}: in un gioco di Lacerda\footnote{Vital Lacerda, autore portoghese di Eurogame
+pesanti, tra cui \emph{The Gallerist}.}, o nella maggior parte dei \emph{German}, sulle
+carte non c'è testo, ``alla buon'icona''. Lo stesso \emph{Race for the Galaxy}, lasciando
+stare il nome e l'effetto ricopiato sotto, si può giocare anche senza leggere l'inglese:
+``mi basta sapere che cosa fanno quelle icone''. Così \emph{The Gallerist}, o \emph{Master
+of Rules}. Altri giochi no: \emph{Magic} è molto difficile da giocare se le carte non sono
+nella propria lingua.
+
+% ---------------------------------------------------------------------
+\section{La città, la stanza, il telefono}
+\label{a10:sec:pervasivo}
+
+``In quali altri modi posso impattare l'esperienza di chi gioca senza passare per le
+regole e per la fiction?'' Sulla slide c'è un'immagine di
+\textbf{\emph{Pac-Manhattan}}\footnote{La trascrizione dice ``Pac-Man Hatton''.
+\emph{Pac-Manhattan} (2004) è un gioco urbano nato alla New York University, in cui
+persone vere interpretavano Pac-Man e i fantasmi nelle strade di Manhattan.}: la città,
+gli aspetti \textbf{pervasivi urbani} sono anch'essi paragame.
+
+\paragraph{La stanza come pista.} Un altro esempio è un gioco di corsa cooperativo che
+la trascrizione chiama ``Vroom''\footnote{Il titolo non è stato possibile verificarlo.}:
+usa il \textbf{tavolo} come spazio di gioco e chiede di prendere degli \textbf{oggetti
+della propria stanza} e metterli sul tavolo come ostacoli, ``fisicamente, proprio''.
+
+\paragraph{\emph{World of Yoho}.} Infine \emph{World of Yoho}\footnote{La trascrizione
+dice ``World of Yacht'', ``World of YOHO'', ``Word of Yoko''.}, un gioco di pirati che
+chiede di usare il \textbf{cellulare} su un tabellone gigantesco. Il telefono è la
+propria \textbf{nave}: quando lo si sposta, sullo schermo si muove la mappa, e le parti
+di quella casella di mare diventano interagibili in digitale. ``Si poteva fare senza
+cellulare? Sì, con un libro degli eventi gigantesco, una seccatura infinita. Mentre così
+è una cosa immediata, che si spiega in tre minuti.'' Uno studente chiede se si giochi su
+un tabellone normale: sì, il gioco arriva in scatola con il suo tabellone, che si mette
+sul tavolo, e chiede semplicemente di usare il telefono come nave per tutta la partita.
+Ogni persona usa il proprio telefono; e nelle battaglie navali ``vedi i proiettili che
+vengono sparati da una nave, che vanno sul bordo del telefono ed entrano nell'altro.
+Pazzi completi. Bellissimo''.
+
+\medskip
+Prima dei casi studio, una seconda pausa: ``sono le 57'', e Ruggero dà otto minuti
+``per il numero tondo'': si riprende alle 19:05.
+
+% ---------------------------------------------------------------------
+\section{Casi studio}
+\label{a10:sec:casi}
+
+``Andiamo avanti nell'ultima parte'': i \textbf{casi studio}, per vedere ``come
+applichiamo le cose che abbiamo appena visto a giochi particolari''. Ce ne sarebbero
+``a tonnellate''; Ruggero ne ha scelti un gruppo ``che va da giochi più regolari a cose
+più \emph{deranged}, come spesso succede'', e per ciascuno dovrebbe essere chiaro perché
+è stato scelto. La tabella~\ref{a10:tab:casi} li riassume.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.3cm}p{5.3cm}p{4.6cm}@{}}
+\toprule
+\textbf{Gioco} & \textbf{Elemento di paragame} & \textbf{Che cosa tocca} \\
+\midrule
+\emph{Cuba Libre} & due regolamenti, due diagrammi di flusso per i bot, quattro
+brochure di fazione & regole, accessibilità di un gioco pesante \\
+\emph{193 Days} & solo un mazzo di carte, niente regolamento & si impara giocando \\
+gioco ``a metropolitana'' & creazione del personaggio piegata come una mappa turistica
+& fiction, \emph{world building} \\
+\emph{Shenzhen I/O} & un manuale fisico da stampare, il faldone della collector's &
+meccaniche (le schede tecniche), fiction, ``feeling'' \\
+pinball in scatola & dadi da schicchera su una ``scalinata'' con i flipper & meccaniche \\
+\emph{Lift It} & la gru da mettersi in testa & ``al centro'' di regole, fiction e
+paragame \\
+\emph{Coffee Rush} & tazzine di plastica e ingredienti a forma di ingrediente & fiction,
+\emph{vibes} \\
+\emph{Ironwood} & una fazione tutta di legno, una tutta di metallo & fiction,
+riconoscibilità, \emph{vibes} delle fazioni \\
+\emph{Nyctophobia} & occhiali oscuranti per chi scappa & meccaniche, accessibilità,
+fiction \\
+\emph{Keep Talking and Nobody Explodes} & visore VR da una parte, manuale di carta
+dall'altra & meccaniche, comunicazione \\
+\emph{City of Six Moons} & nessun regolamento: un artefatto ``alieno'' & il gioco stesso
+è dedurre le regole \\
+\emph{Scandal in the Deep} & un fiammifero acceso come torcia & tempo reale, fiction
+diegetica \\
+\emph{Metal} & componenti di metalli diversi & meccaniche di destrezza (peso, massa) \\
+\emph{Meltdown} & tessere di ghiaccio che si sciolgono & tema e meccaniche, inseparabili
+\\
+\bottomrule
+\end{tabular}
+\caption{I casi studio della lezione, in ordine di presentazione, con l'elemento di
+paragame che li rende interessanti e l'area con cui si intreccia.}
+\label{a10:tab:casi}
+\end{table}
+
+\subsection{\emph{Cuba Libre}: sei brochure}
+
+Si parte da un gioco che Ruggero ama: \textbf{\emph{Cuba Libre}} della GMT\footnote{
+\emph{Cuba Libre} (Jeff Grossman e Volko Ruhnke, GMT Games, 2013), secondo titolo della
+serie COIN (\emph{COunter-INsurgency}).}, uno strategico per quattro persone, da tre o
+quattro ore, sulla rivoluzione cubana. Ha tanto materiale cartaceo, inclusi dei
+\textbf{diagrammi di flusso}, ``che è la cosa che tendenzialmente può intimorire le
+persone''.
+
+In alto, \textbf{due manuali}: \emph{Playbook} e \emph{Rules of Play}. Perché due?
+Nessuno ha giocato \emph{Cuba Libre}, ma la classe sa già rispondere: ``forse uno ha più
+le regole, l'altro lo sviluppo del gioco''. Esatto. Il \emph{Playbook} accompagna la
+partita dal \emph{setup} al turno di gioco, ``scritto come un manuale di gioco da
+tavolo''; le \emph{Rules of Play} sono il manuale tecnico visto con \emph{Root}: un
+manuale ``con font di corpo 6-7, diviso in paragrafi, con il glossario tecnico alla
+fine'', in cui, con un dubbio sul combattimento, si va alla sezione del combattimento e
+si è sicuri di trovare il sottoparagrafo che interessa.
+
+Sotto ci sono \textbf{sei ``foglioni''}: A4, ma fronte e retro e piegati a brochure,
+``come se avessimo quattro facciate''. Che cosa sono? I due a destra sono
+\textbf{diagrammi di flusso}, uguali, con la scritta \emph{Non-Player}: servono quando si
+gioca in \textbf{solitario}, o quando si vuole riempire una delle quattro fazioni. È un
+gioco a quattro fazioni asimmetriche che ha senso giocare con tutte e quattro: ``ma se
+siamo in tre, o in due, che cosa facciamo? Non giochiamo a \emph{Cuba Libre}?'' I
+diagrammi simulano nel dettaglio il comportamento di questi \textbf{bot}, ``un'intelligenza
+artificiale analogica'', ``nel senso vecchio del termine, non generativa: macchine a
+stati''. E il testo scritto è notoriamente un mezzo \textbf{lineare}, che si applica poco
+alle macchine a stati; i diagrammi di flusso risolvono questo problema. Già dalla scelta
+dello strumento si capisce lo scopo: rendere ``il più veloce e scorrevole possibile la
+gestione di automatismi'' delle fazioni giocate dal gioco, ``senza farle troppo
+stupide''.
+
+Gli altri quattro sono \textbf{brochure uguali}, fronte e retro: quattro facciate, una per
+\textbf{ogni fazione}. A che cosa servono, e perché tutti ne hanno una? Una studentessa:
+riassumono le regole specifiche e asimmetriche di ogni fazione, ``e devo sapere che cosa
+possono fare gli altri perché possono influire sul mio gioco''. Esatto: in uno
+strategico di \emph{counterinsurgency} (``si fanno imboscate, ci si ammazza, ci si
+rapisce'') bisogna sapere che cosa può fare l'avversario per impedirgli di fare ``quelle
+cose brutte che vuole farmi''. E per farlo bisogna avere accesso alle stesse
+informazioni che ha lui: nel ``brochurone'' c'è la propria fazione riassunta, e le altre
+tre. ``È chiaro che questa cosa ha senso in un gioco strategico di questo peso, di questo
+publisher. Non metterei un brochurone così dentro \emph{Risiko!}'', perché si
+alienerebbe il \emph{target}.
+
+\paragraph{Approfondimento: il diagramma di flusso come interfaccia.} L'osservazione
+sui diagrammi di flusso vale anche per i progetti del corso. Un automa (un \emph{bot}, un
+avversario controllato dal gioco, un evento che reagisce allo stato del tavolo) è per
+natura una \emph{macchina a stati}: in base alla situazione, sceglie un ramo. Descriverlo
+in prosa costringe chi legge a ricostruire mentalmente i rami; un diagramma li mostra
+tutti insieme e permette di seguirne uno solo. È lo stesso motivo per cui i diagrammi
+di flusso sono lo strumento standard per documentare la logica di un gioco, analogico o
+digitale.
+
+\subsection{\emph{193 Days}: solo un mazzo di carte}
+
+All'estremo opposto del peso c'è \textbf{\emph{193 Days}}\footnote{Titolo come nella
+trascrizione.}, un \textbf{gioco di ruolo per due persone}, senza \emph{master}. I suoi
+componenti sono, tutti, un \textbf{mazzo di carte}: nessun libretto, nessun manuale,
+nessun QR code, nessun link. ``Quando apro la scatola c'è letteralmente solo un mazzo di
+carte.'' Come si impara a giocare? Lorenzo e Tiziana ci arrivano: ``si impara giocando'';
+``come negli \emph{escape} in scatola: la prima carta ti dice come sistemare le altre''.
+Ruggero lo mostra in camera (``ce l'ho qua dietro''): la prima carta spiega che cos'è il
+gioco e che cosa fare con il resto, cioè separare due mazzetti, blu e viola, e darne uno
+a ciascuna persona; poi ognuno rivela la carta \emph{start}, che spiega come leggere le
+altre. ``Il gioco ti dice passo passo che cosa devi fare.'' Non serve un regolamento,
+perché quello che chiede di fare è ``talmente diretto, talmente semplice'', pur essendo
+a livello di \emph{world building} molto complesso.
+
+La storia: due personaggi che vedono il futuro, e sanno che avranno una relazione di
+coppia che durerà \textbf{193 giorni}, dopodiché si lasceranno. Lo sanno entrambi. Ma uno
+vede \textbf{l'unico futuro possibile}, l'altro \textbf{molti futuri possibili}; e la
+meccanica è influenzare l'altra persona con il proprio modo di vedere: chi vede molti
+futuri può aprire alternative all'altro, chi ne vede uno solo può chiuderle. Così si crea
+la narrazione, senza regolamento.
+
+\subsection{Un gioco a forma di metropolitana}
+
+Segue un gioco di cui la trascrizione non restituisce il titolo\footnote{La
+trascrizione dice soltanto ``in un gioco complesso, nel frattempo, in metro''.}: ``un
+gioco di ruolo con un asterisco'', nel senso che il materiale si può usare anche al di là
+del gioco stesso, per creare personaggi per altri giochi. È strutturato come una
+\textbf{metropolitana}: seguire le linee fa creare il personaggio. Ed è piegato come una
+\textbf{mappa turistica} della città. ``Poteva essere un PDF? Poteva essere un manuale
+normale? Sì.'' Ma creandolo come una mappa della città ci sono già il tema, il
+\emph{world building}, ``aspetti di paragame significativi''.
+
+\subsection{\emph{Shenzhen I/O}: un videogioco che chiede un manuale}
+
+\textbf{\emph{Shenzhen I/O}}\footnote{\emph{Shenzhen I/O} (Zachtronics, 2016).} è un
+videogioco, ma Ruggero lo include perché è \textbf{ibrido}. Si interpreta un ingegnere
+mandato a Shenzhen a lavorare per una piccola azienda di elettronica, e all'avvio il
+gioco dice: ``stop, non iniziare ancora a giocare'', e dà il link a un PDF da
+\textbf{stampare fisicamente}. Oppure, ``se siete persone pazze come me'', c'è la
+\emph{collector's edition}, una delle pochissime che Ruggero ha in casa: un
+\textbf{faldone} con il manuale stampato, il visto per la Cina, il modulo di residenza da
+compilare, l'email della società che conferma l'assunzione, ``e una busta che vi dice
+di non aprirla finché il videogioco non ve lo dice''. ``A questo punto non è più un
+videogioco, questo.''
+
+Il gioco chiede di programmare in un linguaggio simile all'\textbf{assembly}. Ruggero
+l'aveva studiato alle superiori e lo odiava (``perché devo scrivere 40 righe per fare
+questa cosa, quando posso usare il C?''); con \emph{Shenzhen I/O} ha imparato ad amarlo,
+``anche a livello formativo''. E soprattutto: il gioco \textbf{non dice} che cosa fanno
+i pezzi del puzzle, i componenti con cui si risolvono i problemi. Lo si scopre dal
+manuale, che contiene le \textbf{schede tecniche} dei vari componenti: come sono fatti,
+che cosa fanno, input e output. Non è un software per lavorare: ha una sua narrazione,
+colpi di scena, una trama che si evolve. ``Ma ti chiede un manuale fisico per essere
+giocato, e non è casuale: contribuisce all'esperienza.''
+
+Ruggero lascia una domanda su cui ragionare, senza risposta: come sarebbe cambiato il
+gioco se quelle informazioni fossero state accessibili dentro il videogioco, ``con un
+pop-up, un menu, un clic che mi dà la scheda tecnica''? Cambia ``l'approccio fisico a
+come le persone giocano''. Lo riprenderà più avanti, a proposito di \emph{Keep Talking}:
+il gioco vuole ricreare il modo in cui si lavorava in \emph{assembly} negli anni '80, e
+quel \emph{feeling} specifico: ``ho un'informazione, un contenuto limitato e discreto, in
+cui sono sicuro che ci sia. È qua dentro: devo solo sfogliarlo e capire dov'è''.
+
+\subsection{Un flipper in scatola}
+
+Poi un gioco da tavolo che vuole ricreare il \textbf{flipper}\footnote{La trascrizione
+dice ``Box top pinball. Haunted house'': dal contesto, un gioco della famiglia dei
+\emph{flipper} da tavolo, nella sua versione ``casa infestata''. Il titolo esatto non è
+ricostruibile.}: in basso ci sono i due \emph{flipper} (``ho dimenticato il nome tecnico
+dei due\dots{} bumper''), e si fanno scendere dei \textbf{dadi} con una schicchera
+dall'alto, lungo una ``scalinata'', per colpire zone speciali, abbattere delle sagome,
+raccogliere punti; si vince facendo l'\emph{high score}, come nel flipper vero.
+``Abbastanza autoesplicativo.''
+
+\subsection{\emph{Lift It}: diventare la gru}
+
+\textbf{\emph{Lift It}}\footnote{Il titolo originale è \emph{Lift it!}.} è un party game
+di costruzioni in cui ``letteralmente diventiamo una gru'': ci si mette in testa un
+supporto con un gancio, e si sollevano e impilano i pezzi con la testa. ``Potevamo
+prendere questi pezzi e impilarli con la mano? Sì. Come cambiava il gioco?'' È una scelta
+di paragame ``che con pochissimo fa tantissimo''.
+
+Una studentessa osserva che, qui, ``la distanza tra la meccanica e il paragame è proprio
+labile''. Ruggero è d'accordo: \emph{Lift It} è ``in quell'intersezione''; ``se vogliamo
+essere onesti, è al centro'', perché è anche fiction (``noi siamo la gru, nel
+\emph{world building} del gioco'') (figura~\ref{a10:fig:aree}). ``Ve l'ho detto, i
+confini qui sono molto grigi.'' Paradossalmente, in altri casi il paragame è
+chiaramente più separato dalle regole, in altri ancora più intrecciato.
+
+\subsection{\emph{Coffee Rush}: le tazzine}
+
+\textbf{\emph{Coffee Rush}}\footnote{La trascrizione dice che è pubblicato in italiano da ``Nasmodest'':
+probabilmente un editore italiano, non ricostruibile con sicurezza.} è un gioco di
+impostazione \emph{German}, ``anche se fatto da designer coreani'', in cui si gestisce
+un \textbf{caffè}: si preparano bevande per i clienti che arrivano, il locale si
+affolla, a un certo punto c'è troppa gente e i clienti se ne vanno scontenti. ``Il
+classico flusso di gioco da gestire un caffè.'' Ma le risorse non sono cubetti: hanno
+\textbf{la forma della risorsa}, e non si mettono su una carta, ma in \textbf{tazzine di
+plastica}. ``Meccanicamente, sono letteralmente dei contenitori per risorse. Punto.''
+Potevano essere carte. È ``un esempio lampante'' di paragame: le tazzine a forma di
+tazzina e gli ingredienti a forma di ingrediente danno quelle \emph{vibes}, aiutano il
+\emph{world building}, ``oltre a essere molto carini al tavolo''.
+
+Facendo il punto, Ruggero distingue: \emph{Lift It} e il flipper sono molto legati alla
+\textbf{meccanica}; \emph{Coffee Rush} alla \textbf{fiction}.
+
+\subsection{\emph{Ironwood}: legno contro metallo}
+
+\textbf{\emph{Ironwood}} è ``un ottimo esempio di paragame intrecciato alla fiction in maniera molto
+netta''. È uno strategico per due, con due fazioni: dei ``nani industriali'' delle
+montagne, con un tema un po' fantasy, e un popolo dei boschi. Il popolo dei boschi può
+muoversi solo nei boschi, quello delle montagne solo nelle montagne. E il popolo dei
+boschi ha solo componenti di \textbf{legno}, quello delle montagne solo componenti di
+\textbf{metallo}. ``Potevano essere di cartone? Meccanicamente sì, non cambia niente.''
+Ma essere di metallo o di legno aiuta la \textbf{visibilità}, la \textbf{tattilità}, la
+\textbf{riconoscibilità} dei componenti al tavolo, ``oltre che il \emph{mood},
+chiaramente'', perché mantiene il tema del conflitto tra le due fazioni, già nel nome:
+\emph{Iron} e \emph{wood}.
+
+\subsection{\emph{Nyctophobia}: giocare bendati}
+
+\textbf{\emph{Nyctophobia}}\footnote{La trascrizione dice ``Nictofobia'' e ``Vinto
+Fabio''. \emph{Nyctophobia} (Catherine Stippell, 2019).} è un gioco fatto da una giovane
+designer e da suo zio, che è \textbf{cieco}. Lo zio aveva perso la vista non alla
+nascita, ma nel corso della vita, e i due giocavano molto da tavolo insieme; così lei ha
+deciso di fare un gioco \emph{ad hoc} per poter continuare a giocare con lui. Il gioco
+ricrea il \emph{feeling} di uno \emph{slasher movie}: una creatura assassina nei boschi,
+di notte, al buio. Chi gioca le persone che scappano indossa degli \textbf{occhiali
+oscuranti} (``non vediamo niente'') e deve orientarsi \textbf{toccando} le cose sul
+tabellone; chi gioca il \emph{killer} vede tutto e può osservare liberamente. Anche qui il
+paragame non è solo materiale: è legato alle meccaniche, ed è coerente con la fiction.
+
+\subsection{\emph{Keep Talking and Nobody Explodes}: la bomba e il manuale}
+
+\textbf{\emph{Keep Talking and Nobody Explodes}}\footnote{La trascrizione dice ``Keep
+Talking in Omnid Explode'' e ``Keep Talking Nomad Explodes''. Il gioco è di Steel
+Crate Games (2015).} è ``un classico'': un cooperativo nato per la \textbf{realtà
+virtuale}, in cui una persona, con il visore, vede una bomba in 3D che può manipolare con
+i \emph{controller}, e deve disinnescarla. Ma non sa come. Le persone fuori dal visore
+hanno un \textbf{manuale tecnico} sparso in fogli su tutto il tavolo: ogni foglio
+riguarda un aspetto che la bomba può avere (i fili, i pulsanti, i numeri, i colori), con
+procedure del tipo ``se la bomba ha otto fili fai questo, se ne ha sette fai
+quest'altro, se ha un filo blu\dots''. Chi è dentro descrive (``vedo tre fili gialli''),
+chi è fuori chiede (``il secondo filo da sinistra è blu?'') e risponde (``allora taglia il
+quarto filo''). La comunicazione tra i due gruppi è \textbf{necessaria}, ed è resa più
+intensa dal fatto che fuori ci sono quattro o cinque persone sullo stesso manuale, in
+tempo reale, con un timer sulla bomba. ``Un giocone. Ve lo consiglio tantissimo.''
+
+Uno studente racconta di averlo giocato come videogioco, senza visore e, a quanto
+ricorda, senza manuale stampato. Ruggero precisa: il gioco si può giocare anche con lo
+schermo, ma le persone fuori devono stamparsi il manuale (``il gioco te lo diceva''); è
+nato come \textbf{cooperativo asimmetrico} e ibrido, e ``non puoi giocarlo solo in
+videogioco''. E ne trae una regola generale: ``chi fa i giochi non può obbligare le
+persone a giocarli come \emph{intended}''. Nessuno può andare a casa delle persone a fare
+``la polizia del gioco: non potete giocarlo così, vi arrestiamo''. Si può però
+consigliare, dire chiaramente ``guardate che il gioco inteso è così'', come fa
+\emph{Shenzhen I/O} all'avvio.
+
+\subsection{\emph{City of Six Moons}: un gioco senza regole}
+
+Il caso successivo è di Amabel Holland, la stessa autrice di \emph{Irish Gauge}: un
+gioco in \textbf{solitario}\footnote{La trascrizione dice ``City of Six Moon''.} che
+\textbf{non ha regolamento}. Il gioco è pensato per essere, \textbf{diegeticamente}, un
+\textbf{artefatto ludico alieno}: chi gioca è un essere umano che ne ha recuperato una
+copia, ma non sa leggere la lingua aliena, e quindi il gioco volutamente non dice come si
+gioca. È giocabile, ha delle sue regole; ma parte del gioco è \textbf{dedurre} e formare
+teorie su come si gioca. L'autrice ha detto che non risponderà mai a nessuna domanda e
+che non dirà mai quale sia la versione corretta, e sono nati gruppi di discussione che
+cercano di capirlo. È il caso estremo di ciò che si è detto su \textbf{contesto} e
+\textbf{lingua}: ``questo gioco si regge sulla sua non leggibilità. Se avessimo il
+manuale, perderebbe buona parte del suo senso''.
+
+Uno studente lo paragona ai film di \textbf{David Lynch}. ``Questo è un vaso di
+Pandora'': Ruggero consiglia un video di analisi di \emph{Twin Peaks} ``della durata di
+credo 16 ore'', alla fine del quale l'autore dice di credere di aver capito la maggior
+parte di ciò che Lynch voleva comunicare. ``Questo è un gioco da tavolo, non una serie
+TV in tre stagioni, quindi in teoria è più facile da capire.'' E ricorda, ``come al
+solito'', che i giochi non sono per tutte le persone: i giochi deduttivi e induttivi a lui
+piacciono moltissimo, ma ha molti amici a cui non piacciono, e viceversa, ``magari se a
+me proponi un gioco sportivo''.
+
+\subsection{\emph{Scandal in the Deep}: il fiammifero}
+
+\textbf{\emph{Scandal in the Deep}}\footnote{Titolo come nella trascrizione.} è un gioco
+di ruolo per due persone, un \emph{master} e un personaggio: la figlia di un ladruncolo
+che entra in un \emph{dungeon}, ruba un artefatto e ora deve solo uscire. Ma ha solo
+\textbf{una torcia}. Il gioco usa un \textbf{fiammifero} vero: quando il fiammifero si
+consuma, la torcia si spegne. Il tempo letterale del fiammifero è quanto resta alla
+torcia, e questo crea ``una coesione tematico-meccanica'' tra l'oggetto reale e quello
+in gioco. ``Poteva essere un timer, una clessidra. Lascio a voi la risposta.'' Con un
+timer sul cellulare sarebbe stato un gioco peggiore; il fiammifero è
+\textbf{diegetico} per il personaggio.
+
+\subsection{\emph{Metal}: metalli diversi}
+
+\textbf{\emph{Metal}}\footnote{Titolo come nella trascrizione.} è una raccolta, una
+scatola con dentro una dozzina di giochi, se Ruggero ricorda bene, che usano componenti
+in \textbf{metallo}, e di \textbf{metalli diversi}: ottone, ferro, alluminio, bronzo. Sono
+giochi di \textbf{destrezza}, e i metalli si comportano diversamente: a parità di
+dimensione, hanno proprietà fisiche diverse, ``in termini anche di peso e di massa''
+(``se fossi stato un professore di fisica lo avrei saputo dire''). Essendo un
+\emph{dexterity}, questo è uno degli aspetti meccanici che il gioco sfrutta.
+
+\subsection{\emph{Meltdown}: tessere di ghiaccio}
+
+L'ultimo caso, ``incredibile'': \textbf{\emph{Meltdown}}\footnote{Titolo come nella
+trascrizione.}, un gioco sul \textbf{riscaldamento globale}. Si gioca una famiglia di
+orsi, orso e piccolo orso, che deve salvarsi dallo scioglimento dei ghiacci. Il gioco
+chiede di mettere l'acqua negli stampi, metterli in freezer, toglierli dal freezer e poi
+giocare: le \textbf{tessere sono di ghiaccio}. Reggono finché reggono; poi si sciolgono, e
+a quel punto si affonda. ``Potevano essere di cartone? Chiaramente no.'' Il gioco
+funziona solo perché sono di ghiaccio: ``il tema qui è talmente connesso, e l'aspetto di
+paragame anche connesso alle meccaniche, che non potevano farle in un altro
+materiale''.
+
+\paragraph{Approfondimento: quando il materiale è il tema.} Schell propone, tra le sue
+lenti, quella dell'\emph{unificazione del tema}: ogni elemento del gioco (meccaniche,
+estetica, storia, tecnologia) dovrebbe rafforzare lo stesso tema. I casi studio di
+Ruggero mostrano che il materiale è uno degli strumenti più forti per farlo, perché agisce
+sul corpo prima che sulla mente: il peso del metallo in \emph{Ironwood}, il buio in
+\emph{Nyctophobia}, la fiamma in \emph{Scandal in the Deep}, il freddo e l'acqua in
+\emph{Meltdown}. In tutti questi casi il materiale non illustra il tema, lo fa
+\emph{provare}. La domanda che Ruggero chiede di farsi (``poteva essere di cartone?'')
+è un buon test: se la risposta è ``sì, e non cambierebbe niente'', il materiale è solo
+decorazione; se è ``no'', è parte del design.
+
+% ---------------------------------------------------------------------
+\section{La discussione aperta}
+\label{a10:sec:discussione}
+
+``Questa era l'ultima slide.'' Resta ``la solita nostra mezz'ora di \emph{open
+discussion}''. Ruggero insiste: ``il paragame dovrebbe essere chiaro a questo punto. Se
+non è chiaro, vi prego, fatemi delle domande''. Non per riempire il buco: vuole che sia
+chiaro ``non solo in termini astratti, ma anche per il vostro gruppo di lavoro'', e che
+già da questa lezione i gruppi si chiedano ``come possiamo integrare nella nostra idea
+di gioco, che \emph{pitcheremo} lunedì, degli elementi che lo rendano un gioco meglio
+progettato, più sensato, migliore''.
+
+\subsection{Il link a \emph{World of Yoho}}
+
+La prima richiesta è pratica: una studentessa, che si era persa il nome durante la
+pausa, chiede il gioco ``con i telefoni sulla mappa''. Ruggero lo mostra:
+\emph{World of Yoho} (lei l'aveva cercato scritto male). Consiglia ``fortemente'' di
+giocarlo con i telefoni carichi, perché una partita di 90 minuti con il telefono acceso
+``può risultare un po' intensa''. Ed è interessante perché è ``quasi un \emph{open
+world}'': ci sono delle \emph{quest}, ci si muove liberamente, si può scegliere se dare
+la caccia ai mercanti o risolvere missioni in giro per il mondo. ``Chiaramente è un gioco
+che esiste solo nel suo formato ibrido.''
+
+\subsection{Il font di \emph{Al Rashid}}
+\label{a10:sec:alrashid}
+
+Ruggero mantiene poi la promessa del gioco venduto per il font. Lo cerca nella sua
+collezione (``ci arrivo da \emph{Caligula}, che è dello stesso designer\dots'') e lo
+trova: \textbf{\emph{Al Rashid}}\footnote{Titolo come nella trascrizione; anche
+\emph{Caligula} e il terzo titolo citato nel percorso (``Zizi'') sono riportati come
+nella trascrizione.}. Per il nome del gioco è stato scelto un font con l'alfabeto
+latino ma ``con queste \emph{vibes} un po' mediorientali''. Problema: non l'hanno usato
+solo per la copertina. Anche le carte usano lo stesso font, per parole come
+\emph{Military}, \emph{Culture}, \emph{Espionage}. ``Questo gioco è ingiocabile. Non si
+legge niente.'' Ed è ``un gioco molto carino, a livello meccanico'', ma con le carte
+scritte così, ``buona fortuna''. (Gianmarco fa una faccia eloquente: ``quella è la mia
+espressione quando l'ho visto''.)
+
+\subsection{Il paragame può agire sulle dinamiche?}
+
+Una studentessa dice che il tema le è chiaro ma le sembra ``molto difficile, molto
+complesso'', una di quelle cose che si imparano con l'esperienza, vedendone tanti.
+E chiede: si sono visti molti casi in cui il paragame influenza le meccaniche; ce ne sono
+in cui influenza \textbf{direttamente le dinamiche}, o le strategie?
+
+Ruggero richiama il \textbf{framework MDA} e il \textbf{DPE}\footnote{La trascrizione
+dice ``DPA Framework''. Sono i framework visti nelle prime lezioni del corso: MDA
+(\emph{Mechanics, Dynamics, Aesthetics}) e DPE (\emph{Design, Play, Experience}).}: le
+dinamiche sono influenzate dalle meccaniche. ``Impattando le meccaniche, noi impattiamo
+le dinamiche.'' Non si può impattare una dinamica senza passare per una meccanica:
+anche la colonna sonora al posto del timer agisce sulle meccaniche (``quando senti il
+gong, devi fare A, B, C sulla mappa''), e di solito anche sulla fiction, perché difficilmente
+si mette una colonna sonora neutra come un metronomo: la si usa per fare \emph{world
+building}. E ricorda il principio della parte sui framework: ``voi non potete agire sulle
+dinamiche direttamente. Voi, da persone che progettano, avete le meccaniche''. Agire
+direttamente sulle dinamiche sarebbe come dire a qualcuno ``spaventati, ora devi sentire
+l'adrenalina'': ``se ti dico sii triste, non diventi triste in automatico. Devi lavorare
+sulle meccaniche per fare in modo che poi sia quello che le persone vivono''. La
+studentessa riformula: essendo un elemento di design, il paragame si controlla ``al pari
+del regolamento''. Esatto.
+
+Ruggero aggiunge che alcuni elementi di paragame aiutano più di altri in una direzione o
+nell'altra. Il paragame di \emph{Ironwood} aiuta più la fiction che le meccaniche, ma
+dà anche le \emph{vibes} delle due fazioni asimmetriche: quella dei nani è aggressiva,
+militarista, ``i pezzi di metallo pesano, ti senti uno che vuole andare a spaccare la
+faccia''; i pezzi di legno ``cadono come foglie, sei fragilissimo'', e le dinamiche sono
+più da imboscata, ``dal bosco vengo a rapirti le persone'', più \emph{counterinsurgency}
+che guerra aperta. In \emph{Meltdown} e in \emph{Keep Talking}, invece, il paragame lavora
+soprattutto sulla parte meccanica e sulla comunicazione. ``Un paragame non meno
+importante'', ma l'ideale è che le due cose \textbf{non siano mutualmente esclusive}:
+``nulla vi vieta di avere il paragame da una parte che dà una mano alla fiction, e su un
+altro aspetto del gioco il paragame che dà una mano alle meccaniche''.
+
+Lo scopo, alla fine, è lo stesso: ragionare sul paragame serve ad
+\textbf{assicurarsi}, o almeno a provare a fare in modo, \textbf{che le intenzioni di
+design arrivino a chi gioca}. ``Voi non saprete chi gioca il vostro gioco, non potete
+essere nelle case delle persone che lo comprano.'' Se si possono comunicare il tema, le
+emozioni, ``con altri elementi oltre alle regole, oltre alla fiction'', il paragame è
+``un elemento in più che lavora al vostro servizio''.
+
+\subsection{Graphic design o illustrazione?}
+
+Un'altra studentessa torna sulla distinzione tra grafica e illustrazioni: pensava che la
+grafica riguardasse l'estetica e le illustrazioni l'iconografia. ``No, è proprio il
+contrario.'' Il \textbf{graphic design} è la parte di \emph{design} delle grafiche: le
+icone, il \emph{wireframing}, la UX, ``l'aspetto più meccanico degli aspetti visuali'':
+com'è fatta un'icona, come sono strutturate le carte, se il costo sta in alto a destra o
+in alto a sinistra. Le \textbf{illustrazioni} sono la parte di fiction, che aiuta il
+\emph{world building}. E non vanno confuse, perché se si fa fare il graphic design a chi
+illustra, si ottiene l'icona di \emph{Argent} vista all'inizio: ``un'icona fatta da una
+persona che fa l'illustratrice, non da un graphic designer'', e lo si vede dal tratto
+(tabella~\ref{a10:tab:grafica}).
+
+Dalla parte opposta c'è \emph{Race for the Galaxy}, ``fatta da un ingegnere,
+ovviamente''. Ma tra le due Ruggero non ha dubbi: preferisce \emph{Race for the Galaxy}.
+``Fa schifo finché non la imparo, ma dopo tre minuti che gioco so tutte le icone, e
+riesco a leggere anche quelle che non ho ancora visto, perché hanno una
+\textbf{grammatica} che sto imparando.'' Quella di \emph{Argent}, invece, ``è un
+disastro: non ne esci vivo''.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.8cm}p{5.2cm}p{5.2cm}@{}}
+\toprule
+ & \textbf{Graphic design} & \textbf{Illustrazione} \\
+\midrule
+Che cos'è & il design delle grafiche: icone, \emph{wireframe}, UX & l'\emph{art}:
+sfondi, personaggi, luoghi \\
+Che cosa serve & la parte ``più meccanica'' del visivo: leggere, trovare,
+riconoscere & la fiction e il \emph{world building} \\
+Domande tipiche & dov'è il costo? quante icone? come si legge in mano? & che mondo è?
+che \emph{mood} ha? \\
+Se lo fa la persona sbagliata & icone ``illustrate'', illeggibili (\emph{Argent}) &
+grafica corretta ma ``ostile'' o fredda (\emph{Race for the Galaxy}, gli Splotter) \\
+\bottomrule
+\end{tabular}
+\caption{La distinzione tra graphic design e illustrazione, come la chiarisce Ruggero
+rispondendo a una domanda. ``Non fate fare queste due cose alla stessa persona.''}
+\label{a10:tab:grafica}
+\end{table}
+
+\subsection{\emph{Mountaineers}, gli inserti e il \emph{setup}}
+\label{a10:sec:inserti}
+
+Ruggero aggiunge poi un'area che ``per questioni di spazio'' non era nelle slide, con un
+gioco che ha un problema proprio lì: \textbf{\emph{Mountaineers}}\footnote{\emph{The
+Mountaineers}, di un piccolo editore indipendente svizzero.}. Dal lato grafico e
+delle illustrazioni è ``incredibile'': è un gioco sullo scalare montagne, con una
+montagna che si costruisce letteralmente in 3D, con dei pannelli al centro del tavolo, e
+su cui si scala piantando dei pioli. ``Gioco incredibile, visualmente bellissimo.'' Ma
+\textbf{non ha un design dell'inserto}. Prepararlo è ``una seccatura talmente grande'' che
+Ruggero, che lo ama, non lo gioca quasi mai: ``l'idea di prepararlo e di sistemarlo mi
+fa venire i brividi''. E vorrebbe essere un gioco \emph{family}, leggero. È un team piccolo
+e indipendente, che non viene dai giochi da tavolo: la scatola è perfino orizzontale,
+bassa, ``tipo vecchio \emph{Monopoly}, da armadio'', non entra in nessuna Kallax, e
+montata la montagna va smontata ogni volta.
+
+\paragraph{Gli inserti fatti male.} ``Il design degli inserti non è casuale. La
+maggior parte degli inserti è fatta male.'' Spesso sono i cosiddetti \emph{vacuum tray},
+gli inserti di plastica termoformata sottovuoto. Ruggero racconta di aver lavorato in
+un'azienda in cui chi progettava quegli inserti ``non giocava al gioco, non sapeva come
+fosse'', e li dimensionava sulle misure del pacchetto di carte appena uscito dalla
+fabbrica: carte appena stampate, compresse, senza umidità. ``Le carte le tieni cinque
+secondi all'aperto e già prendono mezzo centimetro in più di spazio.'' Risultato: tutte le
+carte uscivano dagli inserti. E se il gioco ha componenti sfusi, serve qualcosa che li
+blocchi (magari la plancia inserita in un certo modo), altrimenti, aprendo la scatola,
+tutto si sparpaglia.
+
+\paragraph{Gli inserti stampati in casa.} Ruggero è ``talmente arrabbiato'' con questa
+cosa che gli inserti se li ristampa in casa, in \textbf{stampa 3D}, e li mostra in camera.
+Un gioco\footnote{La trascrizione dice ``Bubba Kiki''; il titolo non è ricostruibile con
+sicurezza.} che nella versione base ``non ha niente, è tutto sfuso'', carte e
+\emph{token}, e per cui lui ha ristampato l'inserto, con il tabellone che fa da
+chiusura. Poi, dopo una ricerca tra i giochi della \textbf{Oink}\footnote{Oink Games,
+editore giapponese di giochi piccoli in scatole tascabili, tra cui \emph{Deep Sea
+Adventure} (nella trascrizione ``Dipsy Adventure'').} (``al decimo gioco della Oink l'ho
+trovato''), un \emph{filler} di carte con tanti \emph{token} diversi: lui gli ha stampato
+un piccolo inserto ``con una comodissima calamita'', che si estrae e si tiene sul tavolo.
+Così si risparmia di dividere i \emph{token} in mazzetti, ``impilare i componenti da 2,
+da 10, da 5, da 20, da 1, in un gioco che dovrebbe durare 10 minuti'': non ha senso
+spendere 10 minuti di preparazione per 10 minuti di gioco. ``Poi io ho dei problemi, di
+nuovo, con questa cosa qua.'' Ma è solo il segnale che il settore spesso lavora male,
+``non del fatto che non si possano fare le cose bene'': molti editori stanno iniziando a
+fare inserti sensati. \emph{Bullet}\footnote{\emph{Bullet} (Level 99 Games, 2021); il titolo originale ha un cuore dopo il nome. Nel
+testo il simbolo del titolo è omesso.}, con la scatola azzurra, ha ``un inserto
+incredibile'', alla terza versione, ``perché hanno imparato da quanto facevano male le
+scatole precedenti''. E un gioco di treni con la scatola bianca\footnote{La
+trascrizione dice ``Spells and Steam, Empiria''; il titolo non è ricostruibile.} si
+prepara in cinque minuti, perché gli inserti si estraggono e hanno già dentro il mercato
+con le tessere. (Qui Ruggero starnutisce: ``sono allergico agli inserti stupidi''.)
+
+\paragraph{Nessuno ama il \emph{setup}.} ``Ricordatevi che preparare un gioco è una
+seccatura. La gente vuole giocarli, i giochi, non prepararli. Chi qui apprezza o ama fare
+il \emph{setup}? Nessuno. E se qualcuno avesse alzato la mano, stareste mentendo.''
+Quindi: non rendete più complessa del necessario la preparazione del gioco. E non vale
+solo per i giochi da tavolo, ma anche per i giochi di ruolo, i giochi di ruolo dal vivo,
+i giochi pervasivi: ``la preparazione è una parte intensa: semplificatela il più
+possibile''. Non solo nella \textbf{procedura}, ma nella \textbf{percezione}. Alcuni
+giochi ``molto furbi'' mettono il \emph{setup} in una fase in cui si sta già giocando,
+con piccole scelte. A volte funziona, a volte no. In molti Eurogame non funziona, perché
+chiede di conoscere già il gioco per scegliere tra la carta A, B o C: ``se non so ancora
+come funziona il gioco, come faccio a scegliere?''. In giochi più leggeri, come
+\emph{Magical Athlete} o giochi più \emph{party}, è un modo per tenere coinvolte le persone
+facendole scegliere qualcosa, mentre chi facilita la partita sta già preparando i
+componenti. (A margine, un rumore di fondo dal microfono di Ruggero: ``potevo mutarmi.
+Ma del resto, anche questo è paragame audio''.)
+
+\subsection{Le domande ``stupide''}
+
+Restano dieci minuti, ``almeno due domande''. Ruggero ricorda che le slide sono già nella
+cartella, insieme a quelle delle lezioni precedenti. E insiste: ``tutto chiaro? Non è
+possibile. Sono un essere umano: qualcosa che ho detto non è chiaro, sicuramente''. Gli
+studenti dicono di non avere dubbi ``in questo momento'' (``i dubbi vengono sempre
+dopo''). ``Ma secondo voi vi giudico per i dubbi?'' Un dubbio che sembra stupido non lo
+è, ``e poi un'altra persona aveva lo stesso dubbio, e come voi non lo chiede''. E torna al
+concetto della prima parte: ``è il \emph{curb cut effect}: siate la rampina del
+marciapiede anche per le altre persone''. Promette, come sempre, che nelle sue lezioni
+la mezz'ora finale di domande ci sarà. Una studentessa è ``cotta''; Ruggero spera di non
+aver bruciato il cervello a nessuno: ``c'era tanta roba, ma potete guardare le slide con
+calma''. E aggiunge che i casi studio ``non sono mai solo casi studio, perché ci
+permettono di parlare poi di altre cose. Quindi, quando posso, li metto sempre''.
+
+\subsection{Chi ci pensa, al paragame? \emph{Rhino Hero} e \emph{The Cat and the Tower}}
+
+L'ultimo intervento lungo è di Gianmarco: il paragame gli sembra una di quelle cose che
+emergono con l'uso, quando un team ``a un certo punto ha tirato fuori il gioco, ha visto
+l'impatto e poi ha corretto''; ha bisogno di un risvolto pratico. ``Tu sei un visionario,
+Gianmarco'', risponde Ruggero: nel mondo ideale è così, ``ma purtroppo spesso la gente
+non ci pensa''. E allora, chiede Gianmarco, nella sua esperienza chi ci pensa, e come,
+quando emergono questi problemi?
+
+``Questo è un vaso di Pandora gigantesco.'' La risposta, ``che so può sembrare
+paracula'', è che \textbf{dipende da progetto a progetto}. Alcuni progetti arrivano con
+delle \textbf{direttive di produzione}, e lì c'è poco da fare: ``se la produzione dice i
+costi sono questi, devi stare in questo costo per questa scatola, hai voglia di dire
+voglio una clessidra alta un metro d'oro puro: non te la daranno mai''. Il vincolo
+produttivo ``ti tarpa un po' le ali'', giustamente, su materiali e formato. Altre cose
+sono legate agli aspetti meccanici del gioco, e lì la domanda è: che cosa ci aiuta e che
+cosa ci rema contro? E parte di queste cose emergono in fase di \textbf{ricerca e
+sviluppo}: guardare quali altri giochi sul tema sono stati fatti aiuta a capire che cosa
+funziona e che cosa no.
+
+L'esempio finale è un confronto (figura~\ref{a10:fig:torri}). \textbf{\emph{Rhino
+Hero}}\footnote{\emph{Rhino Hero} (Scott Frisco e Steven Strumpf, HABA, 2011); la
+trascrizione dice ``il gioco dell'Aba''.}, ``famosissimo'', è un gioco di carte per
+bambini, quasi un \emph{dexterity} semplificato, in cui si costruisce una torre di carte
+su cui sale un supereroe rinoceronte, con lo scopo di arrivare il più in alto possibile
+senza farla crollare. È un gioco che vuole dare \textbf{il senso di eroismo}, di salvare
+l'edificio per salvare la gente; esiste anche una versione gigante, \emph{Rhino Hero:
+Super Battle}, con una torre di cartone più grossa e ``delle scimmie infami che si
+appendono ai bordi''. È un gioco che si basa sul \textbf{\emph{power play}} come
+dinamica, sul supereroe.
+
+\textbf{\emph{The Cat and the Tower}}\footnote{La trascrizione dice ``The Cat and
+Tower''; Ruggero aggiunge che è stato pubblicato in italiano come \emph{Il gatto e la
+torre}, ``l'anno scorso, mi sembra''.} è un gioco giapponese ``bellissimo'' in cui un
+gatto che ha perso la madre deve risalire una torre, metafora dell'aldilà, per
+rincontrarla: ``un gioco tristissimo, straziante''. Anche qui la torre è di cartone,
+esattamente come in \emph{Rhino Hero}. Ma c'è una differenza ``molto subdola'': i muri
+sono diversi (con i mattoncini, con gli archetti, con la finestrella piccola), e in base
+alla loro forma alcuni sono \textbf{uno o due millimetri più bassi} degli altri. Nel
+complesso creano una torre \textbf{molto instabile}. ``Qui il \emph{power play} non lo
+vivete per niente. Qui avete il terrore costante che tutto crolli da un momento
+all'altro. Ed è parte tematica.''
+
+La stessa meccanica, dunque, reinterpretata: è \textbf{\emph{copy, transform,
+combine}}, ``ci ricordiamo, no?''. ``Fate ricerca e sviluppo, perché vi serve anche per
+capire, nel paragame, che cosa succede se cambio qualche elemento. Che cosa posso
+prendere che mi fa la stessa cosa, ma magari reinterpreta il mio gioco?'' E chiude con un
+invito: non solo giochi da tavolo, non solo giochi di ruolo, non solo giochi pervasivi e
+urbani: ``mischiate le cose. \textbf{Cross-modalità}''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small, x=1cm, y=1cm]
+  % Rhino Hero: piani regolari
+  \begin{scope}[shift={(0,0)}]
+    \foreach \y in {0,1,2,3}{
+      \draw[thick] (0,\y) -- (0,\y+0.9);
+      \draw[thick] (2,\y) -- (2,\y+0.9);
+      \draw[thick, fill=gray!20] (-0.2,\y+0.9) rectangle (2.2,\y+1.0);
+    }
+    \node[align=center] at (1,-0.5) {\emph{Rhino Hero}};
+    \node[align=center, text width=4cm] at (1,-1.25)
+      {muri tutti uguali: torre stabile\\$\Rightarrow$ eroismo, \emph{power play}};
+  \end{scope}
+  % Cat and Tower: muri di altezze diverse
+  \begin{scope}[shift={(6,0)}]
+    \draw[thick] (0,0) -- (0,0.9);   \draw[thick] (2,0) -- (2,0.82);
+    \draw[thick, fill=gray!20, rotate around={-2.3:(0,0.9)}] (-0.2,0.9) rectangle (2.2,1.0);
+    \draw[thick] (0.05,0.97) -- (0.05,1.82); \draw[thick] (2.0,0.9) -- (2.0,1.8);
+    \draw[thick, fill=gray!20, rotate around={-0.6:(0.05,1.82)}] (-0.15,1.82) rectangle (2.25,1.92);
+    \draw[thick] (0.05,1.92) -- (0.05,2.72); \draw[thick] (2.05,1.9) -- (2.05,2.78);
+    \draw[thick, fill=gray!20, rotate around={1.8:(0.05,2.72)}] (-0.15,2.72) rectangle (2.25,2.82);
+    \draw[thick] (0.1,2.82) -- (0.1,3.64); \draw[thick] (2.05,2.88) -- (2.05,3.78);
+    \draw[thick, fill=gray!20, rotate around={3.0:(0.1,3.64)}] (-0.1,3.64) rectangle (2.3,3.74);
+    \node[align=center] at (1,-0.5) {\emph{The Cat and the Tower}};
+    \node[align=center, text width=4.4cm] at (1,-1.25)
+      {muri più bassi di 1--2 mm: torre instabile\\$\Rightarrow$ terrore che tutto
+      crolli};
+  \end{scope}
+\end{tikzpicture}
+\caption{Stessa meccanica, paragame diverso: due torri di cartone. In \emph{Rhino Hero}
+i piani sono regolari e la dinamica è quella dell'eroe che sale; in \emph{The Cat and
+the Tower} alcuni muri sono di uno o due millimetri più bassi, e la torre, sempre
+storta, trasmette paura e fragilità. Schema illustrativo, con le pendenze esagerate.}
+\label{a10:fig:torri}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Chiusura: ci si vede il 12}
+\label{a10:sec:chiusura}
+
+Mancano tre minuti, ``tempo per un'ultima domanda'', magari ``quella nell'angolino, un
+po' timida''. Non arriva (``adesso non ce la faccio''). Gianmarco si smuta, ``il segnale
+internazionale'' di chi sta per salutare, ma non ha domande; Ruggero lo invita
+scherzosamente a dire anche solo ``cose stupide, tipo: oggi ho ucciso una mosca in
+bagno''.
+
+``Allora, gente, io vi saluto, e la lezione di oggi si conclude così.'' L'appuntamento è
+\textbf{il 12}, con i \emph{pitch}: ``non fate scherzi, so che li avete, so che li potete
+fare''. Al \emph{pitch} non ci sarà solo Ruggero: ci saranno anche \textbf{Beatrice} e
+\textbf{Daniele}. ``Buona serata, buona cena, buon weekend.''
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item La \textbf{UX} è un primo strato tra la persona che si avvicina al gioco e
+        l'ecosistema di regole: può essere ``un incredibile aiuto o un gigantesco
+        ostacolo''. Regole perfette che non arrivano a chi gioca finiscono ``nel
+        cestino''.
+  \item I \textbf{quattro pilastri}: \textbf{immediatezza} (si capisce subito, senza
+        sforzo: spade e scudi, il barile di petrolio, l'alloro dei punti vittoria),
+        \textbf{efficienza} (un'azione complessa nel minor spazio: ``pesca una carta''),
+        \textbf{memorabilità} (il +4 di \emph{Uno}, il simbolo di ``tappare'' di
+        \emph{Magic}), \textbf{soddisfazione} (\emph{Parks}, \emph{Canvas}, \emph{Tiny
+        Epic Mechs}). Sono indipendenti: le icone di \emph{Race for the Galaxy} sono poco
+        immediate ma molto efficienti.
+  \item Immediato per chi gioca abitualmente non vuol dire immediato per tutti; anche il
+        \textbf{colore} fa parte del significato di un'icona.
+  \item Il \textbf{wireframe} delle carte cambia durante il prototipo: togliere ciò che
+        vale zero, ridurre il testo con le icone, spostare ciò che conta meno. Nei primi
+        stadi: \textbf{carte funzionali, non carte belle}.
+  \item \textbf{Accessibilità}: font per la dislessia, \emph{curb cut effect} (ciò che è
+        più accessibile per qualcuno lo è per tutti), daltonismo da verificare con
+        \textbf{Chromatic Vision Simulator}; i mancini e le carte a ventaglio.
+  \item Il \textbf{paragame} estende al gioco il \textbf{paratesto}: tutto ciò che non è
+        regole e non è fiction, ma incide sull'esperienza. I bordi sono zone grigie
+        (i librogame, \emph{Lift It}).
+  \item Le aree: \textbf{materialità} (legno, plastica, metallo, app, spessore e
+        \emph{core} delle carte, \emph{standee}; clessidra contro timer),
+        \textbf{formato} (font, misura delle carte, \emph{200 Word RPG}),
+        \textbf{regolamento} (pagine, più libretti, video, glossario,
+        \emph{playthrough}, \emph{play aid}), \textbf{scatola} (dall'armadio alla
+        Kallax), \textbf{grafica e illustrazioni} (due mestieri diversi),
+        \textbf{interfaccia analogica}, \textbf{ambiente} (il tavolo IKEA, il treno,
+        \emph{Jenga} in aereo), \textbf{audio}, \textbf{contesto}, \textbf{lingua},
+        \textbf{spazio urbano e ibridi digitali}, \textbf{inserti e setup}.
+  \item Il paragame \textbf{incide sulle regole}: il formato limita la complessità
+        delle regole, la clessidra cambia la tensione, la colonna sonora può essere una
+        meccanica. Ai \emph{pitch} e alle revisioni Ruggero chiederà
+        \textbf{``tantissimi perché''}.
+  \item I casi studio vanno da \emph{Cuba Libre} (due regolamenti, diagrammi di flusso
+        per i bot, brochure per fazione) a \emph{193 Days} (solo un mazzo), da
+        \emph{Shenzhen I/O} (il manuale stampato) a \emph{Meltdown} (tessere di
+        ghiaccio). Il test: ``\textbf{poteva essere di cartone?}''
+  \item Il paragame non agisce direttamente sulle dinamiche: agisce sulle meccaniche
+        (e sulla fiction), come tutto il design. Serve a far sì che \textbf{le intenzioni
+        di design arrivino} a chi gioca, anche quando chi l'ha progettato non è al
+        tavolo.
+  \item Gli \textbf{inserti} non sono un dettaglio: nessuno ama il \emph{setup}, e un
+        buon inserto lo accorcia. Il \emph{setup} si può anche rendere parte del gioco,
+        nei giochi leggeri.
+  \item \textbf{Ricerca e sviluppo} anche sul paragame: \emph{Rhino Hero} e \emph{The
+        Cat and the Tower} hanno la stessa meccanica, ma muri di altezza diversa
+        trasformano l'eroismo in terrore. \emph{Copy, transform, combine}, e
+        \textbf{cross-modalità}.
+\end{itemize}

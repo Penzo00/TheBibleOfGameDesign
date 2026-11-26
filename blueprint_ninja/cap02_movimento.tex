@@ -1,0 +1,220 @@
+\section{Il movimento: salti, wall run e jetpack}
+
+Nel C++ è tutto in \texttt{UPlatformerAbilitiesComponent} e \texttt{UPlatformerJetpackComponent}. In Blueprint conviene creare un \nodo{Actor Component} \var{AC\_Movimento} da aggiungere a \var{BP\_Eroe}: il personaggio resta pulito e la stessa logica si può dare a un altro Character. Dentro il componente il personaggio è \nodo{Get Owner} $\rightarrow$ \nodo{Cast To Character}, salvato in BeginPlay nelle variabili \var{Eroe} e \var{Move} (il suo \emph{Character Movement}).
+
+\subsection{La taratura}
+
+Prima di scrivere nodi si toccano i numeri, in \var{BP\_Eroe} $\rightarrow$ componente \emph{Character Movement}:
+
+\begin{center}
+\begin{tabular}{lrl}
+\toprule
+Proprietà & Valore & Effetto \\
+\midrule
+Jump Z Velocity & 650 & salto alto circa 1,6 m \\
+Air Control & 0,4 & si corregge la traiettoria in aria, ma non troppo \\
+Max Walk Speed & 600 & corsa \\
+Rotation Rate (Z) & 720 & il personaggio si gira subito \\
+Orient Rotation To Movement & sì & guarda dove va (terza persona) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Coyote time e jump buffer}
+
+Due trucchi che il giocatore non vede ma sente. \emph{Coyote time}: per 0,15\,s dopo essere scesi da un bordo si può ancora saltare. \emph{Jump buffer}: se si preme salto 0,15\,s prima di toccare terra, il salto parte appena si atterra.
+Variabili: \var{UltimoAppoggio}, \var{UltimaRichiesta} (Float, secondi di gioco), \var{SaltiInAria} (Integer).
+
+\begin{bpgraph}
+\bpnode{tick}{(0,0)}{bpev}{Event Tick}{-}{exec/,float/Delta Seconds}
+\bpnode{gr}{\sotto{tick}{0.3}{-0.4}}{bppure}{Is Moving On Ground}{obj/Target: Move}{bool/Return Value}
+\bpnode[2.4]{br}{\dx{tick}{2.2}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{gt}{\sotto{br}{0}{-0.4}}{bppure}{Get Game Time in Seconds}{-}{float/Return Value}
+\bpnode{set}{\dx{br}{1.6}{0}}{bpvarh}{Set UltimoAppoggio}{exec/,float/UltimoAppoggio}{exec/}
+\bpexec{tick-out1}{br-in1}\bpwire{bool}{gr-out1}{br-in2}
+\bpexec{br-out1}{set-in1}\bpwire{float}{gt-out1}{set-in2}
+\bpbox{Ogni frame: ricordo l'ultimo istante in cui avevo i piedi per terra}{(tick-nw) (set-se) (gt-se) (gr-se)}
+\end{bpgraph}
+
+Il salto non passa più direttamente a \nodo{Jump}: passa da una funzione \var{ProvaASaltare}, che restituisce \emph{True} se un salto è partito.
+
+\begin{bpgraph}
+\bpnode{ia}{(0,0)}{bpev}{EnhancedInputAction IA\_Jump}{-}{exec/Triggered,exec/Started,exec/Completed}
+\bpnode{try}{\dx{ia}{0.6}{-0.4}}{bpfn}{ProvaASaltare}{exec/}{exec/,bool/Saltato}
+\bpnode[2.4]{br}{\dx{try}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{gt}{\sotto{try}{0}{-0.5}}{bppure}{Get Game Time in Seconds}{-}{float/Return Value}
+\bpnode{set}{\dx{br}{0.6}{-0.4}}{bpvarh}{Set UltimaRichiesta}{exec/,float/UltimaRichiesta}{exec/}
+\bpexec{ia-out2}{try-in1}\bpexec{try-out1}{br-in1}\bpwire{bool}{try-out2}{br-in2}
+\bpexec{br-out2}{set-in1}\bpwire{float}{gt-out1}{set-in2}
+\bpbox{Se non riesco a saltare adesso, mi segno l'ora della richiesta (jump buffer)}{(ia-nw) (set-se) (gt-se)}
+\end{bpgraph}
+
+Dentro \var{ProvaASaltare} si provano, in ordine, i tre modi di saltare. Il primo che riesce esce con \emph{True}.
+
+\begin{bpgraph}
+\bpnode{f}{(0,0)}{bpcustom}{ProvaASaltare}{-}{exec/}
+\bpnode{cj}{\sotto{f}{0}{-0.4}}{bppure}{Can Jump}{obj/Target: Eroe}{bool/Return Value}
+\bpnode{coy}{\sotto{cj}{0}{-0.3}}{bppure}{GameTime $-$ UltimoAppoggio $<$ 0.15}{-}{bool/Coyote}
+\maxx{m1}{cj,coy}
+\bpnode{or}{\dxy{m1}{cj}{0.6}{-0.2}}{bppure}{OR Boolean}{bool/A,bool/B}{bool/}
+\bpnode[2.4]{br}{\dxy{or}{f}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{jmp}{\dx{br}{0.6}{0}}{bpfn}{Launch Character}{exec/,obj/Target: Eroe,vec/Velocity (0 0 650),bool/XY Override false,bool/Z Override true}{exec/}
+\bpnode{rt}{\dx{jmp}{0.6}{0}}{bpflow}{Return Node}{exec/,bool/Saltato: true}{-}
+\bpnode{dj}{\sotto{jmp}{0}{-0.5}}{bpfn}{ProvaDoppioSalto}{exec/}{exec/,bool/Saltato}
+\bpnode{rt2}{\dx{dj}{0.6}{0}}{bpflow}{Return Node}{exec/,bool/Saltato}{-}
+\bpexec{f-out1}{br-in1}
+\bpwire{bool}{cj-out1}{or-in1}\bpwire{bool}{coy-out1}{or-in2}\bpwire{bool}{or-out1}{br-in2}
+\bpexec{br-out1}{jmp-in1}\bpexec{jmp-out1}{rt-in1}
+\bpexec{br-out2}{dj-in1}\bpexec{dj-out1}{rt2-in1}\bpwire{bool}{dj-out2}{rt2-in2}
+\end{bpgraph}
+
+Perché \nodo{Launch Character} e non \nodo{Jump}? Perché durante il coyote time il personaggio è già \emph{Falling} e \nodo{Jump} lo rifiuterebbe. Con \emph{Z Override} la velocità verticale viene sostituita: il salto è identico a quello da terra.
+
+Il buffer si chiude all'atterraggio:
+
+\begin{bpgraph}
+\bpnode{l}{(0,0)}{bpev}{Event On Landed}{-}{exec/,struct/Hit}
+\bpnode{s0}{\dx{l}{0.6}{0}}{bpvarh}{Set SaltiInAria}{exec/,int/0}{exec/}
+\bpnode{buf}{\sotto{l}{0}{-0.6}}{bppure}{GameTime $-$ UltimaRichiesta $<$ 0.15}{-}{bool/}
+\maxx{m1}{s0,buf}
+\bpnode[2.4]{br}{\dxy{m1}{s0}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{j}{\dx{br}{0.6}{0}}{bpfn}{Jump}{exec/,obj/Target: Eroe}{exec/}
+\bpnode{clr}{\dx{j}{0.6}{0}}{bpvarh}{Set UltimaRichiesta}{exec/,float/$-$100}{exec/}
+\bpexec{l-out1}{s0-in1}\bpexec{s0-out1}{br-in1}\bpwire{bool}{buf-out1}{br-in2}
+\bpexec{br-out1}{j-in1}\bpexec{j-out1}{clr-in1}
+\end{bpgraph}
+(\nodo{Event On Landed} esiste solo nel Character: se lavorate nel componente, in BeginPlay fate \nodo{Bind Event to Landed} sull'\var{Eroe}.)
+
+\ninja{Azzerate \var{UltimaRichiesta} dopo averla usata, altrimenti un atterraggio subito dopo fa partire un secondo salto ``fantasma''.}
+
+\subsection{Il doppio salto controllabile}
+
+Il secondo salto in aria non è un semplice \nodo{Jump}: prende la direzione in cui il giocatore spinge lo stick \emph{in quel momento}. Così si può cambiare direzione a mezz'aria, come nel C++ (\texttt{DoubleJumpSteering = 1}). Valori: 1 salto in aria, Z = 600, velocità orizzontale almeno 350.
+
+\begin{bpgraph}
+\bpnode{f}{(0,0)}{bpcustom}{ProvaDoppioSalto}{-}{exec/}
+\bpnode{ha}{\sotto{f}{0}{-0.4}}{bppure}{HaAbilita}{enum/DoppioSalto}{bool/}
+\bpnode{lt}{\sotto{ha}{0}{-0.3}}{bppure}{SaltiInAria $<$ 1}{-}{bool/}
+\maxx{m1}{ha,lt}
+\bpnode{and}{\dxy{m1}{ha}{0.6}{0}}{bppure}{AND Boolean}{bool/,bool/}{bool/}
+\bpnode[2.4]{br}{\dxy{and}{f}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{rf}{\sotto{lt}{0}{-0.5}}{bpflow}{Return Node}{exec/,bool/Saltato: false}{-}
+\bpnode{in}{\dx{br}{0.6}{-0.2}}{bppure}{Get Last Movement Input Vector}{obj/Target: Eroe}{vec/Return Value}
+\bpnode{vel}{\sotto{in}{0}{-0.3}}{bppure}{Max(VLungo(Velocity XY) , 350)}{-}{float/Velocita}
+\bpnode{mk}{\dx{in}{0.6}{0}}{bppure}{Dir $\cdot$ Velocita + (0 0 600)}{vec/Dir,float/Velocita}{vec/}
+\bpexec{f-out1}{br-in1}\bpwire{bool}{ha-out1}{and-in1}\bpwire{bool}{lt-out1}{and-in2}\bpwire{bool}{and-out1}{br-in2}
+\bpdraw[bpexecw] (br-out2) .. controls +(0.8,0) and +(-4,0) .. (rf-in1);
+\bpwire{vec}{in-out1}{mk-in1}\bpwire{float}{vel-out1}{mk-in2}
+\end{bpgraph}
+
+\begin{bpgraph}
+\bpnode{x}{(0,0)}{bpflow}{(dal True)}{-}{exec/}
+\bpnode{lc}{\dx{x}{0.6}{0}}{bpfn}{Launch Character}{exec/,obj/Target: Eroe,vec/Launch Velocity,bool/XY Override true,bool/Z Override true}{exec/}
+\bpnode{inc}{\dx{lc}{0.6}{0}}{bpfn}{Increment Int}{exec/,int/SaltiInAria}{exec/}
+\bpnode{call}{\dx{inc}{0.6}{0}}{bpcustom}{Call OnDoppioSalto}{exec/}{exec/}
+\bpnode{rt}{\dx{call}{0.6}{0}}{bpflow}{Return Node}{exec/,bool/Saltato: true}{-}
+\bpexec{x-out1}{lc-in1}\bpexec{lc-out1}{inc-in1}\bpexec{inc-out1}{call-in1}\bpexec{call-out1}{rt-in1}
+\end{bpgraph}
+
+Se il giocatore non tocca lo stick, \nodo{Get Last Movement Input Vector} è zero e il salto va dritto in su: è il comportamento giusto. Nel C++ durante il doppio salto l'\emph{Air Control} sale a 0,8 finché non si atterra (\nodo{Set Air Control} sul \var{Move}, e in \nodo{On Landed} si rimette 0,4).
+
+\subsection{La corsa sul muro}
+
+Ogni frame, se si è in aria, due \nodo{Line Trace By Channel} cercano un muro a destra e a sinistra (80\,cm). Il muro vale solo se ha il tag \var{WallRun} e se è davvero verticale (la Z della normale è quasi zero). Variabili: \var{InWallRun} (Bool), \var{NormaleMuro} (Vector), \var{TempoSulMuro} (Float), \var{UltimoMuro} (Actor).
+
+\begin{bpgraph}
+\bpnode{tick}{(0,0)}{bpev}{Event Tick}{-}{exec/,float/Delta Seconds}
+\bpnode{fall}{\sotto{tick}{0}{-0.4}}{bppure}{Is Falling}{obj/Target: Move}{bool/}
+\bpnode[2.4]{br}{\dx{tick}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{loc}{\sotto{br}{0}{-0.9}}{bppure}{Get Actor Location}{obj/Target: Eroe}{vec/}
+\bpnode{rv}{\sotto{loc}{0}{-0.3}}{bppure}{Get Actor Right Vector}{obj/Target: Eroe}{vec/}
+\maxx{m1}{loc,rv}
+\bpnode{end}{\dxy{m1}{loc}{0.6}{-0.2}}{bppure}{Loc + Right $\cdot$ 80}{vec/Loc,vec/Right}{vec/}
+\bpnode{lt}{\dxy{end}{tick}{0.6}{0}}{bpfn}{Line Trace By Channel}{exec/,vec/Start,vec/End,enum/Visibility,bool/Ignore Self}{exec/,struct/Out Hit,bool/Return Value}
+\bpexec{tick-out1}{br-in1}\bpwire{bool}{fall-out1}{br-in2}
+\bpexec{br-out1}{lt-in1}\bpwire{vec}{loc-out1}{lt-in2}\bpwire{vec}{loc-out1}{end-in1}\bpwire{vec}{rv-out1}{end-in2}\bpwire{vec}{end-out1}{lt-in3}
+\bpbox{Cerco il muro a destra (a sinistra: lo stesso, con Right $\cdot$ $-$80)}{(tick-nw) (lt-se) (rv-se)}
+\end{bpgraph}
+
+\begin{bpgraph}
+\bpnode{bh}{(0,0)}{bpstruct}{Break Hit Result}{struct/Out Hit}{bool/Blocking Hit,vec/Impact Normal,obj/Hit Actor}
+\bpnode{nz}{\dx{bh}{0.8}{0.6}}{bppure}{Abs(Normal.Z) $<$ 0.3}{vec/Normal}{bool/}
+\bpnode{tag}{\sotto{nz}{0}{-0.3}}{bppure}{Actor Has Tag}{obj/Target,name/Tag: WallRun}{bool/}
+\bpnode{sp}{\sotto{tag}{0}{-0.3}}{bppure}{VLungo(Velocity XY) $>$ 200}{-}{bool/}
+\maxx{m1}{nz,tag,sp}
+\bpnode{and}{\dxy{m1}{tag}{0.6}{0}}{bppure}{AND (4 ingressi)}{bool/Hit,bool/Verticale,bool/Tag,bool/Veloce}{bool/}
+\bpnode[2.4]{br}{\dx{and}{0.6}{0.4}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{st}{\dx{br}{0.6}{0}}{bpcustom}{IniziaWallRun}{exec/,vec/Normale,obj/Muro}{exec/}
+\bpwire{bool}{bh-out1}{and-in1}\bpwire{vec}{bh-out2}{nz-in1}\bpwire{obj}{bh-out3}{tag-in1}
+\bpwire{bool}{nz-out1}{and-in2}\bpwire{bool}{tag-out1}{and-in3}\bpwire{bool}{sp-out1}{and-in4}
+\bpwire{bool}{and-out1}{br-in2}\bpexec{br-out1}{st-in1}
+\end{bpgraph}
+(Per aggiungere ingressi a un \nodo{AND} si clicca \emph{Add pin +}.)
+
+Durante la corsa la gravità la gestiamo noi: \nodo{Set Gravity Scale} a 0 in \var{IniziaWallRun}, poi a ogni Tick si impone la velocità lungo il muro e una discesa lenta.
+
+\begin{bpgraph}
+\bpnode{t}{(0,0)}{bpflow}{Tick, se InWallRun}{-}{exec/,float/dt}
+\bpnode{dir}{\sotto{t}{0}{-0.4}}{bppure}{Cross Product}{vec/A: NormaleMuro,vec/B: (0 0 1)}{vec/}
+\bpnode{sg}{\dx{dir}{0.6}{0}}{bppure}{Dir $\cdot$ Sign(Dot(Dir;Velocity))}{vec/Dir}{vec/Lungo}
+\bpnode{z}{\sotto{sg}{0}{-0.3}}{bppure}{Max(Vel.Z $-$ 380 $\cdot$ dt ; $-$900)}{float/dt}{float/Z}
+\bpnode{mk}{\dx{sg}{0.6}{0}}{bppure}{Lungo $\cdot$ 650 + (0 0 Z)}{vec/Lungo,float/Z}{vec/}
+\maxx{m1}{mk,z}
+\bpnode{sv}{\dxy{m1}{t}{0.6}{0}}{bpvarh}{Set Velocity}{exec/,obj/Target: Move,vec/Velocity}{exec/}
+\bpnode{add}{\dx{sv}{0.6}{0}}{bpfn}{TempoSulMuro += dt}{exec/}{exec/}
+\bpnode[2.4]{br}{\dx{add}{0.6}{0}}{bpflow}{Branch}{exec/,bool/$>$ 1.5 s}{exec/True,exec/False}
+\bpnode{fine}{\sotto{br}{0.4}{-0.4}}{bpcustom}{FineWallRun}{exec/}{exec/}
+\bpexec{t-out1}{sv-in1}\bpwire{vec}{dir-out1}{sg-in1}\bpwire{vec}{sg-out1}{mk-in1}\bpwire{float}{z-out1}{mk-in2}\bpwire{vec}{mk-out1}{sv-in3}
+\bpexec{sv-out1}{add-in1}\bpexec{add-out1}{br-in1}\bpdraw[bpexecw] (br-out1) .. controls +(0.8,0) and +(-0.8,0) .. (fine-in1);
+\end{bpgraph}
+
+\var{FineWallRun} rimette \nodo{Set Gravity Scale} a 1, \var{InWallRun} a false e salva il muro in \var{UltimoMuro}: per 0,45\,s quel muro non si può riprendere (altrimenti il personaggio ci resta incollato). Toccare un muro ridà anche il salto in aria (\var{SaltiInAria} = 0).
+
+\subsection{Il salto dal muro}
+
+In \var{ProvaASaltare}, \emph{prima} di tutto il resto, si controlla \var{InWallRun}. Se è vero, il salto spinge via dal muro e in alto:
+
+\begin{bpgraph}
+\bpnode[2.4]{br}{(0,0)}{bpflow}{Branch}{exec/,bool/InWallRun}{exec/True,exec/False}
+\bpnode{v}{\sotto{br}{0}{-0.4}}{bppure}{Normale $\cdot$ 600 + (0 0 700) + Lungo $\cdot$ 650 $\cdot$ 0.5}{-}{vec/}
+\bpnode{fine}{\dxy{v}{br}{0.6}{0}}{bpcustom}{FineWallRun}{exec/}{exec/}
+\bpnode{lc}{\dx{fine}{0.6}{0}}{bpfn}{Launch Character}{exec/,obj/Eroe,vec/Launch Velocity,bool/XY Override true,bool/Z Override true}{exec/}
+\bpnode{rt}{\dx{lc}{0.6}{0}}{bpflow}{Return Node}{exec/,bool/Saltato: true}{-}
+\bpexec{br-out1}{fine-in1}\bpexec{fine-out1}{lc-in1}\bpexec{lc-out1}{rt-in1}\bpwire{vec}{v-out1}{lc-in3}
+\end{bpgraph}
+
+\subsection{Il jetpack: tenere premuto salto}
+
+Il jetpack non ha un tasto suo: si \emph{tiene premuto} salto. Dopo 0,2\,s di pressione in aria la spinta si accende. La spinta non aggiunge forza: porta la velocità verticale verso +260\,cm/s con \nodo{FInterp To Constant} (accelerazione 2400). Così il jetpack frena una caduta e sale piano, ma non si trasforma in un razzo. Variabili: \var{Premuto} (Bool), \var{TempoPremuto}, \var{Carburante} (2,2\,s), \var{CarburanteMax}.
+
+\begin{bpgraph}
+\bpnode{ia}{(0,0)}{bpev}{EnhancedInputAction IA\_Jump}{-}{exec/Triggered,exec/Started,exec/Completed}
+\bpnode{s1}{\dx{ia}{0.6}{0.2}}{bpvarh}{Set Premuto}{exec/,bool/true}{exec/}
+\bpnode{s2}{\dx{s1}{0.6}{0}}{bpvarh}{Set TempoPremuto}{exec/,float/0}{exec/}
+\bpnode{s3}{\sotto{s1}{0}{-0.4}}{bpvarh}{Set Premuto}{exec/,bool/false}{exec/}
+\bpexec{ia-out2}{s1-in1}\bpexec{s1-out1}{s2-in1}\bpexec{ia-out3}{s3-in1}
+\end{bpgraph}
+
+\begin{bpgraph}
+\bpnode{t}{(0,0)}{bpev}{Event Tick}{-}{exec/,float/Delta Seconds}
+\bpnode{c}{\sotto{t}{0}{-0.4}}{bppure}{Premuto AND Is Falling AND HaAbilita(Jetpack)}{-}{bool/}
+\bpnode[2.4]{br}{\dxy{c}{t}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{add}{\dx{br}{0.6}{0}}{bpfn}{TempoPremuto += dt}{exec/}{exec/}
+\bpnode{c2}{\sotto{add}{0}{-0.4}}{bppure}{TempoPremuto $>$ 0.2 AND Carburante $>$ 0}{-}{bool/}
+\bpnode[2.4]{br2}{\dxy{c2}{add}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpexec{t-out1}{br-in1}\bpwire{bool}{c-out1}{br-in2}\bpexec{br-out1}{add-in1}\bpexec{add-out1}{br2-in1}\bpwire{bool}{c2-out1}{br2-in2}
+\end{bpgraph}
+
+\begin{bpgraph}
+\bpnode{x}{(0,0)}{bpflow}{(dal True)}{-}{exec/}
+\bpnode{vz}{\sotto{x}{0}{-0.4}}{bppure}{FInterp To Constant}{float/Current: Velocity.Z,float/Target 260,float/Delta Time,float/Interp Speed 2400}{float/}
+\bpnode{mk}{\dx{vz}{0.6}{0}}{bppure}{Make Vector (Vel.X; Vel.Y; Z)}{float/Z}{vec/}
+\bpnode{sv}{\dxy{mk}{x}{0.6}{0}}{bpvarh}{Set Velocity}{exec/,obj/Target: Move,vec/Velocity}{exec/}
+\bpnode{fuel}{\dx{sv}{0.6}{0}}{bpvarh}{Set Carburante}{exec/,float/Carburante $-$ dt}{exec/}
+\bpnode{fx}{\dx{fuel}{0.6}{0}}{bpfn}{Set Visibility (Fiamma)}{exec/,bool/New Visibility: true}{exec/}
+\bpexec{x-out1}{sv-in1}\bpwire{float}{vz-out1}{mk-in1}\bpwire{vec}{mk-out1}{sv-in3}\bpexec{sv-out1}{fuel-in1}\bpexec{fuel-out1}{fx-in1}
+\end{bpgraph}
+
+Sul ramo \emph{False} la fiamma si spegne. Il carburante si ricarica solo a terra: nel ramo \emph{True} del Tick del coyote time aggiungete \nodo{Set Carburante} = \nodo{Min(Carburante + 1.5 $\cdot$ dt ; CarburanteMax)}. La fiamma è un cono (\var{SM\_Cone}) con un materiale emissivo arancione e una \nodo{Point Light} figlia, attaccati alla schiena di \var{BP\_Eroe}.
+
+\ninja{Usate \nodo{FInterp To Constant} e non \nodo{FInterp To}: la versione ``Constant'' cambia la velocità sempre dello stesso passo (2400 al secondo), quella normale rallenta man mano che si avvicina al bersaglio e la spinta sembrerebbe molle.}

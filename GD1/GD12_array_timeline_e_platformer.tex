@@ -1,0 +1,2026 @@
+% =====================================================================
+%  Capitolo 12 — Array, timeline e il primo platformer: la seconda
+%  lezione di programmazione con i Blueprint di Unreal Engine (Game
+%  Design, primo anno)
+%  Fonte: trascrizione della lezione GD12 (Game Design, primo anno),
+%  seconda lezione di programmazione, diretta prosecuzione del capitolo
+%  7. Lezione ibrida: una parte della classe in aula, una parte da
+%  remoto, con condivisione dello schermo sul canale vocale "GD1 Voice"
+%  di Discord.
+%  Contenuti, nell'ordine della lezione: il task assegnato subito (un
+%  platformer 3D su tre livelli, da consegnare il 25) e la richiesta di
+%  aggiornare il docente come in un team; il PC nuovo che compila gli
+%  shader; la domanda sulla compilazione di Unreal dal codice sorgente
+%  (modifiche all'engine, server dedicati, console, versioni in
+%  anteprima, la 5.9 e la build per browser); Python in Unreal; il
+%  peso della build, Unreal Engine 6, i template, Android e Visual
+%  Studio; gli array (la classifica, gli indici da zero, Add, Remove,
+%  For Each Loop, Get All Actors Of Class, il filtro per distanza);
+%  come consegnare (File, Zip Project, le cartelle di un progetto);
+%  Maps & Modes; il packaging (Platforms, Shipping, Development,
+%  DebugGame); le tre mappe del task; Fab (il launcher, i tipi di
+%  contenuto, i filtri, i pacchetti gratuiti a tempo, le versioni
+%  dell'engine); la timeline (la piattaforma mobile, l'editor delle
+%  curve, il loop, la porta con Play e Reverse, relative e world); il
+%  giro tra i banchi (la porta con le box di overlap, il teletrasporto a
+%  colpi di Delay, la piattaforma che va avanti e indietro); il
+%  movimento sull'Event Tick e i delta seconds; la piattaforma che si
+%  distrugge; ricaricare il livello (Get Current Level Name, Open Level
+%  by Name); la doppia porta; Engine Scalability; la lava; il timer con
+%  i delta seconds; il trampolino (Jump e Launch Character); il mulino
+%  e il vento; la scala del personaggio; la chiusura e il riepilogo del
+%  task.
+%  Integrazioni dal libro "Blueprints Visual Scripting for Unreal
+%  Engine 5" (Romero, Sewell), segnalate come approfondimenti.
+%
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{amsmath},
+%  \usepackage{graphicx}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Tutte le etichette di questo capitolo hanno il prefisso "gd12:"
+%  (gd12:sec:..., gd12:fig:..., gd12:tab:...) e tutti gli stili TikZ
+%  "propri" il prefisso "gd12", per non collidere con gli altri
+%  capitoli. I grafi Blueprint usano le macro di bp-tikz.tex (la piccola
+%  libreria in tasks/gd7-blueprint/), incluse qui sotto così che il
+%  capitolo sia autosufficiente; sono protette da un controllo, quindi
+%  se un altro capitolo le ha già definite non vengono ridefinite.
+%
+%  Nota sulla fonte: la trascrizione automatica è buona nelle parti
+%  spiegate alla classe (il task, gli array, la consegna, il packaging,
+%  Fab, la timeline, il movimento sull'Event Tick, la doppia porta), ma
+%  molto rovinata nei lunghi tratti in cui il docente gira tra i banchi
+%  o guarda gli schermi condivisi a bassa voce. Quei tratti sono stati
+%  trascritti come frasi senza senso o ripetute in loop ("di aziende, di
+%  aziende", "mi riguarda, mi riguarda", "piccola piccola piccola",
+%  "non ci manchiamo", "lo so, lo so", "non si può fare niente",
+%  "è più da vicino", "l'anno solo, ok"), con brani captati da una fonte
+%  esterna (frasi su "Signor Presidente, onorevoli colleghi", su un
+%  "fascicolo", sul "mercato", su "Sassuolo", sulla "Grecia"): sono
+%  artefatti, omessi. Si omettono anche gli scambi privati non legati
+%  alla lezione (la nonna che entra nella stanza di uno studente, il
+%  bicchiere d'acqua del docente). Diversi nomi sono storpiati ("Arial",
+%  "Areal Engine", "il Real", "Arrhenius", "Gigi One Voice", "la Real
+%  Tech", "R.I." per "array", "sin" per "scene component"): dove il
+%  riferimento è ricostruibile con certezza lo si riporta nella forma
+%  corretta; dove non lo è, lo si segnala in nota invece di indovinare.
+%  Le figure sono ricostruzioni schematiche dei grafi costruiti a
+%  lezione, non screenshot.
+% =====================================================================
+
+% --- Macro per i grafi Blueprint (da tasks/gd7-blueprint/bp-tikz.tex) --
+% Richiedono TikZ e la libreria calc, già caricati nel preambolo.
+\ifcsname bpnode\endcsname\else
+\pgfdeclarelayer{bpbg}
+\pgfdeclarelayer{bpcomment}
+\pgfdeclarelayer{bpwire}
+\pgfsetlayers{bpbg,bpcomment,bpwire,main}
+
+% --- colori dell'editor ----------------------------------------------
+\definecolor{bpBg}{HTML}{262626}
+\definecolor{bpGridFine}{HTML}{2E2E2E}
+\definecolor{bpGridBold}{HTML}{1A1A1A}
+\definecolor{bpBody}{HTML}{141414}
+\definecolor{bpOutline}{HTML}{060606}
+\definecolor{bpText}{HTML}{F0F0F0}
+\definecolor{bpSub}{HTML}{B4B4B4}
+\definecolor{bpValBg}{HTML}{0C0C0C}
+\definecolor{bpValBorder}{HTML}{5A5A5A}
+
+% header dei nodi
+\definecolor{bpHEvent}{HTML}{8E1B1B}   % eventi (rosso)
+\definecolor{bpHFunc}{HTML}{1F5A8C}    % funzioni con esecuzione (blu)
+\definecolor{bpHPure}{HTML}{3F7A2E}    % funzioni pure, senza esecuzione (verde)
+\definecolor{bpHCast}{HTML}{14706F}    % cast (verde acqua)
+\definecolor{bpHFlow}{HTML}{5C5C5C}    % controllo del flusso, macro (grigio)
+\definecolor{bpHVar}{HTML}{3A3A3A}     % SET di una variabile
+
+% pin e fili, un colore per tipo di dato (come nell'editor)
+\definecolor{bpPinexec}{HTML}{FFFFFF}
+\definecolor{bpPinbool}{HTML}{A00000}
+\definecolor{bpPinint}{HTML}{1FE3AF}
+\definecolor{bpPinfloat}{HTML}{9DF53D}
+\definecolor{bpPinstr}{HTML}{F72BD3}
+\definecolor{bpPinname}{HTML}{C98AF7}
+\definecolor{bpPintext}{HTML}{E2779A}
+\definecolor{bpPinvec}{HTML}{F8C624}
+\definecolor{bpPinrot}{HTML}{A0B3FC}
+\definecolor{bpPintrans}{HTML}{F77A10}
+\definecolor{bpPinobj}{HTML}{19A7F2}
+\definecolor{bpPinclass}{HTML}{7B2BC4}
+\definecolor{bpPinsoft}{HTML}{98F2FF}
+\definecolor{bpPinstruct}{HTML}{1458C8}
+\definecolor{bpPinwild}{HTML}{8A8A8A}
+\definecolor{bpPinenum}{HTML}{0D7A6B}
+\definecolor{bpPinskip}{HTML}{141414}
+
+\def\bpRow{0.42}
+\def\bpExecStr{exec}
+\def\bpSkipStr{skip}
+\def\bpCompactStr{compact}
+
+\tikzset{
+  bpTitle/.style={text=bpText, font=\sffamily\scriptsize\bfseries,
+                  inner sep=0pt, align=left},
+  bpTitleC/.style={text=bpSub, font=\sffamily\large\bfseries, inner sep=0pt},
+  bpLabel/.style={text=bpText, font=\sffamily\tiny, inner sep=0pt},
+  bpNoteSty/.style={text=bpSub, font=\sffamily\tiny\itshape, align=left,
+                    inner sep=1pt},
+}
+
+\newcommand{\bpval}[1]{{\setlength{\fboxsep}{0.8pt}\setlength{\fboxrule}{0.3pt}%
+  \fcolorbox{bpValBorder}{bpValBg}{\textcolor{bpText}{\,#1\,}}}}
+\newcommand{\bpsub}[1]{{\color{bpSub}\tiny\itshape\mdseries #1}}
+
+% conta gli elementi non vuoti di una lista "tipo/etichetta, ..."
+\newcommand{\bpcountlist}[1]{%
+  \gdef\bpres{0}%
+  \foreach \bpt/\bpl in {#1}{%
+    \ifx\bpt\empty\else
+      \pgfmathtruncatemacro\bptmp{\bpres+1}\global\let\bpres\bptmp
+    \fi}}
+
+% disegna un pin: tipo, x, y
+\newcommand{\bpXpin}[3]{%
+  \edef\bpPT{#1}%
+  \ifx\bpPT\bpExecStr
+    \fill[bpPinexec] (#2-0.085,#3+0.085) -- (#2+0.02,#3+0.085)
+       -- (#2+0.105,#3) -- (#2+0.02,#3-0.085) -- (#2-0.085,#3-0.085) -- cycle;
+  \else\ifx\bpPT\bpSkipStr
+  \else
+    \fill[bpPin#1] (#2,#3) circle (0.07);
+    \draw[bpPin#1!60!black, line width=0.3pt] (#2,#3) circle (0.07);
+  \fi\fi}
+
+% il nodo generico
+\newcommand{\bpnode}[8][1]{%
+  \bpcountlist{#7}\edef\bpNin{\bpres}%
+  \bpcountlist{#8}\edef\bpNout{\bpres}%
+  \pgfmathsetmacro\bpRows{max(\bpNin,\bpNout,1)}%
+  \edef\bpHC{#4}%
+  \ifx\bpHC\bpCompactStr
+    \def\bpHead{0.06}%
+  \else
+    \pgfmathsetmacro\bpHead{0.14+0.34*#1}%
+  \fi
+  \pgfmathsetmacro\bpH{\bpHead+\bpRows*\bpRow+0.12}%
+  \begin{scope}[shift={(#3)}]
+    \fill[black, opacity=0.45, rounded corners=4pt]
+         (0.07,-0.07) rectangle ++(#6,-\bpH);
+    \fill[bpBody, rounded corners=4pt] (0,0) rectangle (#6,-\bpH);
+    \ifx\bpHC\bpCompactStr
+      \node[bpTitleC] at ({#6-0.52},{-\bpH/2}) {#5};
+    \else
+      \begin{scope}
+        \clip[rounded corners=4pt] (0,0) rectangle (#6,-\bpH);
+        \shade[left color=#4, right color=#4!30!bpBody]
+              (0,0) rectangle (#6,-\bpHead);
+      \end{scope}
+      \node[bpTitle, anchor=west] at (0.14,{-\bpHead/2}) {#5};
+    \fi
+    \draw[bpOutline, line width=0.6pt, rounded corners=4pt]
+         (0,0) rectangle (#6,-\bpH);
+    \coordinate (#2-c)  at ({#6/2},{-\bpH/2});
+    \coordinate (#2-n)  at ({#6/2},0);
+    \coordinate (#2-s)  at ({#6/2},-\bpH);
+    \coordinate (#2-w)  at (0,{-\bpH/2});
+    \coordinate (#2-e)  at (#6,{-\bpH/2});
+    \coordinate (#2-sw) at (0,-\bpH);
+    \coordinate (#2-ne) at (#6,0);
+    \foreach \bpt/\bpl [count=\bpk] in {#7}{%
+      \ifx\bpt\empty\else
+        \pgfmathsetmacro\bpy{-\bpHead-(\bpk-0.5)*\bpRow-0.06}%
+        \bpXpin{\bpt}{0.17}{\bpy}%
+        \coordinate (#2-i\bpk) at (0.17,\bpy);
+        \node[bpLabel, anchor=west] at (0.33,\bpy) {\bpl};
+      \fi}%
+    \foreach \bpt/\bpl [count=\bpk] in {#8}{%
+      \ifx\bpt\empty\else
+        \pgfmathsetmacro\bpy{-\bpHead-(\bpk-0.5)*\bpRow-0.06}%
+        \bpXpin{\bpt}{#6-0.17}{\bpy}%
+        \coordinate (#2-o\bpk) at (#6-0.17,\bpy);
+        \node[bpLabel, anchor=east] at (#6-0.33,\bpy) {\bpl};
+      \fi}%
+  \end{scope}}
+
+% il GET di una variabile: una "pillola" con un'uscita
+\newcommand{\bpget}[5]{%
+  \begin{scope}[shift={(#2)}]
+    \fill[black, opacity=0.45, rounded corners=6pt]
+         (0.06,-0.06) rectangle ++(#5,-0.46);
+    \begin{scope}
+      \clip[rounded corners=6pt] (0,0) rectangle (#5,-0.46);
+      \shade[left color=bpPin#3!40!bpBody, right color=bpBody]
+            (0,0) rectangle (#5,-0.46);
+    \end{scope}
+    \draw[bpOutline, line width=0.6pt, rounded corners=6pt]
+         (0,0) rectangle (#5,-0.46);
+    \node[bpTitle, anchor=west] at (0.14,-0.23) {#4};
+    \bpXpin{#3}{#5-0.17}{-0.23}%
+    \coordinate (#1-o1) at (#5-0.17,-0.23);
+    \coordinate (#1-n) at ({#5/2},0);
+    \coordinate (#1-s) at ({#5/2},-0.46);
+  \end{scope}}
+
+% un filo (sotto i nodi)
+\newcommand{\bpwire}[3]{%
+  \begin{pgfonlayer}{bpwire}
+    \edef\bpWT{#1}%
+    \ifx\bpWT\bpExecStr\def\bpWW{1.15pt}\else\def\bpWW{0.95pt}\fi
+    \draw[bpPin#1, line width=\bpWW]
+      let \p1=(#2), \p2=(#3),
+          \n1={ifthenelse(\x2<\x1, 45pt, max(12pt, abs(\x2-\x1)*0.45))} in
+      (#2) .. controls +(\n1,0) and +(-\n1,0) .. (#3);
+  \end{pgfonlayer}}
+
+% riquadro di commento
+\newcommand{\bpcomment}[3]{%
+  \begin{pgfonlayer}{bpcomment}
+    \fill[white, opacity=0.07, rounded corners=3pt] (#1) rectangle (#2);
+    \draw[white!45!bpBg, rounded corners=3pt, line width=0.4pt] (#1) rectangle (#2);
+    \begin{scope}
+      \clip[rounded corners=3pt] (#1) rectangle (#2);
+      \path (#1) coordinate (bpcA) (#2) coordinate (bpcB);
+      \path ($(bpcA)+(0,-0.42)$) coordinate (bpcH);
+      \fill[white, opacity=0.10] (bpcA) rectangle (bpcB |- bpcH);
+    \end{scope}
+    \node[text=bpText, font=\sffamily\scriptsize\bfseries, anchor=north west,
+          inner sep=3pt] at (#1) {#3};
+  \end{pgfonlayer}}
+
+\newcommand{\bpnote}[2]{\node[bpNoteSty, anchor=north west] at (#1) {#2};}
+
+% l'ambiente grafo
+\newenvironment{bpgraph}[1][]{%
+  \begin{tikzpicture}[#1]}{%
+  \begin{pgfonlayer}{bpbg}
+    \path (current bounding box.south west) ++(-0.35,-0.35) coordinate (bpSW);
+    \path (current bounding box.north east) ++(0.35,0.35) coordinate (bpNE);
+    \fill[bpBg] (bpSW) rectangle (bpNE);
+    \begin{scope}
+      \clip (bpSW) rectangle (bpNE);
+      \draw[bpGridFine, line width=0.3pt, step=0.25] (bpSW) grid (bpNE);
+      \draw[bpGridBold, line width=0.5pt, step=2] (bpSW) grid (bpNE);
+    \end{scope}
+  \end{pgfonlayer}
+  \end{tikzpicture}}
+\fi
+% ---------------------------------------------------------------------
+
+\chapter[Array, timeline e il primo platformer]{Array, timeline e il primo
+platformer: la seconda lezione di programmazione}
+\label{gd12:cap:array-timeline}
+
+Il capitolo~\ref{gd7:cap:blueprint} ha aperto la programmazione con i
+\textbf{Blueprint}: eventi, nodi e variabili, la trigger box, il \emph{cast},
+le monete, i \emph{delta seconds}. Questa è la \textbf{seconda lezione di
+programmazione}, e il docente la imposta come la diretta prosecuzione della
+prima: ``continuare un attimino sull'impostazione della volta scorsa'', ma su un
+\textbf{progetto nuovo}. Come la volta precedente, non sarà una lezione del tipo
+``dovete fare questo, questo e questo'': il docente dà \textbf{vari strumenti},
+che poi ognuno sfrutta per creare quello che preferisce.
+
+La novità è che, questa volta, il \textbf{task} arriva \emph{all'inizio}: ``vi
+assegnerò un task oggi, per comodità ve lo assegno subito, così mentre
+sviluppate durante questa lezione potete già cominciare''. Tutto quello che
+segue (gli array, la consegna, Fab, la timeline, il movimento, il ricaricamento
+del livello) è quindi pensato come \textbf{cassetta degli attrezzi} per quel
+task: un piccolo \textbf{platformer 3D su tre livelli}.
+
+La lezione è \textbf{ibrida}: una parte della classe è in aula, una parte
+(Mattia, Antonino, e per un tratto Francesco) è collegata da remoto e condivide
+lo schermo sul canale vocale di Discord della classe. Anche questa volta il
+computer dell'aula dà qualche problema: è stato appena \textbf{cambiato}, e
+l'engine, mai aperto prima su quella macchina, deve compilare tutti gli
+\emph{shader} prima di partire. La struttura della lezione, e quindi del
+capitolo, è questa:
+\begin{enumerate}
+  \item il \textbf{task}: un platformer 3D su tre livelli, con trappole, aree
+        che cambiano il movimento e un livello a tempo, e la richiesta di
+        tenere aggiornato il docente ``come in un team''
+        (sezione~\ref{gd12:sec:task});
+  \item le domande tecniche in attesa che l'engine sia pronto:
+        \textbf{compilare Unreal dal codice sorgente}, \textbf{Python},
+        Unreal Engine 6, i template, Android e Visual Studio
+        (sezioni~\ref{gd12:sec:attesa}--\ref{gd12:sec:altre-domande});
+  \item gli \textbf{array}: la classifica, gli indici che partono da zero,
+        Add e Remove, il \textbf{For Each Loop}, \textbf{Get All Actors Of
+        Class} e il filtro per distanza
+        (sezioni~\ref{gd12:sec:array}--\ref{gd12:sec:get-all});
+  \item come \textbf{consegnare}: \textbf{Zip Project} e le cartelle di un
+        progetto; \textbf{Maps \& Modes}; il \textbf{packaging}
+        (sezioni~\ref{gd12:sec:zip}--\ref{gd12:sec:packaging});
+  \item le tre mappe del task e \textbf{Fab}
+        (sezioni~\ref{gd12:sec:mappe} e~\ref{gd12:sec:fab});
+  \item la \textbf{timeline}: la piattaforma mobile, l'editor delle curve, il
+        loop, la porta con \emph{Play} e \emph{Reverse}, \emph{relative} e
+        \emph{world} (sezioni~\ref{gd12:sec:timeline}--\ref{gd12:sec:relative});
+  \item il giro tra i banchi: la porta con le box, il teletrasporto a colpi di
+        Delay, la piattaforma che va avanti e indietro
+        (sezione~\ref{gd12:sec:giro1});
+  \item il \textbf{movimento sull'Event Tick} e i delta seconds, di nuovo
+        (sezione~\ref{gd12:sec:tick});
+  \item la piattaforma che si distrugge e il \textbf{ricaricamento del
+        livello} con \emph{Get Current Level Name} e \emph{Open Level (by
+        Name)} (sezioni~\ref{gd12:sec:distrugge} e~\ref{gd12:sec:ricarica});
+  \item la \textbf{doppia porta}, costruita dal docente in diretta
+        (sezione~\ref{gd12:sec:doppia-porta});
+  \item \textbf{Engine Scalability}, la lava, il \textbf{timer}, il
+        \textbf{trampolino} (\emph{Jump} e \emph{Launch Character}), il mulino
+        e il vento (sezioni~\ref{gd12:sec:scalability}--\ref{gd12:sec:giro2});
+  \item la chiusura e il riepilogo del task (sezione~\ref{gd12:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{Il task, subito: un platformer su tre livelli}
+\label{gd12:sec:task}
+
+\subsection{La consegna}
+
+Il docente manda il testo del task sul canale Discord della classe e condivide
+lo schermo per chi è da remoto. ``L'idea sarebbe di creare un
+\textbf{platformer 3D} partendo dal \textbf{template di base} di Unreal''; nel
+testo ci sono ``tutte quante le informazioni''. In sostanza:
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\linewidth}
+\vspace{4pt}
+\textbf{\large Task per la consegna del 25: un platformer 3D}
+\smallskip
+
+\noindent Partendo dal \textbf{template in terza persona} di Unreal Engine,
+creare un \textbf{platformer 3D} con questi requisiti minimi:
+\begin{enumerate}[leftmargin=1.6em, itemsep=2pt]
+  \item \textbf{tre livelli}, cioè tre mappe distinte;
+  \item il \textbf{personaggio di base} del template, con telecamera, salto e
+        tutto ciò che il template già offre;
+  \item degli \textbf{ostacoli particolari}, alcuni dei quali, in certi casi,
+        fanno \textbf{ricominciare il livello} (per esempio una trappola che
+        uccide il giocatore: il livello riparte);
+  \item delle \textbf{aree che modificano il movimento} del giocatore (per
+        esempio un'area in cui si va più veloci);
+  \item \textbf{un livello con un timer}: se il tempo scade prima che il
+        livello sia finito, il livello \textbf{riparte}.
+\end{enumerate}
+\textbf{Asset:} si possono usare liberamente gli asset di \textbf{Fab}, non
+solo quelli del template; \textbf{il codice}, invece, deve essere tutto proprio.
+Vanno \textbf{segnalati tutti gli asset presi online}, possibilmente con un
+link.\\[2pt]
+\textbf{Consegna:} il \textbf{25}, come \textbf{file zip del progetto} (con
+\emph{File $\rightarrow$ Zip Project}, sezione~\ref{gd12:sec:zip}) caricato su
+\textbf{Google Drive}.\\[2pt]
+\textbf{Durante lo sviluppo:} aggiornare il docente sui progressi nella chat
+della classe, ``come se fosse una chat di lavoro'' (i messaggi non sono
+valutati).
+\vspace{4pt}
+\end{minipage}}
+\end{center}
+
+\paragraph{Le date.} Il progetto si consegna \textbf{il 25}. In realtà la
+classe si rivedrà già \textbf{lunedì}, ``però lunedì faremo altre cose''
+(la lezione sarà su Git, si veda più avanti). Poi ci si rivede \textbf{il 23}:
+il docente lascia tempo fino al 25 ``in modo che, se avete delle domande
+all'ultimo, me le fate il giorno stesso''. Nel frattempo, le domande si possono
+fare su Discord.
+
+\paragraph{Gli asset da online, e un link.} ``Fondamentalmente dovete
+segnalarmi tutti gli asset che utilizzate da online, magari con un link, così
+so cosa avete fatto voi e che cosa no.'' Il motivo è ovvio: il task valuta
+\textbf{il codice}, e il docente deve poter distinguere il lavoro dello studente
+da ciò che è stato scaricato.
+
+\subsection{Il primo e unico task in zip}
+
+Questo sarà ``il \textbf{primo e unico} task che vi darò da consegnare come zip
+proprio''. Dai successivi si userà \textbf{GitHub}, ``praticamente un software
+per fare in modo che voi possiate caricare man mano che lavorate''; la lezione
+di lunedì sarà proprio su quello (``lo vedremo fra quattro, cinque giorni''). Per
+questo task, invece: zip, e caricamento su Google Drive.
+
+\subsection{Tenere aggiornato il docente, come in un'azienda}
+
+C'è poi una richiesta nuova, che il docente spiega con cura:
+\begin{quote}
+Mi piacerebbe un po' come se foste in un'azienda vera, perché in un'azienda vera
+è molto difficile che vi diano un task, c'è una data, fatelo. È molto difficile.
+\end{quote}
+Nella realtà, un task non è ``eccolo, ci vediamo alla scadenza'': chi lo
+assegna vuole sapere \textbf{come sta andando}. Per questo il docente chiede di
+tenerlo aggiornato mentre si sviluppa, semplicemente scrivendo nella chat della
+classe\footnote{La trascrizione dice ``sulla chat di Milano'' (e, all'inizio,
+``facciamo Milano''): è con ogni probabilità il canale Discord della classe,
+che porta il nome della sede. Non è possibile ricostruire il nome esatto del
+canale.} ``come se fosse una chat di lavoro'': ``ho implementato il
+\textbf{doppio salto}'', ``ho fatto una \textbf{nuova mappa}'', eccetera, giusto
+``per mantenere un progresso''.
+\begin{itemize}
+  \item Non servono testi formali: ``semplicemente aggiornatelo come se stesse
+        lavorando con un team, cosa che poi farete successivamente''.
+  \item \textbf{I messaggi non sono valutati}: ``questo è importante''.
+\end{itemize}
+
+\paragraph{Approfondimento: lo stand-up, in piccolo.} Quello che il docente
+chiede è una versione minima di una pratica comune nei team di sviluppo: il
+\emph{daily stand-up} delle metodologie agili, in cui ognuno dice in poche righe
+che cosa ha fatto, che cosa farà, che cosa lo blocca (se ne parla nel
+seminario su Agile e Scrum, capitolo~\ref{cap:z3-agile-scrum}). Il valore di questi
+messaggi non sta nella forma ma nella \textbf{visibilità}: chi coordina vede
+presto chi è in difficoltà, e chi lavora si abitua a spezzare il lavoro in
+passi piccoli e comunicabili (``il doppio salto'', ``la nuova mappa'').
+
+\subsection{Domande sul task}
+
+Uno studente avvisa che è appena tornato a casa ed è ``al 99\%
+dell'installazione di Unreal'', quindi dovrà rifare il progetto da capo:
+``tranquillo, perché lo ricominceremo'', anche in classe si parte da un
+progetto nuovo. Si può creare subito il progetto per il task, oppure usare
+quello della lezione e poi riprenderlo.
+
+\paragraph{Sempre in 3D, sempre in terza persona.} Un'altra domanda: il nuovo
+progetto va fatto sempre in 3D? ``Sì, fatelo in 3D, perché tutti quanti i
+template di base sono in 3D'': template \textbf{in terza persona}. Più avanti
+si vedranno anche il template \textbf{in prima persona} e quello del
+\textbf{veicolo}, ``li vedremo un pochettino tutti tranne quello VR, purtroppo'',
+e quello AR, ``che tanto non serve particolarmente, non si usa più tanto''.
+
+% ---------------------------------------------------------------------
+\section{In attesa degli shader}
+\label{gd12:sec:attesa}
+
+\subsection{Il PC nuovo, e GD1 Voice}
+
+Il computer dell'aula è appena stato cambiato, e l'engine ``non è mai stato
+caricato su questa versione'': deve compilare gli \emph{shader}, e il launcher
+(``si è un po' buggato'') non vuole scaricare i pacchetti. ``Speriamo di no,
+però\dots{} non capisco perché non mi ha messo template e funzionalità.''
+
+Nell'attesa, il docente chiede a chi è da remoto di entrare nel canale vocale
+\textbf{GD1 Voice}\footnote{Trascritto anche come ``Gigi One Voice''.} di
+Discord e di \textbf{condividere lo schermo}; chi è in aula può anche non farlo,
+``tanto lo vedo''. E chiede a tutti di \textbf{creare un nuovo progetto in
+terza persona di base}, così da poter dare una mano mentre si lavora. Uno
+studente avvisa che Unreal gli va già a scatti, e con la condivisione su
+Discord ``esplode il computer'': ``va bene, condividi quando ti serve''.
+
+\subsection{Che cosa avete fatto dalla volta scorsa?}
+
+Il docente chiede se ci sia qualcosa della lezione precedente che non è
+riuscito, o se qualcuno abbia scritto codice per altri progettini personali. Uno
+studente ha fatto qualcosa con una \textbf{timeline} (``timeline che non vi ho
+spiegato la volta scorsa, quindi oggi ve la spiego sicuramente'', e infatti è
+il cuore della lezione, sezione~\ref{gd12:sec:timeline}).
+
+\paragraph{L'editor in inglese, di nuovo.} Quando finalmente l'engine si apre,
+è in italiano: ``non posso sopportarlo, devo assolutamente toglierlo''. Il
+docente lo rimette in inglese dalle preferenze dell'editor (\emph{Region \&
+Language}), come già spiegato nel capitolo~\ref{gd7:cap:blueprint}
+(sezione~\ref{gd7:sec:inglese}), e toglie anche l'overlay di Discord, ``veramente
+fastidioso''.
+
+% ---------------------------------------------------------------------
+\section{Compilare Unreal dal codice sorgente}
+\label{gd12:sec:sorgente}
+
+\subsection{La domanda}
+
+Uno studente remoto ha l'engine che si sta ancora caricando: sta
+\textbf{compilando Unreal da zero}. Un compagno chiede: che cosa cambia tra
+compilare il codice sorgente e usare la versione di Unreal ``già fatta''?
+``Domanda molto interessante.''
+
+\subsection{Un engine con il codice aperto}
+
+Premessa: Unreal Engine si può semplicemente scaricare dall'\textbf{Epic Games
+Launcher}, si preme \emph{Play} ``e siamo tutti quanti a posto e contenti''. Ma
+Unreal è uno dei pochi engine (a differenza, per esempio, di Unity) che
+\textbf{mette a disposizione il codice sorgente}: passando da
+GitHub\footnote{La trascrizione dice ``andando su di tab'': il codice sorgente
+di Unreal è distribuito su GitHub, dopo aver collegato il proprio account Epic
+a quello GitHub.} si può accedere al codice di tutte le versioni,
+scaricarlo e \textbf{compilarlo da sé}. Ci sono vantaggi e svantaggi.
+
+\paragraph{Lo svantaggio.} ``Pesa un sacco, e ci vuole un giorno per fare la
+build, fondamentalmente.'' Uno studente ipotizza ``tipo 800 giga''; il docente
+non conferma la cifra, ma ricorda che una volta che l'aveva fatta completa
+``mi pesava un sacco'', e sospetta che allo studente manchi qualcosa.
+
+\paragraph{I vantaggi.} I casi in cui conviene sono, nella sostanza, quattro.
+\begin{enumerate}
+  \item \textbf{Modificare l'engine.} Se si sa programmare in C++, si può
+        cambiare l'engine come si vuole. Serve quando manca una funzionalità
+        che \emph{non si può mettere neanche come plugin}: ``volete che
+        tutte le schermate dell'engine, quando le muovete, siano
+        gommose?''. Non si può fare con un plugin, si può fare così. ``La
+        maggior parte delle funzionalità si possono mettere con plugin, quindi
+        non serve'', ma in quei casi sì.
+  \item \textbf{I server dei giochi multiplayer.} Per un gioco multiplayer
+        serve la build \emph{non per il computer, ma per il server} (il
+        \emph{dedicated server}), che con l'Unreal ``di base'' non si può
+        fare.
+  \item \textbf{Le console.} Per buildare per PlayStation, Nintendo e simili
+        servono dei file che forniscono Sony, Nintendo e gli altri: bisogna
+        compilare l'engine \emph{con quei file dentro}, e solo allora si può
+        fare la build per quelle piattaforme.
+  \item \textbf{Le versioni in anteprima.} Si possono scaricare le versioni
+        ``super preview'', ancora prima che vengano rilasciate. Su GitHub c'è
+        già anche \textbf{Unreal Engine 6}: il docente la sta compilando
+        proprio per testarne le funzioni, e anticipa che, quando uscirà, ci
+        sarà ``sicuramente'' un corso di aggiornamento. ``Comunque i concetti
+        di base, float eccetera, sono tutti quanti in tutti i linguaggi di
+        programmazione. Quindi non vi preoccupate.''
+\end{enumerate}
+``Non credo che vi servirà a breve'', conclude, ma può essere utile saperlo.
+
+\subsection{La 5.9 e la build per browser}
+
+Nel launcher, nell'elenco delle versioni, in fondo c'è già la \textbf{5.9}
+(``l'hanno messa''). È ``uguale alle altre'', se non per una feature ``molto
+carina'': si può fare la \textbf{build per browser}. Se si vuole pubblicare il
+proprio gioco su piattaforme come \textbf{itch.io}, giocabile nel browser
+``senza che uno debba scaricarlo'', ``questo è ottimo''. Era una cosa che
+c'era già in Unreal Engine~4 (il docente cita la 4.22), poi l'hanno tolta, e
+ora l'hanno rimessa.\footnote{Il supporto HTML5 di Unreal Engine~4 è stato
+effettivamente rimosso dalla distribuzione ufficiale intorno alla 4.24 e reso
+un progetto della comunità. Della build per browser della 5.9 si riporta solo
+quanto detto dal docente, che non l'ha ancora provata.} Avvertenza: è una
+versione ``super preview'', ``non l'ho ancora provata, probabilmente è
+terribile, però si fa quel che si può''.
+
+% ---------------------------------------------------------------------
+\section{Altre domande su Unreal}
+\label{gd12:sec:altre-domande}
+
+\subsection{Python in Unreal}
+
+Un'altra domanda riguarda il motivo per cui lo studente si sta compilando
+l'engine: ci sono altri linguaggi oltre ai Blueprint e al C++? Sì: in Unreal si
+possono creare \textbf{tool in Python}; nella sezione dei \textbf{plugin}
+c'è proprio il plugin \emph{Python}. Il docente precisa che cosa ci si fa:
+\begin{itemize}
+  \item \textbf{non il codice di gioco}, ``perché sarebbe anche un pochettino
+        pesante, essendo che Python non è proprio real time'';
+  \item ma \textbf{script per l'editor}, per esempio per agire su tutti gli
+        asset contemporaneamente.
+\end{itemize}
+Queste operazioni sull'editor si possono fare con i Blueprint, con il C++ e con
+Python: ``è tutto tra le possibilità, quindi fai come vuoi''.
+
+\paragraph{L'esempio del docente.} In un gioco a cui ha lavorato, aveva creato
+un tool che, \textbf{premendo un tasto}, comprimeva tutte le texture in modo
+diverso \textbf{in base alla cartella} in cui si trovavano: quelle dei
+personaggi con una certa qualità, quelle delle mappe con un'altra, e così via,
+``in base a vari parametri''. ``Può essere utile, non è indispensabile.'' (Lo
+studente, comunque, non si sta compilando l'engine per usare Python: non c'è
+bisogno di farlo per quello.)
+
+\subsection{Android e Visual Studio}
+
+A uno studente ``un pochettino smanettone'' il docente fa notare che la build
+custom potrebbe tornare comoda anche per \textbf{Android}, ``ma in realtà si può
+fare anche senza'': bisogna però installare ``tipo un milione di software di
+Android'', Android Studio eccetera.
+
+Più avanti nel percorso si vedrà anche come installare \textbf{Visual Studio}
+con tutto il necessario. Finora si sono fatti progetti \textbf{full Blueprint},
+``quindi senza codice vero''. Ma se si entra in un team con un progetto
+\textbf{metà Blueprint e metà C++}, Visual Studio serve, ``se no non potete né
+aprirlo né fare niente''; lo stesso vale se il progetto ha plugin o ``robe
+particolari'' non già compilate. In quel momento, anticipa il docente, si
+scaricherà direttamente la versione successiva, perché ci sarà Unreal Engine~6.
+
+% ---------------------------------------------------------------------
+\section{Gli array}
+\label{gd12:sec:array}
+
+\subsection{Una variabile, tante informazioni}
+
+Con l'engine finalmente pronto (``vi annuncio subito di che cosa cominceremo a
+parlare''), il primo argomento sono gli \textbf{array}: ``delle variabili, però
+un po' particolari''. Le variabili del capitolo~\ref{gd7:cap:blueprint}
+(sezione~\ref{gd7:sec:variabili}), Boolean, Float, Integer e così via,
+mantengono \textbf{un'informazione} ciascuna. Una funzionalità ``molto
+importante'' è poter contenere, \textbf{in una variabile singola, più
+informazioni dello stesso tipo}: questo è un array.
+
+\paragraph{L'esempio della classifica.} Si deve fare una \textbf{leaderboard},
+con diversi punteggi. Senza array, si potrebbe creare una variabile
+\emph{Primo} (un intero con il punteggio di chi arriva primo), poi una
+\emph{Secondo}, poi una \emph{Terzo}, e così via. ``Chiaramente diventa molto
+difficile poi da gestire il codice'': con cinquanta posizioni ``diventerebbe un
+casino''. Con un array, invece, si ha una sola variabile che contiene tutti i
+punteggi, in ordine.
+
+\subsection{Creare un array}
+
+Si crea una variabile normale e, accanto al suo tipo, si clicca sul
+\textbf{pallino} (l'icona del contenitore) e si sceglie \textbf{Array}. In
+questo modo l'informazione singola diventa un array, che ``permette di
+incasellare infinite, tra virgolette, informazioni dello stesso tipo''.
+\begin{enumerate}
+  \item Si \textbf{compila} il Blueprint (come per tutte le variabili, è il
+        momento in cui compare il pannello del valore di default).
+  \item Nel valore di default si preme \textbf{+} per aggiungere elementi:
+        il primo della classifica ha \textbf{950} punti, il secondo
+        \textbf{800}, il terzo \textbf{700}, ``e così via. E ne posso mettere
+        quanti ne voglio.''
+\end{enumerate}
+Nel grafo, un array si riconosce dall'icona: al posto del pallino del tipo
+singolo c'è una \textbf{griglia di quadratini}\footnote{A voce il docente dice
+``quando ci sono questi 8 pallini, questi 8 quadratini''; l'icona dell'array
+nell'editor è una piccola griglia $3 \times 3$.}. ``Vuol dire che è un array,
+perché altrimenti si vedrebbe così'', con il pallino normale.
+
+\subsection{Gli indici partono da zero}
+
+``Informazione importante sono gli \textbf{indici}.'' I valori di un array
+sono \textbf{numerati}, come ci si aspetta, \emph{ma la numerazione parte da
+0}. Il primo valore di un array ha indice \textbf{0}, il secondo indice 1, poi
+2, 3, 4 e così via.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Posizione in classifica} & 1\textsuperscript{a} & 2\textsuperscript{a}
+  & 3\textsuperscript{a} & 4\textsuperscript{a} & \dots \\
+\midrule
+\textbf{Indice nell'array} & 0 & 1 & 2 & 3 & \dots \\
+\textbf{Valore} (Leaderboard) & 950 & 800 & 700 & 8 & \dots \\
+\bottomrule
+\end{tabular}
+\caption{L'array \emph{Leaderboard} della lezione, dopo un \emph{Add} di 8: il
+primo elemento ha indice 0, l'ultimo ha indice pari alla lunghezza meno uno.}
+\label{gd12:tab:indici}
+\end{table}
+
+\paragraph{Non solo numeri.} Un array è utile ``non solo con i numeri'', anche
+con gli \textbf{oggetti}: per esempio un array di \textbf{tutte le monete nella
+scena}, così che con un tasto si prendano tutte quelle intorno. In generale,
+serve ovunque ci sia bisogno di più di un'informazione dello stesso tipo:
+punteggi, oggetti, posizioni.
+
+\paragraph{Una cattiva abitudine da evitare.} ``Cercate di evitare di fare, in
+qualsiasi caso, variabili diverse se sono la stessa cosa soltanto in posizioni
+diverse. Vedo molto spesso fare tanti interi singoli al posto di fare un array,
+semplicemente.''
+
+\subsection{Add e Remove}
+
+Come si usano? Il docente aggancia il codice a un tasto qualsiasi, la
+\textbf{E} (``giusto per vedere come scatenare gli eventi''), e trascina nel
+grafo il \textbf{GET} dell'array. Dal suo pin si possono tirare fuori i nodi
+propri degli array.
+\begin{itemize}
+  \item \textbf{Add} aggiunge un valore nuovo \textbf{in fondo} alla lista. Con
+        i primi tre valori (950, 800, 700), un Add di 8 dà ``questa cosa qua
+        più 8, qui'': 950, 800, 700, 8.
+  \item \textbf{Remove} (nell'editor: \emph{Remove Index}) toglie un elemento:
+        qui bisogna dirgli \textbf{quale posizione} rimuovere. L'indice 0
+        ``vi toglierà il primo dalla classifica, ve lo toglie semplicemente''.
+\end{itemize}
+
+\paragraph{Approfondimento: gli altri nodi degli array.} Il libro di Romero e
+Sewell elenca i nodi più usati, che conviene conoscere da subito:
+\textbf{Get (a copy)} legge l'elemento a un certo indice; \textbf{Set Array
+Elem} lo sovrascrive; \textbf{Insert} aggiunge un elemento \emph{a un indice
+dato}, spostando avanti tutti i successivi (a differenza di Add, che aggiunge in
+fondo); \textbf{Length} restituisce il numero di elementi e \textbf{Last Index}
+l'indice dell'ultimo, che è sempre \emph{Length}~$-$~1; \textbf{Contains} dice
+se un valore è presente; \textbf{Random Array Item} pesca un elemento a caso;
+\textbf{Is Empty} e \textbf{Is Not Empty} controllano se l'array ha elementi. Il
+libro avverte anche di \textbf{non leggere mai un indice oltre l'ultimo}: è un
+errore che può dare risultati imprevisti e crash difficili da rintracciare.
+
+\subsection{Il For Each Loop: vederli tutti}
+
+``La cosa più utile che si fa con gli array non è aggiungere e togliere, ma è
+\textbf{lopparli}, ovvero vederli tutti quanti.'' Per stampare la lista delle
+posizioni, per esempio, si fa un \textbf{loop}: trascinando dal pin dell'array
+si sceglie \textbf{For Each Loop}, ``un nodo un pochettino complesso rispetto
+agli altri, ma neanche troppo''. Per non confondere gli interi del punteggio con
+quelli dell'indice, il docente cambia il tipo dell'array in \textbf{Float} e lo
+rinomina \textbf{Leaderboard}.
+
+Il For Each Loop ha quattro uscite.
+\begin{itemize}
+  \item \textbf{Loop Body}: un'uscita di esecuzione che parte \textbf{una
+        volta per ogni elemento} (``qua mi esce otto volte l'output, rispetto a
+        quanti elementi ci sono qua dentro'').
+  \item \textbf{Array Element}: il valore dell'elemento corrente: ``mi esce il
+        primo valore, poi il secondo, poi il terzo, finché non finisce''.
+  \item \textbf{Array Index}: l'indice dell'elemento corrente: 0, 1, 2, 3, 4,
+        ``finché non finisce''.
+  \item \textbf{Completed}: parte una volta sola, quando il ciclo è finito.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{bpgraph}
+  \bpcomment{-0.3,0.75}{12.6,-3.0}{Stampare la classifica con il tasto E}
+  \bpnode{e}{0,0}{bpHEvent}{E}{2.2}{}{exec/Pressed, exec/Released, struct/Key}
+  \bpnode{fe}{3.3,0}{bpHFlow}{For Each Loop}{3.4}{exec/Exec, float/Array}%
+    {exec/Loop Body, float/Array Element, int/Array Index, exec/Completed}
+  \bpget{lb}{0.4,-1.9}{float}{Leaderboard}{2.2}
+  \bpnode{cv}{7.5,-1.45}{compact}{}{0.8}{float/}{str/}
+  \bpnode{ps}{9.2,0}{bpHFunc}{Print String}{3.0}{exec/, str/In String}{exec/}
+  \bpwire{exec}{e-o1}{fe-i1}
+  \bpwire{float}{lb-o1}{fe-i2}
+  \bpwire{exec}{fe-o1}{ps-i1}
+  \bpwire{float}{fe-o2}{cv-i1}
+  \bpwire{str}{cv-o1}{ps-i2}
+  \bpnote{3.0,-2.35}{\emph{Leaderboard} è un array di float (950, 800, 700, \dots)}
+\end{bpgraph}
+\caption{Il primo uso di un array: alla pressione di E, il For Each Loop esegue
+il Print String una volta per ogni elemento della classifica. Sullo schermo i
+valori compaiono dal basso verso l'alto, perché l'ultimo messaggio va in cima.}
+\label{gd12:fig:foreach}
+\end{figure}
+
+Collegato un \textbf{Print String} al Loop Body, con l'Array Element come
+testo, si preme Play e poi E: ``vedete che mi escono in ordine''. Anzi, sullo
+schermo sembrano al contrario, ``semplicemente perché i messaggi dopo vanno in
+cima'': ogni nuovo messaggio spinge giù i precedenti. ``Tuttavia è corretto.''
+
+% ---------------------------------------------------------------------
+\section{Get All Actors Of Class e il filtro per distanza}
+\label{gd12:sec:get-all}
+
+\subsection{Prendere tutti gli oggetti di un tipo}
+
+Il For Each Loop diventa davvero potente con un nodo che \emph{restituisce} un
+array: \textbf{Get All Actors Of Class}, ``prendi tutti quanti gli oggetti di un
+determinato tipo''. Il docente crea al volo un Blueprint Class
+\textbf{Coin}, ci mette dentro ``una bella sfera'', ne sparge un po' nel
+livello, e torna sul codice del personaggio:
+\begin{enumerate}
+  \item alla pressione di E, \textbf{Get All Actors Of Class} con classe
+        \emph{Coin}: ``prendimi tutte quante le coin'';
+  \item dal suo array di uscita, un \textbf{For Each Loop};
+  \item nel Loop Body, un \textbf{Destroy Actor} con target l'Array Element.
+\end{enumerate}
+Play, E: le monete \textbf{scompaiono tutte}. ``Concettualmente vi torna? Tutto
+quanto chiaro? Chiaramente dovrete prenderci un attimino la mano.''
+
+\subsection{Controllarli uno per uno: la distanza}
+
+``La cosa comoda di avere questo loop è controllarli \textbf{singolarmente}.''
+Per esempio: prendere solo le monete \textbf{entro un certo raggio} dal
+personaggio.
+\begin{itemize}
+  \item Dall'Array Element si prende la sua posizione, \textbf{Get Actor
+        Location} (``come abbiamo già fatto la volta scorsa''): è la posizione
+        della moneta.
+  \item Un altro \textbf{Get Actor Location}, senza target, prende
+        \emph{self}, cioè il personaggio.
+  \item Il nodo \textbf{Distance} (\emph{Vector Distance}) restituisce la
+        distanza tra i due punti.
+  \item Se la distanza è \textbf{minore di 200}, un \textbf{Branch} manda il
+        flusso al Destroy Actor; altrimenti no.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{bpgraph}
+  \bpnode{e}{0,0}{bpHEvent}{E}{2.0}{}{exec/Pressed, exec/Released, struct/Key}
+  \bpnode[2]{ga}{2.8,0}{bpHFunc}{Get All Actors Of Class\\\bpsub{Actor Class: Coin}}{3.6}%
+    {exec/, class/Actor Class \bpval{Coin}}{exec/, obj/Out Actors}
+  \bpnode{fe}{7.3,0}{bpHFlow}{For Each Loop}{3.2}{exec/Exec, obj/Array}%
+    {exec/Loop Body, obj/Array Element, int/Array Index, exec/Completed}
+  \bpnode{br}{11.4,0}{bpHFlow}{Branch}{2.4}{exec/, bool/Condition}{exec/True, exec/False}
+  \bpnode[2]{da}{12.0,-2.4}{bpHFunc}{Destroy Actor\\\bpsub{Target is Actor}}{2.6}%
+    {exec/, obj/Target}{exec/}
+  \bpnode{loc1}{3.0,-3.2}{bpHPure}{Get Actor Location}{3.3}{obj/Target}{vec/Return Value}
+  \bpnode{loc2}{3.0,-4.6}{bpHPure}{Get Actor Location}{3.3}{obj/Target \bpval{self}}{vec/Return Value}
+  \bpnode{dist}{7.0,-3.6}{bpHPure}{Distance}{2.2}{vec/V1, vec/V2}{float/}
+  \bpnode{lt}{9.6,-3.6}{compact}{$<$}{1.7}{float/, float/\bpval{500}}{bool/}
+  \bpwire{exec}{e-o1}{ga-i1}
+  \bpwire{exec}{ga-o1}{fe-i1}
+  \bpwire{obj}{ga-o2}{fe-i2}
+  \bpwire{exec}{fe-o1}{br-i1}
+  \bpwire{exec}{br-o1}{da-i1}
+  \bpwire{obj}{fe-o2}{loc1-i1}
+  \bpwire{obj}{fe-o2}{da-i2}
+  \bpwire{vec}{loc1-o1}{dist-i1}
+  \bpwire{vec}{loc2-o1}{dist-i2}
+  \bpwire{float}{dist-o1}{lt-i1}
+  \bpwire{bool}{lt-o1}{br-i2}
+\end{bpgraph}
+\caption{Distruggere solo le monete vicine: per ogni moneta della scena si
+calcola la distanza dal personaggio, e un Branch lascia passare solo quelle
+entro 500 unità (5 metri). Lo schema ``prendi tutti, controlla uno per uno,
+agisci'' è alla base di moltissimo codice.}
+\label{gd12:fig:distanza}
+\end{figure}
+
+Il valore va tarato a occhio, provando: 200 ``è un pochettino poco'', 2000
+prende ``tutte quante quelle di quest'area'' ed è troppo; con \textbf{500}
+``tac, tutte quante quelle nell'area''. Il principio è importante:
+\begin{quote}
+Con questo concetto potete veramente sbizzarrirvi. Diciamo che buona parte del
+codice viene fatto con questo principio qua. Ed è super importante.
+\end{quote}
+Domande sugli array? Nessuna, per ora: ``chiaramente vi verranno dei dubbi
+dopo, non vi preoccupate''.
+
+\paragraph{Approfondimento: un nodo costoso.} Get All Actors Of Class scorre
+\emph{tutti} gli attori del livello per trovare quelli della classe richiesta:
+va benissimo alla pressione di un tasto, come qui, o una volta al Begin Play,
+ma è una cattiva idea chiamarlo \textbf{a ogni frame} sull'Event Tick in un
+livello pieno di oggetti. Se serve spesso, conviene chiamarlo una volta e
+salvare il risultato in una variabile array.
+
+% ---------------------------------------------------------------------
+\section{Come consegnare: Zip Project}
+\label{gd12:sec:zip}
+
+``Allora, questo è importante per la consegna.'' Anche quando si userà Git, il
+docente vorrà sempre \textbf{poter vedere il progetto}, non solo
+l'eseguibile.\footnote{La trascrizione dice ``non solamente la VIP'':
+plausibilmente la \emph{build}, cioè il gioco esportato.} Come si condivide un
+progetto ``senza utilizzare metodi strani, GitHub eccetera''?
+\begin{itemize}
+  \item \textbf{Sì:} \emph{File $\rightarrow$ \textbf{Zip Project}}, si
+        sceglie il nome, si salva, e dopo qualche secondo lo zip è pronto.
+  \item \textbf{No:} selezionare la cartella del progetto in Esplora risorse e
+        comprimerla a mano, ``perché sennò vi metto un sacco di cartelle che
+        non servono e pesano un sacco''.
+\end{itemize}
+
+\subsection{Che cosa c'è in una cartella di progetto}
+
+Per capire il perché, il docente apre la cartella di un progetto Unreal.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{p{3.2cm}p{9.8cm}}
+\toprule
+\textbf{Cartella} & \textbf{Che cosa contiene, e se serve} \\
+\midrule
+\texttt{Config} & Le impostazioni del progetto: ``molto importante''. \\
+\texttt{Content} & Tutti gli asset: mappe, Blueprint, mesh, materiali,
+  texture. ``La cosa più importante in assoluto.'' \\
+\texttt{Binaries}, \texttt{DerivedDataCache}, \texttt{Intermediate} & File
+  generati dall'engine e cache: ``non servono a niente'' per la consegna,
+  vengono \textbf{rigenerati} ogni volta che si apre il progetto. \\
+\texttt{Saved} & Log, autosalvataggi e \textbf{salvataggi di gioco}: cancellarla
+  azzera anche i salvataggi. \\
+file \texttt{.uproject} & Il file del progetto, quello che si apre con
+  il doppio clic. \\
+\bottomrule
+\end{tabular}
+\caption{Le cartelle tipiche di un progetto Unreal. Zip Project tiene ciò che
+serve ed esclude le cartelle rigenerabili (e quelle in più che compaiono nei
+progetti C++).}
+\label{gd12:tab:cartelle}
+\end{table}
+
+Zip Project esclude da solo le cartelle che si possono rigenerare, e le altre
+che compaiono nei progetti in C++, ``quindi ci pensa lui senza che dobbiate farlo
+voi''.\footnote{La trascrizione elenca a voce ``queste tre qua non servono a
+niente\dots{} questa è cache, questa anche. Qua dentro mi tiene i log e i
+salvataggi di gioco'' senza nominarle; la tabella riporta la struttura standard
+di un progetto Unreal.}
+
+% ---------------------------------------------------------------------
+\section{Maps \& Modes: quale mappa si apre}
+\label{gd12:sec:maps-modes}
+
+Il task chiede più mappe, e quindi bisogna sapere con chiarezza \textbf{quale
+mappa si apre}: quella che si apre allo sviluppatore quando apre l'engine
+(``è quello meno importante''), ma soprattutto quella che si apre \textbf{al
+giocatore} quando avvia il gioco. Si imposta da \emph{Edit $\rightarrow$
+Project Settings $\rightarrow$ \textbf{Maps \& Modes}}, dove ci sono due campi:
+\begin{itemize}
+  \item \textbf{Editor Startup Map}: la mappa che si apre allo sviluppatore
+        quando apre il progetto nell'editor;
+  \item \textbf{Game Default Map}: la mappa che si apre al giocatore quando
+        avvia il gioco.
+\end{itemize}
+Il gioco si aprirà \textbf{sempre} su questa mappa, che di solito è il
+\textbf{main menu}, oppure una \textbf{schermata di avvio} con il logo dello
+studio, che a sua volta apre il main menu: ``tendenzialmente funziona così''.
+
+% ---------------------------------------------------------------------
+\section{Il packaging: dare il gioco a chi non ha l'engine}
+\label{gd12:sec:packaging}
+
+Fare la \textbf{build} non è richiesto per il task, ``più che altro perché ogni
+tanto su alcuni PC può dare problemi, ci può volere un po', eccetera''. Ma il
+docente mostra come si fa a far giocare chiunque, anche chi non ha l'engine.
+
+\paragraph{Platforms.} Nella barra in alto c'è il menu \textbf{Platforms}, con
+la lista di tutti i dispositivi per cui si può buildare. Sul PC dell'aula sono
+tutti con un \textbf{punto esclamativo}: mancano i componenti per fare davvero
+la build per quelle piattaforme (Android, Linux eccetera, ``bisogna attivare un
+po' di cose''). Chi compila Unreal da sé con i file delle console
+(sezione~\ref{gd12:sec:sorgente}) se le ritrova qui, tra le altre.
+
+\paragraph{Le configurazioni.} Prima di fare \emph{Package Project} si sceglie
+la configurazione della build, ``abbastanza intuitive, non particolarmente
+complesse''.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{p{2.6cm}p{10.4cm}}
+\toprule
+\textbf{Configurazione} & \textbf{A che cosa serve, secondo il docente} \\
+\midrule
+\textbf{Shipping} & La versione finale, ``quella proprio che potete dare
+  pubblica a tutti quanti''. Toglie tutti gli strumenti di debug, perché si
+  presuppone che la si pubblichi (su Steam e simili). \\
+\textbf{Development} & ``Abbastanza inutile'', nell'uso del docente. \\
+\textbf{DebugGame} & La più utile mentre si sviluppa: permette di usare la
+  \textbf{console dei comandi}, vedere i \textbf{log} del gioco, fare
+  \textbf{test} (per esempio sul lag) più facilmente. \\
+\bottomrule
+\end{tabular}
+\caption{Le configurazioni di packaging. In termini tecnici anche Development
+conserva console e log; DebugGame in più compila il codice del gioco senza
+ottimizzazioni, per poterlo seguire con il debugger.}
+\label{gd12:tab:packaging}
+\end{table}
+
+\paragraph{La procedura.} Si sceglie \textbf{Shipping}, poi \emph{Package
+Project}. L'editor avvisa che manca un SDK: si fa \emph{Continua}. Si sceglie
+una cartella di destinazione: il docente di solito crea una cartella
+\texttt{Package} dentro il progetto, ``però poi a vostra discrezione''. ``Ci
+vorrà una vita, una vita'', soprattutto la prima volta; le volte successive
+meno, perché l'engine ``si ricorda'' parecchio di ciò che ha già elaborato. (In
+classe il docente interrompe il packaging appena partito.)
+
+% ---------------------------------------------------------------------
+\section{Le tre mappe del task}
+\label{gd12:sec:mappe}
+
+``Allora io direi di cominciare proprio con il task.'' Il primo passo è creare
+\textbf{le tre mappe}. Il docente ricorda che \textbf{il task sono i requisiti
+minimi}: ``tutto quanto ciò che ci sta sopra lo potete creare tranquillamente''.
+La \textbf{gerarchia delle cartelle} non è importante, ``strutturatele un po'
+come preferite''; il docente crea per esempio una cartella \texttt{Maps}.
+\begin{enumerate}
+  \item Non creare il livello con clic destro $\rightarrow$ \emph{Level} nel
+        Content Browser, ``perché sennò ve lo crea veramente vuoto'' (si può
+        anche fare, ma poi manca tutto).
+  \item Fare invece \emph{File $\rightarrow$ \textbf{New Level}} e partire
+        almeno dal \textbf{Basic}, ``così avete almeno il cielo e le cose di
+        base''. (Su come mettere le luci in scena, il docente rimanda al corso
+        di environment; si veda anche il capitolo~\ref{gd11:cap:blockout-luci}.)
+  \item Mettere in scena un oggetto e \textbf{salvare}: \emph{Level1}.
+  \item Per le altre due, \textbf{Ctrl+C, Ctrl+V} sul livello nel Content
+        Browser: \emph{Level2} e \emph{Level3}. ``Perfetto, fantastico.''
+\end{enumerate}
+Sono i requisiti minimi: ``se ne volete fare di più, fatene tranquillamente di
+più''.
+
+% ---------------------------------------------------------------------
+\section{Fab: gli asset da online}
+\label{gd12:sec:fab}
+
+\subsection{Dove si trova}
+
+In altri task gli studenti avevano restrizioni che non permettevano di usare
+\textbf{Fab}, il negozio di asset di Epic. Qui invece sì, e il docente spiega
+come si usa. Dipende un po' dalla versione dell'Epic Games Launcher, ``vecchio o
+nuovo, è abbastanza indifferente, però alcune cose potrebbero cambiare'':
+\begin{itemize}
+  \item nel launcher nuovo c'è una categoria \textbf{Fab};
+  \item nel vecchio, sotto la lista degli engine e dei progetti, c'è il
+        \textbf{Vault} (la libreria), e da lì si apre Fab: ``un pochettino più
+        macchinoso''.
+\end{itemize}
+Fab è disponibile anche \textbf{dentro l'editor}, dal menu \emph{Window}
+$\rightarrow$ \emph{Fab}, e da lì si possono aggiungere i contenuti direttamente
+al progetto.
+
+\subsection{Asset sì, codice no}
+
+``Non vi do restrizioni sugli asset, chiaramente. Non codice, ok?'' Il codice
+deve essere \textbf{tutto proprio}, ``perché sennò è un po' cheattare''.
+Per il resto, ci sono ``un sacco di pacchetti gratuiti''. E i pacchetti
+piratati? ``No, no, no, e se l'hanno fatto è illegale.''
+
+\subsection{Tre tipi di contenuto}
+
+Su Fab i contenuti sono di tre tipi.
+\begin{enumerate}
+  \item \textbf{Asset}: si fa \emph{Add} e vengono aggiunti a un progetto.
+  \item \textbf{Plugin}: si installano \emph{sulla versione dell'engine}, non
+        in un progetto specifico (``anche se adesso questa opzione l'hanno un
+        pochettino cambiata'').
+  \item \textbf{Progetti completi}: si fa \emph{Crea progetto} e viene creato
+        un progetto da zero con quel contenuto.
+\end{enumerate}
+
+\subsection{Filtrare bene}
+
+Fab non contiene solo roba per Unreal: ``prima c'era il Marketplace, che
+permetteva di contenere soltanto cose per Unreal, invece poi l'hanno reso più
+ampio''. Ci sono quindi pacchetti con modelli 3D ``proprio grezzi'', da
+sistemare. Se si vogliono pacchetti già pronti, con i materiali e tutto
+``setappato bene'', conviene:
+\begin{itemize}
+  \item \textbf{filtrare per Unreal Engine} come formato;
+  \item filtrare per \textbf{gratuito} (o ordinare per prezzo crescente:
+        ``è tutto quanto gratis''), ``tanto c'è tanta roba gratis''.
+\end{itemize}
+
+\paragraph{I pacchetti gratuiti a tempo.} Ogni \textbf{quindici giorni} Fab
+rende gratuiti \textbf{tre pacchetti}: ``se li riscattate, poi sono gratis per
+sempre''. Si trovano in homepage; quella metà mese ci sono ``un robot
+gigantesco, un tunnel e un launchpad''.
+
+\paragraph{Non esagerare con il peso.} ``Non prendete pacchetti che pesano mille
+gigabyte'': rallentano lo sviluppo, il download e tutto il resto. E, soprattutto:
+``l'importante comunque per il task è \textbf{il codice}, non
+l'\textbf{estetica}''. Il docente lascia un quarto d'ora per cercare i
+pacchetti, ``non per farci troppo tempo: un pacchetto qualsiasi va bene''.
+
+\subsection{Le versioni: avanti sì, indietro mai}
+
+``Cosa super importante con i pacchetti e tutti quanti gli asset in generale.''
+Gli asset di Unreal si possono sempre portare \textbf{da versioni precedenti a
+versioni successive}, ma \textbf{mai il contrario}. Se si trovano pacchetti, o
+si creano progetti, in una versione successiva, non si può più tornare indietro,
+``perché si corrompe tutto'': ``gli asset scompaiono, fate proprio incolla e non
+esistono più''.
+
+\paragraph{Lo spazio su disco.} I pacchetti scaricati restano anche nella
+\textbf{cache del Vault} sul computer: se ne può cancellare quella copia per
+recuperare spazio, ``tuttavia lo stanno cambiando proprio adesso''.
+
+\subsection{Un piccolo trucco per le mappe grandi}
+
+Mentre il pacchetto si scarica (``che internet rapido che abbiamo''), il docente
+segnala un trucco per aprire più in fretta le \textbf{mappe grandi}: invece del
+doppio clic diretto, fare prima \textbf{clic destro} sulla mappa, così l'editor
+comincia a caricarne il contenuto mentre si può ancora usare l'engine, e poi il
+doppio clic la apre più rapidamente: ``un piccolo escamotage''.\footnote{La
+trascrizione di questo passaggio è frammentaria; si riporta il senso del
+suggerimento così come è ricostruibile.}
+
+\paragraph{Nell'attesa.} Mentre gli studenti cercano i pacchetti, il docente
+gira tra i banchi. Uno studente non trova i contenuti nel progetto: aveva creato
+il progetto con la propria versione e Fab non li cercava lì; il consiglio è
+aggiungerli dall'interno dell'editor, con \emph{Window $\rightarrow$ Fab}. A un
+altro che chiede come far saltare il personaggio da codice, il docente indica il
+nodo \textbf{Jump} (se ne riparla nella sezione~\ref{gd12:sec:trampolino}). E a
+tutti ripete: ``mi raccomando, lo vedremo sul codice, non sull'estetica''.
+
+% ---------------------------------------------------------------------
+\section{La timeline}
+\label{gd12:sec:timeline}
+
+\subsection{Il nodo più complesso, e uno dei più utili}
+
+Arriva il nodo che qualcuno ha già provato da solo: la \textbf{timeline}. ``In
+realtà è molto comodo, perché permette di fare un sacco di cose.'' È il nodo
+\textbf{con più pin} di Unreal, il più complesso, ``perché in realtà è tipo un
+nodo componente''; però ``è super utile, si usa veramente tanto, ed è una delle
+funzionalità veramente forti, secondo me, dei Blueprint, che gli altri linguaggi
+di programmazione non hanno''. E una rassicurazione, che il docente ripeterà
+poi a una studentessa in difficoltà: ``la timeline è tipo il nodo più complesso
+che c'è: se capite bene questo, tutti gli altri sono più facili''.
+
+\subsection{La piattaforma mobile}
+
+Il docente crea un nuovo \textbf{Actor}, \textbf{MovingPlatform}, e ci mette una
+piattaforma: un \textbf{Plane}.
+
+\paragraph{Che cosa fa una timeline.} Permette di \textbf{spostare un oggetto, o
+modificare qualsiasi parametro, nel tempo}, ``senza troppi problemi e con tante
+funzionalità veramente interessanti''. Si crea cercando \emph{timeline} nel
+grafo: \textbf{Add Timeline}. Non si può mettere dappertutto (``ci sono delle
+limitazioni''\footnote{Per esempio, una timeline non si può aggiungere
+all'interno di una \emph{funzione}: vive nell'Event Graph di un Blueprint, come
+un componente.}), ma nell'Event Graph di un Actor sì. Si può, ``anzi si deve'',
+\textbf{rinominare}: il docente la chiama \textbf{Movement}.
+
+\paragraph{I pin.} La timeline fa \textbf{progredire dei valori} nel tempo, sia
+avanti che indietro. A sinistra ha diversi ingressi di esecuzione:
+\textbf{Play} (parte da dove si trova), \textbf{Play from Start} (riparte
+dall'inizio), \textbf{Stop}, \textbf{Reverse} (torna indietro da dove si
+trova), \textbf{Reverse from End}, \textbf{Set New Time}. A destra, le uscite:
+\textbf{Update}, \textbf{Finished}, \textbf{Direction} e, per ogni traccia
+creata, un pin con il suo valore. Collegata al \textbf{Begin Play} su Play, la
+timeline partirà appena l'oggetto viene creato; ``tuttavia non sappiamo ancora
+quali dati ci sono qua dentro''.
+
+\subsection{L'editor della timeline}
+
+Con il \textbf{doppio clic} sul nodo si apre un'altra schermata, quella in cui
+si impostano \textbf{le variazioni nel tempo} di una variabile.
+\begin{enumerate}
+  \item Si aggiunge una \textbf{traccia} con il pulsante \textbf{+}. Quella che
+        si usa ``il 99 per cento delle volte'' è la \textbf{Float Track}: un
+        valore float (``dalla volta scorsa: variabile con la virgola'') che
+        cambia nel tempo. Le si dà un nome.
+  \item Con il \textbf{clic destro} $\rightarrow$ \textbf{Add Key} si aggiunge
+        un punto, cioè un valore in un istante. Con un solo punto, il valore
+        (per esempio 0,27) ``rimarrà a 0,27 per tutta la durata della
+        timeline''.
+  \item Con due punti si crea una \textbf{curva}, in questo caso una retta; con
+        più punti si possono creare variazioni interessanti.
+  \item Selezionando i punti si può scegliere l'interpolazione \textbf{Auto},
+        così che il passaggio sia \textbf{curvo}, ``non soltanto dei valori
+        netti''.
+\end{enumerate}
+
+\paragraph{Una piattaforma che sale e scende.} Per la piattaforma: al tempo
+\textbf{0} il valore è \textbf{0} (``parte da per terra''); dopo \textbf{2,5
+secondi} vale \textbf{200}, l'altezza che si vuole raggiungere; al secondo
+\textbf{5}, l'ultimo istante della timeline, \textbf{torna a 0}. ``Adesso è
+solamente un valore che fa su e giù, però dovrebbe farlo poi di conseguenza la
+piattaforma.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=2cm, y=0.016cm, font=\small]
+  \draw[gray!30] (0,0) grid[xstep=0.5, ystep=50] (5,220);
+  \draw[-{Stealth}] (0,0) -- (5.35,0) node[right] {tempo (s)};
+  \draw[-{Stealth}] (0,0) -- (0,245) node[above] {valore};
+  \foreach \t in {0,1,2,2.5,3,4,5} \node[below, font=\footnotesize] at (\t,0) {\t};
+  \foreach \v in {0,100,200} \node[left, font=\footnotesize] at (0,\v) {\v};
+  \draw[very thick, orange!80!black] (0,0) -- (2.5,200) -- (5,0);
+  \draw[thick, dashed, blue!60!black] plot[smooth, domain=0:5, samples=60]
+       (\x,{100-100*cos(deg(\x*pi/2.5))});
+  \foreach \p in {(0,0),(2.5,200),(5,0)} \fill[black] \p circle (2.2pt);
+  \node[font=\footnotesize, align=left, anchor=west] at (5.25,120)
+       {\textcolor{orange!80!black}{\rule[2pt]{14pt}{1.2pt}} interpolazione lineare\\
+        \textcolor{blue!60!black}{- - -} interpolazione \emph{Auto}};
+  \draw[densely dotted] (5,0) -- (5,230) node[above, font=\footnotesize] {Length = 5};
+\end{tikzpicture}
+\caption{La Float Track della piattaforma: tre chiavi, $(0, 0)$, $(2{,}5, 200)$
+e $(5, 0)$. Con l'interpolazione lineare il moto ha degli spigoli; con
+\emph{Auto} la curva rallenta in cima e in fondo, e il movimento è più
+morbido.}
+\label{gd12:fig:curva}
+\end{figure}
+
+\paragraph{La lunghezza.} La durata della timeline è data dal campo
+\textbf{Length}: ``potete dirgli: questa timeline dura 5 secondi, 20 secondi,
+80 secondi, quello che volete''.
+
+\paragraph{Un pin per traccia.} Aggiungendo la traccia, sul nodo è comparso un
+nuovo pin con il suo valore: ``cosa molto comoda, perché in realtà ne possiamo
+creare più di una''. Se serve che la piattaforma \textbf{si alzi e ruoti}, si
+fanno due tracce diverse, e la timeline avrà due uscite.
+
+\subsection{Collegare la curva alla piattaforma}
+
+Dal componente Plane si tira fuori un \textbf{Set Relative Location}
+(``poi vi spiego come mai''), si divide il vettore e si collega il valore della
+traccia sulla $z$, ``dal basso verso l'alto''. L'esecuzione parte
+dall'\textbf{Update}, che viene chiamato \textbf{a ogni frame} mentre la
+timeline sta andando, ``quindi praticamente costantemente''.
+
+\begin{figure}[htbp]
+\centering
+\begin{bpgraph}
+  \bpnode{bp}{0,0}{bpHEvent}{Event BeginPlay}{2.6}{}{exec/}
+  \bpnode{tl}{3.6,0}{bpHFlow}{Movement}{3.6}%
+    {exec/Play, exec/Play from Start, exec/Stop, exec/Reverse, exec/Reverse from End, exec/Set New Time, float/New Time}%
+    {exec/Update, exec/Finished, enum/Direction, float/Height}
+  \bpget{pl}{4.2,-3.9}{obj}{Plane}{1.6}
+  \bpnode[2]{sl}{10.6,0}{bpHFunc}{Set Relative Location\\\bpsub{Target is Scene Component}}{4.2}%
+    {exec/, obj/Target, float/New Location X \bpval{0}, float/New Location Y \bpval{0}, float/New Location Z, bool/Sweep}{exec/}
+  \bpwire{exec}{bp-o1}{tl-i1}
+  \bpwire{exec}{tl-o1}{sl-i1}
+  \bpwire{obj}{pl-o1}{sl-i2}
+  \bpwire{float}{tl-o4}{sl-i5}
+  \bpnote{7.6,-2.3}{Update: a ogni frame\\finché la timeline va}
+\end{bpgraph}
+\caption{La piattaforma mobile: al Begin Play la timeline \emph{Movement}
+parte; a ogni Update il valore della traccia (qui chiamata \emph{Height})
+diventa la $z$ relativa del Plane. Il pin della traccia compare da solo,
+appena la traccia viene creata.}
+\label{gd12:fig:piattaforma}
+\end{figure}
+
+Messa la piattaforma nella scena e premuto Play, ``vedete che si muove in su''.
+(Un piano visto da sotto non si vede: il docente sta per un attimo ``sotto'' la
+piattaforma e non la vede più, ma il movimento c'è.)
+
+\paragraph{Il loop.} Nell'editor della timeline c'è l'opzione \textbf{Loop}:
+attivata, la timeline riparte da sola all'infinito: ``fa su, giù, poi posso
+salire, su, giù''. ``Abbastanza facile.''
+
+\paragraph{Finished.} L'uscita \textbf{Finished} viene chiamata quando la
+timeline arriva in fondo, ``nel caso in cui non la mettiate in loop,
+chiaramente, altrimenti non finisce''.
+
+\subsection{La porta: Play e Reverse}
+
+``Una delle cose comode è che potete fare che avanza e poi torna indietro.''
+Esempio: una \textbf{porta} che si apre quando ci si avvicina e si richiude
+quando ci si allontana. ``Lo faccio anche molto rapidamente, tanto è super
+facile.''
+\begin{enumerate}
+  \item Un \textbf{cubo} (``questo fantastico cubo sarà la nostra porta''),
+        con un \textbf{Set Relative Rotation} (``relative, sempre''), e il
+        valore della traccia collegato allo \textbf{yaw}, la rotazione attorno
+        all'asse verticale: ``facciamo una porta praticamente girevole''.
+  \item Si toglie il loop (``non è che si deve chiudere in automatico'') e si
+        mette una \textbf{Box Collision} che fa da trigger, ingrandendola
+        (``è un po' piccolina'').
+  \item Sul \textbf{Begin Overlap} della box: \textbf{Play}. Sull'\textbf{End
+        Overlap}: \textbf{Reverse}.
+  \item La curva va da \textbf{0 a 90} gradi, ``non a 200'': la rotazione
+        parte da zero, arriva a 90 (la porta si apre), poi con il Reverse torna
+        indietro (la porta si chiude).
+\end{enumerate}
+
+\begin{figure}[htbp]
+\centering
+\begin{bpgraph}
+  \bpnode[2]{bo}{0,0}{bpHEvent}{On Component Begin Overlap\\\bpsub{(Box)}}{4.0}{}{exec/, obj/Other Actor}
+  \bpnode[2]{eo}{0,-2.2}{bpHEvent}{On Component End Overlap\\\bpsub{(Box)}}{4.0}{}{exec/, obj/Other Actor}
+  \bpnode{tl}{5.4,0}{bpHFlow}{Door}{3.4}%
+    {exec/Play, exec/Play from Start, exec/Stop, exec/Reverse, exec/Reverse from End}%
+    {exec/Update, exec/Finished, enum/Direction, float/Angle}
+  \bpnode[2]{sr}{10.4,0}{bpHFunc}{Set Relative Rotation\\\bpsub{Target is Scene Component}}{4.0}%
+    {exec/, obj/Target, float/Roll \bpval{0}, float/Pitch \bpval{0}, float/Yaw}{exec/}
+  \bpget{cu}{7.0,-3.3}{obj}{Cube}{1.5}
+  \bpwire{exec}{bo-o1}{tl-i1}
+  \bpwire{exec}{eo-o1}{tl-i4}
+  \bpwire{exec}{tl-o1}{sr-i1}
+  \bpwire{obj}{cu-o1}{sr-i2}
+  \bpwire{float}{tl-o4}{sr-i5}
+\end{bpgraph}
+\caption{La porta girevole: entrare nella box fa avanzare la timeline (da 0 a
+90 gradi di yaw), uscirne la fa tornare indietro dal punto in cui si trova. Con
+Reverse la porta non ``scatta'': se si esce a metà apertura, si richiude da
+lì.}
+\label{gd12:fig:porta}
+\end{figure}
+
+\paragraph{Il pivot.} Il primo risultato ``è un pochettino strano'': la porta
+ruota attorno al proprio \textbf{centro}, non attorno ai cardini, ``perché devo
+ruotare il pivot, non ogni cosa''. Il docente sistema il pivot, e la porta si
+apre e si chiude come deve: ``così si apre, così si chiude. Questa è l'idea''.
+(Sul pivot si veda il capitolo~\ref{gd11:cap:blockout-luci}; un modo più pulito
+per ottenere lo stesso effetto, con le \emph{scene component}, è nella
+sezione~\ref{gd12:sec:doppia-porta}.)
+
+\paragraph{A che cosa serve, in generale.} ``In realtà si usa per tantissime
+cose la timeline'': per tutto ciò che \textbf{varia nel tempo}, ``la timeline
+torna comoda''. E c'è un motivo in più per capirla bene: lo stesso strumento,
+``un pochettino più complesso'', è quello delle \textbf{cinematiche}
+(\emph{Sequencer}), ``perché è praticamente lo stesso tool''.
+
+\paragraph{Approfondimento: un esempio dal libro.} Romero e Sewell introducono
+la timeline con un esempio simile per spirito: lo \textbf{zoom} di un'arma,
+in cui il \emph{Field of View} della telecamera passa da 90 a 45 gradi in 0,3
+secondi. Il libro mostra due dettagli pratici che tornano utili anche qui: nel
+riquadro in alto a sinistra del grafico si possono \textbf{scrivere a mano
+tempo e valore} di un punto selezionato, per essere precisi, e due piccoli
+pulsanti \textbf{adattano lo zoom} del grafico, così che i punti non escano
+dalla vista. E fa notare il vantaggio della timeline rispetto a un SET secco:
+il passaggio da un valore all'altro è \emph{graduale}, non uno scatto.
+
+% ---------------------------------------------------------------------
+\section{Relative e world}
+\label{gd12:sec:relative}
+
+``Cosa che non ho approfondito.'' Cercando \emph{Set Location} escono due
+versioni: \textbf{Set Relative Location} e \textbf{Set World Location} (lo
+stesso vale per rotazione e scala). Che differenza c'è?
+\begin{itemize}
+  \item \textbf{Relative}: relativo al componente rispetto all'\emph{actor} in
+        cui si trova, ``quindi proprio queste coordinate qui di lato'', quelle
+        del pannello dei dettagli del componente.
+  \item \textbf{World}: ``sposta magari in questo punto del mondo,
+        indipendentemente da dove sia l'oggetto''.
+\end{itemize}
+Per una piattaforma o una porta che si muovono \emph{rispetto a dove le si
+mette}, quasi sempre si vuole \textbf{relative}: si può piazzare la stessa
+piattaforma in dieci punti del livello, e ognuna salirà di 200 a partire da dove
+si trova. Con world, tutte andrebbero allo stesso punto del mondo. ``Quindi fate
+attenzione a questo, semplicemente.'' (Il collegamento con le coordinate locali
+e globali del capitolo~\ref{gd11:cap:blockout-luci} è diretto.)
+
+\paragraph{Location non è transform.} A una domanda il docente precisa che il
+vettore di un Set Location contiene \textbf{solo la posizione}, non la
+rotazione: ``non è una transform. Se fosse transform, includerebbe anche la
+rotazione e la scala''. Per cambiare insieme posizione e rotazione servono due
+nodi diversi, oppure un nodo che lavora su tutta la transform.
+
+% ---------------------------------------------------------------------
+\section{Il giro tra i banchi, prima parte}
+\label{gd12:sec:giro1}
+
+``Vi lascio un attimino fare, perché chiaramente ho fatto molte cose e potrebbero
+non essere tutte chiare.'' Il docente lascia il proprio codice a schermo
+(``così, se volete prenderne ispirazione, potete farlo tranquillamente'') e
+passa a guardare gli schermi.
+
+\subsection{La porta con le box di overlap}
+
+Una studentessa sta costruendo la porta. Il docente la guida passo per passo.
+\begin{itemize}
+  \item \textbf{Gli eventi della box.} Selezionata la box, si scorre il
+        pannello dei dettagli ``giù in fondo in fondo'': lì ci sono i
+        pulsanti \textbf{+} degli eventi. \emph{On Component Begin Overlap}
+        ``si triggera quando entra qualcosa'', \emph{On Component End Overlap}
+        (il terzo) quando esce. ``Tendenzialmente il player, ma potrebbe
+        entrare anche altro.''
+  \item \textbf{La box è più piccola del cubo.} ``Mi sa che è più piccola del
+        cubo stesso, quindi è tipo dentro'': nella viewport del Blueprint va
+        resa \textbf{più grande della mesh}.
+  \item \textbf{La box è figlia del cubo.} Così ``si muoverà con il cubo'':
+        se non lo si vuole, non deve essere \emph{child}. Nella gerarchia dei
+        componenti (``rimani sulla parte component'') la si trascina
+        sulla radice, così i due sono ``slegati''. ``Avevo intenzione di farlo,
+        ma mi sembrava fosse sbagliato.'' ``No, era la cosa giusta.''
+  \item \textbf{Il nome della timeline.} La sua si chiama ancora
+        \emph{Timeline}: è il nome di default, ``poi la devi rinominare''.
+  \item \textbf{Il flusso.} Collegata al Begin Play, ``entra nella timeline, e
+        da quando entra andrà tutti quanti i frame finché la timeline non
+        finisce''.
+  \item \textbf{La traccia.} Doppio clic, \emph{+ Float Track} (``perché
+        vogliamo cambiare un valore float''), clic destro \emph{Add Key}: la
+        linea che compare è ``come cambierà questo valore nel tempo''.
+  \item \textbf{Vedere il valore.} Sull'Update, un \textbf{Print String} con
+        il valore della traccia collegato al testo (``si converte''): avvicinandosi
+        alla porta, ``vedi che c'è il valore che è cambiato rapidamente come gli
+        hai detto tu prima''.
+\end{itemize}
+Un errore di compilazione sul \emph{ThirdPersonCharacter} (un nodo rimasto lì
+``che non portava a niente'') blocca il primo Play: tolto quello, funziona.
+
+\paragraph{Play non è Play from Start.} La timeline va solo \textbf{la prima
+volta}: ``perché gli hai fatto Play e non Play from Start''. Play riprende da
+dove la timeline si trova: arrivata in fondo, resta in fondo. Per farla
+ripartire, o \textbf{Play from Start}, o la si fa tornare indietro con
+\textbf{Reverse} e poi ripartire.
+
+\subsection{Il teletrasporto a colpi di Delay}
+
+Antonino\footnote{``Antonio'' nella trascrizione: con ogni probabilità
+Antonino, presente nella revisione del capitolo~\ref{gd11:cap:blockout-luci}.}
+condivide lo schermo: si è concentrato solo sui Blueprint, e ha creato un
+\textbf{sistema di teletrasporto} che, quando lo si usa, teletrasporta il
+personaggio e poi \textbf{lo ingrandisce}, con un \textbf{messaggio} in alto a
+sinistra che avvisa che l'abilità si è disattivata, un \textbf{cooldown di 5
+secondi}, e poi la riattivazione. ``Particolare, però può essere
+interessante.''
+
+Il codice è fatto \textbf{tutto con dei Delay}: ``mi piace il fatto che ti sia
+impegnato molto; chiaramente ci sono soluzioni più eleganti, tuttavia vedo che
+sei riuscito a raggiungere l'obiettivo che volevi. Quindi bravo.'' E con una
+battuta: ``Tu hai creato una timeline con le tue forze: delay, delay, delay.''
+
+\paragraph{Approfondimento: Delay contro timeline.} Una catena di Delay va
+bene per \emph{aspettare} (il cooldown), ma è rigida per \emph{animare}: ogni
+passo è uno scatto, e cambiare i tempi significa ritoccare ogni nodo. Una
+timeline descrive l'intera evoluzione in un solo grafico, la interpola fra un
+frame e l'altro, e si può riprodurre all'indietro o interrompere; per
+l'ingrandimento graduale del personaggio sarebbe lo strumento naturale.
+
+Mattia, invece, non riesce a condividere lo schermo (``mi ha freezato''): il
+docente gli suggerisce di fare \emph{Zip Project} e mandarlo, così lo si guarda
+dopo.
+
+\subsection{La piattaforma che va avanti e indietro}
+
+Un altro studente vuole una piattaforma che si muova \textbf{avanti e indietro},
+a destra e sinistra, \emph{per sempre}. È l'occasione per vedere da vicino
+alcuni errori tipici.
+\begin{enumerate}
+  \item \textbf{Prima di tutto, la parte fisica.} Si trascina nel grafo il
+        componente che si vede (il cubo) e se ne tira fuori un \textbf{Set
+        Relative Location}: ``per spostarla deve cambiare la posizione,
+        immagino''.
+  \item \textbf{Collegare l'Update.} ``Devi collegarla, se no non è
+        collegata e chiaramente non può andare'': senza filo bianco il nodo non
+        viene mai eseguito.
+  \item \textbf{Dividere il vettore.} Collegato così, il nodo porta la
+        posizione a $(0,0,0)$ a ogni frame, ``che non è quello che vuoi''. Con
+        il clic destro sul pin \textbf{New Location} $\rightarrow$
+        \textbf{Split Struct Pin} il vettore si divide nelle tre componenti, e
+        il valore della traccia va sulla \textbf{$x$}, ``che è l'avanti e
+        indietro''.
+  \item \textbf{Attenzione all'origine.} Set Relative Location imposta
+        \emph{proprio} quei valori: se il componente non parte da $(0,0,0)$,
+        al primo frame ``ti si sposta di colpo''.
+  \item \textbf{Valori sensati.} La piattaforma ``trema'' molto velocemente:
+        i valori nella curva sono minuscoli, ``si muove di pochissimo, quindi
+        potresti anche non accorgertene''. Il docente fa cancellare i punti e
+        rifarli \textbf{scrivendo i valori a mano} nei campi \emph{Time} e
+        \emph{Value}: $(0, 0)$, e poi a \textbf{5 secondi} il valore
+        \textbf{200}. Ora si muove: ``qualcosa sta funzionando''.
+  \item \textbf{Partire subito.} Lo studente vuole che vada all'infinito,
+        ``anche senza attivarlo'': si cancella la parte con l'overlap, e la
+        timeline si collega al \textbf{Begin Play}, ``così parte subito quando
+        viene creato l'oggetto''.
+  \item \textbf{Il loop.} Si attiva \textbf{Loop} nell'editor della
+        timeline (``un pochettino più in alto, a sinistra'').
+  \item \textbf{Lo scatto all'indietro.} Ora la piattaforma va avanti\dots{} e
+        poi \emph{ricompare} all'inizio. ``È normale'': il valore parte da
+        zero, sale fino a 200 e poi, ricominciando il loop, \emph{riparte da
+        zero}. ``Al posto di fare una curva che è una linea, devi fare che va
+        su e che poi torna giù'': un punto in mezzo, a \textbf{2,5 secondi}, al
+        valore massimo, e quello a \textbf{5 secondi} riportato a
+        \textbf{0}. ``Se lo metti a 0, torna indietro, perché la posizione
+        torna a 0.''
+\end{enumerate}
+I due pulsanti in alto a sinistra del grafico (\emph{zoom to fit} orizzontale e
+verticale) ridimensionano la vista, così che si vedano tutti i punti. ``Va
+avanti, torna indietro, torna avanti. Direi che funziona.'' ``Ok, perfetto,
+questa cosa mi servirà.'' Il consiglio finale: fare \textbf{diverse cose con la
+timeline}, ``in modo da prenderci mano''.
+
+\paragraph{Collisioni e overlap.} A uno studente che chiede se usare la mesh
+stessa per gli overlap, il docente risponde che può essere comodo per forme
+complesse (un arco, per esempio, controllando che non dia overlap strani), ma
+che di solito per gli overlap si usa \textbf{una box}.
+
+% ---------------------------------------------------------------------
+\section{Muovere un oggetto con l'Event Tick}
+\label{gd12:sec:tick}
+
+Una studentessa chiede come far muovere qualcosa senza la timeline. ``Ci sono
+tanti modi per far muovere qualcosa.'' Il primo è la timeline; il docente ne
+mostra un altro, ``soprattutto per muovere le cose non da punto A a punto B, ma
+in generale''.
+
+\paragraph{Il modo base.} Un nuovo Actor, \textbf{MovingObject}, che deve
+\textbf{salire sempre}. Sull'\textbf{Event Tick}, ``perché si deve aggiornare
+tutti quanti i frame'': \textbf{Set Actor Location} con, come nuova
+posizione, \textbf{Get Actor Location} \textbf{+} $(0, 0, 10)$. Così, a ogni
+frame, l'oggetto sale di 10 centimetri, ``e quindi parte e vola''. (Senza
+quel \emph{+}, ``sarebbe tutti quanti i frame sempre dov'è, e quindi non
+servirebbe a nulla''.)
+
+\paragraph{Funziona\dots{} quasi.} ``Chiaramente questa cosa qua funziona
+\emph{circa}, perché va tutti quanti i frame, giusto, però ognuno ha un frame
+rate diverso sul proprio PC.'' È il problema già visto nel
+capitolo~\ref{gd7:cap:blueprint} (sezione~\ref{gd7:sec:delta}): il valore va
+\textbf{moltiplicato per i Delta Seconds}. Con $10 \times \Delta t$ l'oggetto
+sale di 10 centimetri \textbf{al secondo} (``magari anche un pochettino di più,
+perché è un po' pochino''), su qualsiasi PC: ``vedete che piano piano si
+solleva''.
+
+\begin{figure}[htbp]
+\centering
+\begin{bpgraph}
+  \bpnode{tk}{0,0}{bpHEvent}{Event Tick}{2.8}{}{exec/, float/Delta Seconds}
+  \bpnode{mul}{3.6,-1.5}{compact}{$\times$}{1.8}{float/, float/\bpval{100}}{float/}
+  \bpnode{mk}{6.2,-1.5}{bpHPure}{Make Vector}{2.4}{float/X \bpval{0}, float/Y \bpval{0}, float/Z}{vec/}
+  \bpnode{ga}{6.0,-3.6}{bpHPure}{Get Actor Location}{3.2}{obj/Target \bpval{self}}{vec/Return Value}
+  \bpnode{add}{9.8,-2.2}{compact}{$+$}{1.4}{vec/, vec/}{vec/}
+  \bpnode[2]{sl}{11.8,0}{bpHFunc}{Set Actor Location\\\bpsub{Target is Actor}}{3.4}{exec/, obj/Target \bpval{self}, vec/New Location}{exec/}
+  \bpwire{exec}{tk-o1}{sl-i1}
+  \bpwire{float}{tk-o2}{mul-i1}
+  \bpwire{float}{mul-o1}{mk-i3}
+  \bpwire{vec}{mk-o1}{add-i1}
+  \bpwire{vec}{ga-o1}{add-i2}
+  \bpwire{vec}{add-o1}{sl-i3}
+\end{bpgraph}
+\caption{Il modo più semplice di muovere un oggetto: a ogni frame, la posizione
+attuale più uno spostamento. Moltiplicare la velocità (qui 100 cm/s) per i
+Delta Seconds rende il movimento uguale su tutti i computer.}
+\label{gd12:fig:tick}
+\end{figure}
+
+\paragraph{La base sotto tutto il resto.} ``Questo è il modo più facile per far
+muovere un oggetto nello spazio, il modo proprio base.'' La timeline e gli altri
+strumenti sono ``tutte quante cose che noi mettiamo poi sopra per semplificare
+un attimino la vita''. Ma se si vuole far muovere, per esempio, ``un
+\textbf{proiettile} sempre dritto, si fa così''.
+
+Durante la prova un'altra piattaforma, fatta con un piano, ``da sotto non si
+vede'': ``metti un cubo e si risolve''. E sul PC del docente, molto più veloce,
+la versione senza Delta Seconds andrebbe ``molto più veloce'': un'ulteriore
+conferma del perché moltiplicare.
+
+% ---------------------------------------------------------------------
+\section{La piattaforma che si distrugge}
+\label{gd12:sec:distrugge}
+
+\subsection{Una porta che si apre da sola}
+
+Prima, una correzione veloce a una studentessa che ha messo \textbf{due box}
+davanti alla porta: la porta si apre anche quando nessuno si avvicina, perché
+``gli stessi oggetti stanno entrando nella box quando si apre''. L'overlap
+scatta per \emph{qualsiasi cosa} entri, anche per le ante della porta stessa.
+La soluzione è quella del capitolo~\ref{gd7:cap:blueprint}
+(sezione~\ref{gd7:sec:trigger}): controllare chi è entrato, con un
+\textbf{Cast To ThirdPersonCharacter} dall'\emph{Other Actor}, oppure
+confrontando l'Other Actor con il giocatore. ``L'Other Actor ti fornisce
+l'informazione di che cosa sta toccando questa box'': così si è sicuri che sia
+davvero il personaggio.
+
+\subsection{Francesco: la piattaforma che crolla}
+
+Francesco vuole una \textbf{piattaforma che si distrugge} quando ci si sale
+sopra (accanto a un'altra, stabile). ``Bella come idea! Ci sta.'' Al primo Play,
+però, la piattaforma \textbf{scompare subito}. ``Guarda il codice: Event Begin
+Play, ecco perché'': il Destroy era collegato al Begin Play, ``quindi appena
+parte si distrugge''.
+
+\begin{enumerate}
+  \item Il trigger giusto è l'\textbf{overlap}, ``con quella box che hai già
+        lì'', non il Begin Play.
+  \item Secondo errore: il nodo stava distruggendo \textbf{la box}, cioè il
+        componente che controlla l'overlap. ``L'overlap è quello giusto, è il
+        componente che distruggi che è sbagliato.'' Bisogna distruggere il
+        \textbf{Plane}, oppure tutto l'\textbf{Actor} con \emph{Destroy
+        Actor}, ``come stavi facendo prima''.
+  \item \emph{Destroy Component} contro \emph{Destroy Actor}: il primo toglie
+        un solo componente, il secondo ``ti distrugge tutto quanto''. Qui
+        vanno bene entrambi, purché si distrugga la parte giusta.
+\end{enumerate}
+``Se di una cosa non sei sicuro, \textbf{provala} e vedi come va.'' Ora
+funziona. E un'idea in più: mettere un piccolo \textbf{Delay} prima della
+distruzione, ``se vuoi che si distrugga dopo'': si può restare un secondo sulla
+piattaforma, poi crolla.
+
+% ---------------------------------------------------------------------
+\section{Ricaricare il livello}
+\label{gd12:sec:ricarica}
+
+``Ah, vi ricordo questa cosa \textbf{fondamentale per la riuscita del task}.''
+Se si apre lo stesso livello in cui ci si trova, il livello \textbf{si riapre da
+capo}, ``quindi vi refresha tutto''. C'è un modo ``super comodo'' per farlo
+senza scrivere a mano il nome della mappa:
+\begin{center}
+\textbf{Get Current Level Name} $\rightarrow$ \textbf{Open Level (by Name)}
+\end{center}
+``In questo modo vi riapre lo stesso livello, quindi si resetta.'' Per esempio,
+quando il giocatore muore, si fa questo e il livello si ricarica: ``molto
+facile, però segnatevelo''. È esattamente ciò che serve per due requisiti del
+task: la \textbf{trappola} che fa ricominciare il livello e il \textbf{timer}
+che, se scade, lo fa ripartire.
+
+\begin{figure}[htbp]
+\centering
+\begin{bpgraph}
+  \bpnode[2]{bo}{0,0}{bpHEvent}{On Component Begin Overlap\\\bpsub{(Box)}}{4.0}{}{exec/, obj/Other Actor}
+  \bpnode{ca}{5.0,0}{bpHCast}{Cast To ThirdPersonCharacter}{4.6}{exec/, obj/Object}%
+    {exec/, exec/Cast Failed, obj/As BP Third Person Character}
+  \bpnode[2]{gl}{6.0,-2.4}{bpHPure}{Get Current Level Name\\\bpsub{Remove Prefix String \bpval{true}}}{3.9}{}{str/Return Value}
+  \bpnode{ol}{10.8,0}{bpHFunc}{Open Level (by Name)}{3.6}{exec/, name/Level Name, bool/Absolute, str/Options}{exec/}
+  \bpwire{exec}{bo-o1}{ca-i1}
+  \bpwire{obj}{bo-o2}{ca-i2}
+  \bpwire{exec}{ca-o1}{ol-i1}
+  \bpwire{str}{gl-o1}{ol-i2}
+\end{bpgraph}
+\caption{La trappola che fa ricominciare il livello: se a entrare nella box è
+il personaggio, si legge il nome del livello corrente e lo si riapre. La
+stringa viene convertita automaticamente nel tipo \emph{Name} del pin.}
+\label{gd12:fig:ricarica}
+\end{figure}
+
+\paragraph{Il livello che si riapre all'infinito.} Più tardi, uno studente
+inciampa proprio qui: il gioco si riapre di continuo. ``Stai riaprendo lo stesso
+livello all'infinito.'' L'Open Level era collegato a un overlap che scattava
+\emph{per qualsiasi cosa}, anche per oggetti già dentro la box all'avvio:
+appena il livello si apriva, l'overlap lo riapriva. La cura è la stessa di prima:
+un \textbf{cast al personaggio}, per controllare che a toccare sia davvero il
+giocatore, e solo allora ricaricare.
+
+\paragraph{Approfondimento: che cosa si perde ricaricando.} Riaprire il livello
+lo ricostruisce da zero: ogni Actor torna allo stato iniziale, e con lui
+\emph{tutte le variabili} che contiene (monete raccolte, tempo trascorso). È
+esattamente l'effetto voluto per una trappola, ma vuol dire anche che un dato
+che deve sopravvivere al reset (per esempio un contatore delle morti, o il
+punteggio totale fra i tre livelli) non può stare su un Actor del livello: va
+messo nella \emph{Game Instance}, come anticipato nel
+capitolo~\ref{gd7:cap:blueprint} (sezione~\ref{gd7:sec:vita}).
+
+% ---------------------------------------------------------------------
+\section{La doppia porta}
+\label{gd12:sec:doppia-porta}
+
+\subsection{Il problema}
+
+Una studentessa vuole una porta \textbf{a due ante} che si apra \textbf{nella
+direzione giusta}: verso l'interno se si arriva da davanti, verso l'esterno se
+si arriva da dietro. ``Interessante, quello. Si può fare.'' Il consiglio:
+\textbf{due box}, una davanti e una dietro; in base a quale delle due viene
+toccata, le ante si aprono in un verso o nell'altro.
+
+I primi tentativi incontrano i problemi classici. La porta si apre e richiude
+male se si passa da una box all'altra prima che l'animazione sia finita
+(``quando triggeri quella davanti, poi vai nell'altra box e ti triggeri quella
+dopo, prima che si sia chiusa l'altra''). Il docente suggerisce una variabile
+\textbf{booleana} che dica se le porte sono chiuse o se l'animazione è finita:
+``di base è vera, quindi le porte sono chiuse''. Quando ci si avvicina la si
+mette a falso, e la si rimette a vero quando la porta si è richiusa. Attenzione
+all'ordine: ``tu la stai settando come vera e poi la controlli subito, fa poco
+senso. Prima controlli, e poi in caso la setti''. Con un \textbf{Sequence} si
+possono ordinare le operazioni, e con un \textbf{Delay} si aspetta che
+l'animazione finisca. Il docente cita anche \textbf{Combine Rotators}, che somma
+due rotazioni (``come se fosse una somma, ma per le rotazioni'').
+
+Ma con due box e due timeline separate il codice ``va un po' fuori controllo''.
+``Facciamo così, aspetta un attimo, vediamo come si potrebbe rilavorare'': il
+docente la costruisce da capo, in diretta.
+
+\subsection{La versione del docente}
+
+Il nuovo Blueprint, \emph{DoubleDoor}, contiene \textbf{due box} (davanti e
+dietro) e \textbf{due cubi} (le ante, \emph{Cube1} e \emph{Cube2}). Una sola
+\textbf{timeline} porta un valore da \textbf{0 a 90 in 2,5 secondi}. Due
+variabili booleane:
+\begin{itemize}
+  \item una che dice se \textbf{le animazioni sono finite} (nella lezione
+        \emph{is animation}), con valore di default \textbf{vero}: finché è
+        falsa, non si può rientrare;
+  \item \textbf{IsInFront}, che ricorda da quale lato è arrivato il
+        personaggio.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  gd12box/.style={draw, thick, rounded corners=3pt, align=center,
+                  minimum height=0.8cm, inner sep=3pt, text width=3.0cm},
+  gd12ev/.style={gd12box, fill=red!12},
+  gd12dec/.style={draw, thick, diamond, aspect=2.2, align=center,
+                  inner sep=1pt, fill=gray!10, font=\footnotesize},
+  gd12tl/.style={gd12box, fill=blue!8},
+  gd12ar/.style={-{Stealth[length=2.3mm]}, thick}
+]
+  \node[gd12ev] (front) at (0,0) {\textbf{Begin Overlap}\\box davanti};
+  \node[gd12ev] (back) at (6,0) {\textbf{Begin Overlap}\\box dietro};
+  \node[gd12dec] (c1) at (0,-1.6) {animazioni\\finite?};
+  \node[gd12dec] (c2) at (6,-1.6) {animazioni\\finite?};
+  \node[gd12box] (s1) at (0,-3.2) {IsInFront = \textbf{vero}\\finite = falso};
+  \node[gd12box] (s2) at (6,-3.2) {IsInFront = \textbf{falso}\\finite = falso};
+  \node[gd12tl] (tl) at (3,-4.8) {\textbf{Timeline}\\Play from Start\\(0 $\rightarrow$ 90 in 2,5 s)};
+  \node[gd12dec] (dir) at (3,-6.6) {Direction\\= Forward?};
+  \node[gd12box] (rev) at (-1.3,-6.6) {\textbf{Delay} 2 s\\poi \textbf{Reverse}};
+  \node[gd12box] (fin) at (3,-8.4) {finite = \textbf{vero}\\(si può rientrare)};
+  \node[gd12box, text width=3.9cm] (up) at (7.2,-6.6) {\textbf{Update}:\\yaw anta 1 $= v \cdot s$\\yaw anta 2 $= -v \cdot s$\\{\footnotesize $s=+1$ se IsInFront, altrimenti $-1$}};
+  \draw[gd12ar] (front) -- (c1);
+  \draw[gd12ar] (back) -- (c2);
+  \draw[gd12ar] (c1) -- node[right, font=\footnotesize] {sì} (s1);
+  \draw[gd12ar] (c2) -- node[right, font=\footnotesize] {sì} (s2);
+  \draw[gd12ar] (s1) |- ([yshift=0.2cm]tl.west);
+  \draw[gd12ar] (s2) |- ([yshift=0.2cm]tl.east);
+  \draw[gd12ar, dashed] ([yshift=-0.25cm]tl.east) -| node[above, font=\footnotesize, pos=0.3] {ogni frame} (up.north);
+  \draw[gd12ar] (tl) -- node[right, font=\footnotesize] {Finished} (dir);
+  \draw[gd12ar] (dir) -- node[above, font=\footnotesize] {sì: aperta} (rev);
+  \draw[gd12ar] (dir) -- node[right, font=\footnotesize] {no: chiusa} (fin);
+  \draw[gd12ar] (rev.north) |- ([yshift=-0.25cm]tl.west);
+\end{tikzpicture}
+\caption{La logica della doppia porta costruita a lezione. Una sola timeline
+guida entrambe le ante; il segno $s$, scelto in base al lato da cui si arriva,
+decide se si aprono verso l'interno o verso l'esterno, e la seconda anta usa il
+segno opposto alla prima. Quando la timeline finisce in avanti, dopo due
+secondi torna indietro (la porta si richiude); quando finisce all'indietro, la
+porta è di nuovo utilizzabile.}
+\label{gd12:fig:doppia-porta}
+\end{figure}
+
+\paragraph{La spiegazione del docente.} ``Ve lo spiego un attimino, nel caso in
+cui qualcuno volesse replicare questa mostruosità.''
+\begin{enumerate}
+  \item Prima si controlla, con la variabile booleana, che \textbf{non ci siano
+        animazioni in corso}; di base è vera, quindi le animazioni sono finite
+        e si può entrare.
+  \item Se si entra nella box \textbf{davanti}, si mette \textbf{IsInFront} a
+        vero (nella box dietro, a falso), e si mette l'altra variabile a
+        \textbf{falso}, ``in modo che non possa più rientrare un'altra volta''.
+  \item Si fa partire la \textbf{timeline}. Quando finisce, l'uscita
+        \textbf{Direction} dice se stava andando \textbf{in avanti} o
+        \textbf{in reverse}.
+  \item Se stava andando in avanti, la porta si è aperta: si aspettano
+        \textbf{due secondi} e poi la si fa chiudere, cioè ``riparte tutta
+        quanta la timeline, ma in reverse''.
+  \item Quando finisce il reverse, l'animazione è davvero finita: la variabile
+        torna \textbf{vera} e si può rientrare.
+  \item Durante l'Update, in base a IsInFront, il valore viene usato così com'è
+        oppure \textbf{moltiplicato per $-1$}; e la seconda anta usa il segno
+        opposto della prima, ``quindi una va di là e l'altra va di qua''.
+\end{enumerate}
+Al primo Play le ante si aprono al contrario (``vabbè, non è grave, si può
+risolvere in fretta'') e una delle due non era collegata (``ho collegato sempre
+lo stesso cubo''); sistemati i collegamenti e i segni, ``se esco si chiude, se
+vado di qua mi aspetto che si apra al contrario, e infatti funziona''.
+
+``Non bellissimo, non semplicissimo.'' E soprattutto: ``è chiaro che non mi
+aspetto che facciate codice di questo tipo alla seconda lezione''. Chi vuole può
+copiarlo; ``se avete dubbi, chiedetemi pure''.
+
+\paragraph{Approfondimento: perché una sola timeline.} La versione del docente
+risolve il caos dei tentativi precedenti con due scelte. La prima è avere
+\textbf{un'unica fonte di verità} per lo stato della porta (una timeline,
+un booleano che fa da \emph{lucchetto}) invece di due timeline indipendenti che
+possono contraddirsi. La seconda è separare \textbf{che cosa} si anima (l'angolo
+da 0 a 90) da \textbf{come} lo si applica (il segno, deciso dal lato): la curva
+resta una sola, e la direzione è un parametro. È lo stesso principio che, più
+avanti, porterà alle \emph{state machine}.
+
+\subsection{Le cerniere: le scene component}
+
+``Consiglio personale.'' Per porte che sembrino porte vere, il docente aggiunge
+\textbf{due Scene Component}\footnote{Nella trascrizione ``due sin'': sono le
+\emph{Scene Component}, componenti vuoti che hanno solo una transform.} e ci
+attacca sotto i cubi, uno per scena.
+\begin{itemize}
+  \item Le scene sono ``praticamente i \textbf{punti di ancoraggio}'':
+        ``semplicemente sono degli elementi vuoti''.
+  \item Si posizionano le scene \textbf{sull'angolo} dove dovrebbero esserci i
+        cardini, e si ruotano \textbf{le scene al posto dei cubi}.
+  \item I cubi, essendo figli, ruotano attorno a quel punto: la porta ``si apre
+        proprio sui bordi delle porte, non al centro''.
+\end{itemize}
+``Funziona praticamente come se fosse il pivot''; è il modo più pulito di
+ottenere ciò che, con la prima porta, richiedeva di spostare il pivot della mesh.
+``Tuttavia qua stiamo andando un pochettino troppo avanti.''
+
+% ---------------------------------------------------------------------
+\section{Engine Scalability: se il PC non regge}
+\label{gd12:sec:scalability}
+
+``Informazione di servizio.'' Vedendo che diversi PC degli studenti faticano, il
+docente mostra come abbassare la qualità della grafica \emph{dell'editor}:
+\emph{Settings $\rightarrow$ \textbf{Engine Scalability Settings}} e poi
+\textbf{Low}. ``È come se metteste le impostazioni basse sulla grafica'' di un
+gioco: la viewport è più brutta, ma tutto è più fluido. (``L'hanno spostato 25
+volte, il tasto'': in versioni diverse si trova in punti leggermente diversi
+della barra.)
+
+% ---------------------------------------------------------------------
+\section{La lava}
+\label{gd12:sec:lava}
+
+Francesco vuole importare dei modelli 3D per creare un \textbf{terreno su cui
+si cade}: ``c'è della lava e, appena tocchi la lava, muori''. Il consiglio
+generale: \textbf{prima il codice}, poi lo si mette sulla mappa ``appena puoi''.
+(È lo stesso principio del blockout del capitolo~\ref{gd11:cap:blockout-luci}:
+prima le funzionalità, poi l'aspetto.)
+
+Il codice non compila. ``Ti manca veramente poco: è solo un nodo che non è
+collegato.'' Il \textbf{Cast To ThirdPersonCharacter} ha il pin
+\textbf{Object} vuoto, ``quindi non sa che cosa deve controllare che sia un
+ThirdPersonCharacter''. Va collegato l'\textbf{Other Actor} dell'overlap,
+``cioè l'attore che sta collidendo con questo cubo''. Errore successivo, e
+classico: Francesco stava controllando se \emph{la box} fosse il personaggio;
+va controllato l'Other Actor che arriva dall'evento. Poi lo si uccide
+distruggendolo: ``direi che ha funzionato''. (Per il task, naturalmente, al posto
+della distruzione si ricarica il livello, sezione~\ref{gd12:sec:ricarica}.)
+
+``Finché non hai compilato, non puoi neanche lavorare'': un Blueprint con errori
+di compilazione non gira, e l'editor lo segnala sul pulsante \emph{Compile} e
+nel pannello dei risultati.
+
+% ---------------------------------------------------------------------
+\section{Il timer: sommare i Delta Seconds}
+\label{gd12:sec:timer}
+
+Uno studente chiede come costruire il \textbf{timer} del task: ``c'è il delta
+time, ma è solo il delta time\dots{}''. Il docente parte dalla definizione:
+i \textbf{Delta Seconds} sono già \emph{i secondi di un frame}, cioè quanto tempo
+è passato dal frame precedente. Quindi basta \textbf{sommarli}.
+\begin{enumerate}
+  \item Si crea una variabile float, \emph{Value}.
+  \item Sull'Event Tick: \emph{Value} $=$ \emph{Value} $+$ \textbf{Delta
+        Seconds}.
+  \item Con un Print String si vede che il valore ``aumenta di un secondo per
+        ogni secondo''.
+\end{enumerate}
+Attenzione a non confondersi: se a ogni frame si somma \textbf{1}, invece, si
+contano \textbf{i frame}, non i secondi.
+
+\begin{figure}[htbp]
+\centering
+\begin{bpgraph}
+  \bpnode{tk}{0,0}{bpHEvent}{Event Tick}{2.6}{}{exec/, float/Delta Seconds}
+  \bpget{gv}{0.5,-2.4}{float}{Time}{1.4}
+  \bpnode{add}{2.9,-1.8}{compact}{$+$}{1.3}{float/, float/}{float/}
+  \bpnode[1]{set}{4.4,0}{bpHVar}{SET}{1.8}{exec/, float/Time}{exec/, float/}
+  \bpnode{ge}{6.5,-1.6}{compact}{$\geq$}{1.6}{float/, float/\bpval{60}}{bool/}
+  \bpnode{br}{8.3,0}{bpHFlow}{Branch}{2.1}{exec/, bool/Condition}{exec/True, exec/False}
+  \bpnode{ol}{10.9,0}{bpHFunc}{Open Level (by Name)}{3.3}{exec/, name/Level Name}{exec/}
+  \bpnode{gl}{6.2,-3.0}{bpHPure}{Get Current Level Name}{3.6}{}{str/Return Value}
+  \bpwire{exec}{tk-o1}{set-i1}
+  \bpwire{float}{gv-o1}{add-i1}
+  \bpwire{float}{tk-o2}{add-i2}
+  \bpwire{float}{add-o1}{set-i2}
+  \bpwire{exec}{set-o1}{br-i1}
+  \bpwire{float}{set-o2}{ge-i1}
+  \bpwire{bool}{ge-o1}{br-i2}
+  \bpwire{exec}{br-o1}{ol-i1}
+  \bpwire{str}{gl-o1}{ol-i2}
+\end{bpgraph}
+\caption{Un timer di livello: a ogni frame si aggiungono i Delta Seconds alla
+variabile \emph{Time}, che quindi conta i secondi reali; quando supera il limite
+(qui 60 secondi), il livello riparte. La lezione mostra la somma; il confronto
+e il ricaricamento sono il completamento naturale per il requisito del task.}
+\label{gd12:fig:timer}
+\end{figure}
+
+\paragraph{Tanti modi.} ``Se non vi viene, potete anche calcolare il timer con
+una timeline o qualsiasi roba che vi venga in mente. Non è un problema. Ci sono
+tanti modi: per ogni cosa ci sono un sacco di soluzioni.''
+
+\paragraph{Approfondimento: il timer di sistema.} Oltre alla somma sull'Event
+Tick, Unreal offre \textbf{Set Timer by Event} (e \emph{by Function Name}):
+si collega un evento personalizzato, si imposta un tempo (per esempio 60
+secondi), e l'engine chiama quell'evento allo scadere, senza far nulla a ogni
+frame. Con \emph{Get Timer Remaining Time by Handle} si legge quanto manca, per
+mostrarlo a schermo. La somma dei Delta Seconds resta comunque il modo più
+trasparente per capire che cosa sta succedendo.
+
+% ---------------------------------------------------------------------
+\section{Il trampolino: Jump e Launch Character}
+\label{gd12:sec:trampolino}
+
+Francesco vuole una \textbf{piattaforma su cui si atterra e si salta
+automaticamente}. ``Chiaro, chiaro.''
+\begin{enumerate}
+  \item ``Fai la stessa cosa che hai fatto sulla lava'': servono le
+        informazioni del giocatore, quindi overlap e \textbf{cast} al
+        personaggio (``puoi anche fare Ctrl+C, Ctrl+V'').
+  \item ``Devi collegare chiaramente anche il filo bianco, se no non va il
+        codice.''
+  \item Dal riferimento \emph{As ThirdPersonCharacter}, il nodo
+        \textbf{Jump}: ``fai saltare il player; vedi, il target è il
+        ThirdPersonCharacter, che è il player che hai appena toccato''.
+\end{enumerate}
+
+\paragraph{Quanto salta?} Con \textbf{Jump} il personaggio salta ``come se tu
+stessi premendo salto'', con quella forza lì. Per un'altra forza c'è
+\textbf{Launch Character}, sempre tirato fuori dal riferimento al personaggio:
+gli si dà una \textbf{velocità di lancio}. ``Considera che è un launch character,
+quindi può anche andare in orizzontale, non solo in verticale'': il vettore ha
+$x$, $y$ e $z$.
+
+\begin{figure}[htbp]
+\centering
+\begin{bpgraph}
+  \bpnode[2]{bo}{0,0}{bpHEvent}{On Component Begin Overlap\\\bpsub{(Box)}}{4.0}{}{exec/, obj/Other Actor}
+  \bpnode{ca}{4.9,0}{bpHCast}{Cast To ThirdPersonCharacter}{4.6}{exec/, obj/Object}%
+    {exec/, exec/Cast Failed, obj/As BP Third Person Character}
+  \bpnode[2]{lc}{10.6,0}{bpHFunc}{Launch Character\\\bpsub{Target is Character}}{4.4}%
+    {exec/, obj/Target, vec/Launch Velocity \bpval{0 \ 0 \ 1500}, bool/XYOverride, bool/ZOverride}{exec/}
+  \bpwire{exec}{bo-o1}{ca-i1}
+  \bpwire{obj}{bo-o2}{ca-i2}
+  \bpwire{exec}{ca-o1}{lc-i1}
+  \bpwire{obj}{ca-o3}{lc-i2}
+  \bpnote{4.9,-2.15}{con \emph{Jump} al posto di Launch Character\\il salto è quello normale del personaggio}
+\end{bpgraph}
+\caption{Il trampolino: quando il personaggio entra nella box viene lanciato
+verso l'alto. Il valore va cercato provando: 20 o 200 sono troppo poco per
+accorgersene.}
+\label{gd12:fig:trampolino}
+\end{figure}
+
+\paragraph{Il debug passo per passo.} All'inizio non succede niente, ed è
+l'occasione per un metodo.
+\begin{itemize}
+  \item \textbf{Il valore.} ``20 è veramente poco. 2 è tipo niente.'' Conviene
+        lavorare sulla \textbf{$z$}, ``che è quella che ti lancia'' in alto;
+        lo studente aveva modificato un asse orizzontale.
+  \item \textbf{La box.} Nella viewport, l'area va allargata e alzata un
+        po', così che il personaggio la tocchi davvero.
+  \item \textbf{Test rapidi.} ``Quando fai test rapidi, non fare tutto quanto
+        il livello e poi mettere quello lì in fondo, sennò diventa lungo tutte
+        quante le volte.'' Si sposta il \textbf{Player Start} vicino a ciò che
+        si sta testando (``mettilo dove ti viene più comodo'').
+  \item \textbf{Il Print String.} Uno \textbf{Print String} proprio dopo il
+        Begin Overlap dice se il codice \emph{arriva} lì: ``così capiamo dov'è
+        il problema''. Il messaggio compare: il codice arriva.
+\end{itemize}
+Il problema, alla fine, era solo il numero: con 200 il lancio è impercettibile;
+con ``un numero molto più alto'', ``direi che funziona''. ``Funzionava tutto,
+semplicemente il valore era troppo basso e non te ne accorgevi.''
+
+% ---------------------------------------------------------------------
+\section{Il giro tra i banchi, seconda parte}
+\label{gd12:sec:giro2}
+
+\paragraph{Il mulino e il vento.} Antonino condivide di nuovo: nella sua scena
+c'è una pala che gira (il movimento è del modello, il codice ce l'ha messo lui).
+``Puoi anche fare così, va bene. Fai attenzione che c'è il problema del delta
+time, che rimane sempre'': la rotazione sull'Event Tick va moltiplicata per i
+Delta Seconds. C'è anche una zona di \textbf{vento}, fatta con una box,
+``un pochettino strano, però te lo concedo''. ``Direi che sei sulla retta via:
+continua tranquillamente a implementare feature così.''
+
+\paragraph{Il personaggio scalato.} Uno studente ha ingrandito molto il
+personaggio, che ora si comporta in modo strano. ``Perché questo personaggio non
+è pensato per essere scalato'': le \textbf{animazioni} non sono pensate per
+quella scala, ``e quindi il codice non funziona correttamente''. Bisognerebbe
+modificare l'animazione.
+
+\paragraph{Una piattaforma che ruota.} Un'ultima studentessa fatica con la
+timeline, che ``va avanti e indietro'' in modo strano. Il docente torna al
+principio: la timeline non fa nulla da sola, ``semplicemente ti disegni questo
+grafico; questa curva la disegni, e poi il valore di questa curva ti esce, e devi
+sfruttarlo per far andare avanti e indietro''. Se la curva resta a zero, non
+cambia niente; se sale e scende, l'oggetto sale e scende. Rifanno insieme i
+punti: tempo 0 valore 0, tempo 2,5 valore 200, tempo 5 valore 0, ``così fa su e
+poi giù''. Due consigli:
+\begin{itemize}
+  \item per spostare un oggetto partendo da dove si trova, prendere la
+        \textbf{posizione attuale} (o tenere la base a zero e muovere un
+        componente figlio), altrimenti, con valori che vanno sotto lo zero,
+        ``poi è un casino'';
+  \item per farlo \textbf{ruotare} si usa lo stesso principio, con un Set
+        Relative Rotation; e se servono più grandezze insieme si aggiungono
+        \textbf{più tracce} nella stessa timeline, ``così hai diversi
+        grafici''.
+\end{itemize}
+
+\paragraph{Mandate i progressi.} Il docente ricorda a tutti: ``mandatemi poi il
+video sulla chat mentre lavorate'', così sa come procede il lavoro. E a chi chiede
+se si possano cambiare i parametri del personaggio: ``tutto quanto ciò che non è
+specificato nel task potete modificarlo''.
+
+% ---------------------------------------------------------------------
+\section{La chiusura}
+\label{gd12:sec:chiusura}
+
+``Effettivamente sono le 17. Quindi direi che possiamo andarcene tutti quanti a
+casa.'' Ultime domande? Uno studente riassume il task, e il docente conferma:
+\begin{itemize}
+  \item \textbf{tre livelli};
+  \item dei \textbf{punti che possono far ripartire il livello} (trappole,
+        cadute, il timer);
+  \item il resto, ``se volete, sì; se no, niente''.
+\end{itemize}
+``Chiaramente, più robe fate, meglio le fate, migliore sarà il voto. Questo mi
+sembra ovvio.''
+
+Ci si rivede \textbf{lunedì} (la lezione su Git). Chi lavora già nel weekend può
+scrivere i propri dubbi e fare domande. ``Allora, grazie mille. Ci
+rivediamo.''
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item \textbf{Task} (consegna il \textbf{25}, zip su Google Drive): un
+        \textbf{platformer 3D} dal template in terza persona, con \textbf{tre
+        livelli}, \textbf{ostacoli} che possono far ricominciare il livello,
+        \textbf{aree che modificano il movimento} e \textbf{un livello a
+        tempo} che riparte se il timer scade. Asset da Fab ammessi e da
+        segnalare con un link; codice tutto proprio; aggiornamenti informali
+        nella chat della classe, come in un team (non valutati). Dal task
+        successivo, consegne su GitHub.
+  \item Compilare Unreal \textbf{dal sorgente} serve per modificare l'engine,
+        buildare i \textbf{server dedicati}, buildare per \textbf{console} e
+        provare le versioni in anteprima (Unreal Engine 6); costa spazio e
+        un giorno di build. \textbf{Python} si usa per tool dell'editor, non per
+        il codice di gioco.
+  \item Un \textbf{array} contiene più valori dello stesso tipo in una sola
+        variabile; gli \textbf{indici partono da 0}. \textbf{Add} aggiunge in
+        fondo, \textbf{Remove Index} toglie una posizione. Mai tante variabili
+        per la stessa cosa in posizioni diverse.
+  \item Il \textbf{For Each Loop} esegue il Loop Body per ogni elemento, con
+        Array Element e Array Index, e Completed alla fine.
+        \textbf{Get All Actors Of Class} restituisce un array di tutti gli
+        oggetti di una classe: ``prendi tutti, controlla uno per uno
+        (distanza, Branch), agisci'' è alla base di moltissimo codice.
+  \item Si consegna con \textbf{File $\rightarrow$ Zip Project}, non
+        zippando la cartella a mano: \texttt{Config} e \texttt{Content} sono
+        ciò che conta, le cartelle di cache si rigenerano, \texttt{Saved}
+        contiene log e salvataggi.
+  \item In \textbf{Project Settings $\rightarrow$ Maps \& Modes}: \emph{Editor
+        Startup Map} (per lo sviluppatore) e \emph{Game Default Map} (per il
+        giocatore, di solito menu o splash screen).
+  \item \textbf{Packaging} da \emph{Platforms}: \textbf{Shipping} per la
+        versione pubblica, \textbf{DebugGame} per console, log e test. Lento la
+        prima volta. Non richiesto per il task.
+  \item Nuovi livelli con \textbf{File $\rightarrow$ New Level $\rightarrow$
+        Basic}, poi duplicati con Ctrl+C, Ctrl+V. \textbf{Fab}: asset, plugin,
+        progetti completi; filtrare per formato Unreal Engine e gratuito; tre
+        pacchetti gratuiti a tempo ogni quindici giorni; gli asset vanno
+        \textbf{solo avanti di versione, mai indietro}.
+  \item La \textbf{timeline} fa variare valori nel tempo: \emph{Float Track},
+        chiavi con \emph{Add Key} (meglio scrivere tempo e valore a mano),
+        \emph{Length}, \emph{Loop}, interpolazione \emph{Auto}; uscite
+        \textbf{Update} (ogni frame), \textbf{Finished}, \textbf{Direction} e
+        un pin per traccia. \textbf{Play} riprende da dove si trova,
+        \textbf{Play from Start} riparte, \textbf{Reverse} torna indietro: con
+        Begin e End Overlap si fa una porta. Per un andirivieni in loop, la
+        curva deve tornare al valore di partenza.
+  \item \textbf{Relative} è rispetto all'Actor che contiene il componente,
+        \textbf{World} rispetto al mondo. Una location è solo posizione, una
+        transform include rotazione e scala.
+  \item Muovere sull'\textbf{Event Tick}: posizione attuale + spostamento
+        $\times$ \textbf{Delta Seconds}. È il modo base, ad esempio per i
+        proiettili; la timeline ci si appoggia sopra.
+  \item \textbf{Get Current Level Name} $\rightarrow$ \textbf{Open Level (by
+        Name)} ricarica il livello corrente: è la base di trappole e timer.
+        Sempre un \textbf{cast al personaggio} prima, o l'overlap scatterà per
+        qualsiasi oggetto (anche all'infinito).
+  \item La \textbf{doppia porta}: una timeline, un booleano che fa da lucchetto,
+        \emph{IsInFront} per il verso, Direction per decidere se richiudere.
+        Le \textbf{Scene Component} fanno da cerniere, come un pivot.
+  \item Un \textbf{timer} si costruisce sommando i Delta Seconds (sommare 1
+        conta i frame). \textbf{Jump} fa saltare come il tasto,
+        \textbf{Launch Character} lancia con un vettore anche orizzontale; per
+        il debug: Player Start vicino, Print String dopo l'evento, valori
+        abbastanza grandi.
+  \item \textbf{Engine Scalability $\rightarrow$ Low} per i PC che faticano;
+        il personaggio del template non va scalato troppo, perché le
+        animazioni non lo prevedono.
+\end{itemize}

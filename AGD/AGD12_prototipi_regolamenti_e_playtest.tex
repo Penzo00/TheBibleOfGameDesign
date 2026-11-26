@@ -1,0 +1,2276 @@
+% =====================================================================
+%  Analog Game Design, lezione 12 — Prototipi, regolamenti e raccolta
+%  dei feedback.
+%  Una lezione "tradizionale", con poche slide molto pratiche, tenuta da
+%  Ruggero da solo, e poi una lunga parte aperta sui progetti di gruppo.
+%  In apertura, l'attesa, le scadenze (tutoraggio, consegna, final
+%  review) e la domanda su quanto un gioco possa cambiare dopo il pitch.
+%  Poi le slide: che cos'è un prototipo e perché si fa (costo, tempo,
+%  il muro psicologico del costo del cambiamento); il triangolo dei
+%  prototipi (ruolo, look and feel, implementazione) preso da un paper
+%  di elettronica, con gli esempi della scatola della pizza, delle
+%  schermate stampate e del debug; il regolamento: come si insegna un
+%  gioco, la facilitazione, pre-gioco e post-gioco, fiction e intenti,
+%  la scrittura come medium lineare contro il gioco come ecosistema, gli
+%  indici e i blocchi, che cosa c'è in un regolamento (di che cosa parla
+%  il gioco, che cosa serve per giocare, i principi di gioco, con
+%  l'esperimento sul ritematizzare Diamant); i metodi etnografici di
+%  raccolta dei feedback (osservazione in presenza, registrazione,
+%  nessuna osservazione; debriefing orale di gruppo, debriefing 1-1,
+%  form chiuso, report libero), il sentimento dietro la soluzione, la
+%  composizione del gruppo di playtest e il contesto. Infine le domande
+%  (perché hai attaccato?, la ripetitività) e, dopo la pausa, lo stato
+%  dei tre progetti: il gruppo di Rita bloccato nella ricerca, Murder
+%  Memory e la storia che blocca il gioco, Automa e le carte da poker.
+%  Fonte: trascrizione della dodicesima lezione (AGD12) del corso breve
+%  di Analog Game Design, seconda edizione: una lezione online di circa
+%  tre ore, con ogni probabilità venerdì 6 novembre 2026, tenuta da
+%  Ruggero.
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Analog Game Design", dodicesimo
+%  capitolo (numerazione propria 2.12). Nel file principale del libro,
+%  subito dopo il capitolo 2.11:
+%
+%    \input{AGD/AGD11_pitch_e_feedback}
+%    \input{AGD/AGD12_prototipi_regolamenti_e_playtest}
+%
+%  Tutte le etichette di questo capitolo hanno il prefisso "a12:"
+%  (a12:cap:..., a12:sec:..., a12:fig:..., a12:tab:...). Il capitolo è
+%  autonomo: non contiene \ref verso altri capitoli.
+%  Le figure e le tabelle sono ricostruzioni schematiche di quanto
+%  detto a voce e mostrato nelle slide (che non sono nella
+%  trascrizione), non copie delle slide. Dove la trascrizione è troppo
+%  rovinata per ricostruire un dettaglio (un nome, un titolo, chi sta
+%  parlando), il capitolo lo dice invece di inventarlo.
+% =====================================================================
+
+\chapter[Prototipi, regolamenti e raccolta dei feedback]{Prototipi, regolamenti e
+raccolta dei feedback: rendere il gioco giocabile da chi non siete voi}
+\label{a12:cap:playtest}
+
+Questa è la \textbf{dodicesima lezione} del corso di \textbf{Analog Game Design}, la
+prima dopo il \emph{pitch} e dopo le settimane di lavoro autonomo dei gruppi. Dopo una
+lezione ``senza slide'', si torna a una lezione ``più tradizionale'': ci sono delle
+slide, ``non saranno lunghe, non sono tante'', ma sono ``molto poco teoriche, molto
+pratiche'', pensate per dare ai gruppi degli strumenti ``per raddrizzare un attimo il
+prototipo'' e ``portarlo efficacemente a essere testato''. Il titolo della lezione è
+\textbf{prototipo, regolamento e raccolta feedback}. ``C'è tantissimo da dire'', ma il
+contenuto è stato ``distillato il più possibile'' in due o tre concetti chiave
+pragmatici, che i gruppi \emph{possono} e, ``idealmente'', \emph{devono} applicare ai
+propri prototipi.
+
+La lezione è stata \textbf{anticipata}. In calendario, in questa data, doveva esserci la
+lezione di Diego sull'RNG; ma dopo il tutoraggio con Daniele e Beatrice, a cui Ruggero
+non ha potuto partecipare, i docenti hanno pensato che la lezione sul prototipaggio e
+sul \emph{playtest} ``avrebbe potuto avere senso farla prima'', per dare ai gruppi gli
+strumenti per lavorare sul gioco non solo ``come flusso di gioco'' ma ``già nel
+pratico'': come si testa, come si va a vedere se quello che si è messo per iscritto
+funziona. È lo stesso principio che Ruggero spiegherà in chiusura: l'ordine delle
+lezioni si adatta allo stato dei progetti.
+
+Le slide sono tre blocchi. Il primo è il \textbf{prototipo}: che cos'è, perché lo si
+fa, e il \textbf{triangolo dei prototipi} (ruolo, \emph{look and feel},
+implementazione), il modello che Ruggero usa per decidere \emph{che cosa} testare. Il
+secondo è il \textbf{regolamento}: come si insegna un gioco a chi non lo conosce, perché
+scrivere un regolamento è difficile (la scrittura è un \emph{medium} lineare, il gioco
+no), che cosa può e deve contenere. Il terzo sono i \textbf{metodi etnografici di
+raccolta dei feedback}: come si osserva una partita di test e come si raccolgono i
+pareri dopo, con i pro e i contro di ogni metodo. La regola che tiene insieme tutto è
+detta più volte: il gioco ``deve sopravvivere all'allontanarsi da voi''. Dopo la pausa,
+la seconda metà della lezione è dedicata ai progetti: ogni gruppo racconta che cosa è
+cambiato dal \emph{pitch}, e Ruggero dà a ciascuno un'indicazione molto concreta su che
+cosa fare subito.
+
+\paragraph{Data, formato, persone.} La lezione è \textbf{online}, su Zoom (``le
+videolezioni'', ``uno Zoom ricorrente''), e dura presumibilmente circa tre ore, dalle 17 alle 20 come le altre, con una pausa di dieci
+minuti a metà. Si tiene con ogni probabilità \textbf{venerdì 6 novembre
+2026}\footnote{La data non è mai detta. La si deduce da più indizi: nel calendario
+ripassato da Ruggero nella lezione su Tabletop Simulator il 6 novembre era la lezione di
+Diego sull'RNG e il 9 novembre quella di Ruggero su ``\emph{playtest} e metodi
+etnografici di raccolta feedback''; qui Ruggero dice che ``oggi deve esserci in teoria
+Diego con l'RNG'' e che la lezione sul \emph{playtest} è stata messa prima. La lezione si
+chiude con ``buon weekend'', e il tutoraggio di cui si parla è ``sabato 14 novembre'',
+la settimana successiva. Nella lezione del \emph{pitch} si era detto che il 6 novembre
+i docenti avrebbero rivisto la classe ``in aula''; questa lezione, però, è su Zoom.} Il
+docente è solo \textbf{Ruggero}; Daniele e Beatrice sono nominati più volte (il
+tutoraggio che hanno tenuto, le loro email, la decisione su un tutoraggio in più) ma
+non sono presenti. Gli studenti sono quelli dei tre gruppi del \emph{pitch}:
+\textbf{Tiziana}, \textbf{Angelo} e \textbf{Lorenzo L.} (\emph{Murder Memory});
+\textbf{Tancredi}, \textbf{Gianmarco} e \textbf{Lorenzo} (\emph{La Peste}, che nel
+frattempo ha cambiato nome)\footnote{Come nel capitolo precedente, ``Lorenzo L.'' indica
+il Lorenzo del gruppo di \emph{Murder Memory} e ``Lorenzo'' quello del gruppo di Tancredi
+e Gianmarco. Qui la trascrizione non li distingue mai: all'inizio Ruggero nota che c'è
+un Lorenzo (``credo anche Lorenzo. C'è l'altro Lorenzo''), più tardi saluta un Lorenzo
+appena entrato. Il capitolo dice ``un Lorenzo'' quando non è possibile capire quale.};
+\textbf{Rita}, \textbf{Giordano} e \textbf{Nicola} (il \emph{roguelike} in solitario).
+All'inizio sono collegati Tiziana, Angelo, un Lorenzo e Tancredi; Rita, Gianmarco e un Lorenzo entrano a lezione iniziata; Giordano e
+Nicola non ci sono.
+
+\paragraph{Avvertenze di lettura.} Le stesse dei capitoli precedenti, con una novità. La
+trascrizione è automatica e storpia molti nomi: Ruggero è ``Rugger'' e ``Rangri'';
+Tiziana è ``Tatiana'', ``Diana'', ``Tiziano'' e ``Tessati''; il \emph{core gameplay} è
+il ``gore gameplay''; i test di \emph{role} sono ``test di RAW'' e ``test di Rolso''; i
+metodi etnografici diventano ``metodi tecnologici'', ``iconografici'' e ``geografici'';
+\emph{Magical Athlete} è ``Magico Atleta'' e ``Magical Drake''; \emph{Inhuman
+Conditions} è ``in human condition''. Dove la ricostruzione è sicura, o molto probabile,
+il capitolo usa la forma corretta e lo segnala in nota la prima volta; dove non lo è,
+riporta la forma della trascrizione e lo dice. La novità: in tre punti (in apertura,
+prima che la lezione cominci, e durante la pausa, per diversi minuti) la trascrizione
+contiene \textbf{frasi senza senso ripetute in ciclo} (``la situazione è questa, la
+migliore dal 2005'', ``qual è la risposta che ci può essere?''), tipiche di un
+riconoscimento vocale che lavora su un audio vuoto o di fondo. Non fanno parte della
+lezione e il capitolo le ignora. Infine, con molti studenti che intervengono, la
+trascrizione quasi mai segnala chi parla: il capitolo attribuisce le frasi quando il
+contesto lo rende chiaro (Ruggero chiama per nome chi ha risposto) e resta generico
+altrimenti.
+
+\paragraph{Come leggere questo capitolo.} Il capitolo segue l'ordine della lezione. Le
+slide non sono nella trascrizione: le figure ricostruiscono gli schemi che Ruggero
+descrive a voce (il triangolo dei prototipi, il regolamento come ecosistema, le
+combinazioni tra tipi di test e metodi di raccolta, le strutture degli enigmi, il
+calendario), e le tabelle riassumono i pro e i contro dei metodi così come emergono
+dal dialogo con la classe. Dove possibile, il capitolo ricostruisce anche la parte
+``socratica'' della lezione: Ruggero fa quasi sempre prima la domanda alla classe (``pro
+e contro?'') e poi completa le risposte. Qua e là, dei paragrafi di
+\textbf{approfondimento} collegano la lezione ai libri di game design di riferimento,
+soprattutto al capitolo sul \emph{playtesting} di \emph{The Art of Game Design} di Jesse
+Schell, e alla fonte del triangolo dei prototipi; sono segnalati come tali e non fanno
+parte della lezione.
+
+Il percorso del capitolo:
+\begin{enumerate}
+  \item l'attesa, le scadenze e la domanda su \textbf{quanto un gioco può cambiare dopo
+        il \emph{pitch}} (sezioni \ref{a12:sec:attesa} e~\ref{a12:sec:cambiare});
+  \item il \textbf{prototipo} e il \textbf{triangolo dei prototipi} (sezioni
+        \ref{a12:sec:prototipo} e~\ref{a12:sec:triangolo});
+  \item il \textbf{regolamento}: come si insegna un gioco, la scrittura lineare e il
+        gioco come ecosistema, i blocchi, che cosa c'è dentro (sezioni
+        da~\ref{a12:sec:insegnare} a~\ref{a12:sec:contenuti});
+  \item i \textbf{metodi etnografici di raccolta dei feedback}: durante la partita e
+        dopo la partita, il sentimento dietro la soluzione, chi testa e dove (sezioni
+        da~\ref{a12:sec:osservare} a~\ref{a12:sec:contesto});
+  \item le domande sulle slide (sezione \ref{a12:sec:domande});
+  \item dopo la pausa, il ruolo del \emph{playtest} nel corso e lo \textbf{stato dei tre
+        progetti} (sezioni da~\ref{a12:sec:playtestcorso} a~\ref{a12:sec:automa});
+  \item la chiusura: tutoraggi, calendario, contatti (sezione \ref{a12:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'attesa: flusso di gioco, tutoraggi, scadenze}
+\label{a12:sec:attesa}
+
+La lezione comincia, come spesso succede, con qualche minuto di attesa e di chiacchiere.
+Ruggero saluta chi c'è (``come va?'', ``bene, un po' così, ma bene dai''); qualcuno ha
+la connessione che va e viene, uno studente è in macchina con la videocamera spenta, un
+altro sta facendo merenda (``non so quanto sia bello vedermi''). Mentre aspetta gli
+altri, Ruggero chiede se va tutto bene e se ci sono domande prima di iniziare.
+
+\paragraph{Il flusso di gioco: lo vedremo oggi?} La prima domanda è di uno studente del
+gruppo di \emph{Murder Memory}: ``noi abbiamo preparato il flusso di gioco, dobbiamo
+vederlo oggi?''. Ruggero spiega il programma: oggi è una lezione con le slide, ma
+``come al solito'' l'ultima parte è ``la parte aperta di discussione e conversazione'',
+e lì si potrà parlare anche dei singoli progetti. ``Ma voi lo vedete il flusso di
+gioco? Ci date un feedback oppure no?'', insiste lo studente. Ci saranno ``sicuramente
+degli altri tutoraggi'' in cui i docenti lo vedranno nel dettaglio, e ``degli altri
+\emph{check}'' prima della \emph{review} finale; oggi non nello specifico, ma alla fine
+delle slide se ne parlerà. Lo studente spiega il malinteso: si aspettava che per oggi
+ci fosse da consegnare il flusso di gioco, per avere un riscontro del tipo ``ok, è
+chiaro, procedete pure''; la data era legata al tutoraggio con Daniele e Beatrice, e poi
+le date ``si sono spostate''. ``Non vi preoccupate, oggi diamo un'occhiata anche a
+quello.''
+
+\paragraph{Il tutoraggio del 14 novembre.} Il prossimo tutoraggio è \textbf{sabato 14
+novembre}. Un Lorenzo chiede l'orario: Ruggero controlla e dice che ``dovrebbe essere
+alle 13''; uno studente ricordava invece ``10--13''. ``In generale, non vi
+preoccupate'': Ruggero è flessibile, e se nessuno può nell'orario stabilito il
+tutoraggio si sposta, perché ``l'ultima cosa che voglio è avere un tutoraggio in cui
+della classe c'è una sola persona o due persone''. Anticipa anche una novità: con
+Daniele stanno discutendo di dare ai gruppi \textbf{un tutoraggio extra}; ne parlerà
+con Daniele e Beatrice dopo la lezione e comunicherà la data sul Discord. ``È mia
+intenzione darvi anche un altro tutoraggio in più, comunque.''
+
+\paragraph{Il \emph{playtest}: prima o dopo dicembre?} Un'altra domanda, più ansiosa:
+``questa cosa del test è una cosa successiva a dicembre o bisogna farlo prima? Perché la
+vedo abbastanza dura''. Il \emph{playtest}, risponde Ruggero, ``in teoria andrebbe fatto
+prima della \emph{delivery} finale'', quella dell'\textbf{11 dicembre}. Lo studente
+precisa che il gioco va consegnato \textbf{entro il 4 dicembre}: sì, ``per la consegna
+del gioco il \emph{playtest} noi lo chiediamo''. Ma ``non vi preoccupate'': la lezione
+di oggi serve proprio a strutturare ``un test che non vi faccia buttare del tempo'' e
+che concentri ``il poco tempo che avete, l'energia che avete'' in test efficaci.
+
+\paragraph{L'appello.} Mancano molte persone. Ruggero vorrebbe ``almeno una persona per
+gruppo'' prima di iniziare e chiede se Nicola, Rita o Giordano arriveranno; nessuno lo
+sa (``io ho avuto contatti solo con i miei compagni di gruppo''; ``ci sta: alla fine il
+grosso del lavoro lo fate con i vostri compagni di gruppo''). Gianmarco ha scritto che
+arriverà in ritardo. Ruggero tiene aperto il foglio delle presenze e chiede alla classe
+di avvisarlo se qualcuno entra mentre lui ha le slide a schermo intero, così da segnarlo.
+Intanto, dato che al tutoraggio non c'era, invita a fargli subito le domande che non
+hanno potuto fargli: ``approfittiamone''.
+
+% ---------------------------------------------------------------------
+\section{Quanto può cambiare un gioco dopo il \emph{pitch}?}
+\label{a12:sec:cambiare}
+
+Una domanda arriva da uno studente che l'aveva già fatta durante il tutoraggio, e su cui
+dice di pensare ``abbastanza spesso''\footnote{Ruggero si rivolge ad Angelo appena
+prima (``Angelo, visto che ti sei smutato''), ed è probabile che la domanda sia sua; la
+trascrizione non lo rende certo.}: \textbf{quanto può cambiare un gioco dopo il
+\emph{pitch}?}
+
+\paragraph{L'ideale è poco.} ``L'ideale è poco, perché il tempo che avete è poco.''
+Nella vita professionale i progetti cambiano anche dopo il \emph{pitch} iniziale, ``anche
+drasticamente a volte'', ma questo ``implica spesso un allungare dei tempi di lavoro''.
+E il corso non lavora con le logiche e i tempi della pubblicazione, ma con quelli
+dell'\textbf{imparare gli strumenti}. ``In questo corso non vogliamo necessariamente
+giochi che siano i giochi più originali del mondo, né giochi \emph{groundbreaking}, ma
+giochi che vi permettano di applicare quello che avete imparato.'' Anche un gioco che
+non vincerà lo \emph{Spiel des Jahres}\footnote{Nella trascrizione ``lo Spiel.dear'':
+è lo \emph{Spiel des Jahres}, il più noto premio tedesco per i giochi da tavolo.} va
+benissimo, se permette di applicare i \emph{framework} e gli strumenti visti nelle
+lezioni: ``è quello poi lo scopo di questo corso''.
+
+\paragraph{E se il \emph{playtest} dice che qualcosa non funziona?} Lo studente insiste:
+c'è tutta la parte in cui si testa ``tantissimo'', il processo di iterazione è lungo, ed
+è plausibile che le prove dicano ``questo non funziona'' e costringano a rivedere dei
+pezzi; quanto può influire sul prodotto finale? Ruggero rimanda in parte alle slide
+(``oggi un po' di risposte a questa domanda in teoria le avrai''), ma anticipa il punto:
+\textbf{le iterazioni dopo un \emph{playtest} di solito non sono drastiche sul
+\emph{core gameplay}}. Sono interventi sul \textbf{modello matematico}, sull'aggiungere
+o togliere una regola, sul chiarire qualcosa nel regolamento. Non sono trasformazioni del
+tipo ``da gioco di strategia a \emph{card game} di dieci minuti''. ``Lo scopo del test è
+prendere il \emph{core gameplay} che già c'è e limarlo, affinarlo, finché non diventi il
+più pulito possibile.'' E se un test spinge a dire ``prendiamo questo gioco di tre ore e
+facciamolo diventare un \emph{card game} da dieci minuti'', allora ``qualcosa è andato
+storto, molto, molto, molto, ben prima di quel test''.
+
+\paragraph{Non è il gioco della vostra vita.} Ruggero chiude con un tema che tornerà
+più volte nella serata: ``non creerete il gioco della vostra vita in questo corso'', e
+anzi lo spera, ``perché vuol dire che fuori da qua creerete i giochi migliori''. Lo
+scopo è mettere ``le mani in pasta'' con gli strumenti, per poi usarli su giochi al di
+fuori del corso. Quindi anche se un gruppo lavora a un gioco che non è del suo genere
+preferito, non ha il suo \emph{setting} preferito o usa meccaniche che non sceglierebbe
+nel tempo libero, ``se questo vi permette di applicare gli strumenti del \emph{playtest}
+e di iterazione, per noi va bene''.
+
+Poi, visto che nessun altro è ancora entrato, Ruggero condivide lo schermo (``vedete se
+si vede?'') e comincia.
+
+% ---------------------------------------------------------------------
+\section{Che cos'è un prototipo, e perché lo facciamo}
+\label{a12:sec:prototipo}
+
+La prima slide parte da una domanda ``che sembra banale'': \textbf{che cos'è un
+prototipo, a che cosa serve, e perché quando facciamo giochi facciamo prototipi?}
+
+\paragraph{Per testare.} La prima risposta della classe: serve ``proprio per testarlo,
+nel senso che devi vedere se funziona così come avevi pensato tu''. Sì, incalza Ruggero:
+ma perché facciamo un prototipo e non siamo già al gioco completo? ``Perché penso che
+sia più economico fare un prototipo che non il gioco vero.''
+
+\paragraph{Più economico, ma non solo in soldi.} È più economico, certo: ``stampare un
+prototipo con la stampante di casa costa meno che portarlo in tipografia''. Ma c'è
+dell'altro. Il prototipo è anche \textbf{più facile da modificare}, e non solo per
+ragioni pratiche: c'è ``un \emph{trigger} psicologico, che è l'attaccarsi alle cose per
+cui spendiamo''. Se abbiamo speso mille euro per un prototipo fatto benissimo, ``sarà
+molto difficile che ci venga voglia di cambiarlo'' e di spendere di nuovo quei soldi; se
+lo abbiamo fatto ``sulla carta straccia'', cambiare tutto costa poco, e non c'è ``il
+muro psicologico del costo del cambiamento'', che altrimenti ``è gigantesco''. L'ideale
+è quindi un prototipo \textbf{facile da iterare, da cambiare, da modificare}, ``che
+possiamo prendere e buttare in pochissimo senza sentirci in colpa'', senza il freno del
+``ci costa troppo farlo''.
+
+\paragraph{Più veloce.} Il secondo vantaggio è il \textbf{tempo}. Un gioco completo
+richiede tantissimo tempo; un prototipo è ``molto ridotto in scala''. E visto che il
+tempo dei gruppi ``già è pochissimo'', va concentrato in un prototipo ``asciutto, ma
+che contenga il necessario''. Questo obbliga a una scelta: \textbf{che cosa metto a
+testare e che cosa no}. È il tema della slide successiva.
+
+\paragraph{Approfondimento: il prototipo risponde a una domanda.} Le due ragioni di
+Ruggero (il costo del cambiamento e la scala ridotta) corrispondono quasi alla lettera a
+due dei consigli di prototipazione che Jesse Schell elenca nel capitolo
+sull'iterazione di \emph{The Art of Game Design}: ``Forget Quality'' (un prototipo
+brutto ma veloce vale più di uno bello e lento) e ``Don't Get Too Attached'' (il
+prototipo è fatto per essere buttato). Il primo consiglio della stessa lista,
+``Answer a Question'', è il ponte verso il triangolo: \textbf{ogni prototipo dovrebbe
+rispondere a una domanda precisa}, e decidere quale domanda si sta facendo è il primo
+passo per non sprecare un test. Lo stesso Schell, nel capitolo sul
+\emph{playtesting}, descrive il \emph{playtest} come ``un prototipo dell'esperienza di
+gioco'', e ripete il principio: senza obiettivi specifici, un test rischia di essere tempo
+perso.
+
+% ---------------------------------------------------------------------
+\section{Il triangolo dei prototipi: ruolo, \emph{look and feel}, implementazione}
+\label{a12:sec:triangolo}
+
+``Ci sono mille \emph{framework} di prototipaggio e di \emph{playtest}.'' Ruggero
+presenta quello che usa lui, ``con cui mi trovo bene'' e che secondo lui può essere
+utile anche ai gruppi: il \textbf{triangolo dei \emph{playtest}}. Viene da un
+\emph{paper} che parlava di \textbf{elettronica}: era usato nella progettazione di
+cellulari, portatili, strumenti elettronici, ma ``è applicabilissimo anche al
+gioco''\footnote{Ruggero non cita autori e titolo. Il modello è quasi certamente quello
+di Stephanie Houde e Charles Hill, \emph{What Do Prototypes Prototype?} (1997), scritto
+quando gli autori lavoravano in Apple, nel quale ogni prototipo si colloca in un
+triangolo i cui vertici sono \emph{role}, \emph{look and feel} e
+\emph{implementation}; gli esempi citati nella lezione (un portatile Apple simulato da
+una scatola appesantita, schermate di un'applicazione stampate su carta, codice da
+mettere a punto) sono compatibili con quel testo.}. Ai tre vertici del triangolo ci sono
+\textbf{implementazione}, \textbf{ruolo} e \textbf{\emph{look and feel}}; quando
+prototipiamo qualcosa, lo facciamo chiedendoci \emph{che cosa} stiamo testando, cioè
+verso quale vertice ci stiamo muovendo (figura~\ref{a12:fig:triangolo}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a12vert/.style={draw, thick, rounded corners=3pt, fill=gray!12, text width=3.4cm,
+                  align=center, minimum height=1.1cm},
+  a12ex/.style={draw, dashed, rounded corners=2pt, text width=2.6cm, align=center,
+                font=\footnotesize, fill=white},
+  a12dot/.style={circle, fill=black, inner sep=1.6pt}
+]
+  \coordinate (R) at (0,5.2);
+  \coordinate (L) at (-4.4,0);
+  \coordinate (I) at (4.4,0);
+  \draw[very thick] (R) -- (L) -- (I) -- cycle;
+  \node[a12vert, above=0.15cm of R] {\textbf{Ruolo} (\emph{role})\\funzione e scopo:
+    le meccaniche generano le dinamiche volute?};
+  \node[a12vert, below left=0.15cm and -1.6cm of L] {\textbf{\emph{Look and feel}}\\
+    esperienza sensoriale ed emotiva di componenti e grafica};
+  \node[a12vert, below right=0.15cm and -1.6cm of I] {\textbf{Implementazione}\\aspetti
+    tecnici: regolamento scritto chiaro, icone, numeri};
+  % esempi puri
+  \node[a12dot] (e6) at (0,4.2) {};
+  \node[a12ex] (x6) at (3.3,4.6) {schermate stampate su carta: ``dove clicchi ora?''};
+  \draw[thin] (e6) -- (x6.west);
+  \node[a12dot] (e10) at (-3.3,0.45) {};
+  \node[a12ex] (x10) at (-5.0,2.4) {scatola della pizza appesantita come un portatile};
+  \draw[thin] (e10) -- (x10.south);
+  \node[a12dot] (e12) at (3.3,0.45) {};
+  \node[a12ex] (x12) at (5.0,2.4) {\emph{debug} del codice};
+  \draw[thin] (e12) -- (x12.south);
+  % test intermedi
+  \node[circle, draw, fill=white, inner sep=1.6pt] at (-2.2,2.6) {};
+  \node[circle, draw, fill=white, inner sep=1.6pt] at (2.2,2.6) {};
+  \node[circle, draw, fill=white, inner sep=1.6pt] at (0,0) {};
+  \node[font=\footnotesize, align=center, text width=4.2cm] at (0,1.7) {test
+    intermedi (cerchi vuoti, sui lati): ruolo + implementazione, ruolo + \emph{look and
+    feel}\ldots\\ \textbf{mai tutto insieme}};
+\end{tikzpicture}
+\caption{Il triangolo dei prototipi come lo presenta Ruggero, con i tre esempi ``quasi
+puri'' del \emph{paper} da cui viene (pallini neri, vicini ai vertici). I test
+intermedi sono possibili; un test che cerca di stare al centro, testando tutto insieme,
+``fa tutto'' e finisce ``malissimo''.}
+\label{a12:fig:triangolo}
+\end{figure}
+
+\subsection{I test di ruolo}
+
+I \textbf{test di ruolo} (\emph{role}) hanno lo scopo di analizzare \textbf{la funzione
+e lo scopo} di un gioco. La domanda è: \textbf{le meccaniche che abbiamo creato generano
+le dinamiche desiderate?} ``Vi ricordate l'MDA, il DPE?'' Abbiamo un'esperienza in
+mente: le meccaniche che abbiamo messo per iscritto creano quell'esperienza, o ne creano
+un'altra? Ruggero elenca le domande tipiche:
+\begin{itemize}
+  \item \textbf{Le regole, per come sono scritte, ostacolano l'esperienza di chi gioca?}
+        Nella nostra idea il gioco è semplicissimo, da dieci minuti; appena qualcuno lo
+        prova ci mette quaranta minuti, cinquanta, un'ora. ``Non perché sia complesso,
+        ma perché magari le regole sono difficili da capire. Quello è un problema.''
+  \item \textbf{L'esperienza che arriva a chi partecipa è funzionale agli scopi del
+        gioco?} È particolarmente vero per i \textbf{giochi didattici e formativi}, che
+        hanno uno scopo al di là dell'intrattenimento: se voglio far passare una
+        conoscenza, un concetto, quel concetto arriva o no? ``Quella parte lì è
+        importante testarla, e rientra nei test di ruolo.'' Lo stesso vale per le
+        emozioni: vogliamo un gioco adrenalinico, frenetico, che crei ansia, un
+        \emph{horror}, e quello che arriva è ``un gioco super rilassato, \emph{chill}'',
+        che la gente gioca ``col tè caldo in mano''. ``C'è qualcosa che non quadra.'' Magari
+        è bellissimo, ``ma non è quello che vogliamo fare''.
+  \item \textbf{Per quali persone il gioco risulta familiare, e per quali risulta
+        alienante?} Se facciamo un gioco complesso, ma che non rientra in ciò che si
+        aspetta chi gioca agli \emph{eurogame} pesanti, ``non stiamo parlando col
+        \emph{target} ideale''. Il gioco magari è simile per peso, complicazione e
+        complessità ad altri giochi di quel tipo, ma se chi lo gioca ``non riesce a
+        riconoscerlo, quel gioco lì non arriva''.
+\end{itemize}
+I test di ruolo sono quelli che ``culturalmente'', se pensiamo a un \emph{playtest},
+vengono in mente per primi: il test che dice ``il gioco funziona, il gioco fa quello che
+deve fare''. Ma sono solo una delle tre direzioni possibili.
+
+\subsection{I test di \emph{look and feel}}
+
+I test di \textbf{\emph{look and feel}} riguardano \textbf{l'esperienza sensoriale ed
+emotiva} che il gioco trasmette non solo con le meccaniche, ma con i
+\textbf{componenti}, le \textbf{illustrazioni}, la \textbf{grafica}, il
+\textbf{paragame}. Che cosa si prova toccando i componenti, guardando il gioco,
+osservando il tabellone? Che \emph{mood}, che \emph{vibes} generano le illustrazioni, le
+luci, le forme, i materiali (legno, plastica, cartone)? ``Che tipo di gioco si
+percepisce?''
+
+\paragraph{Anche il regolamento ha un \emph{look and feel}.} I gruppi dovranno avere un
+regolamento, e anche il regolamento ``come oggetto'' comunica qualcosa: quante pagine
+ha? ``Avete tenuto in mano dei regolamenti? Sapete quando un regolamento è pesante o no,
+anche solo guardandolo?'' Se sto facendo un \emph{card game} da dieci minuti,
+semplicissimo, e il manuale è di quaranta pagine, ``questo è un problema''. Viceversa, se
+sto facendo ``un gioco da tre ore economico azionario a tema ferroviario'' e il
+regolamento è ``un piccolo \emph{brochurino}'', viene il dubbio che non sia stato scritto
+tutto, o che non sia stato scritto benissimo, che ``salti qualcosa, che dia per scontato
+qualcosa''. Il consiglio: \textbf{se compraste il vostro gioco, che regolamento vi
+aspettereste di trovarci dentro?} Lo stesso vale per i componenti: quanto sono grandi le
+carte, quante sono, i dadi, il tabellone, le plance. I test di \emph{look and feel}
+analizzano ``il \emph{feeling} e le \emph{vibes} date dall'aspetto estetico del gioco'',
+dove estetico non vuol dire solo immagini, ma ``proprio percezione sensoriale''.
+
+\subsection{I test di implementazione}
+
+L'ultima direzione è l'\textbf{implementazione}: ``questa è quella proprio noiosa, ma
+non meno importante''. Riguarda gli \textbf{aspetti tecnici e meccanici} del gioco:
+\begin{itemize}
+  \item il \textbf{regolamento}, non come numero di pagine ma come \textbf{struttura}: il
+        flusso del regolamento, come si imparano le regole leggendolo, in che ordine
+        sono spiegate le cose, come sono spiegate le meccaniche, se c'è un riassunto;
+  \item come è spiegato il \textbf{modello matematico}, i numeri;
+  \item le \textbf{icone} del gioco;
+  \item gli \textbf{automatismi}, il \textbf{\emph{bookkeeping}} (la contabilità che i
+        giocatori devono tenere), il \textbf{\emph{downtime}} di turno;
+  \item in generale, tutto ciò che riguarda ``l'implementazione tecnica delle nostre
+        meccaniche''.
+\end{itemize}
+Sono test che non si chiedono se una meccanica dà un sentimento X o Y, ma \textbf{se la
+meccanica è scritta giusta, se è scritta chiara}: ``la gente capisce quello che sta
+leggendo?''
+
+\subsection{Un test alla volta, e nell'ordine giusto}
+
+\paragraph{Non testate tutto insieme.} ``Noi non possiamo fare test che testino tutte
+queste tre cose insieme, perché se no impazziamo.'' Un test che sia contemporaneamente di
+\emph{look and feel}, di implementazione e di ruolo è ``buttare via tempo'': ``siamo
+esseri umani'', non riusciamo a tenere d'occhio tutto in contemporanea, e ``cercando di
+fare tutto ci sfugge tutto''. Il consiglio: \textbf{focalizzate i vostri test}.
+
+\paragraph{La fase decide la priorità.} In base alla fase in cui si è, alcuni test hanno
+la priorità. Se non si ha ancora chiaro il gioco e il suo flusso, ``è inutile'' testare il
+\emph{look and feel} o l'implementazione, se il regolamento ancora non è scritto: si
+parte dai \textbf{test di ruolo}. Viceversa, se il lavoro sulle meccaniche è stato fatto
+e i test di ruolo dicono che il gioco fa quello che deve fare, a quel punto interessano
+magari solo i \textbf{test di implementazione}: il gioco funziona, ma il regolamento è
+scritto bene? Fa quello che deve fare? E i componenti?
+
+\paragraph{Tre esempi quasi puri.} Per rendere l'idea, Ruggero mostra tre esempi dal
+\emph{paper}, ``esempi elettronici che si capiscono al volo'':
+\begin{itemize}
+  \item \textbf{L'esempio 10, un test di \emph{look and feel}}: una \textbf{scatola della
+        pizza} fatta come un vecchio portatile, ``nel '92''. Apple voleva testare i suoi
+        portatili in termini di peso, dimensione, di come stanno negli zaini e di come
+        si trasportano: la scatola era appesantita fino a pesare quanto il portatile, e
+        si testava com'era portarsela in spalla, tenerla in mano, tenerla su un tavolo.
+        ``È chiaro che quello non è un computer'': dentro non c'è elettronica, né
+        software, né hardware. È un test su come l'oggetto viene percepito: peso,
+        maneggevolezza, dimensione.
+  \item \textbf{L'esempio 6, un test di ruolo}: un test per un software,
+        un'\textbf{app a ipertesto}, con più schermate e menu\footnote{Nella trascrizione
+        l'esempio si chiama ``Nord Navigator''; il nome non è ricostruibile con
+        certezza.}. L'app non esisteva, non era ancora programmata: avevano stampato un
+        foglio per ogni schermata e chiedevano alle persone ``ok, dove clicchi ora?''; a
+        ogni ``\emph{tap}'' cambiavano il foglio davanti alla persona. Non c'era codice,
+        c'erano fogli stampati con dei \emph{wireframe}. Ma già così si vedeva quanti
+        \emph{tap} servivano per passare da una schermata all'altra, se i menu erano
+        intuitivi, se la pagina era leggibile. ``Era un test di ruolo, non era un test
+        di implementazione.''
+  \item \textbf{L'esempio 12, un test di implementazione}: il \textbf{\emph{debug} del
+        codice}. Il codice ha errori? Fa quello che deve fare? ``Test di implementazione
+        puro, praticamente.''
+\end{itemize}
+Sono esempi facili da capire perché ``quasi puri'', cioè quasi sui vertici del
+triangolo. Ma dal triangolo si possono fare anche \textbf{test intermedi}: ``non fate un
+test che fa tutto, perché finite malissimo'', ma test di ruolo e implementazione, o di
+ruolo e \emph{look and feel}, ``secondo me potete già farli''.
+
+\paragraph{Approfondimento: il triangolo e le domande di Schell.} Il triangolo è un modo
+per rispondere alla prima delle sei domande che Schell pone a ogni \emph{playtest}
+(\emph{why, who, when, where, what, how}): \textbf{perché} sto facendo questo test? Schell
+osserva che ``il gioco è divertente?'' non basta come domanda, e che le domande vanno
+rese il più specifiche possibile (``i giocatori capiscono come si gioca?'', ``ci sono
+strategie dominanti?'', ``ci sono momenti di noia, di confusione, di frustrazione?''). Il
+triangolo aiuta a raggruppare queste domande: quelle sull'esperienza e sulle dinamiche
+puntano al ruolo, quelle sulla percezione dei materiali al \emph{look and feel}, quelle
+sulla chiarezza e sulla correttezza all'implementazione. E suggerisce, come Schell, che
+se le domande non possono trovare risposta in un solo test, conviene fare più
+``mini-test'' separati, ciascuno con una domanda sola.
+
+% ---------------------------------------------------------------------
+\section{Il regolamento: come si insegna un gioco?}
+\label{a12:sec:insegnare}
+
+Su questa parte Ruggero dice di aver speso ``un po' più di parole'', perché i giochi
+dei gruppi sono \textbf{giochi analogici}, e i giochi analogici, rispetto ad altri tipi
+di giochi, ``di solito usano i regolamenti per spiegare il gioco''. Il punto è uno solo,
+e la lezione lo ripeterà in molte forme: \textbf{il vostro gioco deve essere capito,
+giocato, organizzato, facilitato da persone che non siete voi}. ``Deve sopravvivere
+all'allontanarsi da voi, il gioco. Perché se il vostro gioco funziona solo con voi,
+quel gioco potenzialmente non fa una bella fine.''
+
+\paragraph{L'asterisco: LARP e giochi pervasivi.} C'è ``un grosso asterisco'', con
+``grossissime eccezioni'': tutto l'ambiente dei \textbf{LARP} e dei \textbf{giochi
+pervasivi}, che spesso sono \textbf{giochi a evento}, facilitati da chi li organizza. Ma
+dai \emph{pitch} Ruggero ha capito che i gruppi sono orientati verso giochi che possono
+essere giocati da persone che non sono loro, e quindi, nel loro caso, il regolamento ``è
+direi obbligatorio''.
+
+\paragraph{La domanda alla classe.} ``Come si insegna un gioco? Come faccio io a
+spiegare a un'altra persona come si gioca un gioco?'', esclusa la risposta ovvia, il
+regolamento. Rispondono in tre, in ordine (``Tiziana, poi Angelo''; ``no, fai prima
+Angelo'').
+\begin{itemize}
+  \item \textbf{Angelo}: ``lo si accompagna passo passo'', ``con una lunga spiegazione dei
+        vari passaggi''. ``Lunga tra parentesi'', ribatte Ruggero: lunga quanto? ``C'è un
+        lungo che è automaticamente corretto? Quando cerco di spiegarlo io, di solito
+        lungo vuol dire troppo.''
+  \item \textbf{Un Lorenzo}: ``innanzitutto deve averlo provato, il gioco''. Ma qui c'è un
+        problema, osserva Ruggero: \textbf{un videogioco contiene al suo interno le regole,
+        automatizzate; il gioco da tavolo no}. ``Io provare un gioco non posso farlo se
+        non so come si gioca.'' ``Tu puoi anche dirmi: prova a giocare a scacchi, ti
+        spiego le regole dopo; ma mentre gioco io non so le regole.'' Ci viene chiesto
+        qualcosa per cui ci manca la conoscenza che sta in mezzo.
+  \item \textbf{Tiziana} racconta la sua esperienza: da quando è arrivata a Roma, le sono
+        stati spiegati ``tanti giochi'' da varie persone, e ``ci sono vari modi di
+        spiegare il gioco'', alcuni più efficaci, altri meno, anche in base al gioco. C'è
+        chi è un giocatore e ti spiega l'essenziale, ti dice le regole e poi ``gioca''; c'è
+        chi cerca di farti entrare dentro il gioco e ti porta anche altri elementi; e c'è
+        \textbf{chi ti facilita il gioco}, ``ed è l'esperienza migliore in assoluto''. Il
+        suo ordine: prima \textbf{l'obiettivo} del gioco (``che cosa arrivo a fare con
+        questo gioco''); poi una \textbf{panoramica generale}, mostrando che cosa c'è nel
+        gioco; poi il dettaglio, un po' alla volta, le meccaniche, le azioni che si possono
+        fare, come si ottengono punti. E la facilitazione ``è come stendere un tappetino
+        rosso davanti a chi inizia a giocare per la prima volta'': che cosa farei io, che
+        cosa non farei; ``tu che giochi per la prima volta tieni conto di questo, questo e
+        questo''; ``come prima mossa potresti fare questa cosa''. Perché spesso qualcuno
+        spiega un gioco anche complesso e poi dice ``boh, vai!'', e chi gioca per la
+        prima volta non sa che cosa fare: ``finché io non lo sperimento, non ce l'ho
+        effettivamente in mano''. Essere accompagnati la prima volta è un'esperienza
+        ``molto più felice'' che essere ``buttati in pasto ai pesci'', cioè agli
+        avversari.
+\end{itemize}
+
+\paragraph{Regole ed euristiche.} Ruggero raccoglie la distinzione implicita nella
+risposta di Tiziana: le \textbf{regole} si possono spiegare, ma la parte di
+\textbf{euristica}, ``tutta quella parte di che cosa ti conviene fare quando'', è
+difficile da capire se non si è già giocato quel gioco, o \textbf{giochi simili}: a
+volte le euristiche si imparano da altri giochi. ``Se io gioco magari dieci
+\emph{worker placement}, all'undicesimo \emph{worker placement} alcune cose le avrò già
+capite dagli altri'', con le differenze del caso. Ed è un'informazione utile per chi
+scrive il regolamento: chi ha già giocato giochi simili porta con sé una parte delle
+euristiche, chi non li ha mai giocati no.
+
+\paragraph{Nessuno conosce il gioco.} Poi un passo indietro. La facilitazione presuppone
+che qualcuno conosca il gioco; ma supponiamo che nessuno lo conosca: lo abbiamo comprato
+a una fiera o in un negozio, lo portiamo a casa, siamo in gruppo, apriamo la scatola.
+Come lo impariamo? ``Leggendo il regolamento.'' Certo; ma il gioco ``non è mai solo il
+gioco''.
+
+\subsection{Pre-gioco, post-gioco, fiction, intenti}
+
+\paragraph{Il pre-gioco.} Nel regolamento ci sono cose che vengono \textbf{prima del
+gioco}: il controllo dei componenti, la preparazione, il \textbf{\emph{setup}}. ``Mentre
+facciamo un \emph{setup}, non stiamo ancora giocando, stiamo preparando la nostra
+partita.'' E quella parte va spiegata. Ruggero chiede di tenere presenti le prossime
+slide quando i gruppi scriveranno i loro regolamenti, che \textbf{devono essere
+comprensibili per chi non è voi}. Questo vuol dire includere anche cose che per chi ha
+fatto il gioco sono ovvie: come si prepara il gioco, che componenti servono, che cosa
+bisogna procurarsi. Un esempio: in un gioco di ruolo spesso non c'è una scatola, c'è un
+manuale, e \textbf{dadi e matite non sono inclusi quasi mai}: il gioco chiede di
+procurarseli e di averli a portata di mano, e il manuale deve scriverlo, ``non devo
+darlo per scontato''. Oppure: se un gioco pervasivo richiede uno specifico ambiente,
+bisogna dirlo. L'anno scorso un progetto era un gioco pervasivo da giocare \textbf{in una
+stazione}, mentre si aspettano i treni, e ``l'aspettare i treni è parte del gioco'':
+questo è stato scritto.
+
+\paragraph{Il post-gioco.} Il gioco non finisce con l'ultima azione: ``c'è tutta una fase
+dopo, che è comunque parte della procedura''. Il \textbf{punteggio}, \textbf{chi vince},
+lo \textbf{spareggio}. E se il gioco tocca temi delicati e si vuole un
+\textbf{\emph{debriefing}}, come si è visto nella lezione sull'\emph{emotional design},
+anche il \emph{debriefing} è parte del post-gioco, e va scritto.
+
+\paragraph{La fiction.} Ma il gioco non è solo ``pre, durante, post'' in termini
+meccanici. C'è una parte di \textbf{fiction}, di \emph{world building}, di
+\emph{setting}: chi siete, che cosa fate in questo universo narrativo. Non vale solo per i
+giochi di ruolo, dove è molto presente: anche in \emph{Monopoly} abbiamo un ruolo, in
+\emph{Risiko} abbiamo un ruolo, in \emph{Ticket to Ride} c'è un \emph{setting}. E questa
+parte \textbf{può aiutare a spiegare il gioco}, specialmente se le meccaniche sono coese
+con il tema: se le azioni del mio turno sono tematicamente legate a chi sono,
+ricordarmele è più facile. ``Stiamo giocando una squadra di ladri e devo scappare dalla
+polizia: le mie meccaniche mi fanno scappare dalla polizia, il tema mi ricorda che devo
+scappare dalla polizia, le due cose lavorano insieme.''\footnote{Nella trascrizione ``una
+squadra di yard''; il senso (una banda in fuga dalla polizia) è chiaro, la parola
+esatta no.}
+
+\paragraph{Gli intenti.} ``C'è un altro problema, però.'' Dove sono, nel regolamento, gli
+\textbf{intenti}? Che cosa volete da questo gioco, non solo in termini di obiettivo (come
+si vince e come si perde), ma in termini di \textbf{perché il vostro gioco esiste},
+``perché qualcuno dovrebbe giocare il vostro gioco e non un altro''. Uno studente chiede
+se si intendono gli intenti del \emph{game designer} o del giocatore: gli intenti
+\textbf{di chi crea il gioco}, gli intenti del design. È una cosa ``molto più comune nel
+gioco di ruolo che nel gioco da tavolo'', ma anche alcuni giochi da tavolo hanno intenti
+molto chiari.
+
+\subsection{La scrittura è lineare, il gioco no}
+\label{a12:sec:lineare}
+
+Messo tutto insieme (materiali, ruoli, paragame, pre-gioco, post-gioco, fiction,
+intenti), ``notiamo subito che c'è un gran casino''. Ed è un casino che deriva da una
+verità ``a cui non potete scappare in nessun modo'': \textbf{la scrittura è un
+\emph{medium} lineare}. Quando leggiamo un regolamento, andiamo dall'inizio alla fine. Ma
+\textbf{i giochi non sono un \emph{medium} lineare}: sono \textbf{un ecosistema di
+regole}, e in quanto ecosistema una meccanica ne influenza un'altra. ``Ma io queste cose
+devo spiegarle a partire da un punto. Devo iniziare da qualche parte''
+(figura~\ref{a12:fig:ecosistema}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a12rule/.style={draw, thick, circle, minimum size=1.0cm, fill=gray!12, font=\footnotesize,
+                  align=center},
+  a12blk/.style={draw, thick, rounded corners=2pt, minimum width=1.75cm,
+                 minimum height=0.8cm, font=\footnotesize, align=center},
+  a12arr/.style={-{Stealth[length=2.5mm]}, thick},
+  a12lnk/.style={thin, gray}
+]
+  % ecosistema
+  \node[a12rule] (a) at (0,2.2) {turno};
+  \node[a12rule] (b) at (-1.6,1.1) {risorse};
+  \node[a12rule] (c) at (1.6,1.1) {azioni};
+  \node[a12rule] (d) at (-1.0,-0.6) {fine\\partita};
+  \node[a12rule] (e) at (1.0,-0.6) {ruoli};
+  \node[a12rule] (f) at (0,0.6) {punti};
+  \foreach \u/\v in {a/b,a/c,b/c,b/f,c/f,f/d,e/c,e/f,d/a,b/e,c/d}{\draw[a12lnk] (\u) -- (\v);}
+  \node[font=\footnotesize, align=center] at (0,-1.6) {il \textbf{gioco}: un ecosistema\\
+    (ogni regola tocca le altre)};
+  % freccia
+  \draw[a12arr, very thick] (2.6,0.6) -- node[above, font=\footnotesize, align=center]
+    {scrivere il\\regolamento} (4.4,0.6);
+  % sequenza lineare
+  \node[a12blk] (s1) at (5.6,2.2) {componenti};
+  \node[a12blk, below=0.15cm of s1] (s2) {\emph{setup}};
+  \node[a12blk, below=0.15cm of s2] (s3) {turno};
+  \node[a12blk, below=0.15cm of s3] (s4) {azioni};
+  \node[a12blk, below=0.15cm of s4] (s5) {fine partita};
+  \draw[a12arr] (s1.east) ++(0.25,0) -- ++(0,-3.85);
+  \node[font=\footnotesize, align=left, text width=3.8cm, anchor=west] at (6.9,0.6)
+    {il \textbf{regolamento}: una sequenza (si legge dall'inizio alla fine).\\[3pt]
+     \textbf{Da dove parto?} Componenti e \emph{setup} prima è la formula classica,
+     ma a volte servono concetti chiave \emph{prima} del \emph{setup}.};
+\end{tikzpicture}
+\caption{Il problema centrale della scrittura di un regolamento come lo pone Ruggero: il
+gioco è un ecosistema di regole che si influenzano a vicenda, ma la scrittura è
+lineare. Scegliere l'ordine in cui spiegare le cose (e verificarlo) è parte dei test di
+implementazione.}
+\label{a12:fig:ecosistema}
+\end{figure}
+
+\paragraph{Che cosa spiego per primo.} Parte dei \textbf{test di implementazione} è
+proprio capire \textbf{che cosa spiego per primo, che cosa metto davanti}. Una delle
+formule più classiche del gioco da tavolo è: prima i \textbf{componenti}, così le persone
+prendono familiarità con ciò che c'è nella scatola; poi il \textbf{\emph{setup}}, così
+vedono com'è il tavolo; poi il dettaglio (la plancia personale, il turno, il flusso di
+gioco). ``Ma a volte non è così.'' A volte ci sono \textbf{concetti chiave prima del
+\emph{setup}}, perché ci sono cose che bisogna sapere prima ancora di preparare il gioco.
+``Non esiste una soluzione univoca, purtroppo, o per fortuna'', a questo problema: i
+gruppi devono ragionarci sopra. Nel gioco che stanno scrivendo, dovendo spiegare
+\emph{tutto} (``non è che possiamo lasciare cose fuori''), da dove partono, che cosa
+spiegano e con quali metodi?
+
+\paragraph{Panoramica e rimandi.} Tiziana aggiunge che spesso nei regolamenti c'è una
+\textbf{panoramica generale} che poi rimanda allo specifico approfondimento, se lo si
+vuole, oppure lo si raggiunge leggendo linearmente. Ruggero conferma: molti regolamenti
+usano l'artificio del rimando (``vedi pagina 18 per il dettaglio del combattimento''),
+oppure un \textbf{indice}, magari all'inizio. Il problema che risolvono è un dubbio
+tipico: leggendo un regolamento per la prima volta, ``questa cosa com'è? Come
+funziona?'', senza sapere che verrà spiegata due pagine dopo. ``È parte dei test di
+implementazione andare a scovare questi dubbi e spostare il regolamento in accordo.''
+
+\subsection{Indici e blocchi: tre esempi}
+
+``Facciamo un po' di esempi.'' Ruggero mostra alcune pagine di regolamenti, colorate per
+blocchi (le immagini non sono nella trascrizione).
+
+\paragraph{L'indice di un gioco di ruolo per due persone.} Il primo è l'indice di un
+gioco di ruolo per due persone (il titolo non è detto), diviso in quattro tipi di
+\textbf{blocchi} (tabella~\ref{a12:tab:blocchi}): blocchi \textbf{generali}
+(introduzione, esempi di partita, obiettivi generali), blocchi \textbf{specifici} (le
+singole meccaniche), blocchi \textbf{personali} (le intenzioni dell'autore, fonti,
+riferimenti, ispirazioni) e \textbf{materiali di gioco} (per esempio schede stampabili,
+o il riassunto delle icone). Due precisazioni. Il \textbf{riassunto delle icone non è una
+regola}: è un materiale utile durante il gioco. La \textbf{premessa narrativa non è una
+regola}: è un aspetto generale che aiuta a contestualizzare ciò che si sta per fare. E
+``non c'è un ordine preciso'' di questi blocchi.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.6cm}p{5.4cm}p{5.0cm}@{}}
+\toprule
+\textbf{Blocco} & \textbf{Che cosa contiene} & \textbf{Note} \\
+\midrule
+Generali & introduzione, premessa narrativa, glossario, tipo di gioco, esempi di
+partita, obiettivi generali & contestualizzano; la premessa non è una regola \\
+Specifici & le singole meccaniche, il turno, il flusso di gioco & il cuore
+``tecnico'' del regolamento \\
+Personali & intenzioni dell'autore, note, fonti, riferimenti, ispirazioni, filmografie
+& ``non nascondetele, rendetele trasparenti'' \\
+Materiali di gioco & schede stampabili, riassunto delle icone, schermi, risorse,
+tabelle di supporto & non sono regole: sono strumenti da usare durante il gioco \\
+Indice & che cosa c'è e dove & comune nei GdR e nei giochi pesanti; assente nei
+\emph{card game} \\
+\bottomrule
+\end{tabular}
+\caption{I tipi di blocchi in cui Ruggero divide i regolamenti di esempio. L'ordine dei
+blocchi non è fisso, e cambiarlo è una delle cose che si possono testare.}
+\label{a12:tab:blocchi}
+\end{table}
+
+\paragraph{\emph{Fiasco}.} Il secondo esempio ha una parte iniziale di introduzione, con
+un \textbf{glossario} e una piccola presentazione del tipo di gioco; poi il dettaglio
+meccanico; poi i \textbf{materiali}. \textbf{\emph{Fiasco}} (il gioco di ruolo di Jason
+Morningstar) è un gioco che ha ``molto peso sui materiali'': la parte dei materiali non
+solo è molto grande, ma \textbf{non è alla fine del regolamento, è a metà}, perché
+\emph{Fiasco} deve essere giocato con quei materiali specifici, e il gioco spende molte
+pagine per spiegarli. Poi c'è una fase di \textbf{\emph{replay}}, ``se vogliamo un
+\emph{actual play}'', cioè una partita completa riassunta, cosa che nel gioco da tavolo
+``non vedremo mai''. Poi le \textbf{note personali} dell'autore, le filmografie di
+riferimento, le ispirazioni. Poi di nuovo materiali di supporto, e infine un
+\textbf{indice}, ``un aspetto generale di che cosa c'è nel regolamento''. Non tutti i
+giochi hanno un indice: è più facile trovarlo nei giochi di ruolo, perché i manuali
+possono avere centinaia di pagine, e nei giochi complessi come \emph{Root}, nei giochi
+della GMT, nei giochi strategici molto pesanti. ``Non troverete mai un indice in un
+\emph{card game}'': ``se comprate \emph{Uno}, \emph{Uno} non ha un indice in nessun
+regolamento''; ``è già tanto se c'è un \emph{brochurino} di una pagina''.
+
+\paragraph{Un gioco \emph{cyberpunk}: spostare i blocchi.} Più avanti Ruggero mostra un
+terzo esempio, da un gioco \emph{cyberpunk}\footnote{Ruggero non dice quale, ma è con
+ogni probabilità il gioco da tavolo di \emph{Cyberpunk} a cui ha lavorato, citato in
+altre lezioni e di nuovo più avanti in questa (``quando abbiamo progettato
+\emph{Cyberpunk}'').}: alcune parti del regolamento sono state \textbf{riallocate},
+spiegate prima o dopo altre, in base a ciò che si era visto nei \emph{pre-test}. I blocchi
+``li vedete anche a occhio nudo da lontano'': strizzando gli occhi davanti alle pagine,
+si vede al volo dove sono il blocco rosso, il verde, il giallo, il viola. E sono in
+quell'ordine non perché sia ``l'ordine naturale'', ma per il problema dell'ecosistema: ci
+sono sei blocchi da spiegare ``in parallelo'', ma bisogna partire da uno. ``Che cosa
+succede se sposto l'ordine di questi blocchi? Questa è un'altra cosa che si può
+testare.''
+
+\paragraph{Ragionate per blocchi.} Il consiglio pratico: \textbf{ragionare per blocchi}
+quando si scrive un regolamento, specialmente se è prototipale. ``Non preoccupatevi più
+di tanto di farlo bello, preoccupatevi di farlo funzionale a voi.'' Dividere in blocchi
+aiuta anche visivamente a capire dove si è messo che cosa, e a spostarlo per vedere che
+cosa succede.
+
+% ---------------------------------------------------------------------
+\section{Che cosa c'è in un regolamento}
+\label{a12:sec:contenuti}
+
+Poi ``un po' più di esempi specifici'', parte per parte. Per ognuna, la consegna implicita
+è la stessa: \textbf{chiedetevi come la scrivereste per il vostro gioco}.
+
+\paragraph{Di che cosa parla il gioco.} È ``in generale buona pratica'' averla. Può avere
+varie forme. Può essere una \textbf{premessa di genere}, in termini meccanici: questo è
+un ``\emph{up-and-down game}''\footnote{Così nella trascrizione; il genere a cui Ruggero
+si riferisce non è ricostruibile con certezza.}, un \emph{worker placement}, un gioco di \emph{draft},
+strategico, astratto. Ma può contenere anche un \textbf{aspetto narrativo}: qual è la
+fiction del gioco, chi siamo. Nei giochi da tavolo che si hanno in casa, ``spesso e
+volentieri le due cose sono un po' mischiate'': il regolamento parla del gioco
+contemporaneamente in termini di \emph{setting} e di chi siamo al tavolo meccanicamente
+(un gioco economico, di strategia, tattico, cooperativo). ``Ragionate anche voi, al
+vostro \emph{project work}: che tipo di gioco è? Se doveste scrivere questa parte nel
+regolamento, che cosa scrivereste?''
+
+\paragraph{Che cosa serve per giocare.} Anche qui varia molto (gioco di ruolo, gioco da
+tavolo), ma in generale è il \textbf{\emph{setup}}, la \textbf{preparazione}, i
+\textbf{componenti}: quando mi siedo con un gruppo di persone per giocare, che cosa devo
+avere con me? Possono essere cose già nella scatola (``nella scatola ci sono A, B, C, D,
+E''), oppure cose da prendere da casa (penne, matite, dadi). Spesso questa parte dà
+anche informazioni su come preparare i componenti, o indicazioni come ``assicuratevi di
+avere un tavolo abbastanza grande''.
+
+\paragraph{I principi di gioco.} Questa parte ``purtroppo è molto rara nel gioco da
+tavolo'', e Ruggero vorrebbe davvero che fosse più presente. Compare a volte nei giochi
+da tavolo con \textbf{dinamiche sociali}: \emph{social deduction}, cooperativi a ruoli
+segreti, giochi con limitazioni sulla comunicazione. È più comune nel gioco di ruolo. I
+\textbf{principi di gioco} dicono: \textbf{se giocate a questo gioco, che cosa dovete
+tenere a mente in termini di come approcciarvi al gioco?} Per esempio: non rivelate il
+vostro ruolo; non parlate liberamente delle carte che avete in mano; nel vostro turno
+non potete parlare, a meno che una carta non ve lo permetta. Sono principi che, se
+seguiti, aiutano a giocare il gioco \textbf{come è stato inteso}, come è stato
+progettato. ``Questo è un punto un po' più opaco per chi viene dal \emph{board game}'';
+se non è chiaro, Ruggero chiede di dirlo.
+
+\paragraph{Principi o regole?} Infatti uno studente chiede: che differenza c'è tra
+questo e le regole? In un gioco a ruoli segreti, ``non rivelare il proprio ruolo'' non è
+una regola? La differenza, risponde Ruggero, è che i principi \textbf{non sono regole e
+non sono meccaniche}: ``stiamo chiedendo a chi gioca di approcciarsi al gioco in un certo
+modo. Non gli stiamo dicendo fai ABC o non puoi fare ABC; gli stiamo dicendo: se giochi
+questo gioco, l'approccio dovrebbe essere questo''. Certo, ``come spesso succede'', ci
+sono zone grigie di incrocio, in cui la stessa cosa può essere una regola o non esserlo.
+Un esempio: ci sono \textbf{giochi di negoziazione in cui le promesse possono anche non
+essere mantenute}, ma il gioco ti chiede di porti come se dovessi mantenerle, ``perché
+stai giocando dei mercanti, non dei truffatori''. È una questione di approccio.
+
+\subsection{L'esperimento su \emph{Diamant}}
+
+Per mostrare che cosa cambia, Ruggero la prende ``un po' tangenziale''. Si è già parlato
+in passato di \textbf{\emph{Diamant}}, pubblicato anche come \textbf{\emph{Incan
+Gold}} a seconda dell'edizione, un gioco di \emph{push your luck}\footnote{Nella trascrizione ``giochi
+pusher l'acqua'', quasi certamente ``\emph{push your luck}'', il genere a cui
+\emph{Diamant} appartiene.}. È un gioco
+competitivo in cui si entra in rovine ``in stile Indiana Jones'' per prendere delle
+gemme. Più si va a fondo, più gemme si ottengono; in qualunque momento si può uscire,
+salvando tutte le gemme raccolte; ma se, andando a fondo, si incontra una trappola, si
+perde tutto. ``Parte del gioco è capire quando torno indietro e quando sto dentro.''
+
+\paragraph{Tre temi, stesse regole.} Il gioco è stato oggetto di \textbf{un esperimento
+sociale}\footnote{Ruggero non cita la fonte dell'esperimento; il capitolo riporta i dati
+come li dice lui.}: lo hanno \textbf{ritematizzato} in tre versioni. Una è quella
+originale, \textbf{alla Indiana Jones}, con avventurieri in competizione per le gemme.
+Una è una versione in cui si è \textbf{pompieri} e, invece di prendere gemme, si
+\textbf{salvano persone da un edificio in fiamme}. E una è \textbf{puramente astratta}:
+più si va a fondo, più punti si prendono; uscendo si salvano i punti; si perde tutto se
+si becca la seconda X. ``Il gioco è lo stesso meccanicamente, le regole sono
+identiche'': stesso modello matematico, stesso numero di carte, stesso numero di carte
+con le gemme. Cambiano la parola usata, il \emph{setting} e \textbf{i principi con cui ci
+si approccia al gioco}.
+
+\paragraph{Il risultato.} Nella versione dei pompieri che salvano vite, ``quasi il 90\%
+delle persone'' va fino in fondo, mentre nella versione Indiana Jones la gente, quando
+può, se ne va con le gemme ottenute. In un caso ci si approccia con l'idea ``stiamo
+salvando delle vite umane''; nell'altro con l'idea ``prendiamo più che possiamo, e poi
+andiamocene''. Queste cose rientrano nella questione del \textbf{paragame} di cui si è
+parlato in una lezione precedente, oltre che nella fiction: ``non sottovalutatelo''.
+Possono aiutare a spiegare il gioco (figura~\ref{a12:fig:diamant}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a12box/.style={draw, thick, rounded corners=3pt, text width=3.3cm, align=center,
+                 minimum height=1.5cm},
+  a12arr/.style={-{Stealth[length=3mm]}, thick}
+]
+  \node[a12box, fill=gray!15] (m) at (0,0) {\textbf{stesse regole}\\stesso modello
+    matematico, stesse carte, stesse trappole};
+  \node[a12box] (ij) at (-4.6,-2.6) {\textbf{Indiana Jones}\\si prendono gemme\\[2pt]
+    $\Rightarrow$ appena si può, \textbf{si esce} con il bottino};
+  \node[a12box] (pm) at (0,-2.6) {\textbf{pompieri}\\si salvano persone\\[2pt]
+    $\Rightarrow$ quasi il 90\% \textbf{va fino in fondo}};
+  \node[a12box] (ab) at (4.6,-2.6) {\textbf{astratto}\\si prendono punti, si perde
+    alla seconda X};
+  \draw[a12arr] (m) -- node[left, font=\footnotesize, pos=0.4]{tema} (ij);
+  \draw[a12arr] (m) -- (pm);
+  \draw[a12arr] (m) -- (ab);
+  \node[font=\footnotesize, text width=12cm, align=center] at (0,-4.1) {cambiano il
+    \emph{setting} e i \textbf{principi di approccio}: il tema cambia ciò che i
+    giocatori sentono di \emph{dover} fare};
+\end{tikzpicture}
+\caption{L'esperimento sul ritematizzare \emph{Diamant} (o \emph{Incan Gold}) come lo
+racconta Ruggero. Per la versione astratta Ruggero non dà un dato.}
+\label{a12:fig:diamant}
+\end{figure}
+
+\paragraph{Voi non siete al tavolo.} ``Ricordatevi: quando fate giocare il vostro gioco,
+voi non siete nel gruppo di gioco. È raro che qualcuno compri il vostro gioco e che
+siate voi a spiegarglielo.'' Quindi scrivete il regolamento ``in modo che sia il più
+comprensibile possibile'', il che può voler dire usare anche dei ``trucchi'' (i principi
+di gioco, il \emph{setting}, il tema) per far passare ciò che si vuole far passare.
+
+\paragraph{Un regolamento può contenere tantissime cose.} (Intanto entra Rita, che si
+scusa per il ritardo, e Ruggero consiglia a lei, a Lorenzo e a Gianmarco di recuperare
+l'inizio della lezione: ``non sono tante slide, ma sono slide importanti''.) Un
+regolamento può avere ``tantissime cose dentro, spesso anche mischiate'':
+\begin{itemize}
+  \item il \textbf{pre-gioco}: \emph{setup}, preparazione, che cosa avere al tavolo;
+  \item un \textbf{\emph{workshop}}, specialmente in ambito formativo o didattico, dove
+        spesso il gioco è preceduto da un \emph{workshop} con chi gioca, come si è visto
+        nei casi studio dei giochi \emph{black box}, dei LARP scandinavi e dei giochi su
+        tematiche delicate;
+  \item la spiegazione dei \textbf{ruoli};
+  \item il \textbf{post-gioco} e il \textbf{\emph{debriefing}};
+  \item le \textbf{note personali} e le \textbf{ispirazioni} avute durante la
+        progettazione: ``non nascondetele, rendetele trasparenti, scrivetele nel
+        regolamento'';
+  \item la \textbf{fiction}, il mondo di gioco, i \textbf{personaggi};
+  \item gli \textbf{esempi di gioco}, l'\textbf{\emph{actual play}}.
+\end{itemize}
+``Tutte cose che vi possono essere utilissime per spiegare il vostro gioco.'' Non è detto
+che i gruppi siano nella posizione di spiegarlo di persona, e la domanda è sempre la
+stessa: \textbf{come mi assicuro che una persona che non sono io legga il regolamento, lo
+capisca e giochi il gioco come io intendo che debba essere giocato?}
+
+\paragraph{Approfondimento: il regolamento come primo \emph{tutorial}.} Schell, nel
+capitolo sul \emph{playtesting}, osserva un effetto collaterale dei test ripetuti: le
+istruzioni che il designer dà ai \emph{tester} prima della partita vengono limate
+sessione dopo sessione, ``una parola tolta qui, una frase aggiunta là'', finché non
+diventano un discorso chiarissimo ed efficiente; e consiglia di \textbf{scriverlo}, perché
+può diventare la base del \emph{tutorial} del gioco. Nel gioco analogico quel discorso
+\emph{è} il regolamento, e la lezione di Ruggero dice la stessa cosa da un altro lato:
+la facilitazione di Tiziana (il ``tappetino rosso'', il ``come prima mossa potresti'') è
+ciò che un buon regolamento deve riuscire a fare da solo, quando il designer non c'è.
+Le euristiche (``che cosa ti conviene fare quando'') sono la parte più difficile da
+mettere per iscritto, ed è per questo che molti regolamenti aggiungono esempi di partita,
+consigli per la prima partita e, nei giochi di ruolo, \emph{actual play}.
+
+% ---------------------------------------------------------------------
+\section{Raccogliere i feedback: che cosa succede durante la partita}
+\label{a12:sec:osservare}
+
+Nessuna domanda sulla parte del regolamento, e si passa all'ultimo blocco di slide: i
+\textbf{metodi etnografici per la raccolta dei feedback}. Il collegamento con il
+triangolo è esplicito. Testare in modo focalizzato (ruolo, implementazione, \emph{look and
+feel}) ``non è in automatico positivo in termini di risultati'': posso fare un test in cui
+so benissimo che cosa sto testando e ho focalizzato il problema, ``ma se non riesco a
+raccogliere i feedback in maniera funzionale, io non me ne faccio niente di quel test''.
+Quindi: durante il test, e alla fine del test, \textbf{come faccio a estrapolare dei
+risultati}, a capire com'è andato?
+
+La lezione distingue due momenti: \textbf{che cosa osservo durante la partita} (tre
+metodi) e \textbf{come raccolgo i feedback dopo la partita} (quattro metodi). Per ogni
+metodo, Ruggero chiede alla classe pro e contro, e poi completa. Le
+tabelle~\ref{a12:tab:durante} e~\ref{a12:tab:dopo} riassumono il risultato.
+
+\subsection{L'osservazione in presenza}
+
+Il metodo ``forse più banale e immediato'': \textbf{sono fisicamente presente} e osservo
+il gruppo che sta giocando. Il gruppo di test gioca, noi che abbiamo creato il gioco
+siamo nella stessa stanza e lo osserviamo.
+
+\paragraph{I pro.} Risponde una studentessa: ``possiamo renderci conto immediatamente di
+tante cose''. Se la lettura del regolamento è chiara, per esempio, perché qualcuno farà
+dei commenti (``questa cosa non l'ho capita'') o chiederà direttamente, ``e sicuramente
+la chiedono a me, se sono lì e ho fatto io il gioco''. E se i giocatori hanno dei dubbi,
+chi ha creato il gioco ``in teoria'' è in grado di rispondere, e può assicurarsi che il
+gioco venga giocato come è stato inteso. L'importante, aggiunge la studentessa, è
+\textbf{osservare le criticità}: i momenti in cui ci si inceppa, quelli in cui non sembra
+chiaro, che tipo di dubbi vengono. E, aggiunge un'altra voce, si può osservare il
+\textbf{linguaggio del corpo}.
+
+\paragraph{I contro.} ``Però così detto sembra tutto rose e fiori.'' La classe ne trova
+diversi, e Ruggero li ordina.
+\begin{itemize}
+  \item \textbf{Il feedback potrebbe non essere realistico}: c'è della \emph{peer
+        pressure}\footnote{Nella trascrizione ``pill pressure''.}. Le persone sono
+        osservate da chi ha creato il gioco, e molte ``si fanno dei problemi quando devono
+        dire a qualcuno in faccia: la cosa che hai fatto fa schifo''. Dipende dalle
+        persone al tavolo, ``con l'asterisco'', ma alcune cercheranno di limare i
+        feedback prima che arrivino, o avranno qualche remora a darli.
+  \item \textbf{Chi gioca si aspetta che gli si dica come giocare}, invece di giocare
+        attivamente come farebbe senza di noi: è condizionato nell'azione, e il
+        \emph{playtest} può essere falsato. In particolare, i giocatori hanno ``poco
+        incentivo a imparare il regolamento come se fossero a casa loro'': c'è qui la
+        persona che ha fatto il design, se ho dei dubbi non li cerco nel regolamento, li
+        chiedo.
+  \item \textbf{La scala}. Uno studente obietta che lui fa provare il gioco ai suoi amici,
+        in quattro; ma il problema è un altro. Se dobbiamo essere presenti e dobbiamo
+        fare dieci test, dobbiamo essere presenti a dieci partite. ``Se io devo fare cento
+        test, tutti e cento in presenza, e il gioco dura due ore, fate voi un po' di
+        calcoli, e il tempo è poco.''
+  \item \textbf{La presenza crea dei \emph{bias}}. Il gruppo che testa con noi presenti
+        non giocherà come se fosse a casa: ``avrà un \emph{feeling} di c'è qualcuno che
+        mi osserva e mi giudica''. E questo non lo si toglie nemmeno dicendo ``non ti
+        preoccupare, non ti giudichiamo, non è una gara, non è un'interrogazione, non è
+        un torneo'': qualcuno li sta osservando giocare. È per forza di cose un test
+        lontano dal giocare in casa con gli amici, dove di solito nessuno ci osserva con
+        giudizio.
+\end{itemize}
+``Nessun metodo è perfetto, ogni metodo ha i suoi pro e i suoi contro.'' La parte
+importante è conoscerli, ``perché alcuni dei pro e alcuni dei contro possiamo combinarli
+ad altri per limitare i danni''.
+
+\subsection{La registrazione audiovisiva}
+
+Seconda opzione: \textbf{una registrazione audiovisiva} del gruppo di gioco. Noi non siamo
+presenti; il gruppo gioca, e una telecamera registra la partita. ``Ma in tempo reale?'',
+chiede qualcuno. No: abbiamo una registrazione, tutta la partita registrata. E la domanda
+ha già toccato un pro.
+
+\paragraph{I pro.} Il primo: \textbf{può essere asincrono}. Posso organizzare dieci gruppi
+di test che giocano in contemporanea e avere dieci registrazioni nel tempo di una sola
+partita: ``abbattiamo un po' il discorso della scala''. Dovrò comunque guardarmi dieci
+partite, ``ma sto abbattendo la durata'' dell'organizzazione. Il secondo, ``un grosso
+pro'', lo trova Gianmarco: \textbf{la partita si può rivedere}. Si può tornare indietro,
+osservare turno per turno, tornare a uno stato precedente del gioco per capire perché le
+persone hanno fatto certe scelte, in modo dettagliato. ``Nella partita che scorre in
+tempo reale possiamo perderci tantissime cose che, riguardandole, diventano più
+evidenti.'' Poter \textbf{archiviare} la partita, riguardarla, estrarne piccoli spezzoni
+specifici da analizzare, ``è una parte importantissima, potenzialmente''.
+
+\paragraph{I contro.} Li trova Rita: \textbf{non si può controllare tutta la stanza}, né
+tutti i movimenti dei giocatori, ma solo ciò che inquadra la telecamera, per esempio il
+tabellone, ``come nella fotografia'' della slide. ``Questo è un punto importantissimo'':
+in presenza siamo esseri umani che si possono spostare, guardare i volti, guardare il
+tabellone, sporgersi a guardare le carte in mano a una persona. Qui no. E, aggiunge una
+studentessa, nel \emph{playtest} è importante osservare anche \textbf{se le emozioni che
+ci siamo prefissati vengono effettivamente provate}: senza vedere come si muovono le
+persone, è difficile. ``Assolutamente.''
+
+\subsection{Nessuna osservazione: il test a porte chiuse}
+
+Terzo metodo: \textbf{nessuna osservazione}. Il gruppo testa, noi non ci siamo, non viene
+registrato niente. Una studentessa non capisce (``com'è che funziona questa osservazione
+senza osservazione?''; ``qui a me sembra un nonsenso''): vuol dire che non osserviamo la
+partita, non siamo presenti, non la registriamo. E come sappiamo che cosa è successo? Ce
+lo raccontano dopo, con uno dei metodi di raccolta successivi; ``ma teniamoci per ora
+durante la partita''.
+
+\paragraph{I contro.} ``Non sai come hanno giocato.'' Banale, ``ma non sappiamo com'è
+andata, davvero''. ``Non ho dati'', dice qualcuno; ``è peggio di così'', risponde
+Ruggero: \textbf{non sappiamo se hanno giocato il gioco correttamente}.
+
+\paragraph{I pro.} Ma anche questo metodo ha i suoi pro, ``almeno altri due'' oltre al
+primo.
+\begin{itemize}
+  \item \textbf{Nessun \emph{bias} dovuto alla presenza} di qualcuno che osserva. Uno
+        studente porta un esempio personale: aveva provato due volte lo stesso esame
+        all'università; la prima volta era andata male, perché era l'unico nell'aula e
+        aveva il professore a fianco che guardava che cosa scriveva, e ``non scrivevo le
+        cose che volevo''.
+  \item \textbf{Interpretazioni impreviste}. Rita osserva che, non essendo condizionati
+        da noi, i \emph{tester} potrebbero dare un'altra interpretazione al regolamento
+        e suggerire letture diverse del gioco, o scoprire una falla. È un effetto
+        collaterale del ``non sappiamo se giocano il gioco giusto'', e magari emerge
+        dopo. Ma è legato a un pro più generale: \textbf{è il metodo più vicino a come
+        le persone giocano realmente i giochi in casa}. ``A livello di \emph{look and
+        feel}, questo metodo è il più vicino in assoluto'': quando giochiamo con gli amici
+        non abbiamo una telecamera puntata, né il designer che ci osserva.
+  \item \textbf{Il tempo}, che trova Tancredi: il tempo richiesto a chi fa il test ``è
+        esattamente quello di zero partite''. Non devo essere presente, non devo
+        guardare nulla, e posso fare anche mille partite in parallelo. Per questo il
+        metodo è usatissimo per i \emph{playtest} \textbf{quantitativi}, quelli sui
+        \textbf{modelli matematici}, quelli su grande scala: ``rilascio una beta e poi
+        aspetto che la gente mi mandi feedback''. Non so se lo giocano, come lo giocano,
+        se lo giocano giusto, ``ma a strascico qualcosa beccherò''.
+\end{itemize}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.6cm}p{5.0cm}p{5.4cm}@{}}
+\toprule
+\textbf{Metodo} & \textbf{Pro} & \textbf{Contro} \\
+\midrule
+In presenza & ci si accorge subito di dubbi e inciampi; si vedono volti, carte,
+linguaggio del corpo; si può garantire che il gioco sia giocato come inteso & feedback
+addolciti (\emph{peer pressure}); i giocatori chiedono invece di leggere il
+regolamento; non scala (dieci test = dieci partite a cui assistere); \emph{bias}
+dell'essere osservati e giudicati \\
+\addlinespace
+Registrazione & asincrona (più gruppi in parallelo); la partita si può rivedere turno
+per turno, archiviare, spezzettare & si vede solo ciò che la telecamera inquadra;
+difficile cogliere volti ed emozioni; le partite vanno comunque guardate \\
+\addlinespace
+Nessuna osservazione & nessun \emph{bias} da osservatore; il più vicino al gioco reale
+in casa; interpretazioni impreviste; costo in tempo nullo, scala a migliaia di
+partite (test quantitativi, \emph{beta}) & non si sa com'è andata, né se il gioco è stato
+giocato correttamente \\
+\bottomrule
+\end{tabular}
+\caption{I tre modi di seguire una partita di test, con i pro e i contro emersi dalla
+discussione con la classe.}
+\label{a12:tab:durante}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Raccogliere i feedback: che cosa succede dopo la partita}
+\label{a12:sec:dopo}
+
+``Ok, la partita c'è stata'': in presenza, con la telecamera, o a porte chiuse. Dopo la
+partita, che cosa facciamo?
+
+\subsection{Il \emph{debriefing} orale di gruppo}
+
+L'opzione ``forse più comune'': alla fine del test, chi ha fatto il gioco, o chi facilita
+il test, fa un \textbf{\emph{debriefing} di gruppo}.
+
+\paragraph{I pro.} Una studentessa: rispetto a un questionario, ``le domande aperte ti
+permettono di raccogliere un feedback non previsto''. Sì: siamo lì in tempo reale, e se
+emerge una domanda possiamo seguirla. Le persone ``non sono delle macchine'', e qualcuno
+dirà plausibilmente qualcosa che ci sorprende, un approccio al gioco a cui non avevamo
+pensato; e visto che siamo lì di persona, possiamo \textbf{costruire in tempo reale} su
+quel feedback qualcosa di più strutturato.
+
+\paragraph{I contro.} ``Ce ne sono svariati.'' Tancredi trova il primo: \textbf{alcune
+persone prendono più spazio di altre}, se il \emph{debriefing} non è gestito bene. ``Questo
+è un punto importantissimo.'' E c'è una conseguenza ``estremamente subdola'', non
+necessariamente voluta ma implicita nel metodo: \textbf{la sovrascrittura delle
+opinioni}. Se una persona è indecisa se una meccanica le piace o no, e un'altra dice
+``'sta meccanica fa schifo, perché A, B, C'', l'opinione forte sovrascrive parzialmente
+quella indecisa e la spinge verso il ``fa schifo'' (``o viceversa''). Non perché chi è
+indeciso sia ``debole mentalmente'', ma nel senso letterale: ``sento opinioni che stanno
+influenzando la mia opinione''. Ed è un peccato: ``se facciamo un test e siamo in sei, a
+noi sarebbe utile avere sei opinioni sul gioco, non un'opinione molto forte e altre che
+sono impattate da quell'opinione''. Un caso tipico è il \textbf{gruppo misto}: se su
+cinque \emph{tester} due sono \emph{game designer} e tre no, i primi tenderanno a dare
+feedback molto tecnici, e gli altri tre si sentiranno ``la mia opinione non vale niente,
+non ha senso neanche che la dica''; e invece magari sono proprio le opinioni che servono
+di più.
+
+\subsection{Il \emph{debriefing} orale uno a uno}
+
+L'alternativa: finita la partita, \textbf{immediatamente}, non si fa parlare il gruppo,
+lo si separa, e si fa un piccolo \emph{debriefing} \textbf{con una persona alla volta}.
+
+\paragraph{I pro.} Il primo ``è appena stato detto'': \textbf{si evita la sovrascrittura}.
+Ma c'è di più: \textbf{si può andare molto più nel dettaglio}. In base a ciò che si è
+osservato, si possono avere domande specifiche per una persona specifica: ``perché nel
+turno X hai fatto questo? Perché al turno Y hai attaccato quest'altra persona?''. In un
+\emph{debriefing} di gruppo questo tipo di indagine è scomodo; in un ambiente uno a uno è
+``l'ambiente perfetto''. Un esempio: una persona ha perso la partita perché al quarto
+turno ha attaccato Tizio. Perché l'hai attaccato? La risposta può essere ``mi sta
+antipatico e gli volevo dar fastidio'', oppure una risposta tattica (``dalle cose che
+avevo, mi sembrava la scelta migliore''). ``Sono due opzioni diverse'', e il
+\textbf{modello matematico} ne risente in modo diverso. E poi si può chiedere all'altra
+persona: al turno X Caio ti ha attaccato; che cosa hai provato? Le \textbf{dinamiche
+interpersonali} si possono indagare molto bene in questo formato.
+
+\paragraph{I contro.} \textbf{Il tempo scala con il numero di giocatori}: un
+\emph{party game} da dodici persone sono dodici interviste uno a uno, e se le si fa da
+soli diventa ``un po' intensa''. Magari ogni intervista dura cinque minuti, e quella di
+gruppo mezz'ora, ma il totale dura comunque il doppio. Se si è in più persone, ci si
+possono dividere le interviste (``io ne faccio tre, tu ne fai altre tre'').
+
+\subsection{Il form chiuso}
+
+Terza opzione: \textbf{un modulo preparato}. Non c'è un \emph{debriefing} orale: a fine
+partita si manda un \emph{form}, e i \emph{tester} lo compilano.
+
+\paragraph{Non te lo compileranno.} Il primo contro arriva subito dalla classe: ``non te
+lo compileranno''. ``Diamo per scontato che le persone non siano tutte delle merde e
+che alcune te lo compilino''; ma sì, è uno dei contro: se non si obbligano le persone,
+non si avranno tutti i \emph{form}. Una pratica che Ruggero ha visto fare anche di
+persona: \textbf{subito a fine partita} si dà ai \emph{tester} un tablet con il
+\emph{form}, o si manda subito una mail, e lo si fa compilare lì. ``Più aspetti, meno è
+possibile che te lo compilino.''
+
+\paragraph{I grandi numeri.} Un altro studente osserva che questo è il metodo che
+\textbf{richiede numeri su grande scala}, per assorbire gli \emph{outlier} e le risposte
+date in fretta: lui stesso, ammette, ad alcune domande risponde bene e ad altre in modo
+frettoloso, e quella fretta si annulla se i \emph{form} sono cento. È ``contemporaneamente
+un pro e un contro'', intrinseco nello strumento, che infatti è usatissimo nei
+\textbf{test quantitativi}. ``Se devo fare mille test, non mi sparo mille interviste uno a
+uno'': non ce la si fa, in termini umani. Mandare mille \emph{form} in contemporanea vuol
+dire che magari quattrocento non rispondono, e trecento rispondono ``mentre sono
+ubriachi'', ma per la legge dei grandi numeri qualcosa viene fuori.
+
+\paragraph{Fuori dai margini delle domande.} Il contro più importante lo trova una
+studentessa: con un \emph{form} \textbf{non si esce dai margini delle domande}; serve a
+\emph{validare}. Per renderlo efficace in termini quantitativi le domande devono essere
+molto restrittive: \emph{slider}, voti da 1 a 5 o da 1 a 10, \emph{checkbox} booleane
+(sì/no, vero/falso), scale numeriche. ``È difficile, a quel punto, che salti fuori
+qualcosa che non ci aspettiamo.'' Nel feedback orale qualcuno può dire ``sai che questa
+meccanica mi ha sorpreso tantissimo? Non me l'aspettavo''; qui quella parte non esiste.
+Per questo Ruggero \textbf{sconsiglia i \emph{form} nelle primissime fasi di test}, quelle
+in cui non si sa ancora quali aspetti del sistema possono sorprendere. Sono invece ottimi
+per i \textbf{test di implementazione} e per i test su grandi numeri sui \textbf{modelli
+matematici}. Un esempio: ``che fazione avevi? Hai vinto? Sì/no''. Già solo questo, su
+grandi numeri, dice quante volte vince ciascuna fazione, in percentuale.
+
+\subsection{Il report libero}
+
+Ultima opzione: \textbf{il report libero}. Sempre digitale, si manda un link, e il
+\emph{tester} scrive liberamente un documento sulla sua esperienza.
+
+\paragraph{I contro, e un pro nascosto.} Gianmarco: c'è il rischio che l'intervistato
+``vada per la tangente'', scriva cose non inerenti, fuori dal \emph{focus} che serve.
+Può scrivere quello che vuole; e in più ``esacerbiamo ulteriormente'' il problema della
+compilazione: se fare il \emph{form} è già una seccatura, ``farti il tema sul
+\emph{playtest}, ti saluto proprio''. Ma, supponendo persone ben intenzionate, ciò che ha
+detto Gianmarco è in realtà ``una piccola parte dei pro'': se nel \emph{form} rigido
+alcune cose non spuntano, in quello aperto sì. Qui si può avere qualcosa di simile al
+``questa meccanica mi ha sorpreso'' del feedback orale.
+
+\paragraph{Il grande contro: leggerli tutti.} ``Non posso leggerli tutti, è molto
+difficile.'' Qui si perdono i vantaggi del quantitativo: senza una struttura standard, se
+arrivano mille report bisogna leggere mille documenti, ``e tanto vale che rifaccio gli
+orali, che almeno ho spazio di manovra emergente''. Un vantaggio, però, rispetto agli
+orali: \textbf{gli orali si perdono, questi sono scritti}. È di nuovo la questione
+``telecamera o non telecamera, testo scritto o testo orale''.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.6cm}p{5.0cm}p{5.4cm}@{}}
+\toprule
+\textbf{Metodo} & \textbf{Pro} & \textbf{Contro} \\
+\midrule
+Orale di gruppo & feedback imprevisti; si può costruire in tempo reale su
+ciò che emerge & chi parla di più occupa lo spazio; \textbf{sovrascrittura delle
+opinioni}; nei gruppi misti, chi non è del settore si autocensura \\
+\addlinespace
+Orale uno a uno & niente sovrascrittura; domande mirate sulle singole scelte
+(``perché hai attaccato?''); dinamiche interpersonali indagate senza imbarazzo & il tempo
+cresce con il numero di giocatori (dodici giocatori, dodici interviste) \\
+\addlinespace
+\emph{Form} chiuso & scala a centinaia o migliaia di risposte; i grandi numeri
+assorbono le risposte frettolose; ottimo per implementazione e modello matematico &
+molti non lo compilano (va fatto compilare subito); domande restrittive, nessuna
+sorpresa: \textbf{valida, non scopre}; sconsigliato nelle prime fasi \\
+\addlinespace
+Report libero & possono emergere cose che il \emph{form} non prevede; resta per iscritto
+& ancora meno compilato; risposte fuori \emph{focus}; impossibile da leggere su grande
+scala \\
+\bottomrule
+\end{tabular}
+\caption{I quattro modi di raccogliere i feedback dopo la partita. Nessuno è migliore
+in assoluto: la scelta dipende da che cosa si sta testando e in che fase.}
+\label{a12:tab:dopo}
+\end{table}
+
+\subsection{Combinare i metodi con il triangolo}
+
+``Io voglio che voi vi approcciate a questi metodi non come uno è meglio degli altri'',
+ma con tre domande: \textbf{che cosa sto testando adesso? In che fase di test sono? Che
+cosa mi è utile per massimizzare i risultati di questo \emph{playtest}?} Se si combinano
+questi metodi con il triangolo dell'inizio della lezione, ``sono sicuro che avete già al
+volo alcune combinazioni molto, molto sensate''. Due esempi: \textbf{un test di ruolo in
+presenza, con feedback orale uno a uno}; oppure \textbf{un test di implementazione da
+remoto, a porte chiuse, con \emph{form} precompilato per il modello matematico}
+(figura~\ref{a12:fig:combinazioni}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a12col/.style={draw, thick, rounded corners=3pt, text width=3.0cm, align=center,
+                 minimum height=0.9cm, fill=gray!12},
+  a12it/.style={draw, rounded corners=2pt, text width=3.0cm, align=center,
+                minimum height=0.75cm, font=\footnotesize},
+  a12arr/.style={-{Stealth[length=2.5mm]}, very thick}
+]
+  \node[a12col] (c1) at (0,0) {\textbf{che cosa testo}};
+  \node[a12col] (c2) at (4.4,0) {\textbf{come osservo}};
+  \node[a12col] (c3) at (8.8,0) {\textbf{come raccolgo}};
+  \node[a12it, below=0.3cm of c1] (r) {ruolo};
+  \node[a12it, below=0.2cm of r] (l) {\emph{look and feel}};
+  \node[a12it, below=0.2cm of l] (i) {implementazione};
+  \node[a12it, below=0.3cm of c2] (p) {in presenza};
+  \node[a12it, below=0.2cm of p] (v) {registrazione};
+  \node[a12it, below=0.2cm of v] (n) {porte chiuse};
+  \node[a12it, below=0.3cm of c3] (o1) {orale uno a uno};
+  \node[a12it, below=0.2cm of o1] (og) {orale di gruppo};
+  \node[a12it, below=0.2cm of og] (f) {\emph{form} chiuso};
+  \node[a12it, below=0.2cm of f] (lib) {report libero};
+  % combinazione 1
+  \draw[a12arr] (r.east) -- (p.west);
+  \draw[a12arr] (p.east) -- (o1.west);
+  % combinazione 2
+  \draw[a12arr, dashed] (i.east) -- (n.west);
+  \draw[a12arr, dashed] (n.east) -- (f.west);
+  \node[font=\footnotesize, text width=12cm, align=left] at (4.4,-5.7)
+    {\textbf{linea continua}: test di ruolo, in presenza, \emph{debriefing} uno a uno
+     (le prime fasi, quando il gioco può ancora sorprendere).\\
+     \textbf{linea tratteggiata}: test di implementazione, a porte chiuse, \emph{form}
+     chiuso (molti test, modello matematico).};
+\end{tikzpicture}
+\caption{Le due combinazioni ``molto sensate'' citate da Ruggero tra tipo di test,
+modalità di osservazione e modalità di raccolta. Le altre combinazioni sono possibili;
+il criterio è sempre che cosa si sta testando e in che fase.}
+\label{a12:fig:combinazioni}
+\end{figure}
+
+\paragraph{Approfondimento: \emph{debriefing} e interviste secondo Schell.} Il capitolo
+sul \emph{playtesting} di \emph{The Art of Game Design} arriva a conclusioni molto
+vicine. Sulle interviste: \textbf{farle in privato quando possibile}, perché le persone
+parlano più onestamente uno a uno che quando ascoltano altri, soprattutto persone che
+conoscono; e, se i \emph{tester} sono amici tra loro, fare l'intervista di gruppo
+\emph{dopo} quelle private. Schell cita anche il \emph{video closet} di Barbara
+Chamberlin: una stanzetta con una telecamera e una lavagna con una domanda, in cui i
+giocatori entrano uno alla volta e rispondono parlando alla telecamera, un rimedio contro
+il \emph{groupthink} che aiuta a dare voce ai più silenziosi. Sui questionari: farli
+compilare \textbf{subito dopo la partita}, non metterci troppe domande, preferire scale a
+cinque punti con etichette chiare, e non prendere i dati come ``vangelo''. E sul
+designer presente al test, Schell riconosce il rischio che Ruggero descrive (il designer
+che ``contamina'' i \emph{tester} con il suo punto di vista), ma conclude che, se si
+riesce a trattenersi, si impara molto di più osservando di persona: lui stesso dice di
+guardare soprattutto \textbf{i volti} dei giocatori, più che il gioco.
+
+% ---------------------------------------------------------------------
+\section{Il sentimento dietro la soluzione}
+\label{a12:sec:sentimento}
+
+``Ricordatevi poi un'altra cosa utilissima, questa è proprio a monte.'' Quando qualcuno dà
+un feedback, molte persone tenderanno anche a dare \textbf{la soluzione} (``devi fare
+così e così''). ``Ma siete voi le persone che stanno facendo il \emph{game design}.''
+Bisogna prendere ciò che i \emph{tester} dicono e \textbf{distillarlo}: capire il
+\textbf{sentimento all'origine}, la fonte. Le persone vedono spesso un aspetto delle
+cose, ``ma non è detto che sappiano cosa c'è sotto il cofano''.
+
+\paragraph{La fazione troppo forte.} L'esempio: qualcuno dice ``guarda, questa fazione è
+rotta, è troppo forte, devi ridurle l'attacco di due''. La \textbf{soluzione} proposta è
+``riduci l'attacco di due''; il \textbf{problema} percepito è ``la fazione è troppo
+forte''; il \textbf{sentimento} è ``questa fazione mi ha distrutto, mi sono sentito
+attaccato inutilmente da una fazione che sembra troppo aggressiva''. Ma guardando la
+partita, magari si scopre che quella fazione era in mano a ``Pierino'', un suo amico che
+voleva fargliela pagare per motivi suoi. Il sentimento della fazione troppo forte, allora,
+non dice necessariamente quanto quella fazione sia forte nel modello matematico. Bisogna
+separare ciò che la persona dice in termini diretti da \textbf{che cosa ha fatto emergere
+il problema}: a volte sì, bisogna ridurre un numero di due, aumentare il numero di carte,
+dare un'unità in più a qualcuno; a volte il problema è frutto di un contesto, e non è
+colpa della fazione, del numero o della carta, ma di qualcos'altro che è successo nella
+partita (figura~\ref{a12:fig:sentimento}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a12lay/.style={draw, thick, rounded corners=3pt, text width=2.9cm, align=center,
+                 minimum height=2.1cm},
+  a12arr/.style={-{Stealth[length=3mm]}, thick}
+]
+  \node[a12lay] (s) at (0,0) {\textbf{soluzione}\\``riduci l'attacco di due''};
+  \node[a12lay] (p) at (3.8,0) {\textbf{problema}\\``la fazione è troppo forte''};
+  \node[a12lay] (e) at (7.6,0) {\textbf{sentimento}\\``mi sono sentito attaccato
+    inutilmente''};
+  \node[a12lay, fill=gray!15] (c) at (11.4,0) {\textbf{causa}\\un modello matematico
+    sbilanciato? o un ``Pierino'' al tavolo?};
+  \draw[a12arr] (s) -- (p);
+  \draw[a12arr] (p) -- (e);
+  \draw[a12arr] (e) -- (c);
+  \node[font=\footnotesize, align=center] at (1.9,-1.55) {ciò che il \emph{tester}
+    dice};
+  \node[font=\footnotesize, align=center] at (9.5,-1.55) {ciò che il designer deve
+    capire (osservando la partita)};
+  \draw[thick] (-1.4,-1.2) -- (5.2,-1.2);
+  \draw[thick] (6.2,-1.2) -- (12.8,-1.2);
+\end{tikzpicture}
+\caption{Distillare un feedback, sull'esempio di Ruggero: dalla soluzione proposta al
+sentimento che l'ha generata, e da lì alla causa. Le soluzioni sono di chi fa il
+design.}
+\label{a12:fig:sentimento}
+\end{figure}
+
+\paragraph{Approfondimento: i \emph{tester} non sono designer.} Anche questo consiglio ha
+un corrispettivo nel capitolo di Schell: \emph{``Don't expect playtesters to be game
+designers''}. Domande come ``il livello tre sarebbe stato migliore se fosse più
+difficile?'' non danno buoni risultati, perché la maggior parte dei \emph{tester} non è
+abituata a ragionare sulle meccaniche (e tende a volere giochi più facili); meglio
+chiedere ``ci sono parti del livello tre noiose?'', cioè chiedere il sentimento e non la
+soluzione. Le sei domande che Schell usa a fine partita (dette \emph{FFWWDD}, da Shawn
+Patton) vanno nella stessa direzione: il momento più frustrante, il momento preferito,
+che cosa avresti voluto fare e non hai potuto, che cosa cambieresti con una bacchetta
+magica, che cosa stavi facendo nel gioco, come lo descriveresti a un amico. Solo la
+quarta chiede una soluzione, e anche quella serve soprattutto a capire che cosa il
+\emph{tester} desidera.
+
+% ---------------------------------------------------------------------
+\section{Chi testa, dove, quanto, con chi}
+\label{a12:sec:contesto}
+
+Le ultime ``considerazioni extra'' riguardano il contesto del test.
+
+\paragraph{Chi è nel gruppo di \emph{playtest}?} Se testano gli amici o un gruppo di
+\emph{game designer}, arriveranno feedback diversi. E non solo: \textbf{che cosa gioca il
+gruppo?} Se lo testano persone che giocano solo \emph{filler}, e il gioco dura tre ore, il
+feedback ``il gioco è troppo pesante'' ha una certa importanza; se lo dicono persone che
+giocano solo giochi economici ferroviari da sei ore, è ``un altro problema''. Bisogna
+capire \textbf{da chi arriva il feedback e che esperienze ha}. È buona pratica, se non
+si conosce il gruppo di test, chiedere: \textbf{che cosa giocate di solito? Che tipo di
+giochi vi piacciono? Che meccaniche vi piacciono, e quali sopportate poco?} Ruggero lo fa
+quando arrivano \emph{tester} che non conosce a provare i titoli della sua azienda: se
+qualcuno dice ``il gioco non mi è piaciuto per niente'', e a quella persona non piacciono
+i \emph{worker placement}, e il gioco è un \emph{worker placement}, ``la sua opinione
+lascia il tempo che trova'', se non come giudizio sui \emph{worker placement}.
+
+\paragraph{Dove si fa il test?} In casa, a una \emph{convention}, a una fiera, a un
+evento, in piazza, al bar, in una ludoteca. C'è casino, rumore, o silenzio e
+tranquillità?
+
+\paragraph{Quanto dura? Chi facilita?} Lo facilitate voi, o lo date a qualcun altro da
+facilitare? E in quel caso chi è: un'altra persona del gruppo, qualcuno che ha già
+testato in passato?
+
+\paragraph{Nessun test nel vuoto.} Tutte queste cose vanno sapute ``perché vi danno
+degli strumenti per capire i feedback che vi arrivano''. ``Il \emph{playtest} è
+un'attività umana, e come tale ha tante intersezioni mentre la stiamo facendo. Non
+esiste il \emph{playtest} in gravità zero, nel vuoto, senza distrazioni.''
+
+\paragraph{Approfondimento: \emph{who} e \emph{where}.} Sono, quasi parola per parola, la
+seconda e la quarta delle sei domande di Schell. Sul \emph{chi}, Schell distingue
+sviluppatori (disponibili ma troppo vicini al gioco), amici e familiari (disponibili ma
+inclini a non ferire e a farsi piacere il gioco), giocatori esperti del genere (precisi
+ma più esigenti della media, con il rischio di tarare il gioco su una nicchia) e
+\emph{tissue tester}, persone che non hanno mai visto il gioco e che si possono usare una
+volta sola, come un fazzoletto di carta; e conclude che la scelta dipende interamente da
+che cosa si vuole imparare. Sul \emph{dove}, elenca lo studio, il laboratorio, un luogo
+pubblico (economico ma pieno di distrazioni), la casa dei \emph{tester} (il ``\emph{habitat}
+naturale'' del gioco) e l'online (quantità a scapito della qualità). È la stessa logica
+dei pro e contro di Ruggero: ogni scelta compra qualcosa e ne paga un'altra.
+
+% ---------------------------------------------------------------------
+\section{Domande sulle slide}
+\label{a12:sec:domande}
+
+Prima della pausa, Ruggero ripercorre le slide (``prototipo, regolamento, raccolta
+feedback''; il triangolo; il gioco come ecosistema e la scrittura come \emph{medium}
+lineare; che cosa c'è nel regolamento; i metodi etnografici) e chiede se è tutto chiaro.
+Uno studente ha ``un paio di dubbi''.
+
+\paragraph{Che cosa mi dice ``perché hai attaccato''?} Il primo riguarda il
+\emph{debriefing} uno a uno: che informazioni ottengo chiedendo a qualcuno perché ha
+attaccato, o perché è stato attaccato? So come ha giocato lui, ``ma è solo una
+persona''. Ruggero precisa che era un esempio, valido per un gioco con meccaniche di
+\textbf{interazione diretta}. In un gioco strategico è utile capire se un'interazione
+diretta aveva uno scopo \textbf{tattico} o \textbf{sociale}: ``posso attaccarti perché mi
+conviene meccanicamente, o perché voglio guadagnare punti sociali nel gruppo e dimostrare
+che non mi si deve dar fastidio: tu mi hai attaccato, adesso ti attacco anch'io''. È
+un'informazione su come le persone giocano quel tipo di gioco. E se è una persona sola?
+``Certo, ma se quella cosa succede sempre quando si gioca una fazione specifica, quella
+cosa diventa importante. E se non l'hai chiesta, rischi di perdere questo dato.''
+
+\paragraph{Le psicometrie di \emph{Cyberpunk}.} Un esempio dalla sua esperienza: quando
+hanno progettato il gioco da tavolo di \emph{Cyberpunk}\footnote{Nella trascrizione
+``Cyberpunk a 2077'': il gioco da tavolo legato a \emph{Cyberpunk 2077} a cui Ruggero ha
+lavorato.}, le diverse fazioni erano pensate per rispondere a diverse
+\textbf{psicometrie di gioco}: c'erano fazioni focalizzate sul voler attaccare
+direttamente gli altri, e fazioni focalizzate sul voler essere attaccate prima di
+attaccare. Serviva capire se era vero ``o se era solo una nostra teoria'', e nei test lo
+si osservava: hai la fazione di attacco diretto; la usi per attaccare direttamente o no?
+E quando lo fai, lo fai perché vedi il beneficio meccanico, o per motivi slegati dal
+beneficio meccanico? Il parallelo vale anche per altri giochi: in un cooperativo con due
+obiettivi paralleli, ``ne hai scelto uno piuttosto che un altro: perché?''. Nel
+\emph{debriefing} uno a uno si possono indagare comportamenti personali \textbf{senza far
+sentire il soggetto in difficoltà}: chiedere in gruppo ``ma perché hai fatto questa
+cosa?'' sembra implicare ``hai fatto una mossa stupida'', e non mette chi ha fatto il test
+``in una posizione ideale''; in privato, la stessa domanda si fa ``in modo un po' più
+morbido''.
+
+\paragraph{Come capisco se un gioco è ripetitivo?} Il secondo dubbio: c'è un modo per
+capire, con il \emph{playtest}, se un gioco è troppo ripetitivo da una partita all'altra?
+Prima di tutto, \textbf{la ripetitività non è oggettiva ma soggettiva}: bisogna definire
+che cosa vuol dire ``ripetitivo'' per il proprio gioco. E \textbf{rigiocabile non vuol
+dire non ripetitivo}: sono due cose diverse, e tutte le combinazioni sono possibili
+(molto rigiocabile ma ripetitivo, poco rigiocabile e ripetitivo, poco rigiocabile e non
+ripetitivo\ldots). La ripetitività è sintomo di che cosa? Del ``non voglio rigiocare il
+gioco''? Quello è un problema diverso, e lo si può indagare (``lo rigiocheresti, sì o
+no?''). Ma, collegandosi all'\emph{emotional design} e alla ruota delle emozioni, è
+\textbf{molto più utile capire se il gioco riesce a suscitare specifiche emozioni}, che
+chiedersi se è rigiocabile o no. ``C'è pieno di giochi che non sono rigiocabili e sono
+giochi ottimi'': i \textbf{\emph{legacy}}, quelli in cui si strappano carte e si
+distruggono componenti, una volta finita la campagna non si giocano più. ``Sul rendere
+rigiocabile un gioco ci sono mille approcci'', ma per ora si sta parlando di
+\emph{playtest} ``a livello di ombrello''.
+
+\paragraph{La pausa.} Non ci sono altre domande. Ruggero propone una pausa e poi di
+parlare dei progetti: ``come siete messi'' e i prossimi passi. Sono ``le 34'': dieci
+minuti bastano? ``Bastano.'' Ci si ritrova ``alle 45''\footnote{L'ora non è detta; se la
+lezione è dalle 17 alle 20 come le altre, la pausa va dalle 18:35 alle 18:45 circa.
+Durante la pausa la trascrizione contiene diversi minuti di frasi ripetute senza senso,
+ignorate.}.
+
+% ---------------------------------------------------------------------
+\section{Dopo la pausa: il \emph{playtest} nel corso}
+\label{a12:sec:playtestcorso}
+
+Si riparte ``con la classica domanda'': ci sono domande? ``Ve la chiedo in
+\emph{debriefing} di gruppo orale, non uno a uno, e non vi mando un \emph{form}'', scherza
+Ruggero. Poi chiarisce che cosa si aspettano i docenti.
+
+\paragraph{I \emph{playtest} sono inevitabili, ma ne bastano uno o due.} ``I
+\emph{playtest} sono una parte inevitabile del processo di creazione di un gioco. Noi ci
+aspettiamo che voi \emph{playtestiate} i vostri giochi.'' Nel tempo che i gruppi hanno,
+non possono fare mille test, né cento, ``neanche dieci''. Ma ``è più importante, in
+questo processo, che voi impariate questi strumenti'', rispetto ad applicarli come se si
+trattasse di un gioco da pubblicare con un editore: in termini pragmatici, \textbf{anche
+uno o due \emph{playtest} vanno bene}.
+
+\paragraph{Il prima possibile: il rischio del \emph{theory crafting}.} Il consiglio è
+\textbf{testare il prima possibile}, perché spesso solo testando ci si rende conto che
+qualcosa non funziona. Finché il gioco resta nel regolamento e lo si immagina giocato,
+senza giocarlo davvero, ``si crea un gap gigantesco''. Ruggero l'ha visto succedere: gruppi
+che fanno il cosiddetto \textbf{\emph{theory crafting}}, ragionano sul regolamento, sul
+flusso di gioco, sugli intenti, ma non lo applicano nel pratico; poi arriva un test che
+``gli spacca tutto'', e a quel punto c'è ``una gigantesca crisi'', perché il lavoro fatto
+fino a lì ``è allucinante''. ``Spendete meno tempo per raffinare tutto quello che avete e
+più tempo per testare il prima possibile.''
+
+\paragraph{Un test per gruppo, e il prima e il dopo.} I gruppi sono da tre, quindi
+testare ``dovrebbe essere anche fattibile''. Non serve che ogni persona del gruppo faccia
+un test separato: basta \textbf{anche un solo test}, organizzato da una persona del
+gruppo, che poi discute con gli altri i feedback e le iterazioni da fare. Ciò che i
+docenti vogliono vedere è \textbf{il gioco prima del test e il gioco dopo il test}, e come
+è cambiato. ``E vi assicuro, è impossibile che non cambi, specialmente in queste prime
+fasi. Se fate un test e il gioco non cambia tra prima e dopo, qualcosa è andato storto in
+quel test.''
+
+\paragraph{Che cosa è cambiato dal \emph{pitch}?} Poi la domanda ai gruppi. Ruggero non
+ha potuto partecipare al tutoraggio, quindi ciò che sa dei progetti si limita al
+\emph{pitch}: chi vuole iniziare a raccontare che cosa è cambiato da allora e lo stato
+attuale del progetto? La tabella~\ref{a12:tab:progetti} riassume ciò che emerge.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.5cm}p{5.0cm}p{5.5cm}@{}}
+\toprule
+\textbf{Gruppo} & \textbf{Stato a oggi} & \textbf{Indicazione di Ruggero} \\
+\midrule
+\emph{Roguelike} di \emph{journaling} (Rita, Giordano, Nicola) & difficoltà a trovarsi;
+ricerca e studio dei casi studio ancora in corso; nessun aggiornamento di gruppo &
+mettere in pausa la ricerca e sviluppo; scrivere subito un \textbf{draft di
+regolamento}, anche in asincrono (un Google Doc condiviso), con una \emph{checklist}
+delle parti necessarie \\
+\addlinespace
+\emph{Murder Memory} (Tiziana, Angelo, Lorenzo L.) & direzione comune trovata: ispirazione
+a \emph{Dieci piccoli indiani}, personaggi con schede, stanze come carte da sbloccare
+con enigmi, libretto e buste; bloccati sulla storia & regolamento \textbf{e} enigmi come
+due binari paralleli; rendere la storia più banale; pochi enigmi, un nodo per ogni
+informazione; un draft di tutti i materiali \\
+\addlinespace
+\emph{Automa}, ex \emph{La Peste} (Tancredi, Gianmarco, Lorenzo) & nuovo
+\emph{setting} (automi e umani nel castello di Geppetto); regole scritte; qualche test
+interno con \emph{proxy} (chat e dadi, carte francesi) & le carte sono il gioco:
+preparare un \textbf{\emph{print and play}} delle carte, uscire dalle tabelle;
+organizzare ora un \emph{playtest} esterno, idealmente \emph{blind} \\
+\bottomrule
+\end{tabular}
+\caption{Lo stato dei tre progetti di gruppo come lo raccontano gli studenti, e
+l'indicazione principale che Ruggero dà a ciascuno. L'obiettivo comune è uno: arrivare
+il prima possibile a un gioco che una persona esterna possa giocare dall'inizio alla
+fine.}
+\label{a12:tab:progetti}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Il gruppo di Rita: fermare la ricerca, scrivere il regolamento}
+\label{a12:sec:rita}
+
+Parla per prima Rita, per il gruppo del \emph{roguelike} in solitario. Di aggiornamenti di
+gruppo ``non ne abbiamo''. Uno dei compagni ha avuto un'influenza, l'altro probabilmente
+impegni suoi; Rita ha provato a contattarli più volte durante la pausa didattica, ma non
+sono riusciti a trovare orari compatibili. I compagni le hanno detto che stavano
+continuando la ricerca e lo studio, provando i giochi consigliati dai docenti, ma non c'è
+stato modo di confrontarsi e procedere. E Rita lo dice apertamente: ``emotivamente sono
+un po' in panico, perché mi rendo conto che il tempo stringe''. Tutti, anche gli altri
+studenti, hanno altri impegni: ``è una vita''. Chiede consigli su come organizzarsi, o
+su come intervenire.
+
+\paragraph{Mettete in pausa la ricerca e sviluppo.} ``È chiarissimo.'' Il consiglio di
+Ruggero: \textbf{fermate un attimo la fase di ricerca e sviluppo}. Non perché non sia
+importante, ma perché a questo punto va fatta \textbf{in parallelo}: se diventa
+totalizzante, c'è un problema. ``Ricordatevi che state facendo questo gioco all'interno
+di un corso e non di un'azienda.'' In un'azienda, finché c'è il \emph{budget}, si possono
+fare anche sei mesi di ricerca e sviluppo; qui, se si fanno sei mesi di ricerca e
+sviluppo, ``poi il gioco non esiste alla fine''. Quindi: passate il prima possibile a
+\textbf{buttare giù per iscritto il regolamento}.
+
+\paragraph{Lavorare in asincrono.} Non serve trovarsi tutti contemporaneamente. Non si
+può scrivere un regolamento ``ognuno per i fatti suoi'' (il documento deve essere fatto
+insieme), ma anche l'anno scorso ci sono stati gruppi che lavoravano in modo
+\textbf{asincrono}: se è difficile trovarsi, uno dei metodi è aprire \textbf{un Google
+Doc comune} e contribuire con pezzi di regolamento quando ognuno riesce. Questo richiederà
+poi un lavoro di \emph{editing}, perché tre persone diverse scrivono in modo diverso e
+bisognerà uniformare, ``ma quello è un problema per il futuro''. E un primo draft, anche
+grezzo, permette già di fare un test: uno dei test di cui si è parlato è \textbf{il test
+del regolamento prima ancora del test del gioco}. Si dà il regolamento a una persona che
+non lo conosce e le si chiede: riusciresti a giocarlo? Dal regolamento capisci come si
+gioca, che cosa devi fare, che cosa devi preparare, che cosa ti serve? Riesci ad arrivare
+alla fine? Che meccaniche hai? Come si vince, come si perde? Un primo draft permette di
+iniziare dai \textbf{test di implementazione}, prima ancora degli altri.
+
+\paragraph{Una scadenza: inizio della settimana prossima.} Rita è d'accordo: nella fase
+iniziale di ideazione si erano visti di più e ne avevano parlato a voce, e mettere le cose
+per iscritto in modo asincrono può aiutare ora che non riescono a trovarsi; poi, quando
+si incontreranno, verrà da sé uniformare. Ruggero conferma: l'asincrono ``è utile a
+passare questo primo scoglio'', e quando il regolamento è finito ci si organizza per un
+\emph{check} insieme in tempo reale, passo passo, ``ma a quel punto non si parte dalla
+pagina bianca''. L'obiettivo: avere un regolamento \textbf{idealmente per l'inizio della
+settimana prossima}, anche per arrivare al prossimo tutoraggio con qualcosa da guardare:
+se al tutoraggio si arriva ``che ancora non avete niente e avete ancora la fase di
+ricerca e sviluppo attiva senza aver prodotto niente, i feedback non possono essere
+granché''.
+
+\paragraph{Il contributo di ciascuno si vede.} Ruggero ricorda una cosa già detta in
+passato: nelle \textbf{cartelle del \emph{project work}} ``è chiaro chi ha lavorato a che
+cosa'' in termini di file, e i docenti lo tengono d'occhio. Sanno che le persone hanno
+impegni diversi; ma ``il progetto è di gruppo per rendervelo più leggero, non è di gruppo
+per cancellare il vostro contributo al progetto''. Rita precisa che crede che anche i
+compagni stiano lavorando, ognuno per conto suo; ma senza confrontarsi non riescono a
+concretizzare un'idea che aveva entusiasmato lei e, in parte, i docenti. Li contatterà,
+cercherà un momento in cui ci sono tutti per fissare almeno i punti chiave del
+regolamento, e si daranno tempistiche più serrate, anche compilando ``in maniera serrata''
+il modulo delle ore dedicate alle diverse fasi\footnote{Nella trascrizione ``quel forum
+per le ore'' e ``il forum dell'ora'': con ogni probabilità un modulo in cui i gruppi
+registrano il tempo speso nelle varie fasi del progetto.}.
+
+\paragraph{Una \emph{checklist} dalle slide di oggi.} Il modulo delle ore aiuta a gestire
+il tempo, ma sotto pressione serve un obiettivo concreto. Il consiglio (``prendetelo con
+le pinze, le persone sono diverse''): buttare giù un draft di regolamento usando le slide
+di oggi, che Ruggero ha già caricato nella cartella condivisa (``il file regolamento,
+raccolta feedback''). Da quelle, \textbf{fare una \emph{checklist}} di tutto ciò che deve
+esserci (la preparazione, il \emph{setup}, la premessa narrativa, i principi di
+gioco\ldots) perché una persona che non è nel gruppo riesca a leggere il regolamento,
+capire come si gioca e giocarlo. ``Mi rendo conto che è una parte complessa, ma è la
+parte chiave di questo passaggio.'' Se si arriva a uno stadio in cui il gioco è ancora da
+limare, alcune meccaniche non funzionano benissimo, ma una persona lo legge e dice ``credo
+di capire più o meno come giocarlo'', ``a quel punto siete già a molto, molto buon
+punto''.
+
+% ---------------------------------------------------------------------
+\section{\emph{Murder Memory}: la storia non deve bloccare il gioco}
+\label{a12:sec:murder}
+
+Il secondo aggiornamento è di Tiziana (che si vede ``sfocata'' in videocamera: ``si vede
+che mi considera sfondo''). Anche il suo gruppo ha avuto difficoltà simili a quelle del
+gruppo di Rita a trovare un momento comune, e il lavoro a più mani allunga i tempi
+(``butto giù la mia idea, poi interviene giustamente un altro e dice: no, secondo me va
+meglio quello''). Ma hanno trovato una direzione comune, e hanno cambiato diverse cose
+\textbf{con l'idea di semplificare}.
+
+\paragraph{Che cosa è cambiato.} Restano gli elementi iniziali: l'aspetto
+\textbf{investigativo}, l'\textbf{\emph{escape}} e gli elementi di \textbf{gioco di
+ruolo}, ma non come al \emph{pitch}. Il gruppo si è ispirato a \textbf{\emph{Dieci piccoli
+indiani}}: tutti gli invitati hanno perso la memoria di ciò che è successo la sera prima,
+e quindi sono tutti coinvolti nel possibile omicidio, e tutti coinvolti nell'indagine. Delle
+due squadre del \emph{pitch} (polizia e indiziato) non si parla più; la parte da gioco di
+ruolo coinvolge tutti:
+\textbf{ognuno interpreta un personaggio}, con una \textbf{scheda personaggio in parte
+compilata e in parte no}, perché ci sono ricordi da recuperare. C'è sempre il proprietario
+della villa, ``un pazzo, un po' uno psicopatico''; e in realtà muore lui, e si tratta di
+un suicidio, ma i giocatori non lo sanno.
+
+\paragraph{In termini meccanici.} Ruggero interrompe la parte di trama: ``io voglio sapere
+in termini meccanici di gioco''. Gli elementi meccanici sono essenzialmente gli stessi:
+ci sono gli \textbf{enigmi} da risolvere per procedere. La novità sono le \textbf{stanze}:
+carte che rappresentano le stanze della villa, che si sbloccano risolvendo gli enigmi;
+i personaggi sono chiusi nella villa e devono arrivare in fondo per poter uscire (la parte
+\emph{escape}). E durante la partita si raccolgono \textbf{indizi} per capire chi ha
+ucciso, e se c'è stato un omicidio.
+
+\paragraph{Come arriva il gioco a chi lo gioca?} Ruggero torna su un tema del
+\emph{pitch}: la bilancia tra un gioco che si gioca con un regolamento e un gioco
+potenzialmente \textbf{a evento}. ``Se io voglio giocare questo gioco, dove lo trovo? Devo
+prendere un biglietto, andare in un posto?'' No, è \textbf{da tavolo}: idealmente si prende
+una scatola, la si apre. E che cosa c'è dentro? Tiziana descrive i componenti:
+\begin{itemize}
+  \item \textbf{un libretto} che contiene il regolamento ``ma non solo'': la parte iniziale
+        della storia, da leggere insieme; le indicazioni legate alle stanze visitate; le
+        soluzioni degli enigmi; eventuali aiuti; e le istruzioni su quando aprire e non
+        aprire, che cosa leggere e che cosa no;
+  \item \textbf{buste con le schede dei personaggi}: ognuno vede la propria e non la
+        mostra agli altri; condivide le informazioni scritte, ma di sua iniziativa, non
+        consegnando la scheda;
+  \item nella busta di ogni personaggio, \textbf{un foglio} su cui scrivere le proprie
+        ipotesi (chi è l'assassino, il movente, l'arma, ``le tre cose'' da indicare) e
+        il \textbf{codice per uscire dalla villa}, di quattro o cinque cifre; alla fine le
+        buste di tutti i giocatori vengono raccolte;
+  \item \textbf{le carte} delle stanze.
+\end{itemize}
+Ruggero chiede se c'è un ruolo di facilitazione, visto che il libretto sembra ``preparare''
+la partita: no, ``sono tutti pari''. E chiede chi decide la combinazione giusta del
+codice: il regolamento, i designer? I designer: c'è la possibilità di individuare le cifre
+durante il gioco, verso la fine, e poi di verificare se sono esatte. Se lo sono, i
+personaggi escono; se no, restano intrappolati, ``e poi succedono determinate cose''.
+
+\paragraph{Due direzioni di lavoro.} A livello pratico, Ruggero vede due binari. Il primo
+è \textbf{la creazione dei contenuti narrativi} che contengono gli elementi meccanici: se
+il gioco si basa su quello, quella parte va scritta il prima possibile, ``anche magari
+scritta male''. Il secondo è il \textbf{regolamento effettivo}, che dice a un gruppo che
+ha appena aperto la scatola che cosa fare. ``Per esperienza: se vedete una scatola in cui
+ci sono delle buste chiuse e non dite alle persone \emph{questa non devi aprirla finché
+non X, Y, Z}, le persone aprono tutto. Tutto quello che troviamo nella scatola, lo
+apriamo.'' Tiziana concorda: andrebbe scritto sulla scatola, o sulla prima cosa che si
+trova aprendola. Quindi: \textbf{il regolamento il prima possibile, anche in draft, ma
+deve esserci tutto}: ``apro la scatola, leggo questo foglio, so che cosa devo fare a
+livello pratico con le cose che sono nella scatola''.
+
+\paragraph{Pochi enigmi, e tutti i materiali in draft.} L'altro consiglio: \textbf{focalizzare
+gli enigmi} il più possibile. ``Non state facendo un \emph{escape room} da tavolo
+pubblicata, state facendo un corso accademico'': meglio tre o quattro enigmi fatti bene che
+cinquanta che poi non si riescono a finire. Rispetto agli altri gruppi, \emph{Murder Memory}
+ha una quantità di \textbf{paragame} e di materiali variegati che sono parte del genere:
+negli \emph{escape} da tavolo, come gli \emph{Exit} o gli \emph{Hidden Games}, ``dentro c'è
+tanta roba'', e quella roba è parte fondamentale del gioco. Il gioco ``si regge su quanto
+quei materiali fanno il lavoro che devono fare''. Quindi serve il prima possibile un
+\textbf{draft di quei componenti}: la versione prototipale, ``anche scritta a matita'',
+``anche su un foglio scritto in Comic Sans''. Non illustrazioni, mappe e giornali curati:
+il testo che deve esserci. ``Finché non avete una versione pratica di quel materiale, non
+è possibile testare il vostro gioco.'' L'``ideale platonico'' è che \textbf{entro la fine
+della prossima settimana} ci siano abbastanza cose in una scatola da darla a un'altra
+persona, che deve riuscire a giocare il gioco dall'inizio alla fine. ``Magari è
+un'esperienza orribile, magari non sono belli da vedere, ma dovrebbe riuscire a giocarlo.''
+E il lavoro si può dividere in asincrono: una bacheca su un Google Sheet con l'elenco dei
+materiali (cinque articoli di giornale, dieci fotografie, una lettera, delle schede) e
+chi si prende che cosa.
+
+\subsection{Il flusso di gioco non è il regolamento}
+
+Tiziana obietta: per dividere i materiali, prima bisogna avere chiara la storia; ``noi
+abbiamo il regolamento prima della storia'', e hanno già scritto il flusso di gioco. Ma la
+differenza, risponde Ruggero, è questa: \textbf{il flusso di gioco è una cosa che serve a
+voi; il regolamento serve a una persona che non è nella vostra testa}, non conosce il
+gioco, e deve sapere che cosa fare con i componenti della scatola. Tiziana precisa che il
+flusso l'aveva scritto pensando che lo leggessero i docenti, perché capissero come funziona
+il gioco, ``non l'abbiamo scritto per noi''. Ed è proprio questo il punto: ``l'obiettivo
+non deve essere convincere i prof che il vostro gioco sia bello''. I docenti, lavorando nel
+settore, riescono a immaginare un gioco anche da un \emph{pitch}; ``ma non è quello che
+dobbiamo valutare''. Lo scopo è portare i gruppi a fare cose \textbf{non per i docenti, ma
+per una persona X} che non sono né i docenti né loro. La domanda chiave: \textbf{una
+persona X che passeggia nella fiera fittizia Y vede il vostro gioco in vendita o in
+dimostrazione, prende la scatola: riesce a giocarlo, sì o no?}
+
+\subsection{``Il vostro gioco è meglio come storia o come gioco?''}
+
+Tiziana insiste: finché non mettono giù la storia con tutti i suoi elementi, non riescono
+a dividerla nelle varie parti e nei vari indizi; parlandone, si aggiunge una cosa, se ne
+modifica un'altra (``ma potrebbe anche essere utile togliere cose, non aggiungere''), e
+``siamo bloccati in tutto''. Ruggero risponde con un avvertimento che dice di aver visto
+avverarsi in passato.
+
+\paragraph{Se il gioco diventa più storia che gioco.} ``Fate molta attenzione, perché se
+il vostro gioco diventa più storia che gioco, non arrivate a consegnare il gioco alla fine
+del corso.'' Scrivere una storia è molto complesso; sembra più facile, perché la storia è
+lineare, ma ``le storie ne subiamo talmente tante che una storia brutta ti spacca tutto''.
+In questo momento la qualità della storia non conta: ``può essere la più banale del mondo,
+potete anche rifarmi \emph{Dieci piccoli indiani}''. Ciò che deve funzionare è la parte
+meccanica. Se questo fosse un corso di scrittura, la storia sarebbe la cosa importante;
+qui ``ce ne frega il giusto'': è \textbf{accessoria al gioco}. Non vuol dire che le storie
+non contino (``se fosse così, non avremmo fatto neanche la lezione su creare personaggi
+giocabili''), ma il corso non ha lo spazio dei moduli di \emph{narrative design} di un
+corso di tre anni, e deve concentrarsi ``molto, molto, molto, \emph{laser}'' sulle
+meccaniche, sulle parti che rendono l'esperienza un gioco.
+
+\paragraph{Definire i punti essenziali.} Tiziana precisa: non le interessa la storia
+``scritta bene'', ma \textbf{definire i punti essenziali della storia}, perché alcune cose
+vengono continuamente rimesse in discussione, e cambiare certe variabili condiziona le
+meccaniche; vanno messe nero su bianco, con l'accordo di tutti e tre, ``altrimenti
+continuiamo a rivangare''. ``Sembra un consiglio terribile'', risponde Ruggero, ``ma
+rendete più banale quella storia.'' \textbf{Se scrivere la storia è la cosa che vi blocca
+dallo scrivere il gioco, c'è un problema con la storia.} E apre ``un vaso di Pandora
+gigantesco'': \textbf{se il gioco si regge solo su una storia e sui suoi colpi di scena, è
+meglio come storia o come gioco?} Se è meglio come storia, ``c'è un problema'', almeno
+nell'ottica di un corso che deve dare gli strumenti del \emph{game design}. Non che non si
+possano fare giochi \emph{narrative driven}: negli anni scorsi ce ne sono stati, ma quelli
+riusciti (arrivati alla fine con il gruppo soddisfatto e con ``un ottimo gioco'') avevano
+una parte di narrazione, di \emph{world building} e di trama, ``ma le meccaniche erano il
+motore dell'esperienza''. ``Fatevi ispirare da quei giochi che semplificano la storia in
+favore del gioco.''
+
+\paragraph{Non tutto dipende dalla trama.} Inoltre si può procedere in parallelo, perché
+non tutte le parti del gioco dipendono dalla trama principale. I personaggi hanno delle
+meccaniche asimmetriche, cose che solo loro possono fare, e quelle non sono
+necessariamente legate alla trama; alcuni enigmi, come quello del codice della porta,
+possono non esserlo. ``Nel mondo ideale la coesione tematico-narrativa sarebbe totale, ma
+qui stiamo facendo un prototipo.'' Una storia migliorabile non obbliga il gioco a tenerla
+fino alla fine: meglio un draft ``stilizzatissimo'', da arricchire poi, che non fare niente
+sul lato meccanico finché tutta la storia non è sulla bacheca. Il rischio, visto in
+passato in alcuni gruppi, è \textbf{autobloccarsi}: ``non abbiamo la storia, quindi non
+facciamo nient'altro'', e intanto si usa un sacco di tempo, ``vi sembra di fare
+tantissimi meeting, tantissimi incontri, e non avete niente in mano''.
+
+\paragraph{Che cosa serve per l'inizio della settimana.} Almeno il regolamento, anche
+stilizzato e migliorabile: ``apro la scatola, che cosa faccio con le cose nella scatola''.
+Anche solo: ``troverai queste buste, non aprirle finché non ti viene detto; troverai
+questo componente, fai questo con questo componente''. L'obiettivo di gioco: qual è lo
+scopo, che cosa bisogna fare. E dalle parti del regolamento viste oggi, capire quali
+servono al loro gioco e che cosa scriverci. Angelo, che stava rileggendo il materiale del
+gruppo, dice che sta già scrivendo nel gruppo di chat le cose da fare; Ruggero raccomanda
+di averne uno (``per esperienza vi velocizza molti dei processi'').
+
+\subsection{Gli enigmi: nodi, catene, parallelo}
+
+Uno studente del gruppo chiede che cosa si intenda per regolamento: l'idea è usare
+\textbf{un unico libretto}, come regolamento e incipit della storia, e poi, ``un po' come
+in \emph{Exit}'', parti che si combinano con le carte per risolvere gli enigmi. Il
+regolamento è solo la parte iniziale con le regole? Nel regolamento, risponde Ruggero, si
+possono usare dei \textbf{\emph{placeholder}}: se ha senso una parte di suggerimenti per
+gli enigmi, la si mette, anche se gli \emph{hint} non ci sono ancora (``sapete che ci
+dovrà essere''). E questo fa nascere altre domande utili: \textbf{come mettiamo gli
+\emph{hint}?} Molti giochi non li scrivono in chiaro, ma \textbf{a specchio} o capovolti,
+``perché l'ultima cosa che vuoi è sfogliare per sbaglio il regolamento e spoilerarti
+l'enigma finale''. Bisogna avere un'idea di come è strutturato il regolamento: che cosa
+c'è, in che ordine, i componenti, la premessa, il \emph{setup}.
+
+\paragraph{Il \emph{game design} degli enigmi.} Subito dopo il regolamento, bisogna lavorare
+sugli enigmi: ``alla fine il vostro è un gioco di enigmi''. Un enigma dà
+un'informazione; quell'informazione si usa direttamente nell'enigma finale, o per
+risolvere un altro enigma, a catena, e la catena si può allungare. Ruggero fa un esempio
+astratto con le quattro cifre della porta (figura~\ref{a12:fig:enigmi}):
+\begin{itemize}
+  \item \textbf{un enigma, quattro cifre}: arrivo all'enigma, lo risolvo, ho le cifre; ``la
+        versione più \emph{smooth} e distillata'';
+  \item \textbf{quattro enigmi in parallelo}, affrontabili nell'ordine che voglio,
+        ciascuno dei quali dà una cifra: l'esito è lo stesso, ma il processo \textbf{apre
+        dell'\emph{agency}};
+  \item \textbf{quattro enigmi in catena}: il primo dà un elemento necessario al secondo,
+        che ne dà uno per il terzo, e così via fino alle cifre.
+\end{itemize}
+``Se pensate agli \emph{Exit}, agli \emph{Unlock}, sono sempre una combinazione di queste
+cose'': un enigma che dà X, più enigmi che insieme danno X, o una serie di enigmi la cui
+catena dà X. Poi sta ai designer decidere quante X e quanti nodi. Il consiglio, con poco
+tempo: \textbf{distillate, un nodo per ogni soluzione}. ``Mi serve un'informazione? Ho un
+enigma che me la dà.'' Si è sempre in tempo, più avanti, a spezzare un nodo in due (una
+parte in un foglio di giornale, una in una fotografia), ma l'arco base va scritto il prima
+possibile.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a12en/.style={draw, thick, rectangle, rounded corners=2pt, minimum width=0.95cm,
+                minimum height=0.7cm, font=\footnotesize},
+  a12out/.style={draw, thick, double, rounded corners=3pt, minimum height=0.75cm,
+                 text width=1.6cm, align=center, font=\footnotesize, fill=gray!12},
+  a12arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  % singolo
+  \node[font=\footnotesize\bfseries] at (0,2.4) {un nodo};
+  \node[a12en] (s) at (0,1.2) {E};
+  \node[a12out] (so) at (0,-0.6) {codice\\4 cifre};
+  \draw[a12arr] (s) -- (so);
+  % parallelo
+  \node[font=\footnotesize\bfseries] at (4.2,2.4) {in parallelo};
+  \foreach \i/\x in {1/2.85,2/3.75,3/4.65,4/5.55}{
+    \node[a12en, minimum width=0.7cm] (p\i) at (\x,1.2) {E\i};
+    \draw[a12arr] (p\i) -- (4.2,-0.25);
+  }
+  \node[a12out] (po) at (4.2,-0.6) {codice\\4 cifre};
+  \node[font=\scriptsize, align=center] at (4.2,-1.55) {ordine libero:\\\emph{agency}};
+  % catena
+  \node[font=\footnotesize\bfseries] at (9.0,2.4) {in catena};
+  \node[a12en, minimum width=0.7cm] (c1) at (7.5,1.2) {E1};
+  \node[a12en, minimum width=0.7cm] (c2) at (8.5,1.2) {E2};
+  \node[a12en, minimum width=0.7cm] (c3) at (9.5,1.2) {E3};
+  \node[a12en, minimum width=0.7cm] (c4) at (10.5,1.2) {E4};
+  \draw[a12arr] (c1) -- (c2); \draw[a12arr] (c2) -- (c3); \draw[a12arr] (c3) -- (c4);
+  \node[a12out] (co) at (10.5,-0.6) {codice\\4 cifre};
+  \draw[a12arr] (c4) -- (co);
+  \node[font=\scriptsize, align=center] at (9.0,-1.55) {ordine obbligato:\\ogni enigma
+    sblocca il successivo};
+\end{tikzpicture}
+\caption{Tre strutture per arrivare alla stessa informazione (le quattro cifre del codice
+della porta), sull'esempio di Ruggero. Con poco tempo: un nodo per ogni informazione; si
+potrà spezzare dopo.}
+\label{a12:fig:enigmi}
+\end{figure}
+
+\paragraph{Le stanze: da sbloccare, poi da investigare.} Lo studente spiega l'idea del
+gruppo, ``un filo differente dalle \emph{escape room} più classiche'': risolvere gli enigmi
+serve a costruire la \textbf{mappa} della casa, stanza dopo stanza; una volta che si hanno
+tutte le stanze, il gioco diventa \textbf{investigativo}, e sul tavolo ci sono, nascosti,
+tutti gli indizi necessari. Ruggero chiede se le stanze sono stanze dell'universo narrativo
+o spazi fisici: dell'universo narrativo. Chi apre la scatola ha davanti ``un mazzo di carte,
+diciamo fogli, perché devono essere belle grandi'': si parte dalla prima, la stanza in cui
+si è chiusi, con l'immagine della stanza; dietro la carta c'è l'enigma, e magari una breve
+descrizione; risolvendolo si prende la seconda stanza e la si collega, e così via. Alla
+fine, guardando le immagini e leggendo le descrizioni, si deve arrivare al codice e
+all'assassino. Anche qui, osserva Ruggero, c'è una questione di \textbf{granularità}: per
+come se lo immaginano, sarà un gioco molto visivo, con la casa e le stanze disegnate; ma in
+fase di prototipo \textbf{una carta con scritta la descrizione di ciò che c'è va bene}, e
+c'è sempre tempo per dettagliare e abbellire. ``I test di \emph{look and feel} servono
+anche a quello. Ma servono se il gioco esiste.'' E aggiunge: ``se il gioco è talmente bello
+nella vostra mente che farlo lo rende brutto, vi state creando da soli degli ostacoli''.
+
+\paragraph{\emph{Sherlock Holmes Consulente Investigativo}.} Lo studente precisa che non
+hanno mai pensato a grandi illustrazioni (``non abbiamo proprio modo''), ma a descrizioni
+minime. Ruggero chiede se qualcuno ha giocato \textbf{\emph{Sherlock Holmes Consulente
+Investigativo}}\footnote{Nella trascrizione ``Sherlock con Suede Investigativo''.}: uno
+studente sì, una volta. ``È tutto scritto, a parte la mappa di Londra'': se si tolgono la
+mappa e il quotidiano, il gioco è praticamente tutto testuale, e dimostra che \textbf{si
+può fare un investigativo anche complesso solo con il testo}. ``La vostra immaginazione su
+come sarà il gioco deve essere uno spunto, non un ostacolo.''
+
+% ---------------------------------------------------------------------
+\section{\emph{Automa}: le carte sono il gioco}
+\label{a12:sec:automa}
+
+L'ultimo gruppo è quello di Tancredi, Gianmarco e Lorenzo. Si sono concentrati sulla
+\textbf{parte interpretativa}, di cui si era parlato al \emph{pitch}: hanno fatto
+un'analisi delle due varianti anche dal punto di vista estetico\footnote{Nella
+trascrizione ``un'analisi della parte di Eye Statistica'': probabilmente ``estetica'', nel
+senso delle estetiche dell'MDA, visto che subito dopo si parla di emozioni ed
+esperienze.}, delle emozioni e delle esperienze, e anche se le emozioni erano abbastanza simili e le esperienze cambiavano
+un po', l'approccio interpretativo ``ci piaceva un po' di più''. Hanno \textbf{scritto le
+regole} e fatto \textbf{un paio di test}.
+
+\paragraph{Che cosa è cambiato.} Il gioco ora si chiama \textbf{\emph{Automa}} (``così ci
+aiuta a cambiarlo'' anche nella testa), e il \emph{setting} è diverso: non ci sono più i
+malati e la peste, ma gli \textbf{automi} (``i pupazzi'') e gli \textbf{umani}, in una
+specie di castello di Geppetto. Gli automi devono capire chi sono gli umani, e gli umani
+devono capire chi sono gli automi. Non c'è più la dinamica per cui alcuni giocatori passano
+da un ruolo all'altro: l'obiettivo finale è \textbf{raccogliere informazioni senza farsi
+scoprire}.
+
+\paragraph{Una persona esterna potrebbe giocarlo?} Il regolamento c'è, anche se ``scritto
+un po' così'', perché stanno facendo molti test sulle meccaniche. ``Quello non è ancora un
+problema.'' La domanda di Ruggero è un'altra: se dò ciò che avete a una persona che non è
+voi, riesce a giocare? E se no, che cosa manca? Tancredi è in dubbio: in teoria il
+regolamento è giocabile, ma non l'hanno fatto leggere a nessuno. Ruggero allarga: il
+regolamento è uno degli elementi, ma ci sono i \textbf{componenti}. ``Se nel regolamento
+dico prendi le 60 carte del mazzo X e distribuiscine 6, è chiaro che cosa devo fare; ma se
+le carte non ce l'ho, non lo posso giocare.'' E le carte non le hanno fatte. Gianmarco
+spiega che per i test interni hanno usato dei \textbf{\emph{proxy}}: i contenuti delle
+carte erano scritti in una chat, e si tirava un dado per sapere quale carta usciva. Fare un
+prototipo giocabile da una persona esterna ``non dovrebbe essere un lavoro enorme'', ma il
+gioco è molto guidato da queste carte, ``e queste carte sono totalmente in versione
+draft''.
+
+\paragraph{Un \emph{print and play} delle carte.} ``Qui avete una parte critica.'' Se il
+regolamento c'è, ma le carte sono ciò che decide se una persona può giocare o no, il focus
+per la prossima volta dev'essere preparare le carte, anche in draft, \textbf{ma in un
+formato pensato per un gioco da tavolo}: ``l'idea è che una persona armata di stampante
+può stamparsi il vostro gioco e giocarlo''. Uno studente obietta che il gioco è giocabile
+anche solo con un \textbf{mazzo di carte francesi}: i colori per i ruoli e una sequenza
+numerica per le carte. ``Se vai a dire a un editore che le persone possono giocare questo
+gioco con le carte francesi, l'editore ti dice: ma non te lo pubblichiamo mai.'' Per
+rendere il gioco pubblicabile a livello materiale, i componenti vanno pensati in modo
+funzionale al gioco. Si possono anche usare le carte dall'asso al re per assegnare tredici
+ruoli; ma se i ruoli hanno \textbf{poteri asimmetrici}, abilità specifiche, ``ha senso che
+siano scritte sulla carta'', soprattutto per la \textbf{qualità della vita} di chi gioca:
+``pesco una carta, è il 7 di cuori: che cosa fa il 7 di cuori? Vado a leggermi una tabella
+e lo scopro''. Quindi: \textbf{preparate un mazzo}. In un foglio A4 stanno circa nove carte
+in formato \emph{Magic: The Gathering}; un foglio \emph{print and play} con quello che
+secondo il gruppo è il minimo necessario per giocare. Il gioco è giocabile anche da chi
+non è nel gruppo? (Gianmarco ``fa la faccia'' di chi non lo sa: ed è proprio il passo
+successivo.)
+
+\paragraph{Un \emph{playtest} strutturato, idealmente \emph{blind}.} ``Preparatevi, perché
+ci arriverete, e ci arriveranno anche gli altri gruppi.'' I gruppi dovranno testare il
+gioco, e Ruggero intende \textbf{un \emph{playtest} strutturato}: in presenza, registrato
+o a porte chiuse? I feedback come si raccolgono? E soprattutto \textbf{un \emph{playtest}
+serio}, non interno al gruppo: \textbf{con gente che non siete voi}. L'ideale ``idealissimo''
+è il \textbf{\emph{blind test}}: i designer non spiegano il gioco, non rispondono a nessuna
+domanda, non chiariscono nessun dubbio; danno al gruppo la scatola, i componenti, il
+manuale, e osservano. ``E solo a quel punto, se il gioco viene giocato come volevate voi,
+senza dirlo, il \emph{playtest} è un successo.'' ``Lo so, è una rottura, ma fare giochi è
+una rottura.''
+
+\paragraph{La parte preferita di Ruggero.} ``Se fosse per me, io farei solo \emph{blind
+test} nella vita.'' È ``la mia parte preferita in assoluto'': vedere un gruppo che non
+conosce il gioco impararlo in tempo reale, e quando lo capisce e lo gioca come deve essere
+giocato, ``è una delle cose più belle della vita'' (``ma io sono pazzo, quindi prendetelo
+con le pinze''). Ruggero sa che, a chi non ha mai fatto \emph{playtest}, i \emph{playtest}
+``suonano come una rottura'': è la logistica. Trovare persone che possano giocare nello
+stesso momento, tenendo del tempo per i feedback dopo la partita, fare un report per capire
+se è andata bene o male; e potenzialmente costringere quelle persone a giocare una
+versione che si sa imperfetta, ``quindi è devastante''. ``Ma vi assicuro che va fatto.''
+
+\paragraph{Meglio i \emph{playtest} di un bel gioco.} ``È più importante che facciate i
+\emph{playtest} con coscienza, rispetto a che esca un gioco bello da giocare alla fine.
+Ve lo giuro.'' Il gioco finale è comunque il gioco di un corso accademico; lo scopo, come
+detto all'inizio, è dare gli strumenti per fare dopo i giochi che si vogliono fare. ``Se
+il gioco più bello che fate è quello di questo corso, io ho fallito tutto.'' E queste cose
+si imparano qui, ``a bassissimo rischio'', e non con un editore. Ruggero racconta, senza
+fare nomi, di progetti con designer già pubblicati che la sua azienda non ha portato a
+termine perché i designer non sapevano fare i \emph{playtest},
+non sapevano fare \emph{development}, non riuscivano a portare il gioco alla fine. ``Se
+imparate davvero due o tre strumenti di \emph{playtest} e di raccolta feedback, siete già
+anni luce davanti a molta gente pubblicata.''
+
+\subsection{Dove si trovano i \emph{tester}}
+
+Gianmarco interviene: il gruppo è ``molto d'accordo'', tanto che hanno provato fin da
+subito a portare il gioco al tavolo di altre persone. Ma trovarle non è stato facile:
+avevano organizzato una serata, lui e Lorenzo, ed è saltata all'ultimo; e in contesti
+fieristici sarebbe più facile, ma il gioco deve essere più maturo. ``È vero, ed è lo
+scoglio più grande dei \emph{playtest}: trovare persone disposte a fare questa cosa.''
+Ruggero elenca alcune strade:
+\begin{itemize}
+  \item gli \textbf{eventi dedicati ai \emph{playtest}}, come il
+        \emph{Playtest Con}\footnote{Nella trascrizione ``la playtest con''; il nome
+        esatto dell'evento non è ricostruibile con certezza.} o, in alcuni momenti
+        limitati, IDEAG\footnote{Nella trascrizione ``idee AG'': quasi certamente IDEAG, il
+        circuito di incontri tra autori di giochi italiani.}, e le \textbf{convention con
+        un angolo \emph{playtest}}, come Officine del Gioco: lì è più facile, perché le
+        persone ci vanno con l'idea di testare e farsi testare, e di solito ci si scambia
+        i test (``io testo il tuo gioco, tu testi il mio''); di contro, sono contesti
+        limitati nel tempo;
+  \item i \textbf{gruppi di \emph{playtest} su Tabletop Simulator} su Telegram, gruppi in
+        cui la gente si trova a giocare e che sono aperti ai \emph{playtest}: si scrive
+        ``ho un \emph{playtest}, mi serve qualcuno la prossima settimana'', e spesso si
+        trovano persone; gruppi degli anni scorsi l'hanno fatto;
+  \item altri social: Ruggero usa poco Facebook, ma sa che ci sono gruppi di discussione
+        dedicati ai \emph{playtest};
+  \item le \textbf{associazioni ludiche locali}, che spesso hanno una serata settimanale
+        di gioco e sono propense a testare qualcosa. A Torino ce ne sono diverse, ma anche
+        nelle città piccole in cui Ruggero ha vissuto ce n'erano una o due; e chi è
+        appassionato di giochi analogici probabilmente le conosce già.
+\end{itemize}
+
+\paragraph{I \emph{tester} si costruiscono con gli anni.} Specialmente all'inizio è
+difficile. Ruggero oggi ha il suo gruppo di \emph{playtester}, ``bello numeroso'', ma i
+gruppi di \emph{tester} ``si costruiscono con il tempo, con gli anni''. Chi proseguirà in
+questa professione imparerà anche a \textbf{selezionarli}: non tutti i \emph{tester} danno
+feedback utili su tutti i giochi, e testando più volte si capisce con quale gruppo ha
+senso testare quale gioco (non il \emph{filler} da dieci minuti con il gruppo A, non il
+gioco economico azionario a tema treni con il gruppo B). Ma è un passaggio successivo.
+\textbf{Adesso, paradossalmente, vanno bene anche amici e parenti}, perché in questo
+primo test \textbf{l'osservazione è più utile dei feedback diretti}: non si stanno facendo
+test quantitativi, né test per affinare il modello matematico o per vedere se il
+regolamento è scritto bene; si sta testando ``se il gioco funziona, prima ancora di tutto
+il resto''. Poi, se arrivano feedback sul resto, sono utili. E proprio perché è la parte
+più faticosa, va resa pratica il prima possibile: ``per esperienza, organizzare un
+\emph{playtest} nella stessa settimana in cui lo si chiede è quasi impossibile''. Se
+questa settimana si organizza il test per la settimana dopo, si arriva in tempo con il
+materiale.
+
+\subsection{Progettare le carte}
+
+Gianmarco solleva un altro tema. Il gioco, nel suo svolgimento, è semplice, ``un peso
+leggero'', e quindi gran parte della dinamica è affidata alle carte; ma non sanno bene
+come approcciare la progettazione delle carte in modo pratico: ``non possiamo andare a
+casaccio''. La sera prima ha provato \textbf{\emph{Magical Athlete}}\footnote{Nella
+trascrizione ``Magico Atleta'' e ``Magical Drake''; il \emph{publisher} è ``Chmik'', cioè
+CMYK.} (Ruggero ce l'ha, e lo mostra): il cuore di quel gioco è come sono progettati i
+poteri degli atleti, e per \emph{Automa} è lo stesso. Lui aveva creato dei filoni di carte,
+li ha mostrati a Tancredi e Lorenzo, e testandoli si sono accorti che uno non funzionava:
+``stiamo proprio avendo delle difficoltà a strutturare questo processo''. Tancredi aggiunge
+il contesto: le carte sono le cose che si possono fare durante i turni, cose da dire,
+cose da fare, interazioni con gli altri giocatori.
+
+\paragraph{\emph{Magical Athlete} non è un metro.} Prima Ruggero ridimensiona il confronto.
+\emph{Magical Athlete} ``ha più o meno ventitré anni di sviluppo'': la prima edizione è del
+2003 (Ruggero controlla), e l'edizione attuale è iterata su ciò che si è imparato in
+ventitré anni; il designer è Richard Garfield, il designer di \emph{Magic: The
+Gathering}, e c'è il lavoro di sviluppo di CMYK, ``un \emph{publisher} incredibile, di una
+pulizia allucinante''. In trentasei carte, ``se non ricordo male'', riescono ad avere carte
+asimmetriche, ``tutte non ambigue, tutte funzionali, tutte identitarie''. ``È difficile
+avere una roba del genere.''
+
+\paragraph{Due risposte.} La prima è una risposta già data: \textbf{ricerca e sviluppo}, e
+in particolare \textbf{\emph{Inhuman Conditions}}\footnote{Nella trascrizione ``in human
+condition''. È uno dei casi studio assegnati al gruppo nella lezione del \emph{pitch}.},
+che il gruppo ha già visto. La seconda è ``più astratta, ma forse paradossalmente più
+utile in questa fase'': quando si sviluppa un'\textbf{asimmetria} di questo tipo, si può
+\textbf{ragionare a livello emotivo}, su che cosa dà, emotivamente, giocare uno specifico
+ruolo. ``Prendete la ruota delle emozioni: avete dieci ruoli, sceglietevi dieci emozioni
+della ruota, e fate in modo che ogni ruolo abbia una meccanica che vada a giocare lì.''
+Oppure si può lavorare su \textbf{psicometrie diverse}, cioè sulle dinamiche che si
+vogliono generare al tavolo: un ruolo di interazione diretta, uno di interazione indiretta,
+uno aggressivo, uno di negoziazione, uno di patteggiamento, uno cooperativo
+(figura~\ref{a12:fig:carte}). E comunque, ``avere un draft migliorabile è più utile che
+non avere niente'': meglio testare con le carte brutte che non testare.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a12src/.style={draw, thick, rounded corners=3pt, text width=3.6cm, align=center,
+                 minimum height=1.3cm, fill=gray!12},
+  a12card/.style={draw, thick, rounded corners=4pt, minimum width=1.25cm,
+                  minimum height=1.75cm, text width=1.15cm, align=center,
+                  font=\scriptsize},
+  a12arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  \node[a12src] (em) at (-4.0,1.2) {\textbf{ruota delle emozioni}\\un'emozione diversa
+    per ogni ruolo};
+  \node[a12src] (ps) at (-4.0,-1.2) {\textbf{psicometrie / dinamiche}\\diretta, indiretta,
+    aggressiva, negoziazione, cooperativa\ldots};
+  \foreach \i/\lab in {1/ruolo A\\[2pt]paura, 2/ruolo B\\[2pt]sospetto, 3/ruolo C\\[2pt]
+    negozia, 4/ruolo D\\[2pt]attacca}{
+    \node[a12card] (k\i) at (-0.3+1.55*\i,0) {\lab};
+  }
+  \draw[a12arr] (em.east) -- (k1.north west);
+  \draw[a12arr] (ps.east) -- (k1.south west);
+  \node[font=\footnotesize, text width=6.2cm, align=center] at (3.6,-1.6) {una
+    meccanica per ruolo, \textbf{scritta sulla carta} (non in una tabella):
+    stampabile, nove per foglio A4};
+\end{tikzpicture}
+\caption{Due punti di partenza per progettare carte di ruolo asimmetriche, come li
+suggerisce Ruggero al gruppo di \emph{Automa}. Le etichette sulle carte sono solo
+esempi illustrativi, non ruoli del gioco.}
+\label{a12:fig:carte}
+\end{figure}
+
+\paragraph{L'obiettivo immediato, per tutti.} ``Lo dico al vostro gruppo, ma vale anche
+per gli altri'': l'obiettivo è arrivare il prima possibile a uno \textbf{stato materiale
+del gioco} per cui quel materiale si possa dare a una persona che non è nel gruppo, e
+quella persona possa giocare il gioco dall'inizio alla fine. Ogni gruppo lo persegue in
+modo diverso: per il gruppo di Rita è prioritario il \textbf{regolamento}; per il gruppo
+di Tiziana, Angelo e Lorenzo L. il regolamento deve essere affiancato agli
+\textbf{enigmi}, ``due binari paralleli''; per \emph{Automa}, il regolamento in draft c'è
+già, ``ottimo'', ma \textbf{le carte sono il gioco}. ``Non possono essere carte da poker,
+anche se sulla carta per voi lo sono'': anche se meccanicamente il gioco è uguale, ``pesca
+una carta e poi vai a vedere sulla tabella chi sei'' e ``pesca una carta e sulla carta c'è
+scritto che cosa devi fare'' non sono la stessa cosa, e bisogna puntare alla seconda.
+
+\paragraph{Non è solo \emph{editing}: il \emph{party game} delle tabelle.} ``Però, Ruggero,
+è veramente un lavoro di \emph{editing}'', obietta uno studente. ``È lavoro di
+\emph{editing}, ma non del tutto, perché è lavoro di paragame'': cambia la dinamica di
+gioco. Ruggero racconta uno dei suoi primissimi giochi, ``una ventina di anni fa'': un
+\emph{party game} sul tema dei \textbf{\emph{talk show} televisivi}, in cui si giocavano
+degli ospiti di una trasmissione, ognuno con la propria personalità e il proprio modo di
+partecipare alla conversazione; in realtà era un gioco sul \textbf{rubarsi la parola} a
+vicenda per ottenere più \emph{share} sotto i riflettori. Nella primissima versione, tutte
+le interruzioni, le personalità, le caratteristiche dei personaggi erano \textbf{tabelle}:
+``tiri il dado e vedi sulla tabella cos'è, tiri il dado e vedi sulla tabella cos'è''. ``Era
+una merda da giocare, ve lo dico.'' In un'iterazione successiva ha portato tutte quelle
+tabelle in \textbf{mazzi di carte separati}: tabelle sparite, dadi spariti. ``Il gioco è
+andato da così a così.'' Tirare un dado e guardare una tabella ``è quanto di più lontano da
+un \emph{party game} ci possa essere'': c'è un \emph{downtime} in mezzo; la carta invece la
+pesco, ce l'ho in mano, la posso giocare, ``e il gioco diventa già più leggero''. Il
+consiglio: stampatelo, ``anche con la stampante di casa, o sulla carta igienica
+piuttosto'', ``ma uscite da quelle tabelle''. ``Poi il gioco è vostro, fate quello che
+volete.''
+
+\paragraph{Il \emph{proxy} va benissimo.} Lo studente precisa che le tabelle erano solo un
+\emph{proxy} per iniziare a testare e vedere se tutto funzionava. ``Assolutamente: il
+\emph{proxaggio} è una cosa che consiglio.'' Anzi, chi ha in casa delle bustine protettive
+vuote per le carte da \emph{Magic} può infilarci dentro le carte stampate: ``è una cosa
+comunissima'', e per \emph{Automa} forse il modo più immediato per testare.
+
+\paragraph{Approfondimento: \emph{blind test} e \emph{tissue tester}.} Il \emph{blind test}
+di Ruggero corrisponde a due indicazioni di Schell. Sul \emph{chi}: i \emph{tissue tester},
+persone che non hanno mai visto il gioco, sono i migliori per le domande di usabilità, di
+comunicazione e di primo impatto, perché vedono ``con occhi nuovi'' ciò a cui il designer
+si è abituato; e si possono usare una volta sola. Sul \emph{come}: per alcuni test
+``non dirai niente ai giocatori, lascerai che il gioco parli da solo'', soprattutto se vuoi
+vedere se riescono a capirlo da soli; e, quando si dice qualcosa, va scritto prima, perché
+anche poche parole fuori posto prima della partita possono rovinare il test. Schell, del
+resto, confessa nello stesso capitolo di \emph{odiare} il \emph{playtesting}, per paura che
+il gioco non piaccia, e di trovare ogni scusa per rimandarlo: la stessa resistenza che
+Ruggero riconosce negli studenti, e lo stesso rimedio (``va fatto'').
+
+% ---------------------------------------------------------------------
+\section{Chiusura: la materialità del gioco, i tutoraggi, i contatti}
+\label{a12:sec:chiusura}
+
+Mancano cinque minuti. Ruggero chiede se ci sono altre domande, anche da altri gruppi o
+sulle slide, già caricate, e ripete a chi è arrivato tardi di recuperare la prima parte
+(prototipo e \emph{focus} del \emph{playtest}): ``vi servirà''.
+
+\paragraph{La raccomandazione finale.} ``Molto, molto, molto sottolineato'': \textbf{buttate
+giù un draft di regolamento il prima possibile} e \textbf{identificate la materialità del
+vostro gioco}, cioè che cosa c'è nella scatola, se arriva in scatola. Lo scopo è arrivare
+il prima possibile a dare quella scatola a un gruppo di persone che non sono i designer, e
+che riescano a giocarla. ``Non stiamo ancora parlando di una bella esperienza, di un gioco
+bello. Siamo ancora a prima: devono perlomeno riuscire a giocarlo.'' Il caso peggiore è
+che leggano il regolamento e rispondano ``non ho idea di come si giochi questa roba'':
+Ruggero dice di averlo vissuto su giochi pubblicati, ``ed è orribile come sentimento''. In
+prototipo è la prima cosa da evitare, ``perché questa è la morte del vostro gioco''. E non
+solo in termini di prodotto: anche un gioco non commerciale, creato come mezzo personale
+per comunicare un'esperienza propria, anche intima, se la persona non riesce a capire
+come si gioca, ``è tutto lavoro buttato''. ``E l'ultima cosa che voglio è farvi buttare
+via del tempo, che già è poco.''
+
+\paragraph{I contatti.} Per i dubbi si può scrivere \textbf{via email o Telegram}, non solo
+a Ruggero ma anche a Daniele e Beatrice. Ruggero risponde in genere entro 24 ore; il
+Discord, ``per colpa mia'', lo apre meno di quanto vorrebbe: chi vuole essere sicuro di una
+risposta entro 24 ore usi Telegram o la mail.
+
+\paragraph{Cambiano le lezioni?} Tancredi chiede che cosa cambierà nelle prossime
+settimane. Gli \textbf{orari delle lezioni restano gli stessi}; forse cambia l'ordine di
+alcune lezioni, come oggi, quando la lezione di Diego sull'RNG ha lasciato il posto a
+quella su prototipi e \emph{playtest}, ritenuta più prioritaria. I docenti adattano il
+contenuto allo stato dei progetti: negli anni passati, per esempio, i gruppi avevano già un
+draft prima, e la lezione sul migliorare il regolamento arrivava dopo; l'anno scorso c'era
+una lezione sul \emph{world building}, che per questa classe non è così prioritaria,
+perché a livello di premessa narrativa i gruppi hanno già fatto il lavoro necessario,
+mentre è più urgente il \emph{playtest}.
+
+\paragraph{Il tutoraggio e il calendario unico.} Sul tutoraggio Ruggero ne parlerà con
+Daniele e Beatrice, per trovare una data in cui la classe c'è: se sabato non va bene, come
+ha detto Tiziana, non ha senso tenerlo con due persone. Si cercherà, anche tramite Discord,
+una data che vada bene ai gruppi e si combini con gli impegni dei docenti, per
+massimizzare i gruppi presenti, ``anche solo una persona per gruppo'' (meglio tutto il
+gruppo, ma va bene anche un rappresentante). Tancredi chiede se si possono scrivere i
+tutoraggi nello stesso calendario delle lezioni, per non avere ``due cose diverse in due
+posti diversi'': ora i tutoraggi sono nelle slide, le lezioni nel calendario. ``Ha
+sensissimo.'' La differenza è burocratica: le lezioni sono gestite dall'istituto con uno
+Zoom ricorrente nel calendario regolare, i tutoraggi i docenti devono segnarli a parte; ma
+cercheranno di comunicarli in un posto unico. ``Che sia un link Zoom o un altro, sti
+cavoli, però almeno uno li vede subito tutti vicini'', conclude Tancredi.
+
+\paragraph{``Toppettissimo''.} Ruggero chiude: idealmente, per la prossima settimana,
+``\emph{best result ever}'': se per lunedì c'è già ``un draftettino di regolamento'',
+``toppettissimo''; ma il consiglio è farlo il prima possibile. ``Buon weekend, ci vediamo
+la prossima. Ciao ciao.'' La figura~\ref{a12:fig:calendario} riassume le scadenze nominate
+nella lezione.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a12ev/.style={draw, thick, rounded corners=3pt, text width=2.3cm, align=center,
+                minimum height=1.3cm, fill=white},
+  a12arr/.style={-{Stealth[length=3mm]}, thick}
+]
+  \draw[a12arr] (0,0) -- (14.6,0);
+  \foreach \x/\lab in {0.8/6 novembre, 3.9/lunedì 9 nov.\ (circa), 6.9/sabato 14
+                       novembre, 10.2/4 dicembre, 13.4/11 dicembre}{
+    \fill (\x,0) circle (2.5pt);
+    \node[below=4pt, font=\footnotesize] at (\x,0) {\lab};
+  }
+  \node[a12ev, above=0.5cm] at (0.8,0) {lezione su prototipi, regolamento,
+    \emph{playtest}};
+  \node[a12ev, above=0.5cm] at (3.9,0) {\textbf{draft di regolamento}\\(``inizio della
+    settimana'')};
+  \node[a12ev, above=0.5cm] at (6.9,0) {tutoraggio\\(data e ora da confermare; forse un
+    tutoraggio extra)};
+  \node[a12ev, above=0.5cm] at (10.2,0) {\textbf{consegna} del gioco, con
+    \emph{playtest}};
+  \node[a12ev, above=0.5cm] at (13.4,0) {\emph{final review}};
+\end{tikzpicture}
+\caption{Le scadenze dei progetti di gruppo come emergono dalla lezione. Per \emph{Murder
+Memory} Ruggero indica anche un obiettivo ``platonico'': materiali giocabili in una
+scatola entro la fine della settimana successiva. La data di lunedì è dedotta da ``se per
+lunedì avete già un draftettino''.}
+\label{a12:fig:calendario}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Il \textbf{prototipo} costa meno, si fa prima e, soprattutto, si cambia senza
+        il ``muro psicologico del costo del cambiamento'': deve poter essere buttato senza
+        sensi di colpa. Obbliga a scegliere che cosa testare.
+  \item Il \textbf{triangolo dei prototipi}: \textbf{ruolo} (le meccaniche generano le
+        dinamiche e le emozioni volute? il gioco è familiare al suo \emph{target}?),
+        \textbf{\emph{look and feel}} (componenti, grafica, materiali, anche il peso del
+        regolamento), \textbf{implementazione} (struttura del regolamento, icone, numeri,
+        \emph{bookkeeping}, \emph{downtime}). Mai tutto insieme; la fase decide la
+        priorità; i test intermedi sono possibili.
+  \item Il gioco deve \textbf{sopravvivere all'allontanarsi da voi}: chi lo compra non lo
+        avrà spiegato da chi l'ha fatto. Il regolamento deve contenere anche ciò che per
+        voi è ovvio: pre-gioco, \emph{setup}, che cosa procurarsi, post-gioco,
+        \emph{debriefing}, fiction, intenti.
+  \item \textbf{La scrittura è lineare, il gioco è un ecosistema}: decidere che cosa
+        spiegare per primo è parte dei test di implementazione. Indici, rimandi,
+        panoramiche e \textbf{blocchi} (generali, specifici, personali, materiali)
+        aiutano; l'ordine dei blocchi si può testare.
+  \item I \textbf{principi di gioco} non sono regole ma indicazioni di approccio; il tema
+        cambia il comportamento (\emph{Diamant} con i pompieri: quasi il 90\% va fino in
+        fondo).
+  \item Durante la partita: \textbf{in presenza} (si vede tutto, ma \emph{bias},
+        domande al designer, non scala), \textbf{registrazione} (asincrona e rivedibile,
+        ma vede solo ciò che inquadra), \textbf{porte chiuse} (realistica e a costo zero,
+        ma non si sa com'è andata).
+  \item Dopo la partita: \textbf{\emph{debriefing} di gruppo} (sorprese, ma
+        \textbf{sovrascrittura delle opinioni}), \textbf{uno a uno} (dettaglio e niente
+        imbarazzo, ma lento), \textbf{\emph{form}} (scala, ma valida e non scopre: non
+        nelle prime fasi), \textbf{report libero} (sorprese scritte, ma illeggibile su
+        grande scala).
+  \item Combinare: per esempio ruolo + presenza + uno a uno nelle prime fasi;
+        implementazione + porte chiuse + \emph{form} per il modello matematico.
+  \item Dietro ogni \textbf{soluzione} proposta da un \emph{tester} c'è un
+        \textbf{sentimento}: distillarlo e cercare la causa; le soluzioni sono del
+        designer. Sapere chi testa, che cosa gioca di solito, dove, quanto, chi facilita:
+        ``non esiste il \emph{playtest} in gravità zero''.
+  \item \textbf{Ripetitivo non vuol dire non rigiocabile}; più utile chiedersi se il
+        gioco suscita le emozioni volute.
+  \item Nel corso bastano \textbf{uno o due \emph{playtest}}, ma il prima possibile, con
+        persone esterne, e mostrando \textbf{il gioco prima e dopo}. Il rischio da evitare è
+        il \emph{theory crafting} che non arriva mai al tavolo. L'ideale è il
+        \textbf{\emph{blind test}}.
+  \item \textbf{Il flusso di gioco serve a voi, il regolamento a una persona X} in una
+        fiera: riesce a giocarlo, sì o no? Se la storia blocca il gioco, \textbf{rendete
+        più banale la storia}; pochi enigmi, un nodo per ogni informazione.
+  \item Se le carte sono il gioco, vanno scritte \textbf{sulle carte}, non in tabelle:
+        un \emph{print and play}, anche con i \emph{proxy}. Per i ruoli asimmetrici,
+        partire dalle \textbf{emozioni} o dalle \textbf{psicometrie}.
+  \item L'obiettivo immediato di tutti: \textbf{un draft di regolamento e la materialità
+        del gioco}, in modo che qualcuno che non siete voi possa giocarlo dall'inizio alla
+        fine.
+\end{itemize}

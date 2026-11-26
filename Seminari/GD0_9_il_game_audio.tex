@@ -1,0 +1,2392 @@
+% =====================================================================
+%  Lezione zero 9 — Il game audio: ruoli, storia e produzione del
+%  sonoro nei videogiochi
+%  Fonte: trascrizione della nona "lezione zero" (GD0_9): una
+%  masterclass online di circa quattro ore, di pomeriggio, dedicata al
+%  game audio e tenuta da Davide Pensato, fondatore di DP Studios ed ex
+%  audio designer di Ubisoft Milano. Una decina scarsa di partecipanti
+%  (14 iscritti), quasi tutti in webcam, una pausa di una ventina di
+%  minuti, alcuni video di gioco commentati, due strumenti mostrati dal
+%  vivo (un tracker e un emulatore di Game Boy Advance) e diverse
+%  domande a voce.
+%  Pacchetti richiesti nel preambolo del libro:
+%    \usepackage[italian]{babel}, \usepackage[T1]{fontenc},
+%    \usepackage[utf8]{inputenc} (solo pdfLaTeX), \usepackage{booktabs},
+%    e in più, come nel capitolo GD6:
+%    \usepackage{tikz} con
+%    \usetikzlibrary{arrows.meta,positioning,calc,fit}
+%    (le librerie vanno caricate nel preambolo, non nel capitolo; quelle
+%    già richieste da GD6 le comprendono tutte)
+%
+%  Collocazione nel libro: parte "Lezioni zero", subito dopo
+%  GD0_8_esplorare_il_metaverso, con la stessa numerazione propria (0.9).
+%  Nel file principale del libro:
+%
+%    \part{Lezioni zero: il game designer nell'industria}
+%    \renewcommand{\thechapter}{0.\arabic{chapter}}
+%    \setcounter{chapter}{0}
+%    \input{Seminari/GD0_1_cultura_del_feedback}
+%    ...
+%    \input{Seminari/GD0_7_hackerare_un_gioco}
+%    \input{Seminari/GD0_8_esplorare_il_metaverso}
+%    \input{Seminari/GD0_9_il_game_audio}
+%    \part{Il corso di Game Design}
+%    % ...
+%
+%  (Con hyperref aggiungere anche \renewcommand{\theHchapter}{z.\arabic{chapter}}
+%  nella parte zero, per evitare ancore duplicate.)
+%  Il capitolo non forza la numerazione: inserito dopo GD0_8 prende da
+%  solo il numero 0.9.
+%  Tutte le etichette di questo capitolo hanno il prefisso "z9:"
+%  (z9:cap:..., z9:sec:..., z9:fig:..., z9:tab:...). Il capitolo è
+%  autonomo: non contiene rimandi agli altri capitoli.
+%  Le due figure sono ricostruzioni schematiche di quanto il relatore
+%  spiega a voce e con le slide, non copie delle slide.
+% =====================================================================
+
+\chapter[Il game audio]{Il game audio: ruoli, storia e produzione del
+sonoro nei videogiochi}
+\label{z9:cap:audio}
+
+Questa nona lezione zero è una \textbf{masterclass sul game audio}, cioè sul
+sonoro dei videogiochi: musica, effetti sonori, ambienti e dialoghi, e soprattutto
+il modo in cui tutto questo viene progettato, prodotto e \textbf{integrato} in un
+gioco. Il relatore, \textbf{Davide Pensato}, ne chiarisce subito la natura: è una
+masterclass, ``un incontro in cui vi andrò a raccontare un po' cos'è, come
+funziona, come si lavora'', e \textbf{non un workshop}: non si faranno esercizi.
+Se i conti con il tempo tornano, però, si darà almeno ``uno sguardo'' a qualche
+strumento di lavoro e a qualcosa di già fatto, perché anche questo ``può essere
+sicuramente utile''. E in effetti, dopo la pausa, il relatore aprirà dal vivo un
+\emph{tracker} e un emulatore di Game Boy Advance.
+
+L'incontro si svolge \textbf{online} e dura circa quattro ore, con una pausa di
+una ventina di minuti a metà. Gli iscritti sono quattordici, ma il relatore sa
+che non tutti seguiranno in diretta: all'inizio i collegati sono sei, poi ne
+arrivano altri due o tre. Quasi tutti accendono la \textbf{webcam}, su invito del
+relatore (``a me fa piacere, così ci vediamo''), che commenta soddisfatto:
+``tutti in webcam, benissimo, perfetto. Una situazione perfetta''. Il numero
+ridotto permette uno scambio vero: il relatore fa domande, chiede pareri dopo
+ogni video, e i partecipanti intervengono a voce.
+
+Tre avvertenze di lettura. La prima: gran parte della prima metà dell'incontro è
+costruita su \textbf{video di gioco} che il relatore mostra e commenta; la
+trascrizione ne registra solo il commento (e, talvolta, frammenti dei dialoghi
+dei video, riportati in modo confuso). Il capitolo ricostruisce di volta in volta
+che cosa si vede, sulla base di quello che il relatore dice, e segnala in nota
+quando il titolo del gioco non è detto o è una deduzione. La seconda: il
+relatore avverte che i suoi video sono ``molto vecchi'', ed è una scelta voluta
+(se ne parla nella sezione~\ref{z9:sec:evocativo}); gli esempi vanno letti come
+esempi di \emph{tecniche}, non come rassegna dei giochi più recenti. La terza: la
+trascrizione è automatica e storpia moltissimi nomi propri e termini tecnici
+(``ESO Wars'' per \emph{Gears of War}, ``WISE'' per Wwise, ``milchi tracker''
+per MilkyTracker, ``Karsten Obansky'' per Karsten Obarski, ``Vengeokazu'' per
+\emph{Banjo-Kazooie}); dove la ricostruzione è sicura il capitolo usa la forma
+corretta, altrimenti lo segnala in nota. Durante la pausa, inoltre, la
+trascrizione registra alcune frasi senza senso che non hanno nulla a che fare con
+la lezione, e che il capitolo ignora.
+
+Quanto alla data, la masterclass si colloca con ogni probabilità \textbf{tra la
+fine della primavera e l'inizio dell'estate del 2026}\footnote{La data non è mai
+detta. La si deduce da alcuni indizi: un partecipante dice ``adesso nel 2026'';
+il relatore dice che nel 2027 il suo studio compirà vent'anni di attività;
+racconta che il First Playable di Firenze si è svolto ``la settimana scorsa'',
+``giovedì e venerdì''; dice che lo Svilupparty di Bologna, che si tiene ``di
+solito'' a metà maggio, ``c'è stato''. È una deduzione, non un'informazione
+esplicita.}: i riferimenti a ``oggi'', ``adesso'' e ``ultimamente'' vanno letti
+rispetto a quel momento.
+
+Il percorso del capitolo segue quello dell'incontro:
+\begin{enumerate}
+  \item le presentazioni dei partecipanti (sezione~\ref{z9:sec:avvio});
+  \item il percorso del relatore, il suo studio e due consigli di esperienza
+        (sezione~\ref{z9:sec:relatore});
+  \item una parentesi sulla \textbf{contrazione} del mercato dei videogiochi e
+        sui giochi \emph{Triple-I} (sezione~\ref{z9:sec:contrazione});
+  \item la citazione di Spielberg: l'audio comunica ``più della metà''
+        dell'esperienza (sezione~\ref{z9:sec:spielberg});
+  \item i tre elementi di importanza dell'audio: \textbf{potere evocativo},
+        \textbf{caratterizzazione} e \textbf{supporto al gameplay}, ciascuno
+        con i suoi video (sezioni da~\ref{z9:sec:tre} a~\ref{z9:sec:gameplay});
+  \item una \textbf{breve storia dell'audio nei videogiochi}: gli anni Ottanta, i
+        \emph{tracker}, gli anni Novanta e il presente (sezioni
+        da~\ref{z9:sec:storia} a~\ref{z9:sec:presente});
+  \item il \textbf{team audio}: audio director, sound designer, compositore,
+        dialoghi e doppiaggio, audio programmer (sezioni
+        da~\ref{z9:sec:team} a~\ref{z9:sec:programmer});
+  \item la seconda citazione, di Alexander Brandon, e il posto dell'audio nel
+        \textbf{ciclo di produzione} (sezioni~\ref{z9:sec:brandon}
+        e~\ref{z9:sec:ciclo});
+  \item le \textbf{quattro categorie di suoni}: musica, effetti sonori, ambienti
+        e dialoghi (sezione~\ref{z9:sec:categorie});
+  \item le domande finali e i consigli sugli eventi di settore (sezioni
+        \ref{z9:sec:domande} e~\ref{z9:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'avvio e le presentazioni}
+\label{z9:sec:avvio}
+
+\subsection{Aspettando i ritardatari}
+
+L'incontro comincia con qualche minuto di attesa. Il relatore ha quattordici
+iscritti e sei collegati; sa che non tutti seguiranno dal vivo, e propone di
+aspettare ``5-6 minuti''. Poi, visto che ``non c'è un flusso di persone che si
+aggiungono per cui ha senso stare ad aspettare'', decide di partire: chi arriverà
+più tardi, verso le 14:15, sarà ``accodato'' alle presentazioni. Durante il giro
+arrivano infatti Alessio e Giovanni, e dopo la pausa il relatore saluta anche un
+Luca, che non ha la videocamera accesa (``fammi un cenno se ci sei''; ``silenzio
+assenso, andiamo avanti'').
+
+\subsection{Perché un giro di presentazioni}
+
+Il relatore comincia sempre, anche nelle lezioni in presenza, con un giro di
+presentazioni, soprattutto quando i partecipanti non sono tantissimi. Gli serve
+per tre cose: \textbf{conoscersi}, \textbf{far parlare} i partecipanti e
+cominciare a \textbf{focalizzare} gli argomenti. È vero che si tratta di una
+lezione singola, ammette, ``però è sempre utile comunque confrontarci''; e in una
+lezione online lo è ``a maggior ragione'', per avere ``almeno un minimo di
+scambio'' e non ``quattro ore in cui voi siete lì fermi e zitti e io parlo,
+parlo, parlo''.
+
+Ha preparato una slide con le domande, e chiede a ognuno di rispondere in modo
+rapido, ``un po' scherzando, all'anonima alcolisti'':
+\begin{itemize}
+  \item \textbf{che cosa siete oggi}: che studi avete fatto, qual è il vostro
+        percorso;
+  \item quali sono i vostri \textbf{obiettivi}, presumibilmente nella game
+        industry e magari nel game audio, ma è ``sempre interessante scoprire
+        gli obiettivi personali di ciascuno'';
+  \item se avete un'\textbf{attitudine} più per la musica o più per il sound
+        design;
+  \item se avete già qualche \textbf{esperienza}: un progetto, un aiuto ad
+        amici, una jam, un lavoro;
+  \item e, ``come curiosità finale'', il vostro \textbf{gioco preferito per
+        l'audio}.
+\end{itemize}
+
+Sull'ultima domanda il relatore fa un'osservazione che ripete sempre. Di solito
+riceve \textbf{tre tipi di risposta}: chi ha davvero un gioco preferito per
+l'audio (``ha l'audio bellissimo, ha la colonna sonora''); chi risponde ``boh,
+non lo so'', e allora gli si chiede semplicemente il gioco preferito; e chi
+risponde ``boh, io non gioco, non mi piacciono i giochi''. Anche questa, dice, ``è
+una risposta''. In una masterclass così focalizzata, immagina, sarà più facile
+che tutti ne abbiano uno.
+
+\subsection{I partecipanti}
+
+Il relatore procede seguendo l'elenco testuale dei partecipanti.
+
+\begin{description}
+  \item[Alessio] è al quarto anno di un istituto tecnico a indirizzo
+        informatico, dove con degli esperti esterni che vengono
+        dall'accademia\footnote{Nella trascrizione l'accademia è resa in modi
+        diversi (``IBU'', ``IBO'', ``Hive'', ``AVE''). Come negli altri
+        capitoli, si usa semplicemente ``l'accademia''.} lavora con Unreal
+        Engine. Parallelamente cerca di inserirsi nel mondo del
+        \textbf{doppiaggio}, molto presente nei videogiochi ``soprattutto negli
+        ultimi anni'': alla domanda del relatore, precisa di voler fare il
+        doppiatore, cioè l'attore, non il tecnico. Non ha un gioco preferito,
+        ma ama le colonne sonore di \emph{Assassin's Creed}.
+  \item[Cindy] ha frequentato il liceo musicale; si è iscritta per orientarsi
+        verso il \textbf{sound design}, che l'ha sempre incuriosita. Gioca a
+        tutto, ``che sia un \emph{Dark Souls}, che sia un \emph{Hollow
+        Knight}'', e il suo gioco preferito per il sonoro è proprio
+        \textbf{\emph{Hollow Knight}}: un indie 2D ``molto leggero'', che ``può
+        girare dappertutto'', ma con colonne sonore e suoni ``pazzeschi'', di
+        ``una semplicità e di una bellezza'' che l'hanno colpita dall'inizio
+        alla fine. Ricorda anche le \textbf{voci} del gioco, che ``tornavano in
+        continuazione'' e parlano ``un linguaggio tutto loro'', e i motivetti
+        che ``ti rimangono in testa''; tutto ``si amalgama benissimo''.
+  \item[Fabrizio] ha fatto un istituto tecnico, poi ha ``virato totalmente''
+        verso lingue straniere all'università. Condivide con Alessio la
+        passione per il doppiaggio, da fan (``seguo doppiatori'') e un tempo
+        anche con il desiderio di provarci. Gli interessa la pipeline dello
+        sviluppo, perché pensa di mettersi in proprio o di collaborare con amici
+        usciti dall'accademia o da accademie simili. Tra musica e sound design
+        non saprebbe scegliere; ama gli MMO, i JRPG e gli open world, e cita
+        \emph{Kingdom Come: Deliverance II}, in cui ``anche solo andare a
+        camminare nel bosco'' è ``un'esperienza fantastica'' (``non ho idea di
+        come ci siano riusciti''). Non ha esperienza di audio: è un
+        ``osservatore terzo''. Il gioco che lo ha segnato di più sul piano
+        musicale è \textbf{Pokémon}, fino al periodo del Nintendo DS, per la
+        musica a 8 bit\footnote{Nella trascrizione ``la musica in beat'':
+        quasi certamente ``a 8 bit''.}: ``potrebbe essere una risposta molto
+        comune, però secondo me ci azzeccano quasi sempre''.
+  \item[Giacomo] ha 22 anni ed è perito capotecnico in automazione. Oggi
+        \textbf{programma videogiochi} con un suo team, come programmatore e
+        game designer. Ha però alle spalle \textbf{otto anni} come sound
+        designer, compositore e autore di testi, smessi l'anno prima: si occupa
+        di mixaggio, mastering, composizione e scrittura ``da dove tira il
+        vento'', e vende testi e basi. Il suo gioco preferito per il suono, nel
+        senso degli effetti e delle voci, cioè della ``tecnica dell'audio'', è
+        \textbf{\emph{Spider-Man}} (il primo, il migliore della serie su questo
+        piano); per la musica, \textbf{\emph{Zelda}}.
+  \item[Giovanni] ha 30 anni, è di Reggio Emilia e si è diplomato al
+        conservatorio di Bologna in \textbf{musica per film e pubblicità}.
+        Nasce come pianista; ha lavorato tre anni nel mondo discografico
+        italiano in uno studio di Modena, imparando a suonare più strumenti, e
+        poi ha scelto i videogiochi, affascinato dal ``lato tecnico'' di tutto
+        quello che ci sta dietro. Lavora a due giochi, forse a un terzo, sia come
+        compositore sia come sound designer, e sta imparando a programmare e a
+        \textbf{implementare l'audio negli engine}. Ultimamente fa soprattutto
+        il sound designer, ``che mi sta appassionando''. L'obiettivo è fare del
+        game audio il suo lavoro ``a 360 gradi'', perché oggi fa anche altro in
+        ambito musicale.
+  \item[Nicole] si è diplomata in economia e aveva cominciato da autodidatta a
+        creare videogiochi ``senza nessuna base''; dopo il diploma si è iscritta
+        al \textbf{primo anno di Game Design} dell'accademia. Non ha ancora chiaro
+        che cosa vorrà fare, continua a studiare anche da autodidatta, e non ha
+        un particolare legame con la musica: si è iscritta ``per avere una
+        conoscenza in più''. Il suo gioco preferito è \textbf{\emph{Elden
+        Ring}}\footnote{Nella trascrizione ``Ender Ring''.}, il primo
+        \emph{soulslike}\footnote{Nella trascrizione ``source deck''.} che ha
+        giocato, che trova ``molto elaborato'' sotto molti aspetti.
+\end{description}
+
+Alla fine del giro il relatore chiede, ``per totale curiosità'', quanti siano gli
+studenti dell'accademia: sono tre. Gli altri partecipanti vengono da fuori.
+
+% ---------------------------------------------------------------------
+\section{Il relatore e il suo studio}
+\label{z9:sec:relatore}
+
+``Vi siete un po' raccontati, adesso vi racconto un po' qualcosa di me'', dice il
+relatore, anche per ``togliervi il dubbio'' che sia lì ``per caso'' e per
+giustificare il fatto di essere lì ``a raccontarvi delle cose''.
+
+\subsection{DP Studios: uno studio verticale}
+
+Il suo studio si chiama \textbf{DP Studios}, ``tutto minuscolo, tutto
+attaccato'': una ``lotta'' che il relatore fa ogni giorno e che pensa ``di non
+vincere mai''. Si occupa da molti anni di \textbf{game audio} ed è uno studio
+\textbf{verticale}: lavora soltanto sull'audio per i videogiochi. Il relatore
+stesso e i suoi collaboratori hanno anche altre competenze (c'è chi ha lavorato a
+cortometraggi, chi in pubblicità, chi fa audio ``lineare'', cioè per media non
+interattivi), ma è stata una sua scelta precisa fin dall'inizio: DP Studios fa
+solo videogiochi, e se qualcuno del team fa un lavoro di altro tipo, quel lavoro
+non entra nel portfolio dello studio. Finisce nel portfolio personale di chi
+l'ha fatto, oppure, in futuro, in un altro ``contenitore'' che il relatore ha in
+mente da tempo.
+
+La ragione è una convinzione che il relatore esprime senza mezzi termini: non gli
+sono mai piaciuti gli studi che dicono ``faccio sound per cinema, installazioni,
+videogiochi''. Sono ``cose talmente eterogenee'' che ``fare tutto bene è
+difficile''; preferisce piuttosto un'\textbf{associazione di più studi}, di più
+professionisti specializzati.
+
+Lo studio ha quasi vent'anni (``nel 2027 abbiamo 20 anni di attività''), un sito
+(\texttt{dpstudios.it}), un team di professionisti che il relatore riesce in
+genere a tenere tutti occupati, ``a seconda dei periodi, poi c'è chi più chi
+meno'', e un portfolio ``abbastanza vasto'', di cui mostrerà un estratto.
+
+\subsection{Dall'ingegneria a Ubisoft}
+
+Il relatore nasce come \textbf{ingegnere delle telecomunicazioni}, con un
+percorso ``tecnico-scientifico'': liceo scientifico, poi ingegneria. In realtà
+comincia con \textbf{ingegneria gestionale}, seguendo ``quella stupidata che
+ognuno di noi si è sentito dire almeno una volta nella vita: fai quello perché
+c'è lavoro sicuro''. Durante il corso si accorge che non gli piace. Avrebbe
+potuto mollare; ma dalla fine del liceo aveva cominciato a suonare la
+\textbf{chitarra} e a \textbf{cantare}, senza mai frequentare un conservatorio
+ma prendendo lezioni private e seguendo percorsi formativi, e la passione per la
+musica si era allargata a una passione ``proprio per il suono''. Chiede
+consiglio, e gli dicono di passare a \textbf{telecomunicazioni}: è lì che si
+studia ``tutto l'aspetto del suono, il segnale, lavorazione, digitalizzazione,
+trasmissione''. Erano gli anni in cui il digitale c'era ``da non così tantissimo
+tempo'' e ``si stavano ancora muovendo tante cose''. Da allora il relatore ha
+sempre avuto un \textbf{dualismo}: ``l'anima ingegneristica e tecnica'' unita
+allo ``spirito creativo del cantante, del chitarrista''.
+
+Finiti gli studi, cerca tutti i posti di lavoro che possano avere a che fare con
+l'audio, anche in ruoli tecnici. Scrive a tutte le aziende possibili (ricorda
+che c'era ancora qualche costruttore con una sede in Italia, ``non so se era la
+Roland o la Edirol''), aiutandosi con un libro che in fondo aveva una lista di
+aziende. Un giorno va di persona al \textbf{laboratorio di informatica musicale}
+dell'Università degli Studi di Milano, a portare il curriculum. Il laboratorio
+non ha i fondi per prendere una persona, anche se gli servirebbe un profilo come
+il suo; ma il direttore gli racconta che sono passate delle persone di
+\textbf{Ubisoft}, che hanno lasciato un volantino: cercano un \textbf{audio
+designer}.
+
+Qui il relatore apre una piccola riflessione sul \textbf{caso}: a volte la
+fortuna arriva, ``ma non si sa se è veramente fortuna'' o se è qualcosa che ci
+si è cercati, perché lui in quel laboratorio ci era andato di persona. ``Ai
+tempi si portava ancora a mano il curriculum'': prendevi la metropolitana e lo
+consegnavi in busta. E così diventa \textbf{audio designer negli studi Ubisoft di
+Milano}, assunto a tempo indeterminato, in un mondo ``ahimè, diverso, molto
+diverso da quello che esiste oggi''. Era la fine degli anni Novanta (``proprio
+'99'', dirà più avanti), ``un'esperienza abbastanza lontana da oggi''.
+
+\subsection{Gli anni in Ubisoft}
+
+Negli anni in Ubisoft il relatore ha lavorato a \textbf{otto progetti}, che una
+slide mostra in miniatura. Il primo è \textbf{\emph{Rayman}} per \textbf{Game Boy
+Color}\footnote{Nella trascrizione ``Ryman''.}, che gli ha permesso di lavorare
+``veramente con l'8 bit'' (la cartuccia è ancora in una bacheca del suo studio).
+Poi arriva il \textbf{Game Boy Advance}, dove ``inizia a esserci un po' di
+digitale, poco poco''; poi i giochi per PC, Xbox, PlayStation, PlayStation~2,
+fino a \textbf{Xbox 360}: l'ultimo è \textbf{\emph{Splinter Cell: Double
+Agent}}. Il relatore ha quindi vissuto ``da interno'' tutto il periodo fino
+all'Xbox 360. Più avanti citerà anche \textbf{\emph{Rayman M}}, sviluppato metà
+a Milano e metà a Parigi (sezione~\ref{z9:sec:compositore}).
+
+Un partecipante lo interrompe: da piccolo ha giocato a un \emph{Tomb Raider} di
+quella serie, ``The Prophet''\footnote{Con ogni probabilità \emph{Tomb Raider:
+The Prophecy} (2002) per Game Boy Advance, sviluppato da Ubisoft Milano.}, e ce
+l'ha ancora a casa. Il relatore spera che gli sia piaciuto; il partecipante
+conferma, e il relatore aggiunge che, per quanto ne sa, il gioco ``era andato
+bene''.
+
+Dopo circa \textbf{otto anni e mezzo} il relatore lascia Ubisoft, diventa libero
+professionista e fonda \textbf{DP Studios}.
+
+\subsection{Primo consiglio: la cura del proprio brand}
+
+Su questa slide il relatore si sofferma sempre su due cose, perché per lui è
+importante, oltre a ``raccontare le cose che devo raccontare'', anche
+``portare un po' di esperienza''.
+
+La prima: fin da subito ha scelto di presentarsi con un \textbf{brand da studio}.
+Ha scelto il nome immediatamente, con un logo che è ``rimasto praticamente
+sempre lui'' (lo stile vecchio, che si trova ancora in rete, era ``fondamentalmente
+identico'', solo meno moderno, con colori leggermente diversi), e sotto un
+\emph{claim} ``bello chiaro''. Anche se era da solo, ha creato il nome di uno
+studio.
+
+Il consiglio che ne ricava è questo: \textbf{date importanza alla
+brandizzazione}. Che decidiate di avere un nome di brand o di usare il vostro nome
+e cognome (``sono scelte lecitissime''), pensate da subito alla vostra
+\textbf{presentazione}:
+\begin{itemize}
+  \item un \textbf{sito}, o comunque una pagina di riferimento con il vostro
+        portfolio;
+  \item almeno una \textbf{galleria dei lavori ben organizzata};
+  \item un bel \textbf{profilo LinkedIn} da poter girare;
+  \item va bene anche un \textbf{Linktree}, ma ``è bello che il Linktree abbia il
+        loghettino'' e una scelta di colori;
+  \item un piccolo \textbf{logo} e dei \textbf{colori} riconoscibili.
+\end{itemize}
+Sono dettagli, ma in ambito professionale contano. Il relatore lo vede dal suo
+punto di vista quando riceve un curriculum: ``una persona che ha due link,
+clicco, si apre la pagina, bella ordinata, si capisce tutto, comunque fa un
+effetto migliore''. E lo vede quando incontra team di sviluppo, per esempio al
+\textbf{First Playable} di Firenze della settimana precedente: quando poi deve
+fare il \emph{follow up}, senza un sito ``è dura'', perché ``ad oggi un sito che
+spiega quello che fai'' è importante.
+
+\subsection{Secondo spunto: otto progetti, tutti italiani}
+
+La seconda cosa riguarda le miniature. La slide nasce con \textbf{otto}
+miniature perché otto erano i progetti Ubisoft, e per coerenza il relatore ha
+continuato a usarne otto anche per lo studio: il portfolio sul sito è ``un muro
+di progetti'', e ogni tanto la slide va aggiornata (``già adesso dovrei
+aggiornarlo e non riesco mai a farlo''), togliendo un progetto e mettendone un
+altro.
+
+Ebbene, da diversi anni, ``forse più di 5-6 anni'', quando il relatore aggiunge
+un progetto, quello nuovo è \textbf{sempre di uno studio italiano}. Ormai gli otto
+progetti in vetrina sono tutti italiani, mentre prima c'era sempre qualche
+cliente estero, perché i progetti ``degni di essere mostrati'' erano misti. Per
+il relatore è ``un bel messaggio, un bel segnale'': la \textbf{scena italiana
+sta crescendo} e ``c'è lavoro, tendenzialmente c'è lavoro per tutti''.
+
+% ---------------------------------------------------------------------
+\section{Una parentesi: la contrazione del mercato}
+\label{z9:sec:contrazione}
+
+Il relatore si rende conto che le sue parole possono sembrare ``un po' di
+propaganda'', ``una campagna elettorale'', in un periodo in cui il settore dei
+videogiochi è \textbf{in contrazione}, ``anche forte'', a livello mondiale. Ma
+insiste: rispetto a com'era la scena vent'anni fa, ``la contrazione di oggi è
+oro''. Oggi ci sono tante aziende, mediamente più lavoro, più opportunità, tanti
+team italiani che sviluppano. Apre allora una parentesi, ``velocissima'', sulle
+cause della contrazione, che spera finisca presto (``anche se c'è chi dice no,
+durerà anni, vedremo'').
+
+Prima di tutto, chiarisce, la contrazione \textbf{non è dovuta all'intelligenza
+artificiale} nel senso in cui se ne parla per tutti i settori, cioè l'IA che
+sostituisce il lavoro: ``no, non è così''. Le cause, per lui, sono tre.
+
+\begin{enumerate}
+  \item \textbf{Il boom del Covid e i licenziamenti.} Durante la pandemia il
+        videogioco ha avuto un boom; sviluppatori e publisher hanno investito
+        tantissimo, e i team sono cresciuti ``troppo'', pensando erroneamente che
+        la situazione sarebbe durata per sempre. L'esempio del relatore: hai un
+        team di 20 persone, arriva il Covid, ``figata, allora facciamo tre
+        progetti in parallelo'', e prendi 60 persone. Quando la domanda si
+        normalizza, ti ritrovi con 60 persone e licenzi. Succede in tutte le
+        aziende: anche Epic Games, ricorda, ha licenziato mille persone ``due o
+        tre mesi fa''. I licenziamenti creano panico e \textbf{sfiducia}; e gli
+        investitori, ``che poi decidono un po' tutto'', vedendo tagli e chiusure
+        si allontanano.
+  \item \textbf{L'intelligenza artificiale, ma da un altro punto di vista.} Gli
+        investitori che prima mettevano i soldi nelle aziende di videogiochi
+        oggi li mettono nelle aziende che sviluppano intelligenza artificiale:
+        ``investono in Anthropic, investono in OpenAI''. Il focus ``di dove sono
+        i soldi'' si è spostato, e nel gaming ce ne sono meno.
+  \item \textbf{Il modello di business.} La tipologia di giochi che il pubblico
+        acquista è diventata ``un po' più piccola'': oggi sviluppare un grosso
+        titolo, anche solo un doppia A, è molto rischioso per uno studio magari
+        semi-indie, ed è molto più semplice sviluppare giochi più piccoli.
+\end{enumerate}
+
+A questo proposito il relatore segnala una nuova etichetta: i giochi
+\textbf{\emph{Triple-I}} (``AAAI'' nella trascrizione), una ``classificazione
+nuova''. Sono i giochi indie ``un po' più grossini'', ``un po' più fatti
+bene'': una via di mezzo. Non sono doppia A, che richiedono ancora team di 30,
+40, 50 persone, ma titoli indie con team magari di dieci persone, ``fatti bene,
+curati'', che hanno successo. ``Scusate un attimo per la divagazione, ho colto la
+palla'': l'argomento sarebbe venuto fuori comunque, e il relatore preferisce
+``smarcarlo subito''.
+
+Il programma della giornata, annuncia poi, prevede una \textbf{panoramica sul
+game audio}, i \textbf{ruoli e le competenze} e, verso la fine, la
+\textbf{produzione}: il processo, la pipeline e l'integrazione dell'audio nel
+gioco.
+
+% ---------------------------------------------------------------------
+\section{Più di metà dell'esperienza: la citazione di Spielberg}
+\label{z9:sec:spielberg}
+
+Il relatore comincia sempre il suo racconto con una \textbf{citazione di Steven
+Spielberg}: ``il punto di partenza di tutto''. Spielberg non si occupa di
+videogiochi, ma la frase lo ha colpito, sia perché mostra la sua ``attenzione e
+cura'' per l'audio, la stessa che il relatore ha in ambito gaming, sia perché
+rappresenta bene che cosa sia l'audio per il videogioco. Il senso, come il
+relatore la riporta, è che \textbf{il suono e la musica comunicano più della metà
+dell'esperienza}, ``ancor più di quello che vedi''\footnote{La slide non viene
+letta per intero. Nella forma che circola più spesso la frase attribuita a
+Spielberg dice che ``il suono e la musica sono il 50\% dell'intrattenimento in un
+film''; il relatore la riassume a voce come ``più della metà'' dell'esperienza,
+``ancor più di quello che vedi''.}.
+
+Spielberg parla di cinema, un'esperienza lineare, ma riportata sul videogioco la
+frase vale ``praticamente lo stesso''. Anzi, la seconda parte, ``ancor più di
+quello che vedi'', è quella che ``va a centrare l'obiettivo''. Anche in un film si
+può ricreare un ambiente che non si vede, o anticipare la tensione con una musica
+anticipatoria; ma in un medium \textbf{interattivo} questo diventa ancora più
+forte. Per chi fa audio, dice il relatore, il videogioco è ``veramente la
+quintessenza'', ``una leva molto importante'': perché quello che il giocatore
+\textbf{non vede}, se lo \textbf{sente}, gli permette di \textbf{giocare e
+comportarsi in modo diverso}.
+
+Gli esempi sono tre.
+\begin{itemize}
+  \item \textbf{Il corridoio.} Stai percorrendo un corridoio e senti certi suoni:
+        capisci che in fondo c'è qualcosa. In un film la scena successiva arriva
+        comunque; in un gioco puoi \textbf{tornare indietro}, evitare quel
+        passaggio se possibile, andare a curarti o a rinforzarti, lasciarlo per
+        ultimo perché sarai più forte.
+  \item \textbf{La gara.} In un gioco di corse, alle ultime curve, sei testa a
+        testa con un avversario. Invece di premere il tasto che mostra lo
+        specchietto, rischiando di sbagliare nella foga e finire fuori strada,
+        semplicemente \textbf{ascolti il motore}, a destra o a sinistra, e chiudi
+        le traiettorie. Al relatore capita ``spessissimo'': senti l'avversario
+        che aumenta sulla sinistra, ``sta passando di lì'', e lo chiudi.
+  \item \textbf{La giungla e il dungeon.} In una giungla, graficamente, è
+        difficile far muovere e vedere tutti gli elementi, ``perché sennò il
+        processore non ce la fa'': ambienti di per sé molto ricchi hanno spesso
+        poco che si muove a schermo. Ma con l'audio ci puoi mettere fruscii,
+        foglie, vento, animali. In un dungeon puoi far sentire i topi che
+        squittiscono, gli insetti, i pipistrelli, ``ma non ci sono''. Con l'audio
+        si aggiunge ``tantissimo di quello che non si vede''.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{I tre elementi di importanza dell'audio}
+\label{z9:sec:tre}
+
+Quando gli chiedono quali siano gli elementi di importanza dell'audio in un
+videogioco, il relatore risponde con tre parole, che presenta come ``il mio
+contributo, la mia idea'':
+\begin{enumerate}
+  \item il \textbf{potere evocativo};
+  \item la \textbf{caratterizzazione};
+  \item il \textbf{supporto al gameplay}.
+\end{enumerate}
+
+Il terzo è forse ``la cosa più specifica proprio dell'interattività''. In un film
+il potere evocativo c'è, la caratterizzazione c'è; al posto del supporto al
+gameplay si potrebbe parlare di \emph{supporto alla narrazione}, ``però in realtà
+non è la stessa cosa''. Il supporto al gameplay è ciò che permette di
+\textbf{giocare in modo diverso} a seconda di quello che si ascolta, o che
+\textbf{guida} il giocatore.
+
+Per ciascuno dei tre il relatore mostra alcuni video. Avverte subito che sono
+\textbf{video vecchi}, di giochi e situazioni datate, ed è in parte voluto: ha
+costruito tutto il racconto su questi video, ci è ``molto affezionato'', ha
+provato negli anni ad aggiornarli e ha delle idee per farlo, ma il racconto
+funziona talmente bene che ha ``sempre paura'' che, cambiandoli, ``si rompe
+tutto''. ``Se vedete dei videogiochi e dite: caspita, videogioco di 50 anni fa,
+sappiate che è in un certo senso un po' voluto''. Dopo ogni video, chi vuole può
+intervenire.
+
+% ---------------------------------------------------------------------
+\section{Il potere evocativo}
+\label{z9:sec:evocativo}
+
+Il \textbf{potere evocativo} è la capacità di \textbf{provocare reazioni
+emotive}: porta l'emozione, l'emotività. Si usa per \textbf{rafforzare} situazioni
+di gioco e anche per \textbf{anticipare} situazioni e snodi di gameplay; si usa
+moltissimo nelle \emph{cutscene}\footnote{Nella trascrizione il termine compare
+in forme storpiate (``cazzi'', ``cuts in'', ``cazzin''): è sempre
+\emph{cutscene}, le scene di intermezzo non interattive.}, quando c'è una
+situazione d'impatto. Qui ``la fa da padrona'' la \textbf{musica}, ma non è
+l'unico strumento: anche il \textbf{sound design} ha un forte potere evocativo,
+come mostreranno i video.
+
+\subsection{Il trailer di \emph{Gears of War}}
+
+Il primo video è ``la quintessenza del potere evocativo'', anche se non è una
+scena di gioco: serve a far capire ``dove si può arrivare''. È il \textbf{primo
+trailer di \emph{Gears of War}}\footnote{Nella trascrizione ``ESO Wars''; più
+avanti il relatore lo chiama ``il trailer di Gears of War''. Il brano che si
+sente è \emph{Mad World}, nella versione lenta di Gary Jules: la trascrizione ne
+riporta alcuni versi (``All around me are familiar faces, worn out places, worn
+out faces\ldots'').}, trasmesso in televisione quando il relatore lavorava ancora
+in Ubisoft. Il giorno dopo ``un po' tutti ne parlavamo'', in particolare con un
+collega programmatore che era anche musicista professionista, con un gruppo che
+girava l'Italia: si discuteva di come la \textbf{scelta audio} avesse reso
+``surreale'' quel video.
+
+La scena è una \textbf{scena di guerra}: fuochi, fumo, esplosioni, pioggia, un
+soldato che si muove e poi corre a combattere. Il relatore propone un
+esperimento mentale, ``una cosa che prima o poi farò'': se desse questo video da
+sonorizzare, probabilmente il \textbf{95\%} delle persone metterebbe prima di
+tutto del \textbf{sound design}, perché la scena ``chiama sound design'' (``cioè
+addirittura piove''); e come musica, qualcosa di \textbf{tensione}, sospeso, poi
+una crescita, un \emph{rise}, fino al climax finale con una musica d'azione
+adrenalinica, ``perché lui va lì a combattere''.
+
+Il trailer fa ``totalmente l'opposto'': su un video di guerra c'è \textbf{solo
+musica}, una musica \textbf{malinconica e introspettiva}. E questa musica
+\textbf{sposta l'emotività}. C'è anche un ``trucchettino'' più sottile: mentre il
+testo dice \emph{worn out faces}, l'inquadratura gira proprio sul volto del
+soldato. ``Sono stati molto bravi''. Guardando il video non si pensa alla guerra,
+ma a lui: è triste, ``poverino'', magari ha una famiglia, una casa; si pensa
+all'\textbf{ineluttabilità della guerra}, a concetti ``più interiori''. Anche
+quando il soldato parte e combatte, non si ha la percezione di una scena d'azione.
+È uno spostamento ``grosso'', da adrenalina e combattimento a malinconia: per
+questo il relatore lo mostra sempre, pur non essendo gameplay.
+
+Cindy interviene: verso la fine il video le ha dato ``proprio una sensazione di
+tristezza''; si è immedesimata moltissimo nella scena del soldato che corre,
+vista dall'alto, ``come se stesse andando a morire''. Ha avuto come una
+\textbf{premonizione} che quella sarebbe stata la sua fine. ``Esatto, è proprio
+quello'', conferma il relatore: l'obiettivo ``è proprio stato centrato''.
+
+\subsection{Un'idea mai realizzata}
+
+Il relatore fa una premessa al video successivo. Durante il \textbf{gameplay},
+ottenere uno spostamento emotivo così forte è più difficile: un trailer ``si
+presta di più''. Per quanto ne sa, nessuno ha ancora fatto la scelta estrema di
+un gioco in cui la musica ``non c'entri proprio nulla'' a livello emotivo con
+quello che succede: ``non so, un videogioco di guerra tutto con musica country''.
+Ha anche cercato qualcosa del genere, senza trovarlo. ``Potrebbe essere
+un'idea''.
+
+\subsection{\emph{Assassin's Creed}: la musica che si apre}
+
+Il secondo video è di un \textbf{\emph{Assassin's Creed}} ``bello vecchio''. Si
+parte da una \textbf{cinematica} di tensione, ``tensione estrema''; a un certo
+punto il controllo passa al giocatore (lo si capisce dal ``classico movimento di
+camera'' che segnala il passaggio) e la musica \textbf{cambia}, ``si apre'', come
+se si liberasse della tensione e dicesse al giocatore: \emph{ok, adesso vai,
+perché tocca a te}. ``Quasi ti andasse a dire: vai e purifica'', è la lettura
+del relatore.
+
+Il relatore usa questi primi video anche per dare qualche spunto tecnico, e qui
+individua \textbf{tre livelli}.
+\begin{enumerate}
+  \item La \textbf{cinematica}, il caso più semplice: è un pezzo lineare, e la
+        musica la segue.
+  \item Il \textbf{passaggio di controllo}: la musica si apre. Se il giocatore
+        restasse fermo, o si muovesse in quella piccola zona, la musica
+        andrebbe avanti probabilmente in \textbf{loop}.
+  \item Il \textbf{trigger}: a un certo punto il personaggio raggiunge un punto
+        dove, presume il relatore, c'è un \textbf{trigger}. Un trigger è
+        ``praticamente un volume, un box invisibile'' che, quando il personaggio
+        lo tocca, comunica al gioco che si sta entrando in una zona d'azione: lo
+        stato di tensione passa, per esempio, ``da 1 a 2'', e il sistema
+        \textbf{alza il volume di una traccia}. Si sente entrare \textbf{in fade
+        in} un \emph{layer} con una parte ritmica, e la musica cresce, diventa
+        ``più sostenuta'' man mano che c'è più azione.
+\end{enumerate}
+
+In questo caso la musica \textbf{non sposta} l'emotività, come nel trailer, ma
+la \textbf{supporta}. E tutto avviene in modo ``abbastanza trasparente'': con gli
+strumenti di oggi queste transizioni si possono fare senza che il giocatore se ne
+accorga. Qui, nota il relatore, è anche relativamente facile, perché la sequenza
+è lineare e ``sai più o meno quando è il punto di passaggio''.
+
+\subsection{\emph{Manhunt}: l'oppressione senza musica}
+
+Il terzo video mostra come si possa ottenere un effetto emotivo \textbf{anche
+senza musica}. Il gioco è \textbf{\emph{Manhunt}}, sviluppato da \textbf{Rockstar
+Games}. Il relatore lo descrive come ``un po' il precursore di \emph{Hunger
+Games}'': il protagonista è un condannato a morte che viene ``graziato'', ma la
+grazia consiste nel buttarlo in una città fantasma dove deve uccidere chi
+incontra, altrimenti lo uccidono. Il gioco, sottolinea, è arrivato molto prima di
+\emph{Hunger Games}.
+
+Il relatore lo conosce bene per una ragione personale: lead designer del gioco
+era \textbf{Christian Cantamessa}, un ex collega di Ubisoft passato a Rockstar.
+Tra colleghi ed ex colleghi c'erano le ``classiche prese in giro'' (``adesso sto
+facendo giochi seri''), e quando il gioco uscì il team di Milano lo provò, un po'
+anche per poterlo prendere in giro, visto quanto il collega se n'era vantato. In
+pausa pranzo, nella zona relax, dopo cinque o dieci minuti il collega che stava
+giocando \textbf{passò il pad} a quello di fianco: ``ho l'ansia, ho l'ansia,
+gioca tu''. Il gioco aveva davvero questo effetto. Nei giorni successivi il
+relatore, che nel frattempo lo aveva giocato anche da solo e aveva notato che
+l'audio era ``un po' particolare'', contattò Cantamessa. Lui gli confermò che
+l'indicazione data al dipartimento audio era proprio quella: tutto doveva essere
+il più \textbf{opprimente} possibile, oltre alla storia e all'ambientazione
+anche l'audio. L'input era ``oppressione, ansiogeno'', perché quello era il tipo
+di gioco.
+
+Nel video, e in tutto il gioco, il relatore fa notare diversi elementi.
+\begin{itemize}
+  \item Tutto ciò che è \textbf{tutorial} e spiegazione arriva con una
+        \textbf{voce filtrata}, con un rumore radio, come se venisse dalla
+        telecamera: già questo dà un senso di \textbf{alienazione}.
+  \item Durante il gameplay \textbf{non c'è musica}. La musica c'è solo nelle
+        cutscene, ed è una musica ``abbastanza ruvida'', di tipo punk rock, se il
+        relatore ricorda bene.
+  \item L'\textbf{ambiente} è metà suono di città (ci sono anche finestre
+        accese, e non si capisce se la città sia davvero fantasma) e metà
+        \textbf{elementi tonali} che non si capisce se siano musica o parte
+        dell'ambiente: ``un soundscape un po' ibrido''.
+  \item Il \textbf{bonus} non fa ``bling'' come in Super Mario, ma un suono cupo.
+  \item Avvicinandosi alla vittima si sente il \textbf{battito cardiaco}, fino
+        alla fase finale, l'esecuzione, dove tutto è ``più semplice'' perché
+        legato a un'azione violenta.
+\end{itemize}
+Senza musica, solo con il sound design, il gioco riesce a trasmettere
+``qualcosa di cupo, di scuro, di oppressivo''. Il potere evocativo, conclude il
+relatore, si esercita con la musica ``nella stragrande maggioranza dei casi'', ma
+``molto spesso anche con il sound design''.
+
+\subsection{Altri esempi: \emph{Alien: Isolation}, \emph{Silent Hill},
+\emph{Scanner Sombre}}
+
+Un gioco che il relatore aveva valutato di usare al posto di \emph{Manhunt} (``a
+me questo video piace molto, difficilmente troverò qualcosa per sostituirlo'') è
+\textbf{\emph{Alien: Isolation}}: camminando si sentivano ogni tanto dei suoni
+intorno, come se l'alieno si muovesse nei condotti proprio accanto a te. Poi non
+c'era. Non erano \emph{jump scare}, cose che ti fanno sobbalzare: erano suoni
+che ti facevano paura \emph{mentre camminavi}.
+
+Una partecipante\footnote{La trascrizione non dice chi parla; dal contesto è con
+ogni probabilità Cindy.} si aggancia proprio a questo punto, al suono
+dell'ambiente. Negli horror di oggi vanno moltissimo di moda i \emph{jump scare},
+ed è ``la cosa che trovo meno spaventosa di tutto'': ti prendono alla sprovvista,
+ma trova molto più cupo e ansiogeno un horror in cui magari non c'è nemmeno un
+mostro, ``non c'è effettivamente niente'', ma il suono è fatto talmente bene
+(il battito cardiaco, ``tutte queste cose'') da \textbf{rievocare} un momento di
+tensione o di paura vissuto davvero. La paura, dice, è molto più una cosa
+\textbf{ansiogena} che un ``oh mio Dio, c'è qualcosa che mi segue'', e con un
+buon sound design la si percepisce molto meglio.
+
+Il relatore è d'accordo e aggiunge un suo esempio: il suono che lo
+``terrorizzava tantissimo'' era quello di \textbf{Pyramid Head} in
+\textbf{\emph{Silent Hill}}. Le prime volte sentivi il suono e poi lo vedevi
+passare; dopo, ogni volta che sentivi quel suono, \emph{non} lo vedevi, e scattava
+subito il panico: ``oddio, me ne devo andare''. Ogni volta che lo sentiva cercava
+di andare via. ``Ti metteva proprio l'ansia, solo sentire il suono''.
+
+Fabrizio, che nel frattempo cercava il nome, ne aggiunge un altro:
+\textbf{\emph{Scanner Sombre}}, visto su YouTube. Il giocatore ha un apparecchio
+che scansiona digitalmente la stanza, e si sentono fondamentalmente solo
+\textbf{rumori digitali di scansione}; più qualcosa si avvicina, più il rumore
+diventa distorto o si accentuano certi elementi. Anche questo, per lui, è molto
+più pauroso, ``magari anche senza incontrare mai un mostro'', di tanti horror che
+puntano sull'effetto sorpresa.
+
+% ---------------------------------------------------------------------
+\section{La caratterizzazione}
+\label{z9:sec:caratterizzazione}
+
+Il secondo elemento è la \textbf{caratterizzazione}, e anche qui il videogioco è
+diverso dal film: la caratterizzazione è fatta \textbf{in tempo reale}.
+
+\subsection{Una simulazione, non una sonorizzazione}
+
+Bisogna caratterizzare prima di tutto l'\textbf{ambiente}. ``Ormai al giorno
+d'oggi'' non si fa più un unico loop audio che gira sotto la scena: si
+\textbf{lanciano suoni} che si sovrappongono, e si possono variare man mano che
+il giocatore si muove, cambiando il set di suoni. ``Diventa tutta una cosa
+\textbf{generativa}'' (se ne riparlerà nella
+sezione~\ref{z9:subsec:ambienti}).
+
+Poi ci sono gli \textbf{oggetti} che riempiono il mondo. Un condizionatore
+appeso alla finestra emette un suono; se gli spari e lo danneggi, si sentono le
+scintille e poi il suono di un motore danneggiato. È una caratterizzazione che
+non funziona come al cinema, dove ``vedo la scena e attacco i suoni in base a
+quello che succede'': ``la parola giusta è proprio \textbf{una simulazione}''.
+Gli oggetti hanno degli \textbf{stati}, e il sound designer studia che cosa può
+fare ciascun oggetto. Una sedia da scrivania si può trascinare piano o
+velocissimamente, si può lanciare, si può distruggere: \textbf{ogni stato} che
+un oggetto interagibile può avere deve avere il suo suono. ``E quindi è un bel
+lavoro''.
+
+\subsection{Una città africana: superfici, riverberi, oggetti}
+
+Il primo video di caratterizzazione mostra una missione in una città africana,
+``se non ricordo male Kinshasa''\footnote{Il titolo non è detto. Una missione a
+Kinshasa c'è in \emph{Splinter Cell: Double Agent}, a cui il relatore ha
+lavorato; il riferimento è una deduzione.}. Il relatore commenta mentre il video
+scorre.
+\begin{itemize}
+  \item Guardandosi intorno \textbf{non si muove niente}: non ci sono macchine,
+        non ci sono voci. Ma \textbf{si sentono}: dei \emph{clack}, delle vocine,
+        che danno l'idea di un villaggio africano. L'ambiente è caratterizzato
+        dal suono.
+  \item L'\textbf{equipaggiamento} del personaggio e i \textbf{passi}, che
+        cambiano con ogni superficie: dal marciapiede all'asfalto, forse una
+        ghiaietta, poi il legno quando si entra in casa.
+  \item Entrando cambia l'\textbf{ambiente}: non si sente più l'esterno e si
+        sente un \textbf{riverbero} diverso.
+  \item I \textbf{colpi} sono tutti caratterizzati: un oggetto di legno, una
+        ringhiera.
+  \item Una \textbf{televisione} accesa trasmette una musichetta; appena la si
+        colpisce, la musichetta si interrompe e si sente il rumore bianco della
+        televisione distrutta.
+\end{itemize}
+Questo tipo di gioco, dice il relatore, è particolarmente adatto alla
+caratterizzazione, perché non c'è musica in gioco ma c'è ``tanto, tanto, tanto''
+altro: le armi, la ricarica, quanta roba il personaggio ha addosso, se
+l'armatura è pesante o leggera, i passi su tutte le superfici, l'apertura delle
+porte, l'ambiente, il riverbero. E tutto è in tempo reale: se si torna fuori, il
+passo cambia di nuovo e si torna a sentire il clacson.
+
+\subsection{\emph{Assassin's Creed II}: la Venezia di Ezio}
+
+Il secondo video viene dalla stessa serie del primo esempio di potere evocativo,
+con una caratterizzazione ``super estrema''. Si sente un dialogo in inglese
+(``Ezio, Leonardo says that the machine is ready\ldots''): è
+\textbf{\emph{Assassin's Creed II}}, a Venezia. Il relatore anticipa un dettaglio:
+la musica che si sente è \textbf{diegetica}, cioè suonata da un'orchestra
+presente nella scena, e quindi caratterizza anche l'ambiente e l'epoca.
+
+Oltre ai passi e a tutti i suoni del personaggio che si arrampica, la peculiarità
+del gioco erano le \textbf{voci}: gli \textbf{emettitori} erano attaccati alle
+coppie di persone, e camminando tra la folla ogni tanto partiva un piccolo
+dialogo. Tutti questi dialoghi che partivano casualmente davano la sensazione di
+una città viva. Quando Ezio sale, la musica e l'ambiente \textbf{scendono}; si
+sentono i piccioni; quando fa cadere una guardia, si sente il suono della caduta;
+poi i fuochi d'artificio. ``È proprio un lavoro minuzioso e complesso'', con una
+cura di tutti i dettagli, dai passi agli appigli, ai fuochi, alle voci.
+
+L'obiettivo di questo lavoro, e in generale del sound design, è
+\textbf{contestualizzare} e \textbf{far sentire immersi}; in questo caso vale
+anche per la musica, che è diegetica. Il relatore riassume il cammino fatto:
+``abbiamo l'emotività, l'immersività, se vogliamo, e arriviamo poi al supporto al
+gameplay''.
+
+\paragraph{Un confronto con i libri.} L'idea che il suono sia ciò che rende
+credibile un luogo è anche in \emph{The Art of Game Design} di Jesse Schell,
+che nell'elenco delle competenze utili a un designer scrive del sound design:
+``il suono è ciò che convince davvero la mente di trovarsi in un luogo; in altre
+parole, \emph{sentire è credere}''. Parlando di realtà virtuale, Schell nota
+anche che il suono realistico è molto \textbf{contestuale} (lo stesso oggetto
+suona diversamente in una stanza piccola o in una grande, su un tavolo di legno
+o di vetro) e che una moneta che cade senza fare rumore basta a ricordare al
+giocatore che il mondo è finto: è la stessa logica della simulazione per stati
+descritta dal relatore. (Il confronto non è stato fatto a lezione.)
+
+% ---------------------------------------------------------------------
+\section{Il supporto al gameplay}
+\label{z9:sec:gameplay}
+
+Il \textbf{supporto al gameplay} significa che l'audio \textbf{fornisce al
+giocatore elementi utili}, spesso \textbf{non visibili}, per migliorare
+l'esperienza di gioco. (Il relatore si chiede se esista una traduzione di
+\emph{gameplay}: probabilmente ``esperienza di gioco'', ``giocabilità'', con
+accezioni leggermente diverse.) In un'esperienza interattiva l'audio è
+fondamentale per \textbf{guidare} e \textbf{aiutare}, come negli esempi della
+citazione di Spielberg.
+
+\subsection{I passi della guardia}
+
+Il primo video è di un gioco \textbf{stealth}: l'audio fa capire che c'è
+qualcuno, e quindi si gioca in modo diverso. Il giocatore è entrato da una
+finestra, ha sentito dei passi e si ferma ad ascoltare: \textbf{prima sente} i
+passi, \textbf{poi vede} la guardia. In questi giochi si ascolta il più possibile
+quando i passi si fermano e quando ripartono, per capire il percorso della
+guardia; dopo averla vista passare due o tre volte, si capisce quando ci si può
+muovere. È la caratteristica tipica dei giochi stealth.
+
+\subsection{La telecamera di sorveglianza e il microfono sulla camera}
+
+Il secondo video è simile, ma riguarda un oggetto: il giocatore sente che c'è una
+\textbf{telecamera di sorveglianza}. E fa una cosa particolare: muove la
+\textbf{camera di gioco}, perché \textbf{il microfono è sulla camera di gioco}.
+Ruotandola, cerca il punto in cui il volume del ronzio della telecamera si alza:
+``ah, ok, si sta alzando il volume, quindi probabilmente è dietro l'angolo''. Il
+giocatore \textbf{sfrutta l'audio} per localizzarla, e poi la neutralizza. (Il
+relatore chiede se i partecipanti sentano il video in stereo, perché lui non ha
+impostato la condivisione stereo.)
+
+Sono due esempi ``forse un po' più classici'': l'audio che fa capire se arriva un
+nemico, se c'è una telecamera, un laser o qualcos'altro che può danneggiarti.
+
+\subsection{La musica che dice se sei in combattimento}
+
+Anche la \textbf{musica} può aiutare. Il video successivo è il seguito di uno dei
+video precedenti (quello di \emph{Assassin's Creed}): la musica fa capire, in
+modo molto semplice, se si è \textbf{in combattimento} oppure no. È importante
+soprattutto nei giochi \textbf{a orde}, in cui compaiono più nemici: si comincia a
+combattere, c'è ``il cattivone lì che parla'', la musica va; quando la musica
+finisce, il giocatore sa che non arriveranno altri nemici, e può andare a
+uccidere il cattivo senza guardarsi intorno. Infatti nel video non si guarda
+neanche in giro: ``è guidato dalla musica''.
+
+Il relatore potrebbe sostituire questo video con uno di
+\textbf{\emph{Solstice}}\footnote{Così nella trascrizione (``In Solstice''): uno
+dei giochi a cui lo studio del relatore ha lavorato di recente. Il titolo esatto
+non è ricostruibile con certezza.}, uno dei giochi a cui ha lavorato di recente,
+dove la situazione è ancora più estrema: in una classica \emph{combat arena}
+continuano ad arrivare nemici, anche lontani, anche dopo che hai ucciso quelli
+vicini. Se la musica non si ferma, capisci che sei ancora in combattimento e vai
+a cercarli.
+
+\subsection{Che cosa sa il motore di gioco?}
+
+Su questo video il relatore fa da qualche anno una domanda ai partecipanti.
+Ferma il video in un momento preciso, durante l'ultimo combattimento: la musica
+sta andando. \emph{Che cosa sappiamo, in questo preciso istante?} Non dal punto
+di vista del giocatore, precisa, ma \textbf{dal punto di vista del motore}: che
+cosa sa il gioco, ``a livello di statistica, di dati, di informazioni''?
+
+Un partecipante risponde che è il colpo finale. Nicole, che fatica ad accendere
+il microfono, pensa che, essendo il colpo finale, il gioco dovrebbe ``piano piano
+far finire la musica dinamica''. Il relatore insiste: c'è un'informazione che il
+motore di gioco può già passare al \textbf{motore audio}, perché prepari la sua
+transizione e cambi la musica in modo pulito. Qualcuno ci arriva: \textbf{il
+nemico è già morto}.
+
+È proprio così. Quella che si vede è una \textbf{mossa \emph{finishing}}, la
+mossa finale: in quel momento il nemico è già morto, il personaggio sta solo
+eseguendo l'animazione conclusiva. Il motore di gioco può quindi dire al
+\emph{sound engine} ``morto'', e il sound engine, sulla base di come il
+compositore ha costruito la musica, probabilmente finisce la battuta, va in un
+piccolo loop di transizione e arriva sul colpo finale. Da quel momento, ``anche
+se non sembra'', la musica si sta già portando verso la conclusione. Il relatore
+conta: ``uno, due, tre, quattro, cinque''. \textbf{Cinque secondi}: ``è
+tantissimo tempo''.
+
+La \textbf{musica interattiva} si basa tutta su cose di questo tipo: sfruttare
+il fatto che c'è un'animazione di \emph{finishing}, una piccola cinematica, uno
+dei tanti momenti in cui il gioco \textbf{ha già l'informazione}, per avere il
+tempo di chiudere la musica con una piccola transizione e finire
+``perfettamente a tempo''.
+
+\subsection{Il giocatore che sfrutta la musica}
+
+L'ultimo video è ``una piccola chicca'', perché il supporto al gameplay qui
+funziona al contrario: non è la musica strutturata \emph{per aiutare} il
+giocatore, è il giocatore che \textbf{capisce come è strutturata la musica} e la
+sfrutta.
+
+Il gioco è uno \emph{Splinter Cell}\footnote{Il relatore non dice il titolo
+esatto, ma precisa di aver ``un po' lavoricchiato alla serie di Splinter Cell''.}.
+Il giocatore guarda attraverso la serratura con la fibra ottica e vede un
+corridoio lunghissimo, con una guardia. La soluzione ``normale'' sarebbe
+aspettare che la guardia vada in fondo, scassinare la serratura, aprire la porta
+piano piano, entrare, mettersi in un punto dove non lo vede: ``è un quarto d'ora
+per fare 'sto corridoio''. Invece \textbf{apre la porta di proposito} e si
+nasconde. Parte la musica di tensione: il sistema è in \textbf{allerta}. La
+guardia lo cerca; lui la \textbf{immobilizza} e la porta via, fuori dalla zona
+d'allerta, tornando da dove era venuto. A un certo punto \textbf{la musica si
+ferma}.
+
+Che cosa ha scoperto? Che \textbf{non ci sono altre guardie allertate}: quella
+era l'unica. In questi giochi, normalmente, quando una guardia dà l'allarme ce
+n'è magari un'altra seduta nel buio, o in un'altra stanza, che dice ``ah, cosa
+succede?'', e cominciano a girare in tre. Facendo scattare l'allerta e
+aspettando che la musica cali, il giocatore ha verificato che quello era l'unico
+trigger di allerta: ora il corridoio lo può fare ``di corsa, saltellando e
+fischiettando''.
+
+Come il trailer di \emph{Gears of War}, è un esempio \textbf{estremo}: un
+giocatore ha scoperto questa caratteristica e la usa. Per quanto ricorda il
+relatore, non era stata pensata: ``non c'era una volontà di dire: con la musica
+tu puoi giocare diversamente''.
+
+\paragraph{Un confronto con i libri.} Chris Bateman, in \emph{21st Century Game
+Design}, analizzando i modi in cui i giochi stealth informano il giocatore, nota
+che \emph{Thief} e \emph{Splinter Cell} gli mostrano un indicatore di luce sul
+proprio stato di visibilità, mentre le informazioni sui nemici arrivano
+``altrimenti da indizi visivi e sonori'': è esattamente il ruolo dell'audio nei
+due video sui passi e sulla telecamera. (Il confronto non è stato fatto a
+lezione.)
+
+% ---------------------------------------------------------------------
+\section{Breve storia dell'audio nei videogiochi}
+\label{z9:sec:storia}
+
+Prima della pausa il relatore propone di fare il punto sui tempi (``vabbè, un po'
+lungo come sempre'') e di cominciare un racconto di \textbf{storia dell'audio
+nei videogiochi}. Due pause da dieci minuti o una sola da venti? I partecipanti
+scelgono di arrivare fino alle ``meno un quarto'' e fare una pausa unica di una
+ventina di minuti, ``così se uno vuole mangiare, caffè, relax''.
+
+\subsection{Perché la storia}
+
+L'obiettivo del racconto è dare un po' di \textbf{contesto}, anche culturale,
+``che non fa mai male''; ma soprattutto mostrare che molte \textbf{tecniche} che
+si usano oggi sono nate in quell'epoca. Oggi ci sono ``super middleware, super
+strumenti'', memoria e processore in abbondanza, ``non dico infinita''; eppure
+le \textbf{limitazioni} sono sempre le stesse, e bisogna stare attenti più o meno
+alle stesse cose. ``È un attimo, ancora oggi, arrivare in situazioni in cui
+spariscono suoni perché abbiamo esaurito la polifonia della scheda audio'', per
+esempio della PlayStation.
+
+\subsection{Tre periodi}
+
+Il relatore divide la storia in \textbf{tre periodi}:
+\begin{itemize}
+  \item le \textbf{origini}: gli anni Ottanta;
+  \item il \textbf{boom}: gli anni Novanta, ``veramente un boom in generale, non
+        solo per l'audio'';
+  \item il \textbf{presente}, che per lui va dal 2000 in poi. Non sono più dieci
+        anni come gli altri periodi, ``sono più del doppio'', ma per l'audio
+        non c'è più stato un salto tecnologico, generazionale, tale da
+        giustificare un periodo in più.
+\end{itemize}
+
+I videogiochi, ovviamente, esistevano già negli anni Settanta: \emph{Pong} risale
+a quel decennio, e ``se non sbaglio'' anche \emph{Space Invaders}; il relatore ha
+letto che già alla fine degli anni Sessanta c'era ``embrionalmente'' qualche
+gioco sulle grosse workstation ``a muro''. Ma è negli anni Ottanta che il
+videogioco diventa una \textbf{forma di intrattenimento di massa}.
+
+% ---------------------------------------------------------------------
+\section{Gli anni Ottanta: chip, sintesi e linguaggio macchina}
+\label{z9:sec:anni80}
+
+\subsection{Nasce la produzione audio}
+
+Negli anni Ottanta il videogioco si diffonde: nascono i \textbf{publisher},
+nascono i \textbf{generi} e i sottogeneri (l'RPG, l'adventure, il platform, il
+racing). Il settore matura e diventa un'\textbf{industria}. Ed è in questi anni
+che nasce la \textbf{produzione audio}: prima i suoni erano dei \emph{beep}, che
+in gergo tecnico si chiamano \textbf{\emph{chirp}}, emessi da piccoli
+altoparlanti; ora c'è bisogno di un vero sound.
+
+Due cose, unite, fanno nascere la produzione audio, cioè musica ed effetti
+sonori.
+\begin{itemize}
+  \item La \textbf{possibilità}: le console e i personal computer dell'epoca
+        hanno a bordo dei \textbf{chip audio}, piccoli sintetizzatori,
+        ``processorini audio'' con per esempio \textbf{quattro voci}. Bisogna
+        immaginare un sintetizzatore in grado di far suonare quattro strumenti
+        alla volta.
+  \item L'\textbf{esigenza}: ora c'è l'RPG, e quindi il combattimento, la morte,
+        la vittoria. ``Non era più ping, ping, ping, ping''.
+\end{itemize}
+
+\subsection{Team piccoli e kit costosissimi}
+
+Il relatore negli anni Ottanta non lavorava nel settore (ci è arrivato nel '99,
+anche se giocava, ``avevo il Commodore 64''); il suo racconto viene da un paio
+di collaboratori e amici a cui ha chiesto. I \textbf{team erano piccolissimi},
+di massimo due o tre persone, anche perché i \textbf{kit di sviluppo} costavano
+moltissimo: ``tipo 20 milioni di lire'', una cifra enorme per l'epoca, come se
+oggi un kit costasse 30.000 euro. ``Io sono un team indie, devo sviluppare per
+PlayStation e devo acquistare il kit a 30.000 euro'': non cominci nemmeno.
+
+Il tipico team ``indie'' degli anni Ottanta era fatto di un programmatore e di
+una persona che faceva il game designer. Il \textbf{programmatore} era ``un po'
+il tuttofare'': spesso faceva l'audio, se era anche musicista; a volte la
+grafica.
+
+\subsection{Registri e forme d'onda}
+
+Tutto quello che accadeva veniva programmato in \textbf{assembly} o addirittura in
+\textbf{linguaggio macchina}: si dovevano scrivere i \textbf{registri} della CPU
+o dei vari chip. Musiche e suoni erano fatti in \textbf{sintesi}. Il chip audio
+tipico, almeno nella configurazione iniziale (poi ``si è un po' espanso''),
+aveva:
+\begin{itemize}
+  \item \textbf{due onde quadre};
+  \item un'\textbf{onda custom}, in cui si poteva caricare una forma d'onda a
+        scelta: normalmente una sinusoide o un dente di sega;
+  \item una \textbf{quarta voce di rumore bianco}.
+\end{itemize}
+Per far suonare qualcosa bisognava scrivere dei valori nel chip: ``scrivere e
+leggere, scrivere e leggere'', tutto in linguaggio macchina.
+
+\subsection{Il \emph{voice stealing}}
+
+Con un video di un gioco dell'epoca\footnote{Il titolo non è detto: è un gioco
+in cui il protagonista distrugge dei blocchi.} il relatore mostra una tecnica
+che esiste ancora oggi, ``anche se ovviamente un po' mitigata'': il
+\textbf{\emph{voice stealing}}, letteralmente ``rubare una voce''.
+
+La musica usa tutte e quattro le voci: il basso, la linea melodica, la batteria.
+La batteria si faceva con la sinusoide per la cassa e con il \textbf{rumore
+bianco} per il rullante e il charleston. Ma quando il personaggio distrugge un
+blocco, anche l'effetto sonoro usa il rumore bianco: per suonarlo, il gioco
+\textbf{ruba la voce} alla musica, e il charleston sparisce per un istante, per
+poi tornare. Verso la fine del video, quando il personaggio continua a
+distruggere, viene rubata addirittura la \textbf{linea melodica}: la musica sotto
+continua, ma la melodia sparisce. Era ``proprio classico''; ma l'orecchio veniva
+ingannato e il giocatore non se ne accorgeva.
+
+\subsection{Il \emph{voice stealing} oggi}
+
+``Ancora oggi si usa''. Di recente, su un gioco, al relatore è capitato un suono,
+il motore di un veicolo, che continuava a sparire. Investigando, ha scoperto che
+venivano chiamate \textbf{troppe voci} contemporaneamente. Oggi, dice, è
+``ancora peggio'', perché ``ci sentiamo supereroi'': si lanciano suoni ovunque,
+si crea un evento con dentro cinque suoni ``perché così è più realistico'', poi
+se ne lancia uno, due, tre, e si fa presto ad arrivare a \textbf{64 voci
+contemporanee}. A quel punto qualcosa sparisce.
+
+Per questo si usa ancora il \emph{voice stealing}, in modo controllato: si decide,
+per esempio, che di \textbf{passi} se ne vogliono sentire al massimo tre
+contemporaneamente; se il gioco deve lanciarne cinque, si zittiscono i primi
+lanciati per far suonare i nuovi. Anche qui, ``sempre col discorso della
+\textbf{psicoacustica}'', si inganna l'orecchio.
+
+La lezione è generale: la \textbf{gestione del numero di istanze} dei suoni
+arriva dagli anni Ottanta ma è attuale. Non vale il ragionamento ``tanto memoria,
+tanto processore, faccio quello che voglio'': ci sono sempre i \textbf{vincoli di
+RAM} (non si possono creare suoni di lunghezza infinita, perché la RAM serve
+anche ad altri), di \textbf{processore} (anche lui condiviso) e di
+\textbf{polifonia}. Negli anni Ottanta le limitazioni erano più strette, oggi
+meno; ma il lavoro ``rispecchia ancora quello che succedeva ai tempi''.
+
+\subsection{La pausa}
+
+Il relatore vorrebbe chiudere gli anni Ottanta prima della pausa, ma c'è ancora
+una parte con qualcosa ``di concreto che suona''. Chiede ai partecipanti se
+preferiscono vederla dopo la pausa, con calma, o se deve tagliare: qualcuno
+risponde ``io vorrei vederlo''. Si fa quindi la pausa di una ventina di minuti,
+per riprendere ``con calma, freschi, senza andare di corsa'' e vedere il
+\emph{tracker}.
+
+\subsection{Il programmatore-compositore}
+
+Alla ripresa, il relatore riparte dalla figura ``un po' mitologica'' degli anni
+Ottanta: il \textbf{programmatore-compositore}. In tantissimi team era il
+programmatore a comporre la musica. Il motivo non è certo, ma il relatore lo
+presume: molte persone suonano uno strumento o hanno un po' di formazione
+musicale, e tra i programmatori era statisticamente probabile trovarne uno che
+sapesse fare un po' di musica. ``Vabbè, io suono la chitarra, allora mi occupo
+anche della parte audio, visto che è comunque tutta sintesi e codice, lo faccio
+io''.
+
+In Italia il relatore conosce, per esempio, \textbf{Ivan Del Duca}, oggi
+technical director di 505 Games, con una carriera da programmatore (è stato
+anche in Milestone), ``persona di rilievo in ambito tecnico'' ma famosa anche
+perché su alcuni giochi degli anni Ottanta e Novanta, pur essendo
+programmatore, aveva composto le musiche. E ``così ci sono tanti nomi''.
+
+\subsection{Rob Hubbard e le macro in linguaggio macchina}
+
+Uno di questi è \textbf{Rob Hubbard}, compositore famoso dell'epoca ma anche
+programmatore, perché si programmava lui stesso le \textbf{macro} in assembly. Il
+relatore apre un articolo trovato in rete qualche anno prima, che racconta il
+suo lavoro\footnote{Nella trascrizione l'autore è ``Anthony Maxwell''. Con ogni
+probabilità si tratta dell'articolo di Anthony McSweeney che smonta e commenta
+il codice di un brano di Rob Hubbard per Commodore 64; il riferimento non è
+verificabile dalla trascrizione.}, e ne mostra tre parti:
+\begin{itemize}
+  \item le \textbf{macro}, scritte in istruzioni di linguaggio macchina (``LDA'',
+        ``tutte istruzioni''): la prima si chiama \emph{init music}, poi
+        \emph{music off}, e così via. Una volta scritte, si potevano riutilizzare
+        in più giochi; ma bisognava comunque scriverle, e quindi conoscere il
+        linguaggio macchina;
+  \item i \textbf{dati} che le macro andavano a leggere: la \textbf{partitura}
+        della canzone, scritta in un formato numerico (``track 1, track 2, track
+        3'');
+  \item i \textbf{pattern} e gli \textbf{strumenti}, cioè le sonorità: per
+        ottenere una certa voce bisognava scrivere nei registri del chip la forma
+        d'onda desiderata, il timbro di ogni singola voce.
+\end{itemize}
+``Era tutto un delirio''. A un certo punto qualcuno inventò degli
+\textbf{editor} per scrivere questi dati in modo più semplice.
+
+\subsection{Il \emph{tracker}}
+
+Poi arriva il ``game changer'': \textbf{Karsten Obarski}\footnote{Nella
+trascrizione ``Karsten Obansky'' e ``Karsten O'Barsti''. \emph{Ultimate
+Soundtracker} è del 1987.}, su \textbf{Commodore Amiga}, crea \textbf{Ultimate
+Soundtracker}. Non è più un editor testuale dove scrivere byte (``03, 04A'') da
+trasformare poi in partitura, ma un \textbf{tracker}: un software con delle
+\textbf{tracce a scorrimento verticale}, un po' come un software di
+programmazione, in cui si poteva scrivere la musica in modo abbastanza semplice;
+poi il tracker esportava i dati.
+
+Per farlo vedere, il relatore apre \textbf{MilkyTracker}\footnote{Nella
+trascrizione ``milchi tracker''.}, un tracker gratuito che si può scaricare
+(``avete tra le mani un tracker come quelli che si usavano negli anni
+Ottanta''), e carica una canzone. Si lavora così:
+\begin{itemize}
+  \item la musica è divisa in \textbf{pattern} di un certo numero di righe
+        (``tipo 64, 32, 128 righe'', a seconda del tipo di pattern), un po' come
+        le battute musicali; si creano tanti pattern;
+  \item in ogni riga si scrive la \textbf{nota}, l'\textbf{ottava} e lo
+        \textbf{strumento};
+  \item poi ci sono dei \textbf{modificatori}: il \emph{pitch bend}, il
+        vibrato, il volume (per esempio un ``03'').
+\end{itemize}
+Mandando in play, la barra scorre e suona le note che incontra (``nulla di
+speciale''). Quando si salvava la canzone, il tracker salvava la partitura in un
+formato che poi si inseriva nel programma, e suonava.
+
+Per curiosità, il relatore aggiunge che i tracker sono ``i papà dei
+\textbf{sequencer}''. Il primo Cubase era ``semplicemente un sequencer'', e i
+sequencer erano ``i tracker messi in orizzontale'', più simili a un foglio di
+musica: si scrivevano le note, si faceva il \emph{piano roll}, si pilotavano
+campionatori e sintetizzatori e si faceva musica elettronica. I sequencer si sono
+poi evoluti nelle \textbf{digital audio workstation}, strumenti ``per fare musica
+a 360 gradi''. Questo, però, è un capitolo della storia della musica
+elettronica; per i videogiochi interessa che il tracker sia nato \textbf{proprio
+in ambito gaming}, creato su Amiga per aggirare la complessità di scrivere tutto a
+mano.
+
+\subsection{Gli editor di suono: un'onda quadra su Game Boy Advance}
+
+Il tracker serviva a scrivere la partitura; ma poi bisognava \emph{suonare}, e si
+usavano le \textbf{voci del dispositivo}: del Game Boy, dell'Amiga, e così via.
+Bisognava scegliere la forma d'onda, e c'erano degli \textbf{editor} per
+modificarne i parametri e provarli in tempo reale.
+
+Quando lavorava a \emph{Rayman} per Game Boy Color, il relatore aveva un
+\textbf{kit di sviluppo} e un'applicazione simile a quella che mostra ora. Prima
+ne fa vedere uno screenshot, poi la apre dal vivo: lancia
+\textbf{no\$gba}\footnote{Nella trascrizione ``NoCash'', ``scritto NoDollaroGBA'':
+è l'emulatore \emph{no\$gba}.}, un emulatore di Game Boy Advance, e carica una
+ROM con un editor di suoni (``per esempio la voce 1''). Su Game Boy c'era
+qualcosa di simile, ``ovviamente con una grafica più Nintendo'', e lo si
+controllava con la croce direzionale e il tasto A per il play; nell'emulatore il
+relatore usa la barra spaziatrice.
+
+Sente la \textbf{voce a onda quadra} e ci gioca: ``voglio che la \emph{sweep
+direction} sia all'insù, ma voglio che ci metta 5 step; no, troppo lungo; 4, 3.
+Ok, questo è il suono che mi piace per quando prendo il bonus''. Mentre cambia i
+parametri, in alto cambiano i numeri del \textbf{registro} (``lì c'è scritto
+\emph{reg sound}''), e il suono cambia un po'.
+
+``Nel lavoro era tutto così''. Con queste applicazioni si scrivevano direttamente
+i registri, si provava, si sceglieva una sonorità per la linea melodica o si
+creava un effetto sonoro, e poi si salvavano dei \textbf{preset}, cioè i valori,
+da richiamare nel momento in cui serviva quel suono. Era un lavoro molto
+\textbf{tecnico}, che implicava conoscere i registri, saper lavorare con il codice
+e saper testare: per questo in molti team lo faceva il programmatore. Gli
+strumenti tipici erano quindi due: un \textbf{editor per creare i suoni},
+vincolato strettamente alla console (e allora si sentiva direttamente la console
+che suonava, non un emulatore), e il \textbf{tracker}.
+
+Il relatore si offre di passare questi strumenti, tutti gratuiti, a chi voglia
+``spippolarci'' per curiosità o per usarne i suoni.
+
+% ---------------------------------------------------------------------
+\section{Gli anni Novanta: campioni, MIDI e CD}
+\label{z9:sec:anni90}
+
+Negli anni Novanta arriva ``il primo salto tecnologico grosso'', quello che
+nell'arco di un decennio porta allo standard che abbiamo ancora oggi. ``Succede
+tanto''.
+
+\subsection{La wavetable}
+
+Arrivano le \textbf{schede audio con wavetable}. La wavetable è uno spazio di
+\textbf{RAM} in cui si possono \textbf{memorizzare dei suoni}, cosa che prima non
+esisteva: prima era tutto sintesi. All'inizio lo spazio era piccolissimo. Il
+relatore aveva una Sound Blaster AWE64\footnote{Nella trascrizione ``Sound
+Blaster Avdi 64''.} e la ricorda con ``64k, neanche mega'': bisognava mettere
+campioni molto ridotti, magari a 22 kHz e a 8 bit (``mi è capitato di fare
+l'8 bit''). Poi le memorie sono cresciute, 128, un mega, ``poi pian pianino''.
+
+Poter memorizzare dei suoni significava poter avere lo sparo, la voce, ma anche i
+\textbf{campioni di strumenti}: un campione di chitarra, uno di batteria, da far
+suonare con il \textbf{MIDI}.
+
+\subsection{Il MIDI e la separazione dei ruoli}
+
+Il \textbf{MIDI} era già dagli anni Ottanta lo standard della produzione di
+\emph{computer music}: un linguaggio che permette di far comunicare strumenti
+diversi (una tastiera Roland e un sintetizzatore Korg, con il loro cavo) e che si
+era poi esteso al PC, con i sequencer collegati a moduli esterni o virtuali.
+Negli anni Novanta il gaming \textbf{importa questo standard di produzione}.
+
+La conseguenza è enorme. Non si va più dal programmatore a chiedergli di simulare
+il suono della batteria con le voci del chip: si va da uno \textbf{studio
+esterno} e si chiede un brano. Lo studio lo crea con il suo Cubase e consegna il
+\textbf{MIDI} e i \textbf{campioni} (``per le chitarre abbiamo usato questi due o
+tre campioni, ti do i suoni di batteria''), cioè tutti i sorgenti. L'esempio
+classico è il \textbf{Nintendo 64}: le musiche di \emph{Zelda} e di
+\emph{Banjo-Kazooie}\footnote{Nella trascrizione ``Vengeokazu''.} sono tutte MIDI
+che suonano dei campioni, con quel suono ``un pelo finto'' tipico degli anni
+Novanta, ma molto più reale delle sonorità precedenti. Lo stesso vale per gli
+effetti, ora digitali.
+
+Con uno standard di produzione audio importato nel videogioco si può lavorare
+con uno \textbf{studio di produzione}, come faceva già il cinema: si sceglie uno
+studio perché è bravo, gli si fa fare la musica, registrare gli effetti. I
+\textbf{ruoli si separano}: il programmatore si occupa della parte tecnica, e ci
+si appoggia a \textbf{creativi} veri e propri. Anche negli anni Ottanta c'erano
+compositori che non programmavano; ma per implementare la loro musica dovevano
+stare ``spalla a spalla'' con un programmatore che convertiva tutto, ``un bel
+delirio''. Ora il compositore fa il MIDI, lo si porta nel gioco, c'è un player
+MIDI, ``e via''.
+
+Nasce così una figura chiamata \textbf{Game Audio Engineer}: la persona che sta
+in mezzo tra i creativi e i programmatori. Parla con lo studio, gli dà le
+specifiche e la direzione creativa; poi prende i contenuti e si siede con il
+programmatore: ``ok, questo è il MIDI, questi sono i sample, implementiamoli''.
+
+\subsection{Il CD della PlayStation}
+
+Nel 1995, ``proprio a metà del decennio'', arriva la \textbf{PlayStation}, che fa
+``un po' il terremoto'' perché ha il \textbf{CD}, e quindi tanto spazio. Sul CD si
+possono memorizzare \textbf{tracce audio in formato CD}: lanciando il gioco non
+si ha più il MIDI con i campioni ``un po' fintarelli'', ma la registrazione
+stereo dell'Orchestra Sinfonica di Praga; nel menu di un altro gioco, gli Iron
+Maiden. ``È stato un bel salto tecnologico''.
+
+\subsection{Un periodo ibrido}
+
+Negli anni Novanta si arriva così, man mano, a un audio che \textbf{non è più di
+sintesi}. Ma la sintesi non sparisce del tutto: molte console avevano ancora la
+parte chip, usata per alcune sonorità, magari i suoni dei menu o qualche effetto
+specifico. Era una situazione \textbf{ibrida}: anche sul Game Boy
+Advance\footnote{Nella trascrizione ``Pandora Advance''.} c'erano le voci di
+sintesi più una \textbf{voce digitale}, e si poteva decidere di suonare le cose
+più importanti con i suoni digitali.
+
+Il relatore lo fa sentire con un video di un \emph{Final Fantasy}: la
+\textbf{cinematica} ha già un audio digitale, con riverbero e archi; quando si
+passa \textbf{in gioco} si sente che c'è ancora qualcosa di simile alla sintesi,
+``anche il basso è un po' finto''. La direzione, però, era quella del digitale.
+
+\subsection{Dal linguaggio macchina al C e agli script}
+
+C'è un'ultima cosa sugli anni Novanta: non c'è più il linguaggio macchina, c'è il
+\textbf{C}. Nascono i primi \textbf{script}, e quindi la possibilità di
+programmare in modo più semplice: anche un sound designer che sapesse un po'
+programmare poteva scriversi i suoi. In Ubisoft il relatore aveva un editor con
+``una sorta di JavaScript'' e funzioni come \emph{play music}, \emph{play sound},
+\emph{stop sound}, con cui si scrivevano piccole routine: se succede questo,
+lancia questa musica; se succede quest'altro, lancia quest'altra. ``Un po' quello
+che è il C\# di Unity oggi, più o meno''.
+
+Il processo era però ancora molto \textbf{iterativo} e lento: produrre, mettere
+il materiale nel gioco, aspettare la \textbf{build} (``andavi a prendere un
+caffè, anche due caffè''), tornare, testare, segnare quello che non andava,
+correggere, reintegrare gli asset corretti, ``altro caffè e così via''. Con
+``grandi bruciori di stomaco'', dopo dieci caffè al giorno: al relatore è capitato
+di esagerare con il caffè della macchinetta, e da allora non lo prende più.
+
+% ---------------------------------------------------------------------
+\section{Dal 2000 a oggi: il livello del cinema}
+\label{z9:sec:presente}
+
+Il grosso salto avviene intorno al \textbf{2000--2005}: tutto l'audio diventa
+\textbf{digitale}. La RAM costa meno, le console escono con più RAM e con
+\textbf{processori dedicati all'audio}; più memoria e più potenza di calcolo
+significano più qualità. Diventano possibili:
+\begin{itemize}
+  \item audio campionato a \textbf{44 kHz e 16 bit};
+  \item l'\textbf{audio spaziale}, cioè i suoni 3D;
+  \item gli \textbf{effetti in tempo reale}: riverberi, equalizzazione,
+        distorsione, ``tutti gli effetti che possiamo pensare'' applicati in
+        tempo reale nel gioco;
+  \item l'\textbf{audio adattivo}: far entrare tracce, spostarsi all'interno di
+        un brano, \textbf{randomizzare}, cioè mandare in play suoni scelti a
+        caso.
+\end{itemize}
+
+Tutto questo ha portato il game audio, pian piano, \textbf{al livello del
+cinema}. Come il videogioco dagli anni Duemila a oggi è diventato graficamente
+``quasi un film'', anche l'audio ha raggiunto quella qualità, nella colonna
+sonora, nel sound design e nel doppiaggio. Sono cresciuti i budget, e il
+\textbf{team} che lavora all'audio è diventato più grande e complesso.
+
+\paragraph{Un confronto con i libri.} Un esempio classico di audio degli anni
+d'oro dei cabinati è citato da Jesse Schell, in \emph{The Art of Game Design},
+a proposito di \emph{Space Invaders}: gli invasori in marcia producevano una
+specie di \textbf{battito cardiaco} che accelerava insieme a loro, con un effetto
+``molto viscerale'' sul giocatore. Il battito cardiaco tornerà, venticinque anni
+dopo, nel \emph{Manhunt} mostrato dal relatore. (Il confronto non è stato fatto a
+lezione.)
+
+% ---------------------------------------------------------------------
+\section{Il team audio}
+\label{z9:sec:team}
+
+Il relatore guarda l'orologio (``sono le quattro e mezza'') e constata di essere
+in ritardo di ``una mezz'oretta'', ``ma poco male'': la recupererà mostrando un
+paio di video in meno. Apre la seconda parte, dedicata al \textbf{team audio} e ai
+suoi \textbf{ruoli}.
+
+\subsection{Perché conoscere i ruoli}
+
+Mettere ordine nei ruoli è importante. All'inizio della sua carriera al relatore
+non era ``chiarissimo'': era stato assunto in Ubisoft come sound designer, ma si
+rendeva conto che, oltre a fare sound design, aveva un ruolo di
+\textbf{integrazione} e di \textbf{gestione}. ``Di fatto ho scoperto che poi in
+realtà io facevo l'audio director''.
+
+I ruoli che presenta sono \textbf{macro-ruoli}. Alcuni sono univoci
+(``l'audio director è l'audio director''), altri hanno declinazioni più o meno
+tecniche: accanto al sound designer esiste il \textbf{technical sound designer},
+un sound designer più tecnico che ``mette più le mani nell'engine''. Ognuno può
+specializzarsi in quello che gli piace di più: c'è il sound designer o il
+compositore che ``non ne vuole sapere di aprire una linea di codice'' e chi
+invece dice di sì. Il compositore dello studio del relatore, per esempio, quando
+compone apre \textbf{FMOD}, uno strumento di lavoro, e crea direttamente un
+\textbf{evento FMOD} con le sue tracce: non consegna una traccia audio con una
+cattura video che mostra come funzionerebbe la musica interattiva, ma
+\textbf{la musica interattiva vera e propria}. Chi non sa o non vuole farlo si
+concentra sulla parte creativa.
+
+\subsection{Il team dei sogni e il team reale}
+
+Una slide mostra i \textbf{titoli di coda} dell'audio di \emph{Manhunt}, presi
+all'inizio dei credits, che dividono il lavoro in quattro aree: \textbf{sound,
+music, dialogue, programming}, per cinque persone in tutto. Il relatore nota un
+dettaglio: in quel team, che non era un tripla A ma un doppia A, nel sound
+design c'è \textbf{una persona sola}, che probabilmente faceva sia l'audio
+director sia il sound designer.
+
+Succede spesso. Quello della slide è il ``team dei sogni''; nei titoli
+\textbf{indie} c'è molto spesso una persona che compone e una che fa sound
+design, o addirittura \textbf{una persona che fa tutto}. È capitato anche al
+relatore di dover fare sia le musiche sia il sound design: sono lavori diversi e
+``secondo me è giusto separarli'', ma capisce che in certe situazioni il team è
+piccolo, il budget è piccolo, e c'è una persona sola. ``Dipende dal progetto''.
+
+% ---------------------------------------------------------------------
+\section{L'audio director}
+\label{z9:sec:director}
+
+L'\textbf{audio director} è una persona di riferimento: è un \emph{director},
+come l'art director o il creative director, e quindi \textbf{dirige}; è un po' il
+responsabile del team audio.
+
+Il percorso tipico: l'audio director \textbf{viene quasi sempre dal sound
+design}. È un sound designer che magari diventa technical sound designer e poi si
+specializza fino a diventare audio director. È più facile che sia un sound
+designer che un compositore: il compositore ``tendenzialmente è più
+affezionato'' al suo ruolo e ci resta.
+
+I suoi compiti:
+\begin{itemize}
+  \item \textbf{definisce il design}: decide che il gioco deve avere un certo
+        stile, un certo approccio creativo e anche tecnico; definisce la
+        \textbf{visione} dell'audio del gioco;
+  \item lavora con i \textbf{game designer}, con i \textbf{programmatori} e con
+        tutte le altre figure del team;
+  \item si occupa degli \textbf{aspetti tecnici}, il ``supporto per l'audio
+        API'' della slide, cioè tutta la parte tecnica: quali strumenti di lavoro
+        si usano, e così via. Nei team più grossi, pur sapendo mettere le mani,
+        spesso fa anche parte dell'integrazione;
+  \item \textbf{sceglie le persone}: il compositore e magari il sound designer.
+        Molti team lavorano più o meno sempre con gli stessi; in altri, a seconda
+        del progetto, si sceglie un compositore diverso (``mi serve musica
+        orchestrale, e secondo me questo studio di composizione, questo artista
+        è adatto a questo progetto''). ``L'audio director è quello che decide un
+        po' tutto''.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Il sound designer}
+\label{z9:sec:sounddesigner}
+
+Il \textbf{sound designer} è la persona che crea \textbf{tutti gli effetti
+sonori}, compresi gli \textbf{ambienti}. Le tecniche di lavoro sono quelle che i
+partecipanti probabilmente conoscono già:
+\begin{itemize}
+  \item il \textbf{field recording}, la registrazione in esterna;
+  \item il \textbf{foley}, la registrazione in studio dei suoni;
+  \item le \textbf{librerie audio}, usatissime: dipende sempre dal progetto e
+        dal budget, e molti progetti indie hanno budget talmente piccoli da non
+        potersi permettere di registrare, e lavorano con le librerie.
+\end{itemize}
+Due immagini mostrano l'attrezzatura del field recording e del foley, ``più una
+curiosità''.
+
+\subsection{Le limitazioni: qualità e lunghezza}
+
+Quello che interessa al relatore è un'altra cosa: il sound designer per
+videogiochi deve \textbf{sempre tenere presente le limitazioni}. Non si può
+sempre avere la massima qualità, suoni a 48 kHz e 24 bit, o addirittura a 96 kHz:
+spesso bisogna \textbf{stringere}. E non si possono avere suoni troppo
+\textbf{lunghi}.
+
+Al relatore capita di chiedere a un sound designer il loop di un macchinario e di
+riceverne uno di \textbf{25 secondi}: ``no, attento, questo loop me lo devi fare
+massimo di 7 secondi''. Non è semplice, ma 25 secondi di suono, rispetto a 7,
+significano allocare molta più RAM e chiedere all'engine uno sforzo molto più
+grande. E il ragionamento va fatto su tutti i suoni. Per questo si cerca di avere
+uno \textbf{standard}:
+\begin{itemize}
+  \item tendenzialmente i loop non superano i \textbf{10 secondi};
+  \item un loop semplice, come il ronzio di un trasformatore elettrico, può
+        durare anche \textbf{2 secondi};
+  \item un macchinario \textbf{5--6 secondi};
+  \item un loop con uno sviluppo più complesso si cerca di farlo stare in
+        \textbf{10 secondi}.
+\end{itemize}
+C'è anche una ragione tecnica in più: in \textbf{FMOD}, racconta il relatore, i
+suoni sopra i 5 secondi vengono messi in automatico in \textbf{streaming}. Lo
+streaming si può disattivare, ma avere tantissimi suoni in streaming rischia di
+\textbf{saturare il sistema di streaming}. Attenzione quindi alla lunghezza dei
+loop, parlando di effetti sonori.
+
+\subsection{Le code dei suoni e le campane}
+
+Lo stesso vale per le \textbf{code} dei suoni. Se serve il colpo di martello di
+un fabbro, non servono sei secondi di coda della risonanza: ``tagliamela, quella
+coda'', tanto nel mix è abbastanza nascosta.
+
+Il relatore racconta un episodio di Ubisoft, su \textbf{PlayStation 2}. Il gioco
+a un certo punto \textbf{non partiva più}: la memoria non bastava. Si scoprì che
+uno stagista, che nel frattempo aveva finito lo stage ed era andato via, aveva
+preparato i \textbf{rintocchi delle campane} di un villaggio: ogni rintocco
+durava \textbf{27 secondi}, perché conteneva tutta la coda della campana. Il
+relatore lo tagliò a 6 secondi. E non solo: lo stagista aveva fatto lo stesso su
+tantissimi campioni, molti dei quali avevano anche del \textbf{silenzio in coda}.
+Il relatore passò una giornata a ``tagliare, tagliare, tagliare'', recuperò
+``tipo 50--60 mega'', e il gioco partì. ``C'è proprio la differenza'' tra il
+gioco che non va, con ``la Francia'' che ti chiama perché sei il responsabile, e
+il gioco che va: tagliare le code dei suoni.
+
+\subsection{Suoni asciutti e riverbero in tempo reale}
+
+Una partecipante\footnote{Il relatore le risponde ``brava''; la trascrizione non
+dice il nome.} fa una domanda: per evitare che, tagliando le code, si tagli anche
+l'ambiente, ha senso inserire una \textbf{reverb zone} in tutti gli ambienti che
+suonano, per alleggerire il carico?
+
+``Sì, assolutamente'', risponde il relatore: è un'osservazione corretta, e porta a
+un'altra regola. Tutti i suoni di un videogioco si fanno tendenzialmente
+\textbf{asciutti}. Non serve fare il passo riverberato, perché il riverbero lo
+applica il motore \textbf{in tempo reale}: quando sei in una chiesa applica il
+riverbero della chiesa, quando sei in una caverna quello della caverna. Quindi
+suoni asciutti e senza troppa coda.
+
+\subsection{Zero silenzio in testa}
+
+Un'altra regola importante: \textbf{zero silenzio in testa}. Un suono di passo
+deve suonare nel momento in cui il piede appoggia: in quel momento il motore dice
+\emph{play}. Se il file ha del silenzio all'inizio, il suono arriva in ritardo
+rispetto all'immagine. Tutti i suoni devono quindi cominciare \textbf{sul
+transiente}, ``appena prima, proprio sulla parte iniziale del transiente'', il
+più possibile.
+
+Se poi si vuole che qualche suono parta leggermente dopo, gli strumenti come
+FMOD o Wwise\footnote{Nella trascrizione sempre ``WISE''.} permettono di
+impostare un \textbf{ritardo casuale}: anche se il play arriva al tempo zero, non
+tutti i suoni partono a zero. ``A livello tecnico abbiamo tutta la possibilità
+del mondo'', ma il ritardo si aggiunge nel motore, non nel file.
+
+\subsection{Lineare e interattivo}
+
+Il sound designer che lavora per il gaming, conclude il relatore, deve tenere
+presenti molte cose che nel \textbf{lineare} non cura. Nel lineare si mette tutto
+su una timeline, si sincronizza, si sposta, se un suono è lunghissimo lo si
+accorcia, e alla fine si fa un bell'export: una traccia stereo, mixata,
+renderizzata. Nel gioco, invece, \textbf{tutti gli asset sono separati}: vengono
+caricati in memoria e suonano insieme, e bisogna tener conto di tutto.
+
+% ---------------------------------------------------------------------
+\section{Il compositore}
+\label{z9:sec:compositore}
+
+Il \textbf{compositore} si occupa della musica: compone, scrive, dirige, con
+tutte le competenze classiche. Il relatore si concentra sulle
+\textbf{peculiarità} del lavoro per i videogiochi, che richiede un processo
+creativo specifico.
+
+\subsection{La musica è al 90\% loop}
+
+La prima peculiarità il relatore non l'ha nemmeno scritta, perché la dà per
+scontata: nei videogiochi \textbf{la musica è al 90\% loop}. Parte e gira su se
+stessa. E anche qui il brano \textbf{non è lunghissimo}: spesso un minuto, un
+minuto e mezzo, fino a due minuti; difficilmente tre, perché è ``pesante'', anche
+banalmente come spazio occupato.
+
+Ne nasce un difficile \textbf{bilanciamento}: una musica in loop, di durata non
+eccessiva, deve \textbf{variare} abbastanza da non far capire che sta girando, ma
+restare abbastanza \textbf{omogenea} da non disturbare. Il relatore, che da
+tempo non compone più (si è spostato sul sound design e ``in quest'ultima parte
+della carriera'' fa soprattutto l'audio director e l'integrazione), ricorda le
+difficoltà che aveva a creare un loop ``abbastanza vario, abbastanza omogeneo
+allo stesso tempo, per non annoiare''.
+
+Oggi ci sono delle tecniche per aiutarsi. Si possono creare dei \textbf{micro
+loop} che a ogni giro vengono \textbf{selezionati in modo casuale}. Per esempio,
+se una linea di basso deve coprire una musica di un minuto e mezzo, si scrivono
+alcune linee diverse da 30 secondi e ogni 30 secondi se ne sceglie una a caso:
+la musica continua a variare, e con poca musica si copre più tempo.
+
+\subsection{La musica è interattiva}
+
+La seconda peculiarità: la musica è \textbf{interattiva}. Spesso non basta
+comporre un brano che va in loop: bisogna comporre un brano che \textbf{si adatti
+a diverse situazioni}. È come prendere un brano e arrangiarlo per situazioni
+diverse, potendo \textbf{passare dall'una all'altra}: bisogna quindi creare
+anche le \textbf{transizioni}. ``È un lavoro complesso''.
+
+\subsection{Molti stili, una sola persona}
+
+La terza peculiarità è ``un po' trascurata'': la \textbf{varietà di stili}. Quando
+un film ha bisogno di musiche molto diverse, di solito sono brani di musicisti
+diversi, o tracce famose di gruppi e artisti diversi: nei titoli di coda si
+leggono le tracce del gruppo A, del gruppo B, dell'artista C. Nei videogiochi
+succede solo in alcune serie che usano \emph{playlist} di artisti diversi, come
+\emph{Grand Theft Auto} o \emph{FIFA}. Normalmente, invece, \textbf{si viene
+contrattualizzati per creare la musica di un intero gioco}, che magari ha
+ambientazioni diversissime. Un gioco d'avventura può avere una parte nella
+foresta amazzonica, poi le piramidi, poi i ghiacciai: e bisogna comporre in
+\textbf{stili diversi}, in tempi abbastanza brevi (``non hai tre anni o due anni
+di produzione''), magari anche solo riarrangiando lo stesso brano in stili
+diversi. Bisogna essere bravi, conoscere più stili, essere \textbf{duttili e
+flessibili}. ``Questa è una difficoltà che non è banale''.
+
+\subsection{Il compositore di \emph{Rayman M}}
+
+Il relatore racconta un aneddoto. \textbf{\emph{Rayman M}}, a cui ha lavorato, fu
+sviluppato metà a Milano e metà a Parigi, e il compositore era francese, ``molto
+bravo'' e abbastanza conosciuto in Francia (il relatore non ne ricorda il nome).
+Durante una visita, il compositore raccontò che quando doveva comporre la musica
+per un livello si \textbf{immergeva totalmente} in quel genere: lo ascoltava in
+qualsiasi situazione, in macchina, la sera. E scherzosamente aggiunse che, per la
+mappa \emph{Cemetery}, aveva abbassato le tapparelle e acceso candele a forma di
+zucca, trasformando la casa in una specie di Halloween per entrare nel
+\emph{mood}; e che per la musica piratesca si metteva il cappello da pirata.
+
+Il relatore non sa quanto scherzasse; ma l'aneddoto fa capire una pratica reale.
+Sa che lo fanno diversi compositori, anche per il cinema: ricorda un'intervista
+(non sa più di chi) in cui un compositore raccontava di masterizzarsi dei CD con
+il genere su cui stava lavorando e di tenerli in macchina e ovunque, anche solo
+per capire ``quali potevano essere gli schemi, i pattern''.
+
+% ---------------------------------------------------------------------
+\section{Il doppiaggio e il dialogue director}
+\label{z9:sec:doppiaggio}
+
+Nel \textbf{doppiaggio} c'è una figura, presente soprattutto negli studi più
+grossi o negli studi esterni specializzati: il \textbf{dialogue director}, la
+persona che \textbf{supervisiona} e gestisce tutto il doppiaggio. Il relatore fa
+questo lavoro quando il suo studio si occupa di doppiaggi, e lo descrive così:
+\begin{itemize}
+  \item si occupa degli \textbf{script} e dei testi: non li scrive, ma li prende e
+        li \textbf{organizza}, per esempio in un bel file Excel, separati per
+        lingua;
+  \item crea il \textbf{brief per i doppiatori}: per ogni personaggio, una
+        descrizione, l'età, lo stile di voce, e poi i testi per ogni lingua;
+  \item riceve i \textbf{contenuti} registrati e li organizza.
+\end{itemize}
+È un lavoro complesso che si appoggia a un team: il doppiaggio è ``quasi un
+dipartimento a sé''. Ci sono gli autori dei testi, i doppiatori, il direttore del
+doppiaggio, i fonici, chi fa l'\textbf{editing} (pulizia e taglio dei file).
+I file doppiati, puliti e tagliati vengono poi \textbf{post-prodotti}, cioè
+livellati, e consegnati al dialogue director, che li \textbf{implementa}
+nell'engine.
+
+\subsection{Una domanda sull'intelligenza artificiale}
+
+A questo punto un partecipante\footnote{La trascrizione non dice chi parla.}
+chiede la sua opinione sull'\textbf{intelligenza artificiale} nel doppiaggio.
+``Adesso, nel 2026'', ha avuto modo di sperimentare software di doppiaggio e
+anche di musica, e vede un ``buon rischio'' di sostituzione, soprattutto per i
+giochi indie a budget praticamente zero.
+
+Il relatore conferma che \textbf{il rischio c'è}. L'anno prima gli sono stati
+chiesti dei test di doppiaggio con l'IA su un progetto: il risultato è
+``buono, molto buono'', ma ``sull'aspetto recitativo manca ancora qualcosa''. Il
+partecipante è d'accordo. Per un team a budget zero, che deve scegliere tra non
+avere doppiaggio, avere doppiatori non professionisti e un risultato che non
+funziona, o una voce sintetica non perfetta, l'IA può avere senso.
+
+\subsection{Il contratto e la frase ``troppo moscia''}
+
+C'è poi un punto delicato dal lato dei \textbf{doppiatori}. Molti dei doppiatori
+con cui il relatore lavora vogliono che nel \textbf{contratto} sia scritto che la
+loro voce non potrà essere usata per addestrare sistemi\footnote{Nella
+trascrizione ``per fare trading'': quasi certamente ``per fare training''.} né
+modificata. Uno in particolare si è ``proprio acceso'' quando un cliente chiedeva
+il contrario: ``pensare che poi loro possono avere la mia voce per fare tutto non
+è giusto''.
+
+Il relatore invita a pensarci. Se, finito il doppiaggio, ci si accorge che una
+frase è venuta male, che manca una ``frasettina corta'', o che il creative
+director vuole un'intonazione diversa (``questa frase è troppo moscia''), e il
+doppiatore è impegnato o difficile da raggiungere, perché non generarla? Il
+relatore lo ha vissuto: aveva tutto il doppiaggio di una doppiatrice e gli
+serviva una sola frase detta in modo diverso. ``Ho i contenuti, cioè io ho tutto
+il tuo doppiaggio, lo prendo, lo butto dentro ElevenLabs, la clono, ti firmo che
+non lo userò, però prendo quella singola frase, gliela faccio generare 50 volte''
+e scelgo quella che mi piace. ``Questo non è una cosa così brutta''.
+
+Il partecipante è d'accordo, con una precisazione: per lui ``l'idea deve partire
+dall'uomo'', ma l'IA ha dei lati positivi poco visti ``per una paura di
+utilizzare troppo l'intelligenza artificiale''. Se fosse doppiatore, dice,
+\textbf{clonerebbe la propria voce} e offrirebbe \textbf{due tariffe}: la voce
+originale, con qualità al 100\%, registrata di persona; oppure la voce clonata, a
+un costo molto più basso, ``ma almeno così ottieni del lavoro''.
+
+Il relatore aggiunge, ``detto tra noi, lo dico e non lo dico'', che una frase
+breve generata dal doppiaggio esistente probabilmente non la nota nessuno, forse
+nemmeno il doppiatore. Lo paragona a quando, in un brano musicale da tagliare in
+un punto, si ricrea con strumenti virtuali una coda finale che non c'era: si
+aggiunge qualcosa che non viene dal compositore, ma ``un ritocco secondo me non è
+sicuramente un uso'' improprio. Dipende da chi si ha dall'altra parte: chi dice
+``la mia arte non deve essere toccata dall'intelligenza artificiale'' rischia,
+per il partecipante, di diventare ``quasi troppo vincolante''.
+
+Il relatore però \textbf{capisce la paura} dei doppiatori: che una fetta di
+clienti, tutti gli indie (anche del cinema), cominci a usare voci clonate, e che
+il doppiatore si ritrovi con metà del lavoro. O ti adatti, cloni la tua voce e la
+metti in vendita, o non hai lavoro: ``è vedere il lavoro in una maniera
+diversa''. E in effetti, racconta, su \textbf{ElevenLabs}\footnote{Nella
+trascrizione ``Eleven Labs'', ``Level Labs'' e, più avanti, ``level up''.},
+``il sistema più diffuso'', ha riconosciuto le voci di un paio di doppiatori
+italiani che aveva inserito nel suo casting, con lo stesso nome: hanno fatto
+proprio quello che suggeriva il partecipante. ``Per un doppiatore che resta
+purista e nega questa cosa, ce ne sono cento che danno la voce da clonare'': ci si
+deve adattare, a meno di essere ``lo Hans Zimmer dei doppiatori''.
+
+% ---------------------------------------------------------------------
+\section{L'audio programmer}
+\label{z9:sec:programmer}
+
+L'ultimo ruolo è l'\textbf{audio programmer}, con compiti tutti tecnici (il
+relatore va ``un pelo veloce''):
+\begin{itemize}
+  \item fornisce gli \textbf{elementi e le limitazioni tecniche}: dice ai sound
+        designer che cosa si può fare su una specifica piattaforma;
+  \item realizza il \textbf{sound engine}, oppure implementa un
+        \textbf{middleware} esterno;
+  \item crea dei \textbf{tool}; in generale si occupa di tutta la parte tecnica.
+\end{itemize}
+È un programmatore, ma deve avere \textbf{competenze audio}. E deve ricordare
+alcune cose.
+\begin{itemize}
+  \item \textbf{Comunica con un team audio} che spesso non esprime le esigenze
+        in termini tecnici. Al relatore è capitato di avere a che fare con
+        programmatori ``un po' rigidi'' che non capivano le sue richieste perché
+        non usava termini tecnici. L'audio programmer deve conoscere lui stesso
+        i termini audio.
+  \item Deve saper fare dei \textbf{test in autonomia}. L'audio programmer di
+        Ubisoft, che lavorava a un sistema per mandare in play dei loop con
+        regole particolari, si creava da solo i suoi loop di prova.
+  \item Ogni \textbf{soluzione tecnica} o limitazione ha \textbf{conseguenze
+        sulla produzione audio}. Per esempio, se si deve cambiare traccia in una
+        musica interattiva, spesso bisogna aspettare la \textbf{fine della
+        battuta}: non la si può troncare.
+  \item Le \textbf{specifiche di consegna} vanno date in modo chiaro e
+        \textbf{da subito}. Altrimenti il compositore consegna le musiche nel
+        formato sbagliato, poi passa a un altro progetto, non lo si trova più,
+        e ``ti devi tenere quello che ti è arrivato''.
+\end{itemize}
+
+\subsection{Gli \emph{stem} che non c'erano}
+
+Il relatore racconta un caso. Un team lavorava con un compositore abbastanza
+conosciuto, con un contratto ``a minuto di musica'': tanti soldi per tanti
+minuti. Il compositore consegnò le tracce. Poi subentrò lo studio del relatore,
+per l'integrazione in FMOD, e a un certo punto il team chiese: ``vogliamo che
+quando dall'\emph{exploration} parte il \emph{combat}, la musica cambi''.
+``Ok'', rispose lo studio, ``se ci date gli \textbf{stem}, riusciamo a farla
+cambiare''. Il team, che non era di sound designer, chiese che cosa fossero gli
+stem\footnote{Gli \emph{stem} sono le tracce separate di un brano (per esempio
+percussioni, archi, basso), esportate in modo da poterle far suonare insieme o
+separatamente.}; andarono dal compositore, che consegnò semplicemente degli
+\textbf{arrangiamenti diversi} della stessa musica. Gli stem non arrivarono mai, e
+lo studio dovette arrangiarsi: il compositore dello studio creò degli stem e si
+``simulò'' la transizione. Il problema era a monte: nessuno aveva detto chiaramente
+al compositore che doveva consegnare gli stem. Per questo è ``importantissimo''
+che chi gestisce la parte tecnica dia le \textbf{specifiche corrette}.
+
+% ---------------------------------------------------------------------
+\section[Metà del lavoro è l'implementazione]{Metà del lavoro è l'implementazione: Alexander Brandon}
+\label{z9:sec:brandon}
+
+``Cambiamo argomento leggermente'' con la seconda e ultima citazione, di
+\textbf{Alexander Brandon}, audio director ``abbastanza storico, ancora più
+storico di me'': quando il relatore cominciava, Brandon lavorava già da un po'.
+Il senso: \textbf{la produzione}, cioè le musiche, gli effetti sonori, il
+doppiaggio, i contenuti, \textbf{è solo metà del lavoro}; l'altra metà è
+\textbf{come li implementi}.
+
+Si possono avere contenuti prodotti benissimo, doppiaggi perfetti, il miglior
+doppiatore, il miglior compositore; ma se poi si \textbf{implementa male} e si
+\textbf{mixa male} in tempo reale nel gioco, l'audio è brutto, nonostante la
+qualità dei contenuti. E questo dipende da \textbf{come si lavora} durante lo
+sviluppo: per questo è importante capire come l'audio interviene nelle varie
+fasi di un videogioco.
+
+% ---------------------------------------------------------------------
+\section{L'audio nel ciclo di produzione}
+\label{z9:sec:ciclo}
+
+Il relatore racconta il ciclo di produzione in tre slide, una per fase:
+\textbf{pre-produzione}, ``una fase molto importante per il gaming'',
+\textbf{produzione} e \textbf{post-produzione}. In ogni slide, in alto c'è il
+\textbf{team di sviluppo} (con l'icona del pad), in basso il \textbf{team audio}
+(con l'icona dell'altoparlante). La figura~\ref{z9:fig:ciclo} riassume le tre
+slide.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\footnotesize,
+    fase/.style={draw, thick, rounded corners=2pt, fill=gray!15,
+                 minimum width=3.6cm, minimum height=0.8cm,
+                 text width=3.4cm, align=center, font=\small\bfseries},
+    sviluppo/.style={draw, rounded corners=2pt, text width=3.4cm,
+                     minimum height=3.3cm, align=left, inner sep=4pt},
+    audio/.style={draw, thick, rounded corners=2pt, fill=gray!8,
+                  text width=3.4cm, minimum height=3.9cm, align=left,
+                  inner sep=4pt},
+    freccia/.style={-{Stealth[length=2.5mm]}, thick}
+  ]
+  \node[fase] (f1) at (0,0)   {Pre-produzione};
+  \node[fase] (f2) at (4.2,0) {Produzione};
+  \node[fase] (f3) at (8.4,0) {Post-produzione};
+  \draw[freccia] (f1) -- (f2);
+  \draw[freccia] (f2) -- (f3);
+
+  \node[sviluppo, below=0.35cm of f1] (s1)
+    {\textbf{Team di sviluppo}\\[2pt]
+     core team (game designer, programmatore, artist; a volte producer o
+     creative director)\\ game design e documento\\ prototipo};
+  \node[sviluppo, below=0.35cm of f2] (s2)
+    {\textbf{Team di sviluppo}\\[2pt]
+     il team si completa (programmatori, level designer, animatori,
+     artist\ldots)\\ si costruiscono livelli, animazioni, ambienti};
+  \node[sviluppo, below=0.35cm of f3] (s3)
+    {\textbf{Team di sviluppo}\\[2pt]
+     beta: tutte le feature dentro\\ testing e correzioni\\
+     candidate master $\rightarrow$ gold master};
+
+  \node[audio, below=0.3cm of s1] (a1)
+    {\textbf{Team audio}\\[2pt]
+     audio design (categorie, regole)\\ funzionalità necessarie\\
+     scelta della tecnologia, test sul prototipo\\ lista degli asset e budget};
+  \node[audio, below=0.3cm of s2] (a2)
+    {\textbf{Team audio}\\[2pt]
+     creazione dei contenuti: musiche, effetti, doppiaggio\\
+     integrazione e test continui\\ richieste di modifica (layer, frasi,
+     transizioni)};
+  \node[audio, below=0.3cm of s3] (a3)
+    {\textbf{Team audio}\\[2pt]
+     ultimi contenuti (cinematiche)\\ \emph{audio mixing} in tempo reale\\
+     \emph{audio test}: una sessione completa, senza trucchi};
+\end{tikzpicture}
+\caption{Le tre fasi del ciclo di produzione, con il lavoro del team di sviluppo
+(in alto) e del team audio (in basso). Ricostruzione schematica delle tre slide
+del relatore.}
+\label{z9:fig:ciclo}
+\end{figure}
+
+\subsection{La pre-produzione: il team di sviluppo}
+
+In pre-produzione il team di sviluppo si forma: nasce un \textbf{core team},
+tipicamente un \textbf{game designer}, un \textbf{programmatore} e un
+\textbf{artist}, a volte un producer o un creative director. Sono tre o quattro
+persone che poi diventeranno i \emph{lead} (il programmatore diventerà lead
+programmer quando arriveranno altri programmatori). Il core team crea il
+\textbf{game design}: si definiscono le regole, si scrive il documento di game
+design, e da lì si costruisce un \textbf{prototipo}, per capire se il gioco ``è
+bello, funziona, può vendere''.
+
+Lo si fa sempre, nelle grandi multinazionali come negli indie. Le multinazionali
+come Ubisoft\footnote{La trascrizione cita anche ``Tony Karts'', un nome non
+ricostruibile con certezza.} chiedono spesso alle varie filiali dei prototipi
+(anche al team del relatore ne furono chiesti un paio): magari ne fanno fare 6, 8,
+10, con una pre-produzione di sei mesi; ne scartano sei, agli altri quattro
+danno altri sei mesi; poi ne scartano tre ``e tirano fuori l'\emph{Assassin's
+Creed}'', che ripaga tutti i soldi spesi negli altri prototipi. Per i
+\textbf{team indie} vale la stessa logica, ma il prototipo, invece di farlo
+valutare dalla sede centrale, lo si fa valutare \textbf{dal mercato}: si va agli
+eventi, si cerca un publisher a cui piaccia e che metta i soldi. L'obiettivo è
+sempre quello: capire con un prototipo se partire davvero.
+
+\subsection{La pre-produzione: l'audio}
+
+Sotto, nella parte audio, la frase che il relatore sottolinea è che
+\textbf{l'audio deve esserci già in pre-produzione}. ``Credetemi, non è
+scontata''. Gli è capitato proprio al First Playable dei giorni precedenti:
+chiede un meeting a un team per capire se si può collaborare, e la risposta è
+``ma noi siamo ancora in una fase iniziale, non stiamo ancora pensando
+all'audio''. ``Male, male'': è proprio all'inizio che bisogna pensare all'audio e
+coinvolgere una figura dedicata. In pre-produzione si fanno quattro cose.
+
+\begin{enumerate}
+  \item \textbf{L'audio design.} Se si sta facendo il game design, si possono
+        già definire le regole dell'audio. Per esempio: ci sono 20 personaggi
+        diversi; li si \textbf{categorizza} (grossi, medi, piccoli), e a livello
+        sonoro si decidono \textbf{tre tipologie di passo}: pesante, medio,
+        leggero. Su quali \textbf{materiali}? Dov'è ambientato il gioco, quali
+        superfici ci sono: neve, erba, ghiaia? Le \textbf{armi}: che sonorità
+        hanno? Se queste regole non si definiscono subito, in produzione non c'è
+        il tempo di farlo.
+  \item \textbf{Le funzionalità.} Fatto l'audio design, si decide che cosa
+        serve: musica interattiva? Un effetto specifico di riverbero in tempo
+        reale? Il multistreaming? Bisogna sapere che cosa serve.
+  \item \textbf{La tecnologia.} Da lì si decide l'implementazione: usare il
+        motore audio di \textbf{Unreal Engine} oppure no, scegliere
+        \textbf{Wwise} ``perché è uno strumento più completo e mi permette di
+        fare determinate cose''. Sono scelte da fare ora, e da \textbf{provare
+        sul prototipo}: si può chiedere al programmatore due cartelle diverse,
+        una con Wwise e una con FMOD, per fare dei test, dei \emph{benchmark}, e
+        capire bene quale tecnologia si vuole.
+  \item \textbf{La lista degli asset.} Alla fine della pre-produzione si comincia
+        a definire ``la lista della spesa'': 50 passi su 10 superfici diverse, lo
+        \emph{swoosh} della spada, dell'ascia, il colpo della mazza, cinque
+        musiche, la musica del menu, quella dei credits. Serve per il
+        \textbf{budget}: la pre-produzione può durare un mese o tre, mentre il
+        gioco magari due anni, e alla fine bisogna andare dal publisher a dire
+        ``ho bisogno di 800 mila euro''. Il publisher vorrà sapere quante musiche
+        servono, se c'è del doppiaggio: sono costi.
+\end{enumerate}
+
+\paragraph{Un confronto con i libri.} Lo stesso allarme si trova in \emph{The
+Art of Game Design} di Jesse Schell, nel paragrafo \emph{Use Audio}: uno degli
+errori più gravi degli sviluppatori è aggiungere musica e suoni solo alla fine.
+Schell suggerisce anzi di \textbf{scegliere la musica all'inizio}, ``forse
+prima ancora di sapere che gioco sarà'', perché un brano che dà la sensazione
+giusta prende già molte decisioni sull'atmosfera; e se una parte del gioco
+contrasta con quella musica, è un buon segnale che sia quella parte a dover
+cambiare. Schell cita anche uno studio in cui due gruppi di giocatori valutavano
+\emph{solo la grafica} dello stesso gioco: il gruppo con l'audio di qualità più
+alta giudicò migliore anche la grafica. (Il confronto non è stato fatto a
+lezione.)
+
+\subsection{La produzione: contenuti e integrazione}
+
+Se il prototipo va a buon fine, si passa in \textbf{produzione}. Sopra succede
+qualcosa di prevedibile: il team si completa con programmatori, designer, level
+designer, texture artist, animatori, environment artist (``bla bla bla bla''), e
+man mano si costruiscono livelli, animazioni, ambienti, ``si compone tutto il
+gioco''.
+
+Se la pre-produzione è importantissima, la produzione è la fase ``più concreta'',
+in cui si mette in atto tutto. Il compositore crea le musiche, il sound designer
+gli effetti, si realizza il doppiaggio: si creano i \textbf{contenuti}. Ma
+soprattutto \textbf{i contenuti si integrano} nel gioco: si mettono dentro, si
+provano, e si scopre che qualcosa non funziona. Serve un pezzo di musica in più
+per collegare due ambienti, una zona di transizione a cui non si era pensato, e
+si torna dal compositore a chiedere una modifica. Un suono fatto in un certo modo
+non funziona, va spezzato in elementi separati per mixarli in tempo reale, e si
+torna dal sound designer.
+
+\subsection{L'armatura in tre layer}
+
+L'esempio pratico del relatore è ``un caso reale'' di un progetto. Il sound
+designer aveva consegnato i suoni del movimento di un'\textbf{armatura}. Ma in
+gioco si scopre che il personaggio si muove in modi diversi: piano, a velocità
+media, bruscamente. Si torna allora dal sound designer e gli si chiede di
+consegnare lo stesso suono in \textbf{tre layer}:
+\begin{itemize}
+  \item il \textbf{metallo} che si muove;
+  \item le \textbf{catene}, ``tutto ciò che è catenella'';
+  \item la \textbf{pelle}, ``tutto ciò che è tessuto''.
+\end{itemize}
+Suonati insieme danno lo stesso identico suono; ma nel motore di gioco sono tre
+livelli diversi. Se il personaggio si muove piano si sente soprattutto la pelle e
+un po' di catenella; a velocità media pelle, catenella e un po' di metallo; se si
+muove bruscamente, soprattutto il metallo. Questo lo si scopre \textbf{solo in
+produzione}: ``produci, integri e dici: caspita, suona finta questa roba!''.
+Allora si separa, suona meglio, e magari si scopre che manca un quarto layer a
+cui non si era pensato. ``È tutto questo processo dove si fa la differenza''.
+
+Lo stesso vale per i \textbf{dialoghi}: si implementano e si scopre che mancano
+delle frasi, o che vanno mixati meglio, o che serve un \textbf{sidechain}, cioè
+abbassare un po' la musica quando parte un dialogo perché altrimenti si sente
+male. ``Tutte queste cose le scopri mentre integri''. Quello che si è deciso in
+pre-produzione aiuta, perché dà gli strumenti per cambiare direzione; ma le
+scelte finali su come si producono e integrano le cose si fanno qui. Si crea, si
+compone, si integra, si testa, fino alla chiusura della produzione.
+
+\subsection{La post-produzione: dalla beta alla gold master}
+
+Chiusa la produzione si arriva alla \textbf{beta}. Le scadenze del videogioco sono
+quelle dello sviluppo software:
+\begin{itemize}
+  \item l'\textbf{alpha}, una versione intermedia;
+  \item la \textbf{beta}, che segna la fine della produzione: il gioco con
+        \textbf{tutte le feature implementate}. Possono anche funzionare male:
+        c'è una ``regola non scritta'' per cui a volte la beta deve avere tutto
+        dentro e funzionante, a volte si sa consapevolmente che qualcosa è
+        ancora vago, ``però deve essere tutto dentro'';
+  \item poi un periodo di \textbf{testing}, di uno o due mesi, in cui si
+        sistema tutto;
+  \item la \textbf{candidate master}, se si è su console: la versione
+        \emph{candidata} a essere quella che esce. Si chiama così perché la si
+        consegna a Sony, Nintendo o Microsoft, che la provano e possono
+        respingerla perché qualcosa non è conforme alle loro specifiche. A volte
+        sono cose gravi, come un \textbf{tempo di caricamento} troppo lungo (su
+        PlayStation, ricorda il relatore, non può superare ``i 6 secondi, i 10
+        secondi''); a volte ``cavolate'', come aver chiamato il controller
+        ``Gamepad''. Si corregge e si consegna una nuova candidate master;
+  \item la \textbf{gold master}, quando la piattaforma dà l'ok: la versione che
+        si può rilasciare.
+\end{itemize}
+
+In questa fase \textbf{l'audio non smette di lavorare}, e fa due cose.
+
+\paragraph{L'audio mixing.} Anche l'audio, in beta, dovrebbe avere tutto dentro.
+``Non è mai così''. Il relatore ha ``sempre questa lotta'' con il producer: le
+\textbf{cinematiche}, per esempio, sono pronte due giorni prima della beta (``e
+noi come facciamo a mettere dentro i suoni? Avete 20 cinematiche finite''). È
+``un gioco delle parti'': spesso si concede di chiudere l'audio qualche giorno
+dopo la beta; e il team audio cerca comunque di avere tutto dentro, magari con
+suoni \emph{placeholder}, in modo che la cinematica ``suoni qualcosa'', per poi
+rifinire.
+
+Poi si deve \textbf{mixare}, perché in produzione si è messo dentro tutto senza
+bilanciarlo. Oggi il mixaggio si fa \textbf{in tempo reale}: si collega lo
+strumento (FMOD o Wwise) al gioco, si gioca su un monitor tenendo aperta la
+sessione sull'altro, e si regolano i volumi \emph{mentre si gioca}. Può durare
+due giorni, una settimana o di più, a seconda della grandezza del gioco, e
+coinvolgere più persone, ognuna su parti o aspetti diversi.
+
+\paragraph{L'audio test.} L'ultima cosa è il \textbf{test audio}. Anche se c'è un
+team di test esterno, spesso i tester \textbf{non trovano i problemi audio}: se
+non si chiede espressamente un giorno di test audio, capita che giochino con la
+loro musica in cuffia, perché ``poveretti'' devono giocare otto ore al giorno,
+sbattere contro i muri per cercare i bug, fare sempre lo stesso salto, e non
+vogliono sentirlo quaranta volte. Si possono chiedere test audio dedicati, ma
+essendo molto specifici spesso il team audio \textbf{se li fa da sé}.
+
+Si prende il gioco e ci si mette in un ambiente tranquillo: in sede magari dalle
+sei di sera, quando la gente comincia ad andare via, fino alle otto; in remoto,
+``meglio ancora''. E si gioca \textbf{senza cheat}, senza codici per saltare da
+una parte all'altra (quelli si usano quando si mixa): si \textbf{simula una
+sessione reale}. Si entra nel menu, si girano tutte le voci, si provano tutti i
+tasti, si cambiano le opzioni; si comincia, si guarda la cinematica iniziale
+senza saltarla, e si fa un \emph{walkthrough} il più completo possibile,
+verificando che tutto l'audio funzioni.
+
+``È tutto chiaro? Non siete ancora abbastanza stanchi da non capire?''.
+
+% ---------------------------------------------------------------------
+\section{Le quattro categorie di suoni}
+\label{z9:sec:categorie}
+
+L'ultimo argomento sono le \textbf{categorie di suoni} in un videogioco. Sono
+fondamentalmente \textbf{quattro}, ciascuna con una funzione principale
+(tabella~\ref{z9:tab:categorie}).
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Categoria} & \textbf{Funzione principale} & \textbf{Chi la produce} \\
+\midrule
+Musica           & emozionale    & compositore \\
+Effetti sonori (SFX) & descrittiva & sound designer \\
+Ambienti         & descrittiva   & sound designer \\
+Voce (dialoghi)  & narrativa     & doppiaggio \\
+\bottomrule
+\end{tabular}
+\caption{Le quattro categorie di suoni di un videogioco e la loro funzione
+principale, secondo la slide del relatore.}
+\label{z9:tab:categorie}
+\end{table}
+
+Perché quattro e non tre? Perché \textbf{effetti sonori} e \textbf{ambienti},
+pur essendo entrambi fatti dal sound designer, sono categorie diverse. Il suono di
+uno sparo e quello di un gabbiano sembrano la stessa cosa (prendi il microfono e
+registri), ma sono diversi \textbf{sia per come vengono prodotti sia per come
+vengono implementati}.
+
+Visto il tempo, il relatore mostra un solo video di questa sezione, ``l'unico
+che ha senso vedere a quest'ora''.
+
+\subsection{La musica: source, lineare, non lineare}
+
+La musica ha \textbf{tre tipologie}.
+
+\begin{description}
+  \item[Source music.] È la musica prodotta da \textbf{sorgenti nel gioco}: la si
+        è già vista nel video di \emph{Assassin's Creed II}, con l'orchestrina a
+        Venezia. C'è qualcosa nel gioco che emette musica: è musica
+        \textbf{diegetica}. Va composta e prodotta, magari ha un loop, ma viene
+        \textbf{integrata e trattata come un effetto sonoro}: nel video, quando
+        Ezio saliva in alto, il suo volume si abbassava. Non è una
+        \emph{soundtrack} che si sente ovunque si vada nel gioco: ha uno scopo
+        diverso e si integra in modo diverso.
+  \item[Musica lineare.] ``Guarda un po', nel videogioco, che è interattivo, c'è
+        anche la musica lineare''. È quella dei \textbf{menu}, dei
+        \textbf{credits} e delle \textbf{cutscene}. Nel menu si può comporre una
+        \textbf{canzone}: non deve essere interattiva né per forza un loop, può
+        avere un'introduzione e una fine e poi ricominciare (spesso nei menu c'è
+        una musica che finisce e riparte). Nelle cutscene si hanno 40 secondi, o
+        10 secondi, di scena, e si compone come se si sonorizzasse un piccolo
+        cortometraggio.
+  \item[Musica non lineare.] È quella che ``la fa da padrona'': composta in modo
+        da \textbf{adattarsi a quello che succede nel gioco}, cambiando nel modo
+        più fluido possibile. Si chiama anche \textbf{musica adattiva} o
+        \textbf{interattiva}.
+\end{description}
+
+\subsection{Action e mood}
+
+La musica non lineare reagisce tendenzialmente a \textbf{due cose}.
+\begin{itemize}
+  \item A un'\textbf{azione}: è l'\emph{action music}. Parte il combattimento,
+        parte la musica; finisce il combattimento, la musica si ferma. È il caso
+        già visto nel video della mossa \emph{finishing}, ``quindi non serve
+        guardare nessun video''.
+  \item A un \textbf{mood}, cioè a uno \textbf{stato del gioco}: è la musica
+        \emph{mood driven}, che reagisce alla vita del giocatore, alla tensione,
+        alla vicinanza all'obiettivo. Sono valori dinamici, continui oppure a
+        gradini (0, 1, 2, 3), e la musica reagisce.
+\end{itemize}
+
+\subsection{Il mod di \emph{Far Cry}: la colonna sonora che si scrive giocando}
+
+Il video è ``un bellissimo esempio di musica non lineare basata sul mood''. Il
+relatore lo ha trovato qualche anno prima: è il lavoro di una persona che
+probabilmente voleva usarlo come \emph{showcase} (non sa se fosse un technical
+sound designer, un audio programmer o un compositore). È un \textbf{mod di
+\emph{Far Cry}}: il gioco permette di creare mod, e quindi di accedere ad alcuni
+parametri di codice. Prima di avviarlo, il relatore lo spiega.
+
+L'autore ha raccolto vari \textbf{parametri di gioco}: se il personaggio è
+nell'erba e quindi coperto, la distanza dei nemici, se i nemici guardano nella
+sua direzione, probabilmente quanto rumore fa. Li ha condensati in un unico
+\textbf{cursore bianco}, che va da un minimo a un massimo: la \textbf{tensione},
+lo stato di minaccia. Se il giocatore corresse come un pazzo verso cinque nemici
+che si girano verso di lui, il cursore schizzerebbe al massimo.
+
+Poi ha fissato delle \textbf{soglie}: sopra il livello 2 lo stato diventa
+\emph{suspense}, poi suspense crescente, e sopra il livello 5 \emph{minaccia}
+(\emph{threat}). E ha composto delle \textbf{clip} per ogni stato. Quando la
+timeline arriva a metà di una clip, il sistema \textbf{sceglie la clip
+successiva} in base a dove si trova il cursore in quel momento (nel video la
+clip scelta lampeggia).
+
+Nel video si vede il giocatore uscire allo scoperto all'inizio, con i nemici
+ancora lontani: il cursore sale nel giallo e viene scelta una clip gialla, di
+suspense. Poi si sposta a sinistra dietro un albero e si copre ``appena in
+tempo'' prima della scelta della clip successiva (altrimenti avrebbe dovuto
+aspettare un altro giro): il cursore scende e si torna al verde. Poi si avvicina
+ai nemici, sempre di più, la tensione sale, finché lo vedono e si va alla
+tensione massima. Muovendosi, \textbf{il giocatore si crea la colonna sonora}:
+un'altra partita darebbe una soundtrack diversa, fatta degli stessi
+``mattoncini'' concatenati in modo diverso.
+
+Il compositore, ipotizza il relatore, avrà composto un certo numero di mattoncini
+per lo stato neutro, per la suspense e per la minaccia, più delle \textbf{zone di
+transizione}: dal verde si passa a una transizione, che può risolvere tornando al
+verde o salire allo stato superiore. ``Non è banale''. La prima fase creativa è
+abbastanza standard: si pensa e si compone il brano, probabilmente in modo
+lineare; poi bisogna cominciare a \textbf{tagliare} e a pensare per
+\textbf{blocchi}.
+
+\subsection{Interattività orizzontale e verticale}
+
+Questo è un esempio di \textbf{interattività orizzontale}: si suona un loop, si
+passa a un altro, ci si muove in orizzontale nella sequenza dei blocchi.
+L'\textbf{interattività verticale} è invece quella in cui si ha una traccia e,
+sotto, altre tracce che suonano mute: quando serve se ne \textbf{alza il volume},
+``come se tu alzassi proprio i volumi di alcune tracce''. È il caso del layer
+ritmico che entrava in \emph{fade in} nel video di \emph{Assassin's Creed}
+(sezione~\ref{z9:sec:evocativo}). La figura~\ref{z9:fig:interattivita}
+schematizza le due tecniche.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\footnotesize,
+    clip/.style={draw, rounded corners=1.5pt, minimum width=1.45cm,
+                 minimum height=0.6cm, align=center},
+    tr/.style={-{Stealth[length=2mm]}, thick},
+    traccia/.style={draw, minimum height=0.5cm, minimum width=6.2cm,
+                    anchor=west, align=left, inner sep=3pt}
+  ]
+  % --- interattività orizzontale ---
+  \node[font=\small\bfseries, anchor=west] at (-0.2,1.1)
+    {Interattività orizzontale};
+  \node[clip, fill=gray!10] (n1) at (0.5,0)  {neutro};
+  \node[clip, fill=gray!10] (n2) at (2.25,0)  {neutro};
+  \node[clip, fill=gray!30] (t1) at (4.0,0)  {transiz.};
+  \node[clip, fill=gray!45] (s1) at (6.0,0.65) {suspense};
+  \node[clip, fill=gray!10] (n3) at (6.0,-0.65) {neutro};
+  \node[clip, fill=gray!70, text=white] (m1) at (8.0,0.65) {minaccia};
+  \draw[tr] (n1) -- (n2);
+  \draw[tr] (n2) -- (t1);
+  \draw[tr] (t1) -- (s1);
+  \draw[tr] (t1) -- (n3);
+  \draw[tr] (s1) -- (m1);
+  \node[anchor=west, text width=9cm, align=left] at (-0.2,-1.75)
+    {A metà di ogni clip il sistema sceglie la successiva in base al
+     valore di tensione (soglie): la sequenza dei blocchi cambia a ogni
+     partita.};
+
+  % --- interattività verticale ---
+  \begin{scope}[yshift=-4.1cm]
+  \node[font=\small\bfseries, anchor=west] at (-0.2,1.1)
+    {Interattività verticale};
+  \node[traccia, fill=gray!25] (v1) at (0.1,0.3)
+    {traccia base: sempre attiva};
+  \node[traccia, fill=gray!12] (v2) at (0.1,-0.3)
+    {layer ritmico: volume da 0 a 1 (\emph{fade in})};
+  \node[traccia] (v3) at (0.1,-0.9)
+    {layer d'azione: muto finché non serve};
+  \draw[tr] (6.6,-0.9) -- node[right, align=left] {stato\\di tensione} (6.6,0.3);
+  \node[anchor=west, text width=9cm, align=left] at (-0.2,-1.8)
+    {Tutte le tracce suonano insieme, sincronizzate; il gioco ne alza o
+     abbassa il volume a seconda dello stato.};
+  \end{scope}
+\end{tikzpicture}
+\caption{Le due forme di interattività della musica non lineare. In alto,
+quella orizzontale del mod di \emph{Far Cry}; in basso, quella verticale del
+layer che entra in \emph{fade in}. Ricostruzione schematica, non tratta dalle
+slide.}
+\label{z9:fig:interattivita}
+\end{figure}
+
+\subsection{Gli effetti sonori}
+
+Gli \textbf{effetti sonori} sono i suoni di \textbf{tutto ciò che succede} nel
+gioco. Sono associati a quattro tipi di cose, e la slide dice anche come vengono
+implementati (i metodi di produzione, invece, si sono già visti):
+\begin{itemize}
+  \item le \textbf{azioni dei personaggi}: si implementano spesso sulle
+        \textbf{animazioni}, agganciando il suono a un frame dell'animazione;
+  \item gli \textbf{oggetti di gioco}: hanno un codice, degli \textbf{stati},
+        degli script, e il suono si aggancia lì (oggetto distrutto, acceso,
+        spento, che esplode);
+  \item gli \textbf{eventi di gioco}: spesso si lanciano con dei
+        \textbf{trigger} piazzati nella scena (passi da un trigger e succede
+        qualcosa);
+  \item l'\textbf{interfaccia}: i suoni sono collegati agli \textbf{input}.
+\end{itemize}
+
+\subsection{Gli ambienti}
+\label{z9:subsec:ambienti}
+
+I \textbf{suoni d'ambiente} sono anch'essi effetti sonori, ma sono i suoni di
+\textbf{tutto ciò che non succede}: il contesto che si ha intorno. Se si entra
+in una scena e si sta fermi, si sente l'ambiente. Spesso si registrano in
+\textbf{field recording}.
+
+Un tempo gli ambienti erano \textbf{loop molto lunghi}: un minuto di traffico, un
+minuto di giungla, un minuto di rumore di una stanza piena di computer. Oggi
+l'approccio è cambiato:
+\begin{itemize}
+  \item si crea un \textbf{loop molto omogeneo}, quasi un sottofondo, che può
+        durare poco, anche \textbf{10--15 secondi}: il rumore generico della
+        città, il fondo della giungla;
+  \item sopra, con gli strumenti di oggi (FMOD, Wwise, ma anche i MetaSounds di
+        Unreal\footnote{Nella trascrizione ``MetaSounds di ARRIA''.} o uno
+        script in Unity), si lanciano continuamente dei \textbf{suoni
+        casuali}: per la città si producono 5--6 clacson, 6--7 frenate, 10
+        accelerazioni e altri suoni urbani, e il sistema continua a lanciarli.
+        Si chiamano \textbf{\emph{one shot random}}.
+\end{itemize}
+Il risultato è un \textbf{ambiente dinamico}: anche restando fermi per due minuti
+si sentono suoni lanciati casualmente, magari con volumi casuali, ``un po' più
+basso, un po' più alto'', tutto intorno. È questa, oggi, la metodologia con cui
+si creano gli ambienti.
+
+\paragraph{Un confronto con i libri.} Tra le lenti di Jesse Schell c'è la
+\textbf{lente dell'atmosfera} (\emph{Lens of Atmosphere}): l'atmosfera è
+``invisibile e intangibile'', ma ci avvolge e ci fa sentire parte del mondo, e una
+delle domande della lente è proprio come usare i contenuti artistici,
+\textbf{visivi e sonori}, per renderla più profonda. (Il confronto non è stato
+fatto a lezione.)
+
+\subsection{I dialoghi}
+
+Anche per i \textbf{dialoghi} ci sono due tipi.
+\begin{itemize}
+  \item I \textbf{dialoghi lineari}, come per la musica: nelle cutscene, o
+        quando c'è un narratore. C'è un testo da leggere e lo si registra.
+  \item I \textbf{dialoghi non lineari}: si pensi alle \textbf{telecronache}, o
+        alle situazioni di botta e risposta, in cui una \textbf{macchina a
+        stati} sceglie la frase successiva. Il dialogo si costruisce in base
+        alle scelte: domandi, rispondi una cosa o un'altra, scegli che cosa dire;
+        il tuo personaggio dice quella frase e l'altro risponde con un'altra.
+\end{itemize}
+
+I dialoghi hanno un paio di \textbf{criticità}. La prima è la
+\textbf{localizzazione}: oggi con i middleware la si gestisce abbastanza in
+automatico, ma in produzione bisogna comunque gestire le varie lingue, e i
+\textbf{file sono tantissimi}.
+
+La seconda è che spesso bisogna usare dei \textbf{placeholder}. Non si fanno
+registrare subito gli attori: se cambiano i testi o si aggiungono frasi, bisogna
+richiamare l'attore per tre frasi, e o non è disponibile o fa pagare un'intera
+sessione di lavoro. Si registrano quindi dei \textbf{file temporanei}. Un tempo
+il relatore faceva registrare amici e colleghi, ``registrazioni grezze'' per
+sentire come funzionavano i dialoghi; oggi si può usare l'\textbf{intelligenza
+artificiale}: si generano tutti i dialoghi con ElevenLabs, li si mette in gioco,
+e alla fine del progetto, quando tutto è \textbf{congelato} e non ci saranno
+nuove frasi, si fanno registrare i doppiatori veri e si sostituiscono i file.
+
+La registrazione vera si fa quindi \textbf{il più tardi possibile}, ``però non
+troppo in là, perché sennò poi non ci sei dentro'': si individua il momento in
+cui le frasi devono essere definitive.
+
+% ---------------------------------------------------------------------
+\section{Le domande finali}
+\label{z9:sec:domande}
+
+\subsection{Il labiale nelle altre lingue}
+
+Un partecipante\footnote{La trascrizione non dice chi parla: è uno studente
+dell'accademia che si occupa anche di animazione.} pone una domanda nata dagli
+studi di animazione all'accademia. Nei giochi con un pubblico molto vario
+(Asia, America, Europa) ci sono spesso diversi doppiaggi, ma le
+\textbf{animazioni facciali} non vengono necessariamente rifatte per ogni lingua:
+ci si ritrova con il ``famigerato'' \emph{ciao} su un labiale completamente
+diverso. Ha visto che a volte, con delle \emph{blend shape}, si rende il labiale
+volutamente vago, abbastanza da dare l'idea senza combaciare con precisione con
+la lingua originale, così che ``sfugge all'occhio''. Esistono altri metodi?
+
+Il relatore risponde su due piani.
+\begin{itemize}
+  \item Per l'\textbf{apertura della bocca}, il piano ``fonosintattico'' di cui
+        parla il partecipante, esistono \textbf{strumenti che leggono l'audio e
+        modificano l'apertura in automatico}. Il relatore ricorda che su un
+        progetto (non ricorda quale) li stavano valutando, e sa che esistono
+        ``già da forse più di dieci anni''.
+  \item Per la \textbf{durata}, il problema si riversa normalmente sul
+        \textbf{doppiaggio}. I doppiatori studiano diverse tecniche, e una di
+        queste si chiama \textbf{\emph{time constraint}}: se la battuta in
+        inglese dura 3 secondi, anche quella in cinese deve durare 3 secondi.
+        ``Non sempre facile, non sempre probabilmente si riesce'', ma la tecnica
+        esiste, ed evita di avere la voce che continua quando l'animazione è già
+        finita.
+\end{itemize}
+
+\subsection{Come fa il gioco a sapere che hai sparato alla televisione?}
+
+Un altro partecipante non ha capito bene il video della televisione colpita: il
+suono è costruito ``sul momento'' oppure è ``un codice premeditato''? Come fa il
+gioco a sapere che si è sparato proprio lì?
+
+``È tutto in tempo reale'', risponde il relatore, e semplifica. La televisione è
+lì e sta trasmettendo. Immagina che dall'arma esca un \textbf{raggio invisibile}
+che intercetta gli oggetti del mondo: puntando la pistola, il raggio tocca la
+televisione. Quando premi il grilletto, il codice dice ``ho sparato, e stavo
+toccando quell'oggetto'': il punto d'impatto è sulla televisione, che entra in
+uno \textbf{stato} di codice, ``mi distruggo''; e allo stato corrispondono il
+suono della musichetta che si interrompe e il rumore bianco. Se invece stessi
+puntando un faretto, si distruggerebbe il faretto. ``Non è esattamente così,
+però il concetto è questo''.
+
+Lo stesso vale per i \textbf{passi}. Dal personaggio parte un raggio invisibile
+verso il basso, lanciato ogni tanto mentre cammina, che tocca la superficie; e
+\textbf{ogni superficie ha un parametro}. Il raggio dice ``sto toccando erba,
+erba, erba'' e il suono è il passo sull'erba; se la superficie cambia e il raggio
+intercetta il \emph{cemento}, il suono diventa il passo sul cemento. È tutto
+codice che intercetta delle \textbf{collisioni}, anche invisibili, e restituisce
+che cosa fare.
+
+% ---------------------------------------------------------------------
+\section{Contatti ed eventi di settore}
+\label{z9:sec:chiusura}
+
+``Direi che ce l'abbiamo fatta'': il relatore è riuscito a mostrare quasi tutto,
+recuperando ``proprio il pelo'' del ritardo. Per restare in contatto, la cosa
+migliore è cercarlo su \textbf{LinkedIn}, come Davide Pensato, e chiedere il
+collegamento; accetta tutte le richieste (un partecipante gliel'ha già mandata) e
+si può scrivergli per qualsiasi cosa.
+
+Si era segnato anche di consigliare alcuni \textbf{eventi di settore}, utili da
+frequentare se si è nelle vicinanze:
+\begin{itemize}
+  \item il \textbf{First Playable} di Firenze, un evento \emph{business}, a
+        pagamento perché vi si incontrano le aziende;
+  \item lo \textbf{Svilupparty} di Bologna, gratuito, di solito a metà maggio
+        (``c'è stato'');
+  \item la \textbf{Milan Games Week}, a Milano, con la sua zona indie, dove il
+        relatore e il suo team vanno di solito;
+  \item sempre in zona Milano, un evento annuale ``che è cresciuto molto ed è
+        diventato abbastanza interessante''\footnote{Nella trascrizione
+        ``Cotoletta 8 Beat''; il nome esatto non è ricostruibile con certezza.};
+  \item gli incontri dei capitoli locali dell'\textbf{IGDA}, l'International Game
+        Development Association, che si stanno diffondendo in tutta Italia (il
+        relatore cita Torino, la Sardegna, la Campania, Bologna; quello di
+        Milano è fermo da un po');
+  \item i \textbf{Milano Indies}, un evento nato a Milano che si tiene ogni due
+        mesi a Cologno Monzese, di fronte agli studi Mediaset, e che ha dato
+        origine anche ai \textbf{Firenze Indies} e ai \textbf{Bologna Indies}:
+        ci sono tanti team indie, ma spesso anche professionisti che lavorano
+        in aziende più grandi.
+\end{itemize}
+
+Il relatore ringrazia per l'invito e saluta: ``ci vediamo a qualche evento, o
+magari a un prossimo incontro''. Si era parlato, infatti, di organizzare un
+\textbf{workshop} a seguito della masterclass.
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Il relatore, \textbf{Davide Pensato}, ingegnere delle telecomunicazioni
+        e musicista, è stato audio designer (di fatto audio director) in
+        \textbf{Ubisoft Milano} per circa otto anni e mezzo e ha poi fondato
+        \textbf{DP Studios}, uno studio \textbf{verticale} che fa solo game
+        audio.
+  \item Consiglio di carriera: curare da subito la propria
+        \textbf{brandizzazione} (sito, portfolio ordinato, LinkedIn, Linktree con
+        logo e colori). Segnale positivo: da anni i nuovi progetti dello studio
+        sono \textbf{tutti italiani}.
+  \item La \textbf{contrazione} del mercato non è dovuta all'IA che sostituisce
+        il lavoro, ma al ridimensionamento dopo il boom del Covid, allo
+        spostamento degli investimenti verso le aziende di IA e a un mercato che
+        premia giochi più piccoli, come i \textbf{\emph{Triple-I}}.
+  \item Per Spielberg suono e musica comunicano \textbf{più della metà}
+        dell'esperienza; nel videogioco, interattivo, quello che si sente e non
+        si vede cambia il modo di giocare.
+  \item Tre elementi di importanza dell'audio: \textbf{potere evocativo}
+        (spostare o rafforzare l'emotività, con la musica ma anche con il solo
+        sound design, come in \emph{Manhunt}), \textbf{caratterizzazione} (una
+        \textbf{simulazione} in tempo reale, con un suono per ogni stato di ogni
+        oggetto) e \textbf{supporto al gameplay} (informazioni non visibili:
+        passi, telecamere, musica di combattimento).
+  \item La musica interattiva sfrutta i momenti in cui il gioco \textbf{sa già}
+        che cosa succederà (la mossa \emph{finishing}: cinque secondi per una
+        transizione pulita). A volte è il giocatore a sfruttare la struttura
+        della musica.
+  \item Storia: negli \textbf{anni Ottanta} chip a quattro voci, sintesi,
+        linguaggio macchina, il \textbf{programmatore-compositore}, il
+        \textbf{\emph{voice stealing}} (ancora attuale) e la nascita del
+        \textbf{tracker} su Amiga; negli \textbf{anni Novanta} wavetable,
+        \textbf{MIDI}, studi esterni, il \textbf{Game Audio Engineer}, il CD della
+        PlayStation e i primi script; \textbf{dal 2000} audio digitale, spaziale,
+        effetti in tempo reale, audio adattivo, qualità cinematografica.
+  \item Ruoli: \textbf{audio director} (visione, tecnica, scelta delle persone;
+        viene quasi sempre dal sound design), \textbf{sound designer} (field
+        recording, foley, librerie; loop brevi, code tagliate, suoni asciutti,
+        zero silenzio in testa), \textbf{compositore} (musica in loop, interattiva,
+        in molti stili), \textbf{dialogue director} e doppiaggio,
+        \textbf{audio programmer} (limiti, engine, tool, specifiche chiare: il
+        caso degli \emph{stem} mancati).
+  \item Sull'IA nel doppiaggio: il rischio di sostituzione esiste, soprattutto
+        per i progetti a budget zero; generare una singola frase da un doppiaggio
+        esistente può essere un ritocco legittimo; molti doppiatori stanno già
+        mettendo in vendita la propria voce clonata.
+  \item Per Alexander Brandon la produzione dei contenuti è \textbf{solo metà
+        del lavoro}: l'altra metà è l'\textbf{implementazione}.
+  \item Nel ciclo di produzione l'audio deve esserci \textbf{già in
+        pre-produzione} (audio design, funzionalità, tecnologia, lista degli
+        asset e budget); in produzione si creano e soprattutto si
+        \textbf{integrano} i contenuti (l'armatura in tre layer); in
+        post-produzione, tra beta e gold master, si fanno il \textbf{mixing in
+        tempo reale} e l'\textbf{audio test}.
+  \item Quattro categorie di suoni: \textbf{musica} (source, lineare, non
+        lineare; \emph{action} o \emph{mood}; interattività \textbf{orizzontale}
+        o \textbf{verticale}), \textbf{effetti sonori} (agganciati ad
+        animazioni, stati, trigger, input), \textbf{ambienti} (loop breve e
+        \emph{one shot random}) e \textbf{dialoghi} (lineari e non lineari,
+        localizzazione, placeholder, registrazione finale il più tardi
+        possibile).
+\end{itemize}

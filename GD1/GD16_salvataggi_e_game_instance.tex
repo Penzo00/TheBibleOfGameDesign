@@ -1,0 +1,1714 @@
+% =====================================================================
+%  Capitolo 16 — I salvataggi: Save Game, Game Instance e le monete
+%  che non si dimenticano, più una mattinata di feature da team (la
+%  quarta lezione di programmazione con i Blueprint di Unreal Engine)
+%  (Game Design, primo anno)
+%  Fonte: trascrizione della lezione GD16 (Game Design, primo anno),
+%  quarta lezione di programmazione, diretta prosecuzione dei capitoli
+%  7, 12 e 13 (stesso docente). È la lezione "del 23" annunciata nella
+%  chiusura del capitolo 13, l'ultima prima della consegna del
+%  platformer. Lezione ibrida: una parte della classe in aula, una parte
+%  collegata da remoto (il docente, in chiusura, si rivolge a "quelli
+%  online").
+%  Contenuti, nell'ordine della lezione: la chiacchierata d'apertura
+%  (Unreal Engine 6.0 e il ritmo delle versioni, la build per browser
+%  tolta e rimessa e perché non può essere un plugin, l'engine scritto
+%  da un'IA in un giorno e mezzo, la storia degli engine: dagli engine
+%  fatti in casa a Unity, Unreal e CryEngine, e forse ritorno; Godot e il
+%  3D); il punto sui task e su GitHub; il template in prima persona e
+%  come installare i template dal launcher (template e pacchetti di
+%  funzionalità, risparmiare spazio); i salvataggi: perché non esiste un
+%  "tasto salva tutto"; la classe Save Game (PlayerSaves, una o due per
+%  gioco, la variabile Score); la Game Instance rivista (che cosa ci va
+%  oltre ai salvataggi: achievement, musica tra un livello e l'altro;
+%  perché sopravvive ai cambi di mappa; Event Init); i nodi del
+%  salvataggio (crea, controlla, carica, cancella, salva) e le varianti
+%  asincrone (nodi istantanei e nodi latenti, l'orologino, l'autosave
+%  degli open world, l'icona che lampeggia); Does Save Game Exist, Branch,
+%  Create Save Game Object e Load Game from Slot; lo slot name e la
+%  variabile stringa; la reference al salvataggio e le variabili che
+%  hanno per tipo un oggetto; il cast al tipo di salvataggio; Maps &
+%  Modes; Save Game to Slot e il custom event SaveGame; le monete (il
+%  Blueprint Coins, il cilindro, l'overlap, il cast al personaggio, il
+%  custom event CoinGrabbed nel player, Destroy Actor); la "torre di
+%  nodi": Get Game Instance, cast, Get Save, Get/Set Score, il cast puro;
+%  la prova (1-2-3 che si ripete senza salvare, poi 4-5-6, 7-8-9 anche
+%  dopo aver chiuso); il file .sav in Saved/SaveGames; il riepilogo; le
+%  domande (dove si trova il SaveGame, il print continuo con l'Event Tick,
+%  quali nodi diventano puri); l'anticipazione del best score nel
+%  prossimo task; l'esercitazione "da azienda" con nove feature da
+%  dividersi (la scala con la distanza, il jetpack, la torcia con la
+%  batteria, il ritorno al punto sicuro, l'oggetto che c'è il 35% delle
+%  volte, la torretta, i tre spawn con l'attesa di 5 secondi, la zona
+%  da 10 HP al secondo, il modello che cambia ogni secondo); i
+%  suggerimenti durante il lavoro (Get Player Pawn, la doppia mesh del
+%  personaggio in prima persona, l'input solo sui Pawn posseduti, a
+%  differenza di Unity); la chiusura.
+%  Integrazioni dai libri "Blueprints Visual Scripting for Unreal Engine
+%  5" (Romero, Sewell) e "The Art of Game Design: A Book of Lenses"
+%  (Jesse Schell, terza edizione), segnalate come approfondimenti.
+%
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{amsmath},
+%  \usepackage{enumitem}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Tutte le etichette di questo capitolo hanno il prefisso "gd16:"
+%  (gd16:sec:..., gd16:fig:..., gd16:tab:...) e tutti gli stili TikZ
+%  "propri" il prefisso "gd16", per non collidere con gli altri
+%  capitoli. I grafi Blueprint usano le macro di bp-tikz.tex (la piccola
+%  libreria in tasks/gd7-blueprint/), incluse qui sotto così che il
+%  capitolo sia autosufficiente; sono protette da un controllo, quindi
+%  se un altro capitolo le ha già definite non vengono ridefinite.
+%
+%  Nota sulla fonte: la trascrizione automatica è buona nella
+%  chiacchierata iniziale e nella spiegazione dei salvataggi (circa un
+%  terzo della registrazione), ma tutta la seconda parte della lezione,
+%  quella del lavoro individuale sulle feature, è quasi interamente
+%  rovinata: il riconoscimento vocale ha riempito i silenzi con frasi in
+%  loop ("Vediamo cosa succede se qualcun altro non ha problemi",
+%  "non voglio fare come una collezione", "la struttura del giardino",
+%  "dopo tutto, forse adesso non sono le stesse lerecchie") e con
+%  lunghissimi brani captati da una fonte esterna o inventati (frasi
+%  sulla "dottrina sul mercato del lavoro", sulla "Corte Suprema di
+%  Internet", sulla "città-stato", sui "funzionari della società", "la
+%  migliore dal 2005", "il numero di persone è molto più basso dopo il
+%  raggio di persone", "gli Stati Uniti", "gli egiziani", "la signora
+%  Nicolai", "Vittorio Prodi", "i patrioti della società civile", "il
+%  paziente"): sono artefatti, omessi. Di quella parte sopravvivono solo
+%  tre suggerimenti dati ad alta voce alla classe e la frase di
+%  chiusura, che la trascrizione taglia a metà. Diversi nomi sono
+%  storpiati ("Arrio", "Ariadne", "Real" per Unreal; "BravaLoser" per
+%  browser; "Cray Engine" per CryEngine; "Bluetooth class" per Blueprint
+%  Class; "gate distance", "distance" per Game Instance; "Scorra" per
+%  Score; "player sense" per PlayerSaves; "lot save, load game from
+%  flot" per Load Game from Slot; "Syncseg" per il salvataggio
+%  asincrono; "Boxer Game" per il custom event SaveGame; "a sette" per
+%  set; "destroy hardware" per Destroy Actor; "eventic" per Event Tick;
+%  "scamotaggio" per escamotage; "Tobiquelli" per "per quelli"): dove il
+%  riferimento è ricostruibile con certezza lo si riporta nella forma
+%  corretta; dove non lo è, lo si segnala in nota invece di indovinare.
+%  Le figure sono ricostruzioni schematiche dei grafi costruiti a
+%  lezione e dei concetti spiegati, non screenshot.
+% =====================================================================
+
+% --- Macro per i grafi Blueprint (da tasks/gd7-blueprint/bp-tikz.tex) --
+% Richiedono TikZ e la libreria calc, già caricati nel preambolo.
+\ifcsname bpnode\endcsname\else
+\pgfdeclarelayer{bpbg}
+\pgfdeclarelayer{bpcomment}
+\pgfdeclarelayer{bpwire}
+\pgfsetlayers{bpbg,bpcomment,bpwire,main}
+
+% --- colori dell'editor ----------------------------------------------
+\definecolor{bpBg}{HTML}{262626}
+\definecolor{bpGridFine}{HTML}{2E2E2E}
+\definecolor{bpGridBold}{HTML}{1A1A1A}
+\definecolor{bpBody}{HTML}{141414}
+\definecolor{bpOutline}{HTML}{060606}
+\definecolor{bpText}{HTML}{F0F0F0}
+\definecolor{bpSub}{HTML}{B4B4B4}
+\definecolor{bpValBg}{HTML}{0C0C0C}
+\definecolor{bpValBorder}{HTML}{5A5A5A}
+
+% header dei nodi
+\definecolor{bpHEvent}{HTML}{8E1B1B}   % eventi (rosso)
+\definecolor{bpHFunc}{HTML}{1F5A8C}    % funzioni con esecuzione (blu)
+\definecolor{bpHPure}{HTML}{3F7A2E}    % funzioni pure, senza esecuzione (verde)
+\definecolor{bpHCast}{HTML}{14706F}    % cast (verde acqua)
+\definecolor{bpHFlow}{HTML}{5C5C5C}    % controllo del flusso, macro (grigio)
+\definecolor{bpHVar}{HTML}{3A3A3A}     % SET di una variabile
+
+% pin e fili, un colore per tipo di dato (come nell'editor)
+\definecolor{bpPinexec}{HTML}{FFFFFF}
+\definecolor{bpPinbool}{HTML}{A00000}
+\definecolor{bpPinint}{HTML}{1FE3AF}
+\definecolor{bpPinfloat}{HTML}{9DF53D}
+\definecolor{bpPinstr}{HTML}{F72BD3}
+\definecolor{bpPinname}{HTML}{C98AF7}
+\definecolor{bpPintext}{HTML}{E2779A}
+\definecolor{bpPinvec}{HTML}{F8C624}
+\definecolor{bpPinrot}{HTML}{A0B3FC}
+\definecolor{bpPintrans}{HTML}{F77A10}
+\definecolor{bpPinobj}{HTML}{19A7F2}
+\definecolor{bpPinclass}{HTML}{7B2BC4}
+\definecolor{bpPinsoft}{HTML}{98F2FF}
+\definecolor{bpPinstruct}{HTML}{1458C8}
+\definecolor{bpPinwild}{HTML}{8A8A8A}
+\definecolor{bpPinenum}{HTML}{0D7A6B}
+\definecolor{bpPinskip}{HTML}{141414}
+
+\def\bpRow{0.42}
+\def\bpExecStr{exec}
+\def\bpSkipStr{skip}
+\def\bpCompactStr{compact}
+
+\tikzset{
+  bpTitle/.style={text=bpText, font=\sffamily\scriptsize\bfseries,
+                  inner sep=0pt, align=left},
+  bpTitleC/.style={text=bpSub, font=\sffamily\large\bfseries, inner sep=0pt},
+  bpLabel/.style={text=bpText, font=\sffamily\tiny, inner sep=0pt},
+  bpNoteSty/.style={text=bpSub, font=\sffamily\tiny\itshape, align=left,
+                    inner sep=1pt},
+}
+
+\newcommand{\bpval}[1]{{\setlength{\fboxsep}{0.8pt}\setlength{\fboxrule}{0.3pt}%
+  \fcolorbox{bpValBorder}{bpValBg}{\textcolor{bpText}{\,#1\,}}}}
+\newcommand{\bpsub}[1]{{\color{bpSub}\tiny\itshape\mdseries #1}}
+
+% conta gli elementi non vuoti di una lista "tipo/etichetta, ..."
+\newcommand{\bpcountlist}[1]{%
+  \gdef\bpres{0}%
+  \foreach \bpt/\bpl in {#1}{%
+    \ifx\bpt\empty\else
+      \pgfmathtruncatemacro\bptmp{\bpres+1}\global\let\bpres\bptmp
+    \fi}}
+
+% disegna un pin: tipo, x, y
+\newcommand{\bpXpin}[3]{%
+  \edef\bpPT{#1}%
+  \ifx\bpPT\bpExecStr
+    \fill[bpPinexec] (#2-0.085,#3+0.085) -- (#2+0.02,#3+0.085)
+       -- (#2+0.105,#3) -- (#2+0.02,#3-0.085) -- (#2-0.085,#3-0.085) -- cycle;
+  \else\ifx\bpPT\bpSkipStr
+  \else
+    \fill[bpPin#1] (#2,#3) circle (0.07);
+    \draw[bpPin#1!60!black, line width=0.3pt] (#2,#3) circle (0.07);
+  \fi\fi}
+
+% il nodo generico
+\newcommand{\bpnode}[8][1]{%
+  \bpcountlist{#7}\edef\bpNin{\bpres}%
+  \bpcountlist{#8}\edef\bpNout{\bpres}%
+  \pgfmathsetmacro\bpRows{max(\bpNin,\bpNout,1)}%
+  \edef\bpHC{#4}%
+  \ifx\bpHC\bpCompactStr
+    \def\bpHead{0.06}%
+  \else
+    \pgfmathsetmacro\bpHead{0.14+0.34*#1}%
+  \fi
+  \pgfmathsetmacro\bpH{\bpHead+\bpRows*\bpRow+0.12}%
+  \begin{scope}[shift={(#3)}]
+    \fill[black, opacity=0.45, rounded corners=4pt]
+         (0.07,-0.07) rectangle ++(#6,-\bpH);
+    \fill[bpBody, rounded corners=4pt] (0,0) rectangle (#6,-\bpH);
+    \ifx\bpHC\bpCompactStr
+      \node[bpTitleC] at ({#6-0.52},{-\bpH/2}) {#5};
+    \else
+      \begin{scope}
+        \clip[rounded corners=4pt] (0,0) rectangle (#6,-\bpH);
+        \shade[left color=#4, right color=#4!30!bpBody]
+              (0,0) rectangle (#6,-\bpHead);
+      \end{scope}
+      \node[bpTitle, anchor=west] at (0.14,{-\bpHead/2}) {#5};
+    \fi
+    \draw[bpOutline, line width=0.6pt, rounded corners=4pt]
+         (0,0) rectangle (#6,-\bpH);
+    \coordinate (#2-c)  at ({#6/2},{-\bpH/2});
+    \coordinate (#2-n)  at ({#6/2},0);
+    \coordinate (#2-s)  at ({#6/2},-\bpH);
+    \coordinate (#2-w)  at (0,{-\bpH/2});
+    \coordinate (#2-e)  at (#6,{-\bpH/2});
+    \coordinate (#2-sw) at (0,-\bpH);
+    \coordinate (#2-ne) at (#6,0);
+    \foreach \bpt/\bpl [count=\bpk] in {#7}{%
+      \ifx\bpt\empty\else
+        \pgfmathsetmacro\bpy{-\bpHead-(\bpk-0.5)*\bpRow-0.06}%
+        \bpXpin{\bpt}{0.17}{\bpy}%
+        \coordinate (#2-i\bpk) at (0.17,\bpy);
+        \node[bpLabel, anchor=west] at (0.33,\bpy) {\bpl};
+      \fi}%
+    \foreach \bpt/\bpl [count=\bpk] in {#8}{%
+      \ifx\bpt\empty\else
+        \pgfmathsetmacro\bpy{-\bpHead-(\bpk-0.5)*\bpRow-0.06}%
+        \bpXpin{\bpt}{#6-0.17}{\bpy}%
+        \coordinate (#2-o\bpk) at (#6-0.17,\bpy);
+        \node[bpLabel, anchor=east] at (#6-0.33,\bpy) {\bpl};
+      \fi}%
+  \end{scope}}
+
+% il GET di una variabile: una "pillola" con un'uscita
+\newcommand{\bpget}[5]{%
+  \begin{scope}[shift={(#2)}]
+    \fill[black, opacity=0.45, rounded corners=6pt]
+         (0.06,-0.06) rectangle ++(#5,-0.46);
+    \begin{scope}
+      \clip[rounded corners=6pt] (0,0) rectangle (#5,-0.46);
+      \shade[left color=bpPin#3!40!bpBody, right color=bpBody]
+            (0,0) rectangle (#5,-0.46);
+    \end{scope}
+    \draw[bpOutline, line width=0.6pt, rounded corners=6pt]
+         (0,0) rectangle (#5,-0.46);
+    \node[bpTitle, anchor=west] at (0.14,-0.23) {#4};
+    \bpXpin{#3}{#5-0.17}{-0.23}%
+    \coordinate (#1-o1) at (#5-0.17,-0.23);
+    \coordinate (#1-n) at ({#5/2},0);
+    \coordinate (#1-s) at ({#5/2},-0.46);
+  \end{scope}}
+
+% un filo (sotto i nodi)
+\newcommand{\bpwire}[3]{%
+  \begin{pgfonlayer}{bpwire}
+    \edef\bpWT{#1}%
+    \ifx\bpWT\bpExecStr\def\bpWW{1.15pt}\else\def\bpWW{0.95pt}\fi
+    \draw[bpPin#1, line width=\bpWW]
+      let \p1=(#2), \p2=(#3),
+          \n1={ifthenelse(\x2<\x1, 45pt, max(12pt, abs(\x2-\x1)*0.45))} in
+      (#2) .. controls +(\n1,0) and +(-\n1,0) .. (#3);
+  \end{pgfonlayer}}
+
+% riquadro di commento
+\newcommand{\bpcomment}[3]{%
+  \begin{pgfonlayer}{bpcomment}
+    \fill[white, opacity=0.07, rounded corners=3pt] (#1) rectangle (#2);
+    \draw[white!45!bpBg, rounded corners=3pt, line width=0.4pt] (#1) rectangle (#2);
+    \begin{scope}
+      \clip[rounded corners=3pt] (#1) rectangle (#2);
+      \path (#1) coordinate (bpcA) (#2) coordinate (bpcB);
+      \path ($(bpcA)+(0,-0.42)$) coordinate (bpcH);
+      \fill[white, opacity=0.10] (bpcA) rectangle (bpcB |- bpcH);
+    \end{scope}
+    \node[text=bpText, font=\sffamily\scriptsize\bfseries, anchor=north west,
+          inner sep=3pt] at (#1) {#3};
+  \end{pgfonlayer}}
+
+\newcommand{\bpnote}[2]{\node[bpNoteSty, anchor=north west] at (#1) {#2};}
+
+% l'ambiente grafo
+\newenvironment{bpgraph}[1][]{%
+  \begin{tikzpicture}[#1]}{%
+  \begin{pgfonlayer}{bpbg}
+    \path (current bounding box.south west) ++(-0.35,-0.35) coordinate (bpSW);
+    \path (current bounding box.north east) ++(0.35,0.35) coordinate (bpNE);
+    \fill[bpBg] (bpSW) rectangle (bpNE);
+    \begin{scope}
+      \clip (bpSW) rectangle (bpNE);
+      \draw[bpGridFine, line width=0.3pt, step=0.25] (bpSW) grid (bpNE);
+      \draw[bpGridBold, line width=0.5pt, step=2] (bpSW) grid (bpNE);
+    \end{scope}
+  \end{pgfonlayer}
+  \end{tikzpicture}}
+\fi
+
+\chapter[I salvataggi: Save Game e Game Instance]{I salvataggi: Save Game,
+Game Instance e le monete che non si dimenticano}
+\label{gd16:cap:salvataggi}
+
+Il capitolo~\ref{gd13:cap:git-componenti} si era chiuso con un appuntamento:
+la lezione ``del 23'', l'ultima prima della consegna del platformer
+(sezione~\ref{gd12:sec:task}). Eccola: è la \textbf{quarta lezione di
+programmazione} con i Blueprint, con lo stesso docente dei
+capitoli~\ref{gd7:cap:blueprint}, \ref{gd12:cap:array-timeline}
+e~\ref{gd13:cap:git-componenti}. Nel capitolo precedente la Game Instance era
+stata presentata con un avvertimento preciso: \emph{non è un salvataggio},
+perché quando si chiude il gioco i suoi dati si perdono. Questa lezione chiude
+il cerchio e mostra come si scrivono davvero dei dati \textbf{sul disco}, in
+modo che sopravvivano alla chiusura del gioco e perfino allo spegnimento del
+computer.
+
+È anche la prima volta, lo dice il docente stesso, che si
+\textbf{interconnettono così tanto i Blueprint}: una moneta che chiama il
+personaggio, un personaggio che chiede alla Game Instance il salvataggio, un
+salvataggio che contiene il punteggio, ``variabili con dentro variabili con
+dentro variabili''. Il salvataggio delle monete costruito a lezione, avverte,
+non è un esempio fine a sé stesso: ``questa cosa qui che viene salvato il
+\textbf{best score}, ve lo anticipo già, ci sarà nel \textbf{prossimo task}''.
+
+La seconda parte è pratica e cambia formato: il docente simula un
+\textbf{team di sviluppo} in un'azienda, con un elenco di \textbf{nove
+feature} da implementare e da dividersi, una a testa. La registrazione di
+quella parte, in cui ciascuno lavora sul proprio progetto, è quasi tutta
+illeggibile (si veda la nota in testa al file sorgente): ne restano l'elenco
+delle feature e tre suggerimenti dati ad alta voce. Il capitolo li riporta e,
+per ciascuna feature, propone in un riquadro di approfondimento una possibile
+strada, chiaramente segnalata come integrazione.
+
+La struttura della lezione, e quindi del capitolo, è questa:
+\begin{enumerate}
+  \item la chiacchierata d'apertura: Unreal Engine~6, la build per browser,
+        l'engine scritto da un'IA e la storia degli engine
+        (sezione~\ref{gd16:sec:apertura});
+  \item il punto sui task e su GitHub, il \textbf{template in prima persona} e
+        come si installano i template dal launcher
+        (sezioni~\ref{gd16:sec:task-github} e~\ref{gd16:sec:template});
+  \item perché non esiste un ``tasto salva tutto'' e la classe
+        \textbf{Save Game} (sezioni~\ref{gd16:sec:perche}
+        e~\ref{gd16:sec:savegame});
+  \item la \textbf{Game Instance} rivista: che cosa ci va e perché
+        (sezione~\ref{gd16:sec:game-instance});
+  \item i nodi del salvataggio e i nodi \textbf{asincroni}
+        (sezione~\ref{gd16:sec:nodi});
+  \item il caricamento all'avvio: controlla, crea o carica, la reference e il
+        cast (sezioni~\ref{gd16:sec:init} e~\ref{gd16:sec:reference});
+  \item dirlo all'engine e \textbf{salvare davvero}: Maps \& Modes, Save Game
+        to Slot e il custom event \emph{SaveGame}
+        (sezione~\ref{gd16:sec:salvare});
+  \item le \textbf{monete}: il Blueprint, il custom event nel personaggio e la
+        ``torre di nodi'' (sezioni~\ref{gd16:sec:monete}
+        e~\ref{gd16:sec:torre});
+  \item la prova, il file \texttt{.sav} sul disco e il riepilogo
+        (sezione~\ref{gd16:sec:prova});
+  \item le domande della classe (sezione~\ref{gd16:sec:domande});
+  \item l'esercitazione ``da azienda'' con le nove feature e i suggerimenti
+        durante il lavoro (sezioni~\ref{gd16:sec:esercitazione}
+        e~\ref{gd16:sec:suggerimenti});
+  \item la chiusura (sezione~\ref{gd16:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{In apertura: engine vecchi, engine nuovi}
+\label{gd16:sec:apertura}
+
+La registrazione parte a conversazione già avviata, mentre la classe si
+sistema e il docente aspetta che si colleghi chi segue da remoto. Si parla
+di engine, ed è una chiacchierata che vale la pena riportare perché tocca un
+tema che riguarda da vicino chi farà questo mestiere nei prossimi anni.
+
+\subsection{Unreal Engine 6 e il ritmo delle versioni}
+
+Il primo argomento è l'uscita di \textbf{Unreal Engine~6.0}: ``in teoria''
+esce \textbf{entro fine anno}. C'è già una \emph{preview}, che chi vuole
+può scaricare, ma secondo quanto si dice in aula è stata fatta uscire ``di
+fretta'', in concomitanza con un \emph{contest} per il quale si voleva che si
+usasse la \textbf{5.9}.\footnote{Il passaggio è molto frammentato nella
+trascrizione (``Rolevo la sei punto zero. Vero esce, in teoria, entro fine anno
+così a Ber''): si riporta solo ciò che è ricostruibile, cioè che la 6.0 è
+attesa per fine anno e che una preview è già disponibile. Non è chiaro dalla
+registrazione se a parlare sia il docente o uno studente, né quale fosse il
+contest.} Il ritmo, comunque, è noto: ``tendenzialmente c'è una versione
+\textbf{ogni sei mesi}'', quindi la prossima ``dovrebbe uscire verso
+gennaio, credo, più o meno''. (Nel capitolo~\ref{gd12:cap:array-timeline}
+il docente aveva raccontato di stare già compilando Unreal Engine~6 dal
+codice sorgente su GitHub per provarne le funzioni.)
+
+\subsection{La build per browser, tolta e rimessa}
+
+Si torna sulla novità della 5.9 già vista nel
+capitolo~\ref{gd12:cap:array-timeline}: la \textbf{build per browser}, cioè
+la possibilità di pubblicare un gioco giocabile direttamente nel
+browser.\footnote{Nella trascrizione ``BravaLoser'': dal contesto (``aggiornare
+l'engine per controllarla sempre anche su\dots'') si tratta quasi certamente
+del browser.} La storia, ricostruita in aula, è questa:
+\begin{itemize}
+  \item la funzione era stata \textbf{tolta ``un sacco di anni fa''}, perché
+        si pensava che ci fosse ``troppo poco mercato'' ed era ``un sacco di
+        casino'' aggiornare l'engine controllando ogni volta che tutto
+        funzionasse anche sul browser;
+  \item la versione per browser che esisteva era ormai ``vecchissima'': Epic
+        l'aveva rilasciata dicendo, in sostanza, ``continuatela a sviluppare
+        voi come community''; ``nessuno l'aveva fatto, e quindi è morta lì'';
+  \item adesso Epic l'ha rimessa, ``e quindi ci sta, è giusto''. ``Feature
+        che per una volta ha anche senso.''
+\end{itemize}
+
+\paragraph{Perché non può essere un plugin.} Il docente aggiunge un
+retroscena. Ne ha parlato con uno sviluppatore che crea \textbf{plugin} su
+\textbf{Fab} (il marketplace visto nella sezione~\ref{gd12:sec:fab}), ``molto
+bravo, mi vende anche tanta roba'', che gli ha spiegato che la build per
+browser \textbf{non si può realizzare come plugin}, e quindi nemmeno vendere:
+``per come è strutturato l'engine, non puoi creare un plugin che aggiunge la
+build per il browser''. È ``una limitazione dell'engine proprio''. Da qui il
+ragionamento: se fosse fattibile come plugin, ``lo farebbero tutti e lo
+venderebbero''; non essendolo, nessuno lo faceva, e alla fine ha dovuto
+rimetterla Epic.
+
+\paragraph{La 5.9 e l'IA.} Sempre sulla 5.9 circola la voce che sia stata
+fatta in gran parte con l'aiuto dell'intelligenza
+artificiale.\footnote{La trascrizione dice ``l'hanno fatta tipo tutta col
+diablo, così hanno detto'', seguito da un frammento incomprensibile
+(``Finché mettono almeno 15 minuti, eh no, non è fatti''). Il riferimento
+all'IA è un'interpretazione resa plausibile dal discorso che segue
+immediatamente, ma non è verificabile dalla registrazione.} Il docente lo
+riconosce come ``una digressione un pochettino'', ma la porta avanti con un
+esperimento personale.
+
+\subsection{L'engine scritto in un giorno e mezzo}
+
+``Qualche settimana fa'' aveva a disposizione dei \textbf{crediti a tempo} su
+un servizio di intelligenza artificiale\footnote{Nella trascrizione ``crediti
+limitati su Cloud'': può trattarsi di un servizio cloud generico o del nome di
+un assistente di IA storpiato dal riconoscimento vocale; dal racconto è chiaro
+solo che si tratta di un agente di IA capace di scrivere codice in autonomia.},
+``troppissimi'', e non sapeva che farne. Così ha provato:
+\begin{quote}
+Boh, facciamo così: fammi un altro engine, tipo Unreal. [\dots] Lo lascio
+andare. Un giorno e mezzo dopo torno. Ha fatto veramente un gran bell'engine,
+pazzesco, veramente un mostro.
+\end{quote}
+Il risultato, a sentire il docente, è notevole:
+\begin{itemize}
+  \item \textbf{graficamente} ``sembrava Unreal, tranquillamente'';
+  \item aveva rimesso dentro \textbf{i Blueprint}, ``ma più ottimizzati,
+        assurdo'';
+  \item era \textbf{già pronto per il multiplayer};
+  \item supportava il \textbf{2D};
+  \item funzionava \textbf{già su browser}.
+\end{itemize}
+
+\subsection{Una breve storia degli engine}
+
+Da qui il docente allarga il discorso: ``aspetta, prendiamola un attimino
+sulla parte storica''.
+\begin{enumerate}
+  \item \textbf{All'inizio}, ogni casa di sviluppo si faceva \textbf{il proprio
+        engine}: ``facevi l'engine per fare quel gioco'', non un engine per
+        tutti i giochi.
+  \item Poi, man mano, è diventato sempre più complesso \textbf{stare dietro ai
+        requisiti}, e ogni volta bisognava \textbf{reimplementare} da capo il
+        funzionamento delle varie parti\footnote{Nella trascrizione ``come
+        funzionava il GACI'': il termine non è ricostruibile con certezza (può
+        riferirsi a un sottosistema dell'engine, per esempio
+        l'illuminazione globale, la \emph{GI}). Il senso del passaggio, cioè
+        che ogni studio doveva reimplementare da zero sistemi complessi, è
+        comunque chiaro.}: ``tutto quanto era un casino''. Ci si è quindi
+        spostati sugli \textbf{engine comuni}: \textbf{Unity},
+        \textbf{Unreal}, \textbf{CryEngine} e altri.
+  \item \textbf{Oggi} questa scelta ``sta scricchiolando''. Se un'IA può
+        scriverti l'engine, non c'è più bisogno di tenersi un Unreal ``che ha un
+        sacco di \emph{bloat}'', cioè ``un sacco di roba che non ti serve'' e
+        che ``ti appesantisce'': si può \textbf{tornare a farsi l'engine per il
+        proprio gioco}.
+\end{enumerate}
+A favore di questo ritorno c'è anche un motivo economico: con Unity, Unreal e
+simili, ``se cominci a fare un po' di vendita, devi anche pagarli'', mentre un
+engine proprio ``è tutto quanto tuo, ti fai quel che vuoi''.
+
+\paragraph{Godot e il 3D.} Per ora, tra gli engine gratuiti e
+\emph{open source}, c'è \textbf{Godot} (citato già nel
+capitolo~\ref{cap:introduzione-game-design}), ``che è carino, è carino, però con il 3D non
+riesce veramente a fare niente''. Il giudizio del docente è netto: crede
+sinceramente che l'engine generato in due giorni, ``senza guardarlo'', sia
+``molto meglio di Godot'' nel 3D.
+
+\paragraph{La previsione.} Il docente si aspetta quindi che ``a brevissimo''
+succeda una di due cose:
+\begin{itemize}
+  \item esca un \textbf{engine pubblico gratuito} (open source) di questa nuova
+        generazione, e ci si sposti su quello;
+  \item oppure ogni studio si faccia \textbf{il suo}: ``mi serve un gioco 3D
+        che ha tante funzionalità, che ne so, di musica'', ci si fa fare
+        l'engine e poi ci si costruisce il gioco sopra. ``Probabile, molto
+        probabile.''
+\end{itemize}
+
+\paragraph{Approfondimento: l'engine come scelta di design.} Jesse Schell, in
+\emph{The Art of Game Design} (capitolo dedicato al prototipo, \emph{Prototyping
+Tip \#8: Pick a ``Fast Loop'' Game Engine}), ricorda che la scelta dell'engine
+non è solo tecnica: conta soprattutto \textbf{quanti cicli di prova al giorno}
+permette. Lo sviluppo tradizionale è ``come cuocere il pane'' (scrivi il codice,
+compili, avvii, raggiungi il punto da testare, provi, e se non va ricominci
+tutto), mentre un engine con un buon sistema di scripting permette di
+cambiare il codice mentre il gioco è in esecuzione, ``come lavorare
+l'argilla''. Schell cita proprio Unreal, che sceglie ``un sistema di scripting
+drag and drop (i Blueprint) che lavora insieme alla programmazione in C++''. Il
+discorso del docente aggiunge un criterio nuovo a quello di Schell: oltre alla
+velocità del ciclo, il peso di tutto ciò che l'engine porta con sé e che il
+gioco non usa.
+
+% ---------------------------------------------------------------------
+\section{Il punto sui task e su GitHub}
+\label{gd16:sec:task-github}
+
+Il docente controlla se si sia collegato qualcun altro da remoto e poi
+apre la lezione vera e propria con la domanda di rito: ``come eravate messi
+con i task?''. Alcuni studenti gli hanno già scritto in privato (``quindi
+bene''), ma vuole sapere ``in generale'' se ci sono difficoltà. Le risposte
+sono rassicuranti (``ok, ok''): ``allora più avanti li vediamo''.
+
+Una domanda riguarda \textbf{GitHub}, la lezione del
+capitolo~\ref{gd13:cap:git-componenti}: qualcuno non c'era. La risposta è
+tranquilla ma ferma: ``tranquilli. \textbf{Recuperatela}, perché è molto
+importante'' (dal prossimo progetto, di gruppo, le consegne passeranno di
+lì).
+
+% ---------------------------------------------------------------------
+\section{Il template in prima persona}
+\label{gd16:sec:template}
+
+\subsection{Perché proprio questo}
+
+Per la lezione si crea un progetto nuovo dal \textbf{template in prima
+persona} (\emph{First Person}). Non c'è un motivo legato ai contenuti, precisa il
+docente (``non perché ci siano [sparatutto] nostri''): ``semplicemente perché
+non l'abbiamo ancora visto''. Nel capitolo~\ref{gd12:cap:array-timeline} si
+era sempre partiti dal template in terza persona, con la promessa di vedere più
+avanti anche quello in prima persona e quello del veicolo.
+
+Il template in prima persona ``è come quello in terza, ma in prima'': lo
+stesso impianto, con qualche colore diverso.\footnote{Nella trascrizione
+``Sesso. Cambio colore'': quasi certamente ``stesso, cambia colore''.} ``Poi c'è
+il personaggio un po' \emph{clippato}'', cioè con parti della mesh che
+attraversano la telecamera o altre geometrie, ``però vabbè, chi se ne
+frega''. (Più avanti, durante l'esercitazione, il docente spiegherà
+perché nel personaggio in prima persona si vedono due modelli compenetrati,
+sezione~\ref{gd16:sec:suggerimenti}.)
+
+\subsection{Se il template non c'è: installarlo dal launcher}
+
+A qualcuno il template non compare. Non è un errore del progetto: i template
+sono contenuti \textbf{opzionali} dell'installazione dell'engine, e si
+aggiungono dal launcher.
+\begin{enumerate}
+  \item Nell'\textbf{Epic Games Launcher}, sezione di Unreal Engine, accanto
+        alla versione installata si apre il menu della versione e si sceglie
+        la voce per \textbf{gestire i moduli}\footnote{Nella trascrizione
+        ``gestisci moduli''; nella versione inglese del launcher la voce
+        corrispondente è \emph{Options}, nel menu a tendina accanto al pulsante
+        di avvio della versione.};
+  \item si spunta \textbf{Template e pacchetti di funzionalità}
+        (\emph{Templates and Feature Packs});
+  \item in fondo si preme \textbf{Applica}: il launcher scarica ``un giga'' e
+        lo installa.
+\end{enumerate}
+
+\paragraph{Risparmiare spazio.} La stessa schermata, nota il docente, ``è super
+comoda per \textbf{risparmiare spazio}'', perché permette di installare
+\textbf{soltanto le cose che servono}. Alcuni componenti probabilmente ``non vi
+serviranno mai, o a breve, comunque''; per esempio il supporto per la
+\textbf{TV di iOS} (\emph{tvOS}): ``non mi è mai servito''. Altri, invece,
+``potrebbero essere utili''. Vale la pena darci un'occhiata quando il disco
+comincia a riempirsi: un'installazione completa di Unreal occupa molte decine
+di gigabyte.
+
+
+% ---------------------------------------------------------------------
+\section{Non esiste un ``tasto salva tutto''}
+\label{gd16:sec:perche}
+
+``Quest'oggi volevo partire da una roba un pochettino concettuale, ma in realtà
+torna molto utile per tipo tutto'': i \textbf{salvataggi}, cioè salvare
+\textbf{proprio su disco} la partita.
+
+Il docente parte smontando un'idea ingenua che molti hanno senza esserne
+consapevoli:
+\begin{quote}
+Non so se ci avete mai pensato, ma in realtà non è che c'è un tasto salva, lui
+salva tutto e poi fai ricarica e lui ricarica tutto. Non funziona così.
+\end{quote}
+In un engine non esiste una ``fotografia'' automatica del mondo di gioco da
+mettere da parte e ripristinare. Il programmatore deve \textbf{dire
+all'engine le singole variabili} da salvare, e \textbf{in che modo}. Tutto ciò
+che non viene esplicitamente messo in un salvataggio, alla riapertura del gioco
+semplicemente non c'è più.
+
+\paragraph{Approfondimento: salvare è una decisione di design.} Il fatto che
+il salvataggio vada costruito a mano ha una conseguenza che va oltre la
+tecnica: \emph{che cosa} si salva, \emph{quando} e \emph{se} lo si può fare
+sono decisioni di design. Jesse Schell (\emph{The Art of Game Design},
+capitolo sul bilanciamento, a proposito delle punizioni) ricorda il caso di
+\emph{Ultima~III} di Richard Garriott: un gioco da quasi cento ore in cui, se
+morivano tutti e quattro i personaggi, il salvataggio veniva
+\textbf{cancellato} e si ricominciava da capo. I giocatori lo trovavano
+ingiusto, e presero l'abitudine di spegnere il computer quando i personaggi
+erano in fin di vita, prima che il gioco facesse in tempo a cancellare il file:
+``evitando di fatto la punizione''. Nello stesso libro (capitolo sulla storia)
+Schell osserva che il salvataggio è una sorta di \emph{macchina del tempo}
+messa in mano a ogni protagonista: tutto ciò che di grave accade può essere
+annullato ricaricando, e questo rende difficilissimo raccontare una vera
+tragedia in un videogioco. Chi progetta il sistema di salvataggio, quindi,
+progetta anche quanto pesano le conseguenze delle scelte del giocatore.
+
+% ---------------------------------------------------------------------
+\section{La classe Save Game}
+\label{gd16:sec:savegame}
+
+\subsection{Creare il salvataggio}
+
+Il primo passo è creare la \textbf{classe di salvataggio}:
+\begin{enumerate}
+  \item nel Content Browser, tasto destro, si crea una cartella
+        \textbf{Save};
+  \item dentro, tasto destro, \textbf{Blueprint Class}\footnote{Nella
+        trascrizione ``Bluetooth class''.}, e si cerca come classe madre
+        \textbf{SaveGame};
+  \item il docente la chiama \textbf{PlayerSaves}.
+\end{enumerate}
+
+\paragraph{Quanti salvataggi?} Le classi di tipo Save Game ``sono proprio i
+\textbf{tipi} di salvataggio''. Tendenzialmente in un gioco ce ne sono
+\textbf{una o due}:
+\begin{itemize}
+  \item una per la \textbf{partita} (``salva la partita'');
+  \item una per le \textbf{impostazioni} (volume, risoluzione, comandi: tutto
+        ciò che vale a prescindere dalla partita in corso), ``perché anche le
+        impostazioni vanno salvate, chiaramente''.
+\end{itemize}
+Qui ne basta una, per la partita.
+
+\subsection{Un Blueprint senza viewport}
+
+Aperto, \emph{PlayerSaves} ``è un Blueprint tipo quelli che abbiamo già visto, ma
+un pochettino strano'': \textbf{non ha una parte visiva}, una viewport.
+``Non gli serve'': essendo un salvataggio, non esiste nel mondo, quindi non ha
+senso dargli una forma o una posizione. È parente, in questo, degli Actor
+Component e della Game Instance del capitolo~\ref{gd13:cap:git-componenti}.
+
+\paragraph{L'unico modo, a parte il C++.} Il docente sottolinea il ruolo di
+questa classe: ``questo è l'\textbf{unico modo}, a parte C++, per salvare cose
+su disco effettivamente in modo \textbf{permanente}''.
+
+\paragraph{Contano solo le variabili.} Del Save Game ``non ci interessa questo
+grafico, non ci interessano le funzioni, nulla'': interessano \textbf{soltanto
+le variabili}, ``che sono quelle che vengono salvate''. Si crea quindi una
+variabile:
+\begin{itemize}
+  \item nome: \textbf{Score}\footnote{Nella trascrizione ``Scorra''; poco dopo il
+        docente parla di ``getScore'' e ``set dello score''.};
+  \item tipo: \textbf{Integer}, ``mettiamo che è il punteggio del nostro gioco''.
+\end{itemize}
+Questa variabile, alla fine, verrà scritta sul disco. Ma il salvataggio, da
+solo, non fa niente: va \textbf{creato}, \textbf{caricato} e
+\textbf{salvato}, e ``ci sono un tot di step in mezzo''.
+
+% ---------------------------------------------------------------------
+\section{La Game Instance, rivista}
+\label{gd16:sec:game-instance}
+
+\subsection{Perché il salvataggio si gestisce lì}
+
+Dove mettere il codice che crea e carica il salvataggio? Non su una mappa:
+tutte queste cose ``vengono gestite al di fuori della mappa stessa''. Se le si
+mettesse su un livello, ``ricaricherebbe il salvataggio per ogni mappa che
+cambiamo'', e ``sarebbe parecchio complicato''. Il posto giusto è la
+\textbf{Game Instance}, ``accennata la volta scorsa''
+(sezione~\ref{gd13:sec:game-instance}) e che ``adesso chiaramente vediamo un
+pochettino meglio''.
+
+Si crea quindi (Blueprint Class, \emph{GameInstance}) una Game Instance, che il
+docente chiama \textbf{MyGameInstance}. Il promemoria è lo stesso del capitolo
+precedente:
+\begin{itemize}
+  \item ce n'è \textbf{solamente una} per ogni gioco;
+  \item è \textbf{la prima cosa che viene caricata} e \textbf{l'ultima che viene
+        scaricata}: ``è sempre lì, insomma''.
+\end{itemize}
+
+\subsection{Che cosa ci va, oltre ai salvataggi}
+
+Uno studente chiede se la Game Instance serva solo per salvare. ``No'': ci
+vanno tutte le cose ``gestite al di fuori'' dei livelli, quelle ``più
+\textbf{globali}'':
+\begin{itemize}
+  \item i \textbf{salvataggi};
+  \item gli \textbf{achievement}, ``queste cose astratte che non sono legate al
+        livello stesso'';
+  \item a volte perfino \textbf{la musica}, ``perché vuoi magari che non si senta
+        il taglio tra un livello e l'altro'': una musica avviata da un Actor del
+        livello verrebbe interrotta al cambio di mappa.
+\end{itemize}
+
+\subsection{Perché sopravvive ai cambi di mappa}
+
+Il motivo è sempre lo stesso, e il docente lo ripete con un esempio
+concreto:
+\begin{quote}
+Quando io faccio ``mi apri questa mappa'', lui distrugge tutto e ricrea tutto
+sempre, ok? Tranne la Game Instance.
+\end{quote}
+Se nella Game Instance si mette una variabile intera per le monete e la si
+porta da 0 a 25 raccogliendole, al cambio di mappa resta a \textbf{25}; ``tutto
+il resto tornerebbe a zero''. (Una variabile così, precisa, qui ``non ci serve'':
+era solo un esempio. Quello che interessa adesso è usare la Game Instance per un
+salvataggio \emph{permanente}.)
+
+La figura~\ref{gd16:fig:vita-dati} mette in fila i tre ``livelli di memoria''
+visti finora: le variabili degli Actor, che muoiono a ogni cambio di livello;
+quelle della Game Instance, che vivono finché il gioco è aperto; quelle del
+Save Game scritte sul disco, che sopravvivono anche alla chiusura.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[
+  gd16bar/.style={rounded corners=2pt, minimum height=0.62cm, inner sep=2pt,
+                  font=\sffamily\scriptsize, anchor=west, text=black},
+  gd16lab/.style={font=\sffamily\footnotesize, anchor=east, align=right},
+  gd16ev/.style={font=\sffamily\scriptsize, align=center},
+  x=1cm, y=1cm]
+  % assi
+  \draw[-{Stealth[length=2.5mm]}, thick] (0,0) -- (13.2,0)
+       node[right, font=\sffamily\scriptsize] {tempo};
+  % eventi
+  \foreach \x/\t in {0.3/avvio\\del gioco, 3.6/Open\\Level, 6.9/Open\\Level,
+                     9.3/chiusura\\del gioco, 11.2/nuovo\\avvio}{
+    \draw[dashed, gray] (\x,0) -- (\x,4.1);
+    \node[gd16ev, below] at (\x,-0.05) {\t};
+  }
+  % actor del livello
+  \node[gd16lab] at (-0.2,3.5) {Variabili di un Actor\\(monete in un livello)};
+  \fill[red!25] (0.3,3.2) rectangle (3.6,3.8);
+  \fill[red!25] (3.6,3.2) rectangle (6.9,3.8);
+  \fill[red!25] (6.9,3.2) rectangle (9.3,3.8);
+  \fill[red!25] (11.2,3.2) rectangle (13,3.8);
+  \foreach \x in {3.6,6.9}{\draw[red!70!black, line width=1.2pt] (\x,3.15) -- (\x,3.85);}
+  \node[font=\sffamily\scriptsize] at (1.95,3.5) {0 \,$\to$\, 25};
+  \node[font=\sffamily\scriptsize] at (5.25,3.5) {0 (si azzera)};
+  \node[font=\sffamily\scriptsize] at (8.1,3.5) {0};
+  \node[font=\sffamily\scriptsize] at (12.1,3.5) {0};
+  % game instance
+  \node[gd16lab] at (-0.2,2.3) {Variabili della\\Game Instance};
+  \fill[blue!20] (0.3,2.0) rectangle (9.3,2.6);
+  \fill[blue!20] (11.2,2.0) rectangle (13,2.6);
+  \node[font=\sffamily\scriptsize] at (4.8,2.3) {25 \,$\to$\, 25 \,$\to$\, 25 (Event Init all'avvio)};
+  \node[font=\sffamily\scriptsize] at (12.1,2.3) {0};
+  % save game
+  \node[gd16lab] at (-0.2,1.1) {Save Game\\scritto sul disco};
+  \fill[green!25] (0.3,0.8) rectangle (13,1.4);
+  \node[font=\sffamily\scriptsize] at (6.6,1.1) {il file \texttt{.sav} resta: al nuovo avvio lo si ricarica};
+\end{tikzpicture}}
+\caption{Quanto vive un dato. Un Open Level distrugge e ricrea tutti gli Actor
+(e le loro variabili); la Game Instance sopravvive ai cambi di livello ma non
+alla chiusura del gioco; solo ciò che è stato scritto con un Save Game resta
+sul disco e può essere ricaricato al successivo avvio.}
+\label{gd16:fig:vita-dati}
+\end{figure}
+
+\subsection{Event Init}
+
+Nel grafo della Game Instance c'è l'\textbf{Event Init}, ``che sarebbe come
+il Begin Play, uguale identico, ma per la Game Instance''. ``È la prima cosa
+che viene chiamata quando parte il gioco, fondamentalmente.'' \emph{Init},
+``che sta per \emph{initialize}, credo''. È qui che si scriverà il codice che
+prepara il salvataggio.
+
+% ---------------------------------------------------------------------
+\section{I nodi del salvataggio}
+\label{gd16:sec:nodi}
+
+\subsection{Che cosa c'è}
+
+Trascinando un filo dall'Event Init e cercando \textbf{save}, compaiono
+``tutte quante le robe di salvataggio''. Il docente le zooma (``altrimenti, se
+faccio tasto destro, non avrete zoomato il testo'') e le elenca:
+\begin{itemize}
+  \item un nodo per \textbf{cancellare} i salvataggi (\emph{Delete Game in Slot});
+  \item uno per \textbf{crearli} (\emph{Create Save Game Object});
+  \item uno per \textbf{caricarli} (\emph{Load Game from Slot});
+  \item uno per \textbf{controllare se ce n'è già uno} (\emph{Does Save Game
+        Exist});
+  \item e quello per \textbf{salvarli} davvero (\emph{Save Game to Slot}), che
+        si userà più avanti.
+\end{itemize}
+Prima di sceglierli, il docente chiede alla classe che cosa servirebbe
+all'avvio del gioco, ``ammesso che non abbiamo la classica selezione del
+salvataggio'' e che il gioco ``faccia già tutto lui''. Uno studente propone di
+caricare l'ultimo salvataggio: ``sì, quello lì servirà, però dobbiamo vedere un
+po' di cose prima''.
+
+\subsection{Nodi istantanei e nodi asincroni}
+
+Alcuni nodi hanno una \textbf{variante async}. ``Tutte quante quelle che trovate
+con \emph{async} vuol dire che sono \textbf{asincrone}.'' Per capire che cosa
+significhi, il docente ricorda come vengono eseguiti i nodi:
+\begin{itemize}
+  \item quasi tutti i nodi di Unreal\footnote{Nella trascrizione ``tutti quanti
+        i nodi di Arrio'' (e poco più avanti ``i meccanismi di Ariadne''):
+        storpiature di Unreal.}, ``tranne alcuni che avete già visto'', si
+        eseguono \textbf{nello stesso frame} in cui vengono chiamati: ``partono,
+        finiscono, tutto a posto. Tipo, fate 5 più 6, funziona subito'';
+  \item altri invece \textbf{vanno nel tempo}: le \textbf{timeline}
+        (sezione~\ref{gd12:sec:timeline}), i \textbf{Delay}. Questi hanno
+        ``tendenzialmente'' un \textbf{orologino} disegnato sul nodo: ``se metto
+        un delay, vedete che ha l'orologino qua''. (Sono i nodi
+        \emph{latenti}, che per questo non si possono mettere dentro le
+        funzioni, sezione~\ref{gd13:sec:funzioni}.)
+\end{itemize}
+
+\paragraph{A che cosa serve salvare in modo asincrono.} Si pensi a un gioco
+grande, ``tipo un \textbf{open world survival}'', con tantissime cose da
+salvare, magari con l'\textbf{autosave}. Se il salvataggio fosse istantaneo nel
+senso di \emph{bloccante}, ``si bloccherebbe il gioco finché non ha finito, e
+poi continuerebbe dopo''. Il salvataggio asincrono invece lavora \textbf{mentre
+il gioco va}:
+\begin{quote}
+Sapete quando vi lampeggia l'icona del salvataggio in basso a destra? Quella
+roba lì. Quindi ci mette del tempo per salvare.
+\end{quote}
+Qui però non serve: ``facciamo un gioco semplice, che salva quando facciamo
+salva, quando finisce un livello''. La differenza è schematizzata nella
+figura~\ref{gd16:fig:async}.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=0.62cm, y=1cm,
+  gd16fr/.style={draw=black!60, fill=blue!12, minimum width=0.56cm,
+                 minimum height=0.5cm, inner sep=0pt},
+  gd16frb/.style={draw=black!60, fill=red!30, minimum height=0.5cm,
+                  inner sep=0pt},
+  gd16t/.style={font=\sffamily\footnotesize, anchor=east, align=right}]
+  % sincrono
+  \node[gd16t] at (-0.4,1.6) {Save Game to Slot\\(sincrono)};
+  \foreach \i in {0,...,3}{\node[gd16fr] at (\i+0.5,1.6) {};}
+  \node[gd16frb, minimum width=4.28cm, font=\sffamily\tiny] at (7.5,1.6)
+       {un frame lunghissimo: gioco fermo};
+  \foreach \i in {11,...,14}{\node[gd16fr] at (\i+0.5,1.6) {};}
+  % asincrono
+  \node[gd16t] at (-0.4,0.3) {Async Save Game\\to Slot};
+  \foreach \i in {0,...,14}{\node[gd16fr] at (\i+0.5,0.3) {};}
+  \draw[thick] (4,-0.05) -- (4,-0.2) -- (11,-0.2)
+       node[midway, below=2pt, font=\sffamily\scriptsize]
+       {il salvataggio prosegue in sottofondo (l'icona che lampeggia); poi scatta \emph{Completed}} -- (11,-0.05);
+  \draw[-{Stealth}, thick] (0,2.35) -- (15.6,2.35)
+       node[right, font=\sffamily\scriptsize] {frame};
+\end{tikzpicture}
+\caption{Salvataggio sincrono e asincrono. Il nodo normale svolge tutto il
+lavoro dentro un solo frame, che con molti dati diventa un blocco visibile; la
+variante \emph{async} lo distribuisce nel tempo, come una timeline o un Delay,
+e segnala la fine con un pin d'uscita apposito.}
+\label{gd16:fig:async}
+\end{figure}
+
+\paragraph{Approfondimento: i nodi asincroni nel dettaglio.} Le due varianti
+asincrone si chiamano \emph{Async Save Game to Slot} e \emph{Async Load Game
+from Slot}. Come gli altri nodi latenti hanno, oltre al pin d'esecuzione
+normale (che prosegue subito), un pin \textbf{Completed} che scatta solo quando
+l'operazione è finita, con un booleano \emph{Success} per il salvataggio o il
+Save Game caricato per il caricamento. Il codice che ha bisogno del risultato
+va attaccato a \emph{Completed}, non all'uscita normale: è l'errore tipico di
+chi le usa la prima volta.
+
+% ---------------------------------------------------------------------
+\section{All'avvio: controlla, crea o carica}
+\label{gd16:sec:init}
+
+\subsection{Il primo avvio: creare}
+
+``Tra crea, controlla, cancella, carica: cosa potrebbe servirci quando apriamo
+il gioco per la prima volta, magari?'' La risposta della classe è
+\textbf{creare}: c'è \textbf{Create Save Game Object}, che ``crea un salvataggio
+nuovo''. Nel suo parametro \textbf{Save Game Class} bisogna dirgli quale
+salvataggio, ``ed è il nostro, quello che abbiamo chiamato qui'': PlayerSaves.
+
+\subsection{Ma forse c'è già: controllare}
+
+Però non è detto che sia la prima volta: ``magari c'è già un salvataggio''. Per
+questo c'è \textbf{Does Save Game Exist}, che controlla se esista già. Lo si
+mette subito dopo l'Event Init.
+
+\paragraph{Lo slot name.} Il parametro \textbf{Slot Name} è ``il nome proprio del
+file che mettete sul disco''. Il docente lo chiama \textbf{Save1}\footnote{Nella
+trascrizione ``chiamiamolo DOM. Save 1''; più avanti è chiaro che il valore usato
+è ``save 1'', senza spazi o con, ``non è importante''.} (``non è importante'' quale
+nome si scelga). Il nodo restituisce un \textbf{booleano}: vero se il salvataggio
+esiste già, falso se non esiste. Da lì un \textbf{Branch}:
+\begin{itemize}
+  \item sul \textbf{False}: \textbf{Create Save Game Object};
+  \item sul \textbf{True}: \textbf{Load Game from Slot}\footnote{Nella
+        trascrizione ``lot save, load game from flot''.}, ``ecco qua,
+        fantastico''.
+\end{itemize}
+
+\subsection{Un solo nome per tutti gli slot}
+
+``Mi raccomando'': il nome dello slot deve essere \textbf{sempre lo stesso} in
+tutti i nodi, ``perché altrimenti poi chiaramente non funziona''. Due strade:
+\begin{itemize}
+  \item copiarlo e incollarlo ovunque;
+  \item oppure, ``per comodità'', creare una \textbf{variabile String} con il nome
+        del salvataggio, \textbf{SaveName}, valore \emph{Save1}, e collegarla a
+        tutti i pin \emph{Slot Name}. ``Così, se cambiamo questo qua di base,
+        cambierà anche gli altri di conseguenza.''
+\end{itemize}
+E ancora: ``mi raccomando, nella variabile \textbf{scrivete qualcosa}, perché se
+lo lasciate vuoto non può salvare un file senza nome''.
+
+% ---------------------------------------------------------------------
+\section{La reference al salvataggio}
+\label{gd16:sec:reference}
+
+\subsection{Tenersi il salvataggio in una variabile}
+
+Sia \emph{Create Save Game Object} sia \emph{Load Game from Slot} restituiscono,
+nel pin \textbf{Return Value}, un oggetto salvataggio: ``questo PlayerSaves che è
+quello che vogliamo noi, fondamentalmente''. Va conservato, perché servirà dopo
+``per metterlo sul counter, eccetera, per salvarlo un'altra volta, per un tot di
+cose''. Si crea quindi una variabile per ``mantenere la \textbf{reference}, un
+riferimento al nostro salvataggio'', chiamata \textbf{Save}.
+
+\paragraph{Il tipo della variabile è una classe.} ``E qua si entra effettivamente
+nei meccanismi di Unreal un attimino più completi'': il tipo della variabile non
+è un numero né un testo, ma \textbf{il nostro salvataggio}: si cerca
+\emph{PlayerSaves} tra i tipi (\emph{Object Reference}). ``Così, accedendo a
+questo qua, troveremo tutte quante le informazioni che c'erano qua'', cioè tutte
+le variabili definite in PlayerSaves.
+
+Il docente sa che ``può sembrare un attimino complicata all'inizio'', e la
+riconduce a una cosa già vista: quando si fa un \emph{Cast To
+FirstPersonCharacter} dopo un overlap con una trigger box, il pin d'uscita
+``è del tipo del personaggio''. Allo stesso modo una variabile può essere ``del
+tipo del salvataggio''. In generale, ``qualsiasi cosa voi creiate qui dentro
+praticamente può essere una variabile'': ogni Blueprint creato nel progetto
+diventa anche un \textbf{tipo} di variabile, ``e così possiamo gestire tutte le
+varie eventualità''.
+
+\subsection{Il ramo del Create e il ramo del Load}
+
+\begin{itemize}
+  \item Sul ramo della \textbf{creazione} è semplice: il Return Value di
+        \emph{Create Save Game Object} si collega direttamente a un
+        \textbf{Set Save}. ``Creiamo il salvataggio e lo impostiamo così.''
+  \item Sul ramo del \textbf{caricamento}, ``purtroppo'', non si può fare lo
+        stesso, ``o almeno così facilmente''. \emph{Load Game from Slot}
+        restituisce un Save Game \emph{generico}, perché ``potrebbero esserci
+        diverse classi di salvataggio'': ``abbiamo creato questo qua, ma potrebbe
+        essercene più di una''. Serve quindi un \textbf{Cast To PlayerSaves},
+        e solo il suo pin d'uscita si collega al \textbf{Set Save}.
+\end{itemize}
+Il risultato, riassume il docente, è che ``qua in fondo siamo sicuri di avere
+la variabile del salvataggio, che avrà al suo interno altre variabili,
+chiaramente'': se il salvataggio non esiste lo crea e se lo tiene; se esiste lo
+carica e se lo tiene (figura~\ref{gd16:fig:init}).
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{bpgraph}
+  \bpnode{ei}{0,0}{bpHEvent}{Event Init}{2.2}{}{exec/}
+  \bpget{sn1}{0.2,-1.5}{str}{SaveName}{2.0}
+  \bpnode{ex}{3.0,0}{bpHFunc}{Does Save Game Exist}{3.4}{exec/, str/Slot Name, int/User Index \bpval{0}}{exec/, bool/Return Value}
+  \bpnode{br}{7.2,0}{bpHFlow}{Branch}{2.1}{exec/, bool/Condition}{exec/True, exec/False}
+  \bpget{sn2}{8.0,-2.0}{str}{SaveName}{2.0}
+  \bpnode{lo}{10.4,0.4}{bpHFunc}{Load Game from Slot}{3.4}{exec/, str/Slot Name, int/User Index \bpval{0}}{exec/, obj/Return Value}
+  \bpnode{ca}{14.6,0.4}{bpHCast}{Cast To PlayerSaves}{3.6}{exec/, obj/Object}{exec/, exec/Cast Failed, obj/As Player Saves}
+  \bpnode{s1}{19.0,0.4}{bpHVar}{SET Save}{2.4}{exec/, obj/Save}{exec/, obj/}
+  \bpnode{cr}{10.4,-3.0}{bpHFunc}{Create Save Game Object}{5.4}{exec/, class/Save Game Class \bpval{PlayerSaves}}{exec/, obj/Return Value}
+  \bpnode{s2}{19.0,-3.0}{bpHVar}{SET Save}{2.4}{exec/, obj/Save}{exec/, obj/}
+  \bpwire{exec}{ei-o1}{ex-i1}
+  \bpwire{str}{sn1-o1}{ex-i2}
+  \bpwire{exec}{ex-o1}{br-i1}
+  \bpwire{bool}{ex-o2}{br-i2}
+  \bpwire{exec}{br-o1}{lo-i1}
+  \bpwire{str}{sn2-o1}{lo-i2}
+  \bpwire{exec}{br-o2}{cr-i1}
+  \bpwire{exec}{lo-o1}{ca-i1}
+  \bpwire{obj}{lo-o2}{ca-i2}
+  \bpwire{exec}{ca-o1}{s1-i1}
+  \bpwire{obj}{ca-o3}{s1-i2}
+  \bpwire{exec}{cr-o1}{s2-i1}
+  \bpwire{obj}{cr-o2}{s2-i2}
+  \bpnote{14.6,-1.6}{il Load restituisce un Save Game generico:\\serve il cast al nostro tipo}
+  \bpnote{3.0,-2.15}{lo stesso nome di slot,\\da una sola variabile String}
+\end{bpgraph}}
+\caption{La Game Instance all'avvio. \emph{Does Save Game Exist} controlla se
+sul disco c'è già un file con quel nome di slot: se c'è, lo si carica e lo si
+converte con un cast in PlayerSaves; se non c'è, se ne crea uno nuovo. In
+entrambi i casi l'oggetto finisce nella variabile \emph{Save}, la reference che
+tutto il resto del gioco userà.}
+\label{gd16:fig:init}
+\end{figure}
+
+\paragraph{Approfondimento: lo stesso schema nel libro di Romero e Sewell.}
+\emph{Blueprints Visual Scripting for Unreal Engine 5} (capitolo~11, \emph{Game
+States and Applying the Finishing Touches}) costruisce un sistema quasi
+identico per salvare il \textbf{round} raggiunto dal giocatore in uno sparatutto
+in prima persona: una classe figlia di \emph{SaveGame} (\emph{BP\_SaveInfo}) con
+una sola variabile intera \emph{Round}; una variabile \emph{SaveInfoRef} di tipo
+\emph{Object Reference} a quella classe; una variabile String
+\emph{SaveSlotName} con il nome del file. Il caricamento (\emph{LoadRound}) è
+lo stesso della figura~\ref{gd16:fig:init}: \emph{Does Save Game Exist},
+\emph{Branch}, \emph{Load Game from Slot}, \emph{Cast To BP\_SaveInfo}, set
+della reference. Due differenze utili:
+\begin{itemize}
+  \item il libro mette tutto nel \emph{FirstPersonCharacter}, dentro due
+        \textbf{macro}; a lezione si è scelta la Game Instance, che ha il
+        vantaggio di non dipendere dal personaggio e di non ricaricare nulla a
+        ogni cambio di livello;
+  \item nel salvataggio (\emph{SaveRound}) il libro usa un \textbf{Is Valid}
+        sulla reference: se non è valida crea il Save Game, poi aggiorna la
+        variabile e chiama \emph{Save Game to Slot}. È un controllo prudente
+        da aggiungere se si teme che la reference sia vuota.
+\end{itemize}
+Il quiz di fine capitolo del libro fissa due punti visti anche a lezione: la
+classe usata per i dati da salvare è \emph{SaveGame}, e \emph{Load Game from
+Slot} restituisce un'istanza di SaveGame che va convertita con un \emph{Cast
+To} per accedere alle variabili salvate. Il libro mostra anche il nodo per
+\textbf{cancellare} il salvataggio, \emph{Delete Game in Slot}, usato per un
+pulsante \emph{Reset All}: prima si controlla con \emph{Does Save Game Exist},
+poi si cancella e si ricarica il livello.
+
+% ---------------------------------------------------------------------
+\section{Dirlo all'engine e salvare davvero}
+\label{gd16:sec:salvare}
+
+\subsection{Maps \& Modes}
+
+``Già dovrebbe funzionare. L'unica cosa è che non gli abbiamo messo la Game
+Instance ancora'', cioè non si è detto all'engine di usarla. Come nel capitolo
+precedente: \textbf{Edit $\rightarrow$ Project Settings $\rightarrow$ Maps \&
+Modes}, ``dove si impostano insomma tutte queste cose'', e alla voce
+\textbf{Game Instance Class} si sceglie la propria, ``perché le altre sono
+dell'engine di base, non ci interessano''. Uno studente non la trova nell'elenco:
+``quella che hai creato tu. Non so come l'hai chiamata. Io l'ho chiamata
+\emph{My}, per distinguere''.
+
+\subsection{Creare non è salvare}
+
+Ora, premendo Play, la Game Instance controlla se c'è il salvataggio. ``Per ora
+fallirà sicuramente'', quindi ne creerà uno. Ma attenzione:
+\begin{quote}
+Quando fa create, non vuol dire che lo salva su disco: vuol dire soltanto che
+lui se l'è creato temporaneamente.
+\end{quote}
+Il file sul disco nasce solo con l'operazione di \textbf{salva}, che va
+chiamata ``quando effettivamente vogliamo salvare''.
+
+\subsection{Save Game to Slot}
+
+``Per fare ciò è abbastanza facile'': il nodo \textbf{Save Game to Slot} (c'è
+anche la variante asincrona: ``scegliete voi quello che preferite''; la
+variante, ricorda, ``ci può mettere più di un frame, perché ha la rotellina''). I
+suoi parametri:
+\begin{itemize}
+  \item \textbf{Save Game Object}: l'oggetto da salvare, ``che ce l'abbiamo,
+        perché lo impostiamo sempre qui'': il \emph{Get Save};
+  \item \textbf{Slot Name}: ``serve sempre lo stesso'', quindi la variabile
+        \emph{SaveName}.
+\end{itemize}
+``E così siamo a posto.'' A questo punto ci sono ``tutte quante le funzionalità
+base di un salvataggio''.
+
+\subsection{Il custom event SaveGame}
+
+Manca un modo per \textbf{chiamare} il salvataggio, ``perché altrimenti non viene
+mai chiamato'': il nodo non ha un evento d'inizio. Ce lo si crea: \textbf{Add
+Custom Event}, chiamato \textbf{SaveGame}\footnote{Nella trascrizione ``Boxer
+Game''; subito dopo il docente dice ``chiamiamo questo save game qui''.}.
+\begin{quote}
+Da qualsiasi punto del gioco chiamiamo questo SaveGame qui: vuol dire ``salva il
+gioco, fai tu''. Così la prossima volta potrà caricarlo.
+\end{quote}
+E poiché vive nella Game Instance, è raggiungibile da qualunque Blueprint
+(figura~\ref{gd16:fig:save}).
+
+\begin{figure}[htbp]
+\centering
+\resizebox{0.78\linewidth}{!}{%
+\begin{bpgraph}
+  \bpnode{ce}{0,0}{bpHEvent}{Custom Event: SaveGame}{3.6}{}{exec/}
+  \bpget{sv}{1.0,-1.5}{obj}{Save}{1.6}
+  \bpget{sn}{1.0,-2.3}{str}{SaveName}{2.0}
+  \bpnode{sg}{4.6,0}{bpHFunc}{Save Game to Slot}{3.6}{exec/, obj/Save Game Object, str/Slot Name, int/User Index \bpval{0}}{exec/, bool/Return Value}
+  \bpwire{exec}{ce-o1}{sg-i1}
+  \bpwire{obj}{sv-o1}{sg-i2}
+  \bpwire{str}{sn-o1}{sg-i3}
+\end{bpgraph}}
+\caption{Il salvataggio vero e proprio, nella Game Instance: un custom event
+\emph{SaveGame}, chiamabile da qualunque punto del gioco, scrive sul disco
+l'oggetto tenuto nella variabile \emph{Save}, sempre con lo stesso nome di
+slot.}
+\label{gd16:fig:save}
+\end{figure}
+
+``Non penso che ci servano altre cose.'' Il docente aspetta che tutti abbiano
+copiato (``confermatemi le cose, dovremmo avercelo'').
+
+
+% ---------------------------------------------------------------------
+\section{Le monete}
+\label{gd16:sec:monete}
+
+\subsection{Il Blueprint Coins}
+
+Per avere qualcosa da salvare servono delle \textbf{monetine}. Nella cartella
+del player: tasto destro, \textbf{Blueprint Class}, \textbf{Actor}, chiamato
+\textbf{Coins}. Mentre lo si crea, il docente aiuta uno studente che non trova
+la variabile del salvataggio nella Game Instance: ``si chiamerà \emph{Save} e
+basta, perché prende il nome che gli avete messo''; se i nomi non coincidono,
+``al massimo rinomina questo qua, così lo trovi più facilmente''.
+
+\paragraph{La forma.} ``Su questa coin, cosa dobbiamo fare per raccoglierla?''
+La classe propone una \textbf{box} di collisione; il docente suggerisce
+``magari una sfera, che è più carina'', ma alla fine per la moneta si usa
+semplicemente un \textbf{cilindro} (``eccola qui, fantastica'').
+
+\paragraph{L'overlap e il cast.} Dall'evento di \textbf{overlap} della moneta
+si fa, ``giusto per controllo'', un \textbf{Cast To FirstPersonCharacter}: ora
+il personaggio non è più quello in terza persona, ``perché abbiamo questo qua
+adesso''. L'esecuzione arriva lì ogni volta che il giocatore collide con una
+moneta.
+
+\subsection{Chi deve fare il lavoro: il personaggio}
+
+Qui il docente introduce un principio di organizzazione del codice:
+\begin{quote}
+L'ideale sarebbe se tutto quanto il codice lo facesse direttamente il First
+Person Character. Quindi non è che ogni monetina si salva la sua informazione,
+ma lo fa il player, che diventa un pochettino più intuitivo.
+\end{quote}
+La moneta deve solo \emph{avvisare} di essere stata presa; che cosa succede al
+punteggio e al salvataggio è affare del giocatore.
+
+\paragraph{Il custom event CoinGrabbed.} Nel Blueprint del personaggio si
+aggiunge quindi un \textbf{Add Custom Event} chiamato \textbf{CoinGrabbed}.
+``Come vedete, questi custom event, una volta che vogliamo cominciare a
+strutturare bene il tutto, si useranno molto spesso.'' Se ne può fare a meno
+``la maggior parte delle volte'', ``tuttavia diventa un casino il codice,
+semplicemente'': con i custom event ``potete riorganizzare un attimino meglio il
+tutto''.
+
+\paragraph{La moneta chiama il personaggio.} Sulla moneta, dal pin d'uscita del
+cast (\emph{As First Person Character}) si trascina un filo e si cerca
+\textbf{CoinGrabbed}: ``facilissimo''. Poi, ``sulla Coin non dobbiamo più fare
+niente'', se non un \textbf{Destroy Actor}, ``così si distrugge la monetina
+quando ci passiamo sopra'' (figura~\ref{gd16:fig:coin}).
+
+A uno studente che non trova l'evento, il docente spiega da dove si prende:
+lo si tira fuori dal pin del personaggio ottenuto con il cast, e appare solo
+se l'evento è stato creato nel personaggio con quel nome. Il collegamento,
+dice, fa ``proprio un \textbf{teletrasporto}'': quando l'esecuzione entra nel
+nodo \emph{CoinGrabbed} sulla moneta, ``esce di qua'', cioè dal custom event
+nel Blueprint del personaggio.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{bpgraph}
+  \bpnode{ov}{0,0}{bpHEvent}{On Component Begin Overlap (Box)}{4.4}{}{exec/, obj/Other Actor}
+  \bpnode{ca}{5.2,0}{bpHCast}{Cast To FirstPersonCharacter}{4.3}{exec/, obj/Object}{exec/, exec/Cast Failed, obj/As First Person Character}
+  \bpnode{cg}{10.4,0}{bpHFunc}{CoinGrabbed}{2.6}{exec/, obj/Target}{exec/}
+  \bpnode{da}{13.8,0}{bpHFunc}{Destroy Actor}{2.6}{exec/, obj/Target \bpval{self}}{exec/}
+  \bpwire{exec}{ov-o1}{ca-i1}
+  \bpwire{obj}{ov-o2}{ca-i2}
+  \bpwire{exec}{ca-o1}{cg-i1}
+  \bpwire{obj}{ca-o3}{cg-i2}
+  \bpwire{exec}{cg-o1}{da-i1}
+  \bpnote{10.4,-1.6}{l'evento vive nel personaggio:\\l'esecuzione ``si teletrasporta'' lì}
+\end{bpgraph}}
+\caption{Il Blueprint \emph{Coins}. La moneta controlla che a toccarla sia il
+personaggio, gli comunica di essere stata presa chiamando il suo custom event
+\emph{CoinGrabbed} e si distrugge. Tutta la logica del punteggio sta nel
+personaggio, non nella moneta.}
+\label{gd16:fig:coin}
+\end{figure}
+
+\paragraph{Prima prova.} Si piazzano un po' di monete ``qui in giro'', ci si
+passa sopra e ``come vedete si distruggono'': il Destroy
+Actor\footnote{Nella trascrizione ``destroy hardware''.} viene chiamato, e
+quindi, ``immagino'', anche l'evento sul personaggio.
+
+\paragraph{Attenzione all'ordine.} A uno studente la moneta viene raccolta ma
+resta lì: il Destroy Actor va collegato dopo la chiamata, ``se no ti rimane lì
+e quindi non la prendi mai, insomma. Cioè, la prendi, ma non si distrugge''.
+
+% ---------------------------------------------------------------------
+\section{La torre di nodi}
+\label{gd16:sec:torre}
+
+\subsection{Variabili dentro variabili}
+
+``Ora da qua dobbiamo accedere a tutte quante le informazioni del salvataggio.''
+Ed è ``la prima volta che vedremo per davvero come vengono fuori le cose con
+Unreal: variabili con dentro variabili con dentro variabili''. Il percorso, nel
+custom event \emph{CoinGrabbed} del personaggio, è questo:
+\begin{enumerate}
+  \item \textbf{Get Game Instance}: ``prendiamo la Game Instance semplicemente
+        perché è lì che abbiamo messo i salvataggi'', e ce n'è solo una;
+  \item \textbf{Cast To MyGameInstance}: ``dobbiamo controllare che sia il nostro
+        tipo di Game Instance'' (lo stesso motivo del capitolo precedente: il
+        nodo restituisce una Game Instance generica);
+  \item \textbf{Get Save}: ``all'interno della Game Instance, se vi ricordate,
+        abbiamo messo il salvataggio'';
+  \item \textbf{Get Score}: ``all'interno del salvataggio c'è lo score delle
+        monete''.
+\end{enumerate}
+``E quindi si creano sempre queste \textbf{referenze di referenze di
+referenze}'', ``la nostra \textbf{torre di nodi}''.
+
+\paragraph{Il cast puro.} ``Se vi dà fastidio questa roba qua'', cioè i pin
+d'esecuzione del cast che allungano la catena, si può fare tasto destro sul
+cast e \textbf{convertirlo in puro} (\emph{Convert to Pure Cast}), ``e funziona
+comunque''. Un cast puro non ha pin d'esecuzione né il ramo \emph{Cast Failed}:
+se fallisce restituisce semplicemente una reference vuota.
+
+\subsection{Sommare uno, e il set}
+
+``Tutto questo casino'' serve a ottenere il valore del punteggio, ``per
+incrementarlo, chiaramente, quando prendiamo una moneta''. Il docente ricorda
+come si fanno le somme, ``solo tanto per ricordarvelo'': si prende il valore,
+si somma 1 e poi si fa il \textbf{Set} (come nel contatore delle morti,
+sezione~\ref{gd13:sec:game-instance}). La differenza è solo che il set va fatto
+\emph{sul salvataggio}: dal pin di \emph{Save} si prende non il \emph{Get Score}
+ma il \textbf{Set Score}, ``che è la stessa roba, semplicemente collegato al
+salvataggio''.
+
+\paragraph{Funziona, ma non salva.} Con un \textbf{Print String} di prova, salendo
+sulle monete compare 1, 2, 3. ``Fantastico. Però se riavvio, fa sempre 1, 2,
+3'': il valore cambia nell'oggetto in memoria, ma non viene scritto da nessuna
+parte. ``Perché non sto salvando, chiaramente.''
+
+\subsection{Chiamare SaveGame}
+
+L'ultimo pezzo è chiamare il custom event \textbf{SaveGame} della Game Instance,
+``in modo che chiami questo e che salvi''. Lo si prende, ancora una volta, dal pin
+della Game Instance convertita con il cast. ``So che è la prima volta che
+interconnettiamo così tanto i Blueprint, ma poi vi verrà abbastanza naturale.''
+Nel caso della lezione si salva \textbf{a ogni moneta presa}
+(figura~\ref{gd16:fig:torre}).
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{bpgraph}
+  \bpnode{ce}{0,0}{bpHEvent}{Custom Event: CoinGrabbed}{3.8}{}{exec/}
+  \bpnode{gi}{0,-2.2}{bpHPure}{Get Game Instance}{3.2}{}{obj/Return Value}
+  \bpnode{ca}{4.6,0}{bpHCast}{Cast To MyGameInstance}{4.0}{exec/, obj/Object}{exec/, exec/Cast Failed, obj/As My Game Instance}
+  \bpnode{gs}{9.4,-2.4}{bpHPure}{Get Save}{2.2}{obj/Target}{obj/}
+  \bpnode{gsc}{12.0,-3.3}{bpHPure}{Get Score}{2.2}{obj/Target}{int/}
+  \bpnode{add}{14.8,-2.9}{compact}{$+$}{1.3}{int/, int/\bpval{1}}{int/}
+  \bpnode{ss}{16.8,0}{bpHFunc}{SET Score}{2.8}{exec/, obj/Target, int/Score}{exec/, int/}
+  \bpnode{sg}{20.6,0}{bpHFunc}{SaveGame}{2.6}{exec/, obj/Target}{exec/}
+  \bpwire{exec}{ce-o1}{ca-i1}
+  \bpwire{obj}{gi-o1}{ca-i2}
+  \bpwire{exec}{ca-o1}{ss-i1}
+  \bpwire{obj}{ca-o3}{gs-i1}
+  \bpwire{obj}{gs-o1}{gsc-i1}
+  \bpwire{obj}{gs-o1}{ss-i2}
+  \bpwire{int}{gsc-o1}{add-i1}
+  \bpwire{int}{add-o1}{ss-i3}
+  \bpwire{exec}{ss-o1}{sg-i1}
+  \bpwire{obj}{ca-o3}{sg-i2}
+  \bpnote{4.6,-3.4}{Game Instance $\rightarrow$ Save $\rightarrow$ Score:\\referenze di referenze}
+  \bpnote{16.8,-1.9}{a lezione, tra SET e SaveGame,\\anche un Print String di prova\\del nuovo valore}
+\end{bpgraph}}
+\caption{La ``torre di nodi'' nel personaggio (senza il Print String di prova). A ogni moneta: si prende la Game
+Instance, la si converte nel proprio tipo, si raggiunge il salvataggio e al suo
+interno il punteggio, lo si incrementa di uno con il set, e infine si chiede
+alla Game Instance di scrivere tutto sul disco con \emph{SaveGame}.}
+\label{gd16:fig:torre}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{La prova, il file e il riepilogo}
+\label{gd16:sec:prova}
+
+\subsection{1, 2, 3\dots{} e poi 4, 5, 6}
+
+Con il salvataggio collegato, ``funziona tutto'': si prendono tre monete, 1, 2,
+3; si chiude e si riavvia, e si continua con 4, 5, 6; di nuovo, 7, 8, 9.
+\begin{quote}
+E se chiudessi il PC, lo spegnessi e lo riprendessi dopo, funzionerebbe sempre
+così. Non è legato alla cosa.
+\end{quote}
+Il valore non dipende più dalla sessione di gioco né dall'editor aperto: è sul
+disco.
+
+\subsection{Dove finisce il file}
+
+Il docente lo fa vedere ``nel pratico'', aprendo la cartella del progetto: in
+\textbf{Saved $\rightarrow$ SaveGames} c'è il file \texttt{Save1.sav}, ``proprio
+il file che è stato salvato su disco''. Lo slot name è, letteralmente, il nome
+del file.
+\begin{itemize}
+  \item Nell'editor lo mette \textbf{nella cartella del progetto}, ``perché è
+        come test'';
+  \item quando si fa la \textbf{build}, lo mette ``nella cache del PC'', cioè
+        in una cartella dell'utente.
+\end{itemize}
+
+\paragraph{Approfondimento: dove sono i salvataggi di un gioco pacchettizzato.}
+Su Windows, un gioco Unreal pacchettizzato scrive di norma i salvataggi in
+\texttt{\%LOCALAPPDATA\%\char92 <NomeProgetto>\char92
+Saved\char92 SaveGames}, con un file \texttt{.sav} per ogni slot. È
+utile saperlo per i playtest: cancellare quel file equivale a far ripartire il
+gioco ``da nuovo'', ed è la stessa cosa che fa, dall'interno del gioco, il nodo
+\emph{Delete Game in Slot}. Nell'editor basta cancellare il file in
+\texttt{Saved/SaveGames} del progetto.
+
+\subsection{Il riepilogo}
+
+Il docente lascia finire di copiare (``se c'è qualcosa che non vi torna
+concettualmente, ditemelo'') e poi riassume tutto ``molto rapidamente''
+(figura~\ref{gd16:fig:mappa}):
+\begin{enumerate}
+  \item si è creata una classe \textbf{PlayerSaves}, il salvataggio: dentro ci
+        sono tutte le variabili che vengono salvate, ``che è quello che viene
+        salvato su disco'';
+  \item quando il gioco inizia, la Game Instance \textbf{controlla} se c'è il
+        salvataggio: se non c'è \textbf{lo crea}, se c'è \textbf{lo carica};
+  \item quando si va sul personaggio, la moneta chiama \emph{CoinGrabbed}: si
+        prende la Game Instance, si controlla che sia quella giusta, si prende il
+        salvataggio, si prende lo score, ``perché tanto è qui dentro, appena
+        caricato'', si somma 1 e si dice alla Game Instance di
+        \textbf{salvare}. ``E basta, finito lì.''
+\end{enumerate}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  gd16bp/.style={draw=black!70, rounded corners=3pt, fill=#1, align=center,
+                 font=\sffamily\footnotesize, minimum width=3.4cm,
+                 minimum height=1.25cm, inner sep=4pt},
+  gd16ar/.style={-{Stealth[length=2.6mm]}, thick},
+  gd16lb/.style={font=\sffamily\scriptsize, align=center, fill=white,
+                 inner sep=1.5pt},
+  node distance=1.2cm and 2.0cm]
+  \node[gd16bp=yellow!20] (coin) {\textbf{Coins}\\(Actor, cilindro)};
+  \node[gd16bp=orange!15, right=2.6cm of coin] (pl)
+       {\textbf{FirstPersonCharacter}\\custom event CoinGrabbed};
+  \node[gd16bp=blue!12, below=1.6cm of pl] (gi)
+       {\textbf{MyGameInstance}\\Event Init, SaveGame,\\variabili Save e SaveName};
+  \node[gd16bp=green!15, left=2.6cm of gi] (sv)
+       {\textbf{PlayerSaves}\\(SaveGame)\\variabile Score};
+  \node[draw=black!70, cylinder, shape border rotate=90, aspect=0.25,
+        fill=gray!15, minimum width=2.2cm, minimum height=1.4cm,
+        font=\sffamily\footnotesize, align=center, below=1.3cm of sv] (disk)
+       {disco\\\texttt{Save1.sav}};
+  \draw[gd16ar] (coin) -- node[gd16lb, above] {overlap $\rightarrow$ cast\\$\rightarrow$ CoinGrabbed} (pl);
+  \draw[gd16ar] (pl) -- node[gd16lb, right] {Get Game Instance\\$\rightarrow$ cast $\rightarrow$ Get Save\\$\rightarrow$ Score $+1$ $\rightarrow$ SaveGame} (gi);
+  \draw[gd16ar] (gi) -- node[gd16lb, above] {reference\\\emph{Save}} (sv);
+  \draw[gd16ar] ([xshift=-6pt]sv.south) -- node[gd16lb, left] {Save Game\\to Slot} ([xshift=-6pt]disk.north);
+  \draw[gd16ar] ([xshift=6pt]disk.north) -- node[gd16lb, right] {Load Game from Slot\\(all'avvio)} ([xshift=6pt]sv.south);
+\end{tikzpicture}
+\caption{Chi parla con chi. La moneta avvisa il personaggio; il personaggio
+passa dalla Game Instance per raggiungere il salvataggio e modificarlo; la Game
+Instance lo scrive sul disco (e all'avvio lo rilegge).}
+\label{gd16:fig:mappa}
+\end{figure}
+
+\subsection{Salvare cose complesse}
+
+La conseguenza generale: ``potete mettere qui dentro qualsiasi variabile e vi
+salverà il gioco''. Ma, di nuovo, niente è automatico. Se si vuole salvare
+qualcosa di complesso, ``tipo la \textbf{posizione del personaggio}'', bisogna
+creare nel salvataggio un \textbf{Vector}, o ``addirittura una
+\textbf{Transform}'' (posizione, rotazione e scala), e scrivere il codice che la
+salva e che, al caricamento, \emph{rimette} il personaggio lì: ``però dovete
+farlo voi, il codice è un attimino lungo''.
+
+\paragraph{Approfondimento: decidere che cosa salvare.} Romero e Sewell, nel
+progettare il loro salvataggio a round, fanno una scelta esplicita di design:
+salvano \emph{solo} il round raggiunto e non quanti nemici sono stati uccisi,
+perché ``avrebbe più senso per il giocatore'' che ogni sessione ricominci
+dall'inizio di un round. È il punto da cui partire anche per il proprio
+gioco: elencare che cosa il giocatore si aspetta di ritrovare (progressi,
+inventario, posizione, impostazioni) e che cosa invece può ripartire da capo.
+Più variabili si salvano, più codice serve per rimettere ogni cosa al suo posto
+al caricamento.
+
+% ---------------------------------------------------------------------
+\section{Le domande della classe}
+\label{gd16:sec:domande}
+
+\paragraph{Da dove si prende SaveGame?} Uno studente non trova il nodo da
+chiamare nel personaggio. ``Questo qua lo trascini fuori da qua, perché questo
+SaveGame l'abbiamo creato noi'' nella Game Instance: ``fa parte della Game
+Instance, quindi lo tiriamo fuori dalla Game Instance''. Prova ne è che, facendo
+doppio clic sul nodo, si viene portati proprio lì; e la voce \textbf{Target} del
+nodo ``ti indica dov'è questa cosa qui''.
+
+\paragraph{Il numero non si incrementa.} A un altro il punteggio non sale tra
+un avvio e l'altro: ``forse non lo carichi correttamente qua''. Il docente
+guarda il collegamento: lo studente ha collegato ``il numero di coin'', ``fatti
+vedere'', ma il numero di coin e lo score ``è la stessa roba''. Il problema era
+altrove; dopo un controllo (``vediamo un attimo'', a un altro studente che ``non
+sta salvando''), il sistema funziona: ``tutte quante le volte dovrebbe
+incrementarti la monetina, infatti vedi? 12, lo faccio ripartire\dots{} 14, 15''.
+
+\paragraph{Vedere il valore sempre a schermo.} Uno studente vorrebbe vedere il
+punteggio a schermo in ogni momento, non solo quando prende una moneta. Senza
+ancora i widget, ``purtroppo non puoi, tra virgolette'', ma c'è ``un piccolo
+escamotage'': mettere il \textbf{Print String} sull'\textbf{Event Tick}, con
+durata \textbf{zero}. A ogni frame il messaggio viene riscritto e sparisce
+subito, ``e così si vede sempre, vedi? Così funziona''. (Il capitolo
+precedente aveva mostrato un'alternativa, il plugin Text~3D.)
+
+\paragraph{Quali nodi si possono rendere puri?} Dopo il cast puro, qualcuno
+chiede se si possano convertire in puri anche gli altri nodi. ``No, no, no.
+Soltanto i cast si può fare'' tra questi; ``gli altri, tendenzialmente, no''.
+``Poi vedremo le cose pure, dopo.''
+
+\paragraph{Il best score del prossimo task.} Prima di passare alla pratica il
+docente chiede conferma che tutto funzioni a tutti, e ripete l'avviso: ``questa
+cosa qui che viene salvato il \textbf{best score}, ve lo anticipo già, ci sarà
+nel prossimo task. Quindi vi ricordate questa roba qua, abbastanza rapida anche
+da ricopiare''.
+
+\paragraph{Approfondimento: dal punteggio al best score.} Il passo dal
+punteggio cumulativo della lezione al \emph{miglior} punteggio è piccolo ma
+istruttivo: il punteggio della partita corrente non va salvato a ogni moneta
+(deve ripartire da zero a ogni partita), mentre nel Save Game si tiene solo un
+\emph{BestScore}. A fine partita si confronta: se il punteggio corrente è
+maggiore del \emph{BestScore} salvato, lo si sostituisce e si chiama
+\emph{SaveGame}; altrimenti non si scrive nulla. È lo stesso schema
+\emph{get, confronta, set, salva} della figura~\ref{gd16:fig:torre}, con un
+\textbf{Branch} su un confronto ($>$) al posto della somma.
+
+% ---------------------------------------------------------------------
+\section{L'esercitazione: un team, nove feature}
+\label{gd16:sec:esercitazione}
+
+\subsection{La simulazione}
+
+``Facciamo un pochettino di pratica.''\footnote{Nella trascrizione ``Furnace un
+pochettino di pratica''.} Il docente chiude il progetto dei salvataggi (``questo
+qua non serve più'') e propone una simulazione:
+\begin{quote}
+Immaginate di star lavorando per un'azienda X, ok? Siete nello stesso team e
+dovete implementare tot feature di test.
+\end{quote}
+Le regole:
+\begin{itemize}
+  \item le feature \textbf{si dividono tra i membri del team}: ``ne fate una a
+        testa'', scegliendo ``quella che vi piace di più'', l'importante è che
+        \textbf{non si faccia la stessa in più persone};
+  \item chi finisce prima ``può fare le altre che avanzano'' (``appena ne finite
+        una, potete passare a quella dopo, se era particolarmente facile'');
+  \item si lavora \textbf{singolarmente}, ciascuno sul proprio progetto, ``per
+        non allungare troppo'';
+  \item vanno bene sia il template in prima sia quello in terza persona:
+        ``funzionano tutti quanti sia con il first sia con il third''. Forse
+        quella della torcia ``è un pochettino più bellina con il first, però
+        funziona tranquillamente'';
+  \item ognuno \textbf{scrive nella chat} quale feature ha scelto, ``così ce
+        l'abbiamo tutti'' (dopo un momento di incertezza su quale chat usare:
+        ``potete scrivere su questa chat o no? \dots{} Me lo metto
+        sull'altro'');
+  \item non è un task da consegnare: ``sì, sì, qua adesso, non è come task da
+        fare in futuro''. E soprattutto: ``tranquilli, che \textbf{non è
+        valutata} questa cosa qua. È soltanto per prenderci un attimino la mano
+        con l'engine''. ``Vi do una mano tranquillamente. Non è che non mi dovete
+        chiedere nulla.''
+\end{itemize}
+
+L'idea è la stessa del richiamo sulla partecipazione del
+capitolo~\ref{gd13:cap:git-componenti}: lavorare come in un team, dividersi il
+lavoro, chiedere.
+
+\subsection{Le nove feature}
+
+L'elenco dettato dal docente è riportato nella tabella~\ref{gd16:tab:feature}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}r p{0.82\linewidth}@{}}
+\toprule
+\# & \textbf{Feature} \\
+\midrule
+1 & Un \textbf{Actor che si ingrandisce} quanto più è lontano dal player. \\
+2 & Un \textbf{jetpack} per il player: si preme il tasto e si vola più in alto. \\
+3 & Una \textbf{torcia}: si preme il tasto e si illumina; ``e poi magari si
+    scarica anche una \textbf{batteria}''. \\
+4 & Se il player \textbf{cade in una zona}, viene riportato a dove era prima che
+    cadesse. \\
+5 & Un oggetto messo nella scena che, tramite codice, \textbf{si vede soltanto il
+    35\% delle volte} che si fa Play; le altre volte ``è come se non ci fosse mai
+    stato''. \\
+6 & Una \textbf{torretta} che spara proiettili che, quando colpiscono il
+    giocatore, \textbf{riavviano il livello}. \\
+7 & Un \textbf{tasto che genera un oggetto tre volte}; poi c'è un'attesa di
+    \textbf{5 secondi}, dopo la quale se ne possono generare altri tre. \\
+8 & Una \textbf{zona che toglie 10 HP al secondo}: ``quindi fate voi il sistema
+    di HP''. \\
+9 & Un \textbf{Actor che cambia modello a caso} ogni secondo. \\
+\bottomrule
+\end{tabular}
+\caption{Le feature dell'esercitazione, una a testa. Il docente chiede di
+sceglierne una, scriverla in chat e poi, finita, passare a una di quelle rimaste.}
+\label{gd16:tab:feature}
+\end{table}
+
+\paragraph{Il 35\% e la generazione procedurale.} Sulla feature~5 il docente si
+sofferma: ``serve molto, questo qua, per la \textbf{generazione procedurale}
+delle varie cose''. Il requisito vero è sottile: ``dovete fare in modo che il
+player \textbf{non si accorga} che c'era questa cosa'', almeno nelle volte in cui
+non deve esserci. Non basta far sparire l'oggetto: deve sembrare che non sia mai
+stato lì.
+
+\subsection{Possibili strade}
+
+La registrazione del lavoro individuale non è utilizzabile, quindi non si sa
+come ciascuno abbia risolto la propria feature. Il riquadro che segue propone,
+per ognuna, una strada con i nodi visti finora (o con pochi nodi nuovi, indicati
+per nome): \textbf{è un'integrazione}, non quanto detto a lezione.
+
+\paragraph{Approfondimento: una possibile soluzione per ciascuna feature.}
+\begin{enumerate}
+  \item \textbf{Scala con la distanza.} Sull'\emph{Event Tick} dell'Actor:
+        \emph{Get Player Pawn} (sezione~\ref{gd16:sec:suggerimenti}),
+        \emph{Get Distance To}, moltiplicato per un fattore (per esempio
+        $0{,}002$) e magari limitato con un \emph{Clamp}; il risultato in
+        \emph{Set Actor Scale 3D} (un float collegato a un vettore si converte
+        da solo in $(s,s,s)$).
+  \item \textbf{Jetpack.} Un input nel personaggio: finché il tasto è premuto,
+        \emph{Launch Character} con una piccola velocità verso l'alto (o
+        \emph{Add Movement Input} lungo $z$ in modalità di volo). Con un float
+        \emph{Fuel} che scende con i \emph{Delta Seconds} si ottiene anche il
+        limite di carburante.
+  \item \textbf{Torcia con batteria.} Uno \emph{Spot Light} come componente figlio
+        della telecamera; il tasto fa \emph{Toggle Visibility}. Un float
+        \emph{Battery} cala sull'\emph{Event Tick} (meno \emph{Delta Seconds}
+        per un consumo) solo quando la luce è accesa; a zero la si spegne, e
+        con \emph{Set Intensity} la si può far calare gradualmente.
+  \item \textbf{Ritorno al punto sicuro.} Un vettore \emph{LastSafeLocation}
+        nel personaggio, aggiornato periodicamente con \emph{Get Actor
+        Location} quando \emph{Is Moving On Ground} è vero; una trigger box
+        sotto il livello che, all'overlap con il personaggio, fa \emph{Set Actor
+        Location} su quel vettore.
+  \item \textbf{L'oggetto del 35\%.} Sul \emph{Begin Play} dell'oggetto:
+        \emph{Random Bool with Weight} con peso $0{,}35$; se esce falso,
+        \emph{Destroy Actor}. Farlo al Begin Play, prima che il giocatore
+        possa vederlo, è ciò che rende la sparizione invisibile; per lo stesso
+        motivo l'oggetto non deve lasciare tracce (collisioni, luci, suoni
+        legati ad altri Actor).
+  \item \textbf{Torretta.} Un \emph{Set Timer by Event} in loop che fa
+        \emph{Spawn Actor} di un proiettile (un Actor con \emph{Projectile
+        Movement Component}) nella direzione del giocatore; all'\emph{Event
+        Hit} del proiettile, cast al personaggio e \emph{Open Level} con
+        \emph{Get Current Level Name} (sezione~\ref{gd12:sec:ricarica}).
+  \item \textbf{Tre spawn, poi 5 secondi.} Un intero \emph{SpawnCount}: a ogni
+        pressione, se è minore di 3, \emph{Spawn Actor} e $+1$; quando arriva a
+        3, un \emph{Delay} di 5 secondi lo riporta a 0. (Se la feature va
+        intesa come ``un tasto genera tre oggetti di fila, poi 5 secondi di
+        attesa'', un \emph{For Loop} da 0 a 2 e un booleano
+        \emph{CanSpawn} risolvono la variante.)
+  \item \textbf{Zona da 10 HP al secondo.} La \emph{Damage Area} e
+        l'\emph{Health Component} del capitolo~\ref{gd13:cap:git-componenti}
+        (sezione~\ref{gd13:sec:componenti}) sono già quasi la soluzione: al
+        \emph{Begin Overlap} parte un \emph{Set Timer by Event} in loop ogni
+        secondo che toglie 10; all'\emph{End Overlap} lo si ferma con
+        \emph{Clear and Invalidate Timer by Handle}. In alternativa, sull'Event
+        Tick, $10 \times$ \emph{Delta Seconds} finché si è dentro.
+  \item \textbf{Modello a caso ogni secondo.} Un array di \emph{Static Mesh}
+        (sezione~\ref{gd12:sec:array}); un \emph{Set Timer by Event} in loop da 1
+        secondo che sceglie un elemento con \emph{Random} (o con \emph{Random
+        Integer in Range} sull'indice) e lo passa a \emph{Set Static Mesh}.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{Suggerimenti durante il lavoro}
+\label{gd16:sec:suggerimenti}
+
+Mentre la classe lavora, il docente gira tra i banchi e tra gli schermi
+condivisi. Tre indicazioni vengono date ad alta voce a tutti.
+
+\subsection{Get Player Pawn}
+
+``Potrebbe servire una cosa, quindi ve la butto lì.'' Finora la reference al
+giocatore la si è sempre ottenuta dal \textbf{Begin Overlap}, quando il player
+tocca una box. Ma si può fare anche \textbf{Get Player Pawn}, che ``vi dà il player
+a prescindere, quindi senza che tocchi una box'': ``ci avete le informazioni del
+player qui dentro''. Utile per esempio per la feature~1 (la distanza dal player)
+o per la torretta, che deve sapere dove mirare senza aspettare un contatto.
+
+\paragraph{Approfondimento: Pawn, Character e cast.} \emph{Get Player Pawn}
+restituisce un \emph{Pawn} generico (con un indice, \emph{Player Index}, che in
+un gioco a giocatore singolo è 0). Per la posizione basta così; per le variabili
+o gli eventi definiti nel proprio personaggio (come \emph{CoinGrabbed}) serve
+comunque un cast al personaggio, o il nodo gemello \emph{Get Player Character}
+seguito dal cast. Romero e Sewell ricordano che un Pawn è ``il corpo fisico'' del
+personaggio, mentre il \emph{Controller} che lo possiede ne è ``una specie di
+cervello''.
+
+\subsection{Il personaggio con due corpi}
+
+A chi usa il template in prima persona e nota, nel Blueprint del personaggio,
+``tipo due personaggi compenetrati'', il docente spiega che non è un errore ma
+una scelta di chi l'ha fatto ``super bene'':
+\begin{itemize}
+  \item una mesh è quella \textbf{che vedi tu in prima persona} (braccia e arma
+        davanti alla telecamera);
+  \item l'altra è quella \textbf{che vedono gli altri}, in terza persona.
+\end{itemize}
+``Capita su molti giochi, tipo su \textbf{Overwatch}'': l'animazione che vede il
+giocatore è diversa da quella che vedono gli altri, ``tendenzialmente''. ``Quindi
+hanno fatto la \textbf{doppia mesh} per questo motivo.'' È anche la spiegazione
+del ``personaggio un po' clippato'' notato a inizio lezione
+(sezione~\ref{gd16:sec:template}).
+
+\subsection{I tasti solo su ciò che si possiede}
+
+L'ultimo suggerimento è una differenza importante rispetto a \textbf{Unity}. Se si
+mette un evento di input, ``che ne so, il tasto qua'', \emph{sulla moneta}, non
+funzionerà: ``voi non state possedendo la coin, perché voi state possedendo il
+First Person Character''.
+\begin{quote}
+Quindi mi raccomando: i tasti possono essere messi soltanto sulla roba che
+possedete, altrimenti non funziona. Su Unity invece funzionerebbe, questa roba
+qua.
+\end{quote}
+Per le feature dell'esercitazione, quindi, gli input (jetpack, torcia, spawn)
+vanno nel personaggio, che poi può chiamare eventi su altri Actor, esattamente
+come la moneta chiama \emph{CoinGrabbed} ma al contrario.
+
+\paragraph{Approfondimento: possedere un Pawn.} Romero e Sewell (capitolo~3)
+spiegano il meccanismo: le istanze di Pawn e Character ricevono gli eventi di
+input \textbf{solo se un PlayerController le possiede}, e gli eventi di input
+si possono mettere nel PlayerController o nel Pawn (il libro consiglia di
+scegliere una strada e di restare coerenti nel progetto). Con il nodo
+\emph{Possess} si può cambiare a runtime il Pawn controllato, e da quel momento
+solo il nuovo riceve i comandi. Per completezza: un Actor qualunque può
+ricevere input se glielo si chiede esplicitamente, con il nodo \emph{Enable
+Input} o con l'opzione \emph{Auto Receive Input} nei suoi dettagli; ma è
+un'eccezione da usare con giudizio, e la regola del docente resta la più sicura.
+
+% ---------------------------------------------------------------------
+\section{La chiusura}
+\label{gd16:sec:chiusura}
+
+La lezione prosegue con il lavoro sulle feature fino alla fine, e la
+registrazione non ne restituisce i dettagli. L'ultima frase leggibile è rivolta
+a chi segue da remoto: ``per quelli online, che si recupereranno la lezione la
+prossima volta\dots''\footnote{Nella trascrizione ``Tobiquelli online che si
+recupereranno la lezione la prossima volta, anche se'': la frase è tagliata e
+la registrazione finisce lì.}. Il prossimo appuntamento con la programmazione
+porterà il task con il \textbf{best score} da salvare, annunciato a metà
+lezione.
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Unreal Engine~6 è atteso a breve; le versioni escono circa ogni sei
+        mesi. La build per browser, tolta anni fa e rimessa nella 5.9, non
+        poteva essere un plugin: è una limitazione dell'engine.
+  \item Secondo il docente, con l'IA capace di scrivere un engine intero torna
+        possibile farsi \textbf{l'engine per il proprio gioco}, senza il peso
+        (\emph{bloat}) e i costi di quelli generalisti; Godot oggi è debole nel
+        3D.
+  \item Il template \textbf{in prima persona} è come quello in terza; se manca,
+        lo si installa dal launcher (\emph{template e pacchetti di
+        funzionalità}), che permette anche di risparmiare spazio.
+  \item Non esiste un ``salva tutto'': bisogna dire all'engine \textbf{quali
+        variabili} salvare e come. Che cosa salvare è anche una decisione di
+        design.
+  \item La classe \textbf{Save Game} (es. \emph{PlayerSaves}) è un Blueprint
+        senza viewport di cui contano solo le \textbf{variabili}; è l'unico
+        modo, oltre al C++, di scrivere dati permanenti sul disco. Di solito
+        una o due per gioco: partita e impostazioni.
+  \item La \textbf{Game Instance} (una sola, prima a caricarsi, ultima a
+        scaricarsi, sopravvive ai cambi di mappa) è il posto per ciò che è
+        globale: salvataggi, achievement, musica continua. Il suo \textbf{Event
+        Init} è il Begin Play del gioco intero.
+  \item All'avvio: \textbf{Does Save Game Exist} $\rightarrow$ \textbf{Branch};
+        se no \textbf{Create Save Game Object}, se sì \textbf{Load Game from
+        Slot} + \textbf{Cast To PlayerSaves}; in entrambi i casi \textbf{Set} in
+        una variabile reference \emph{Save} del tipo del salvataggio.
+  \item Lo \textbf{slot name} è il nome del file: sempre lo stesso, mai vuoto,
+        comodo da tenere in una variabile String.
+  \item Creare non è salvare: il file nasce con \textbf{Save Game to Slot},
+        chiamato da un custom event \textbf{SaveGame} nella Game Instance,
+        raggiungibile da ovunque. Le varianti \textbf{async} non bloccano il
+        gioco (l'icona che lampeggia) e segnalano la fine con
+        \emph{Completed}.
+  \item Ogni Blueprint è anche un \textbf{tipo di variabile}: per raggiungere lo
+        score si passa per Get Game Instance $\rightarrow$ cast $\rightarrow$
+        Save $\rightarrow$ Score, una ``torre'' di referenze; il cast si può
+        rendere \textbf{puro}.
+  \item La logica sta in chi ha senso che la gestisca: la moneta avvisa il
+        personaggio con un \textbf{custom event} (\emph{CoinGrabbed}) e si
+        distrugge; il personaggio aggiorna il salvataggio. I custom event
+        servono a tenere ordinato il codice.
+  \item Il file è in \texttt{Saved/SaveGames/Save1.sav} nel progetto (nella
+        build, in una cartella dell'utente). Posizioni e oggetti complessi si
+        salvano con Vector o Transform e codice dedicato al ripristino.
+  \item Per vedere un valore sempre a schermo senza widget: Print String
+        sull'\textbf{Event Tick} con durata zero.
+  \item \textbf{Get Player Pawn} dà il giocatore senza bisogno di un overlap. Il
+        personaggio in prima persona ha \textbf{due mesh} (quella vista da sé e
+        quella vista dagli altri). Gli \textbf{input} funzionano solo sui Pawn
+        posseduti, a differenza di Unity.
+  \item Nel prossimo task si salverà il \textbf{best score}.
+\end{itemize}

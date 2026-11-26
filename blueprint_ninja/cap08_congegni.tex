@@ -1,0 +1,84 @@
+\section{Congegni: interruttori, leve e cose che si attivano}
+
+Nel C++ c'è una coppia di classi base: \texttt{ASwitchBase} (piastra a pressione, leva) e \texttt{AActivable} (porta, luce, piattaforma che sale). L'interruttore non sa \emph{cosa} accende: ha solo una lista di bersagli. In Blueprint si fa uguale, con un'interfaccia e un Event Dispatcher.
+
+\begin{ricetta}
+  \item Blueprint Interface \var{BPI\_Attivabile} con le funzioni \var{Attiva} e \var{Disattiva} (nessun parametro).
+  \item \var{BP\_Interruttore} (classe padre di piastra e leva): variabile \var{Bersagli} (Array di Actor, \emph{Instance Editable}: si scelgono nel livello con il contagocce), \var{Acceso} (Bool), Event Dispatcher \var{OnCambiato(Acceso)}.
+  \item \var{BP\_Porta}, \var{BP\_LuceAttivabile}, \var{BP\_Ascensore}: in \emph{Class Settings} $\rightarrow$ \emph{Implemented Interfaces} aggiungete \var{BPI\_Attivabile}.
+\end{ricetta}
+
+\subsection{L'interruttore avvisa i bersagli}
+
+\begin{bpgraph}
+\bpnode{f}{(0,0)}{bpcustom}{ImpostaStato}{-}{exec/,bool/Nuovo}
+\bpnode{s}{\dx{f}{0.6}{0}}{bpvarh}{Set Acceso}{exec/,bool/Nuovo}{exec/}
+\bpnode{call}{\dx{s}{0.6}{0}}{bpcustom}{Call OnCambiato}{exec/,bool/Acceso}{exec/}
+\bpnode{fe}{\dx{call}{0.6}{0}}{bpflow}{For Each Loop}{exec/,wild/Array: Bersagli}{exec/Loop Body,wild/Array Element,int/Array Index,exec/Completed}
+\bpnode[2.4]{br}{\dx{fe}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Acceso}{exec/True,exec/False}
+\bpnode{a}{\dx{br}{0.6}{0.3}}{bpfn}{Attiva (Message)}{exec/,obj/Target}{exec/}
+\bpnode{d}{\sotto{a}{0}{-0.3}}{bpfn}{Disattiva (Message)}{exec/,obj/Target}{exec/}
+\bpexec{f-out1}{s-in1}\bpwire{bool}{f-out2}{s-in2}\bpexec{s-out1}{call-in1}\bpexec{call-out1}{fe-in1}\bpexec{fe-out1}{br-in1}\bpexec{br-out1}{a-in1}\bpexec{br-out2}{d-in1}
+\bpwire{obj}{fe-out2}{a-in2}\bpwire{obj}{fe-out2}{d-in2}
+\end{bpgraph}
+
+Il nodo con la busta (\emph{Message}) chiama la funzione dell'interfaccia \emph{se} il bersaglio la implementa, e non fa niente altrimenti: niente cast, niente errori se nella lista finisce un actor sbagliato.
+
+\subsection{La piastra a pressione}
+
+\begin{bpgraph}
+\bpnode{ov}{(0,0)}{bpev}{On Component Begin Overlap (Trigger)}{-}{exec/,obj/Other Actor}
+\bpnode{c}{\sotto{ov}{0}{-0.4}}{bppure}{Other Actor == Get Player Pawn OR Cast To BP\_Cassa riesce}{-}{bool/}
+\maxx{m1}{ov,c}
+\bpnode[2.4]{br}{\dxy{m1}{ov}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{st}{\dx{br}{0.6}{0}}{bpcustom}{ImpostaStato}{exec/,bool/Nuovo: true}{exec/}
+\bpnode{tl}{\dx{st}{0.6}{0}}{bptl}{TL\_Premi (0,25 s)}{exec/Play,exec/Reverse}{exec/Update,float/Alpha}
+\bpexec{ov-out1}{br-in1}\bpwire{bool}{c-out1}{br-in2}\bpexec{br-out1}{st-in1}\bpexec{st-out1}{tl-in1}
+\end{bpgraph}
+
+L'\emph{Update} di \var{TL\_Premi} abbassa la piastra di 8\,cm (\nodo{Lerp} fra 0 e $-8$ sulla Z relativa). Anche le casse generate premono la piastra: è un enigma gratis. Se la piastra deve tornare su (\var{RestaPremuta} = false), \emph{End Overlap} $\rightarrow$ \nodo{Get Overlapping Actors} è vuoto? $\rightarrow$ \var{ImpostaStato}(false) e \emph{Reverse}.
+
+\subsection{La leva: interagire con il tasto E}
+
+L'eroe non sa niente delle leve. Quando preme \var{IA\_Interact} lancia una sfera davanti a sé e chiede a quello che colpisce: ``sei interagibile?''.
+
+\begin{bpgraph}
+\bpnode{ia}{(0,0)}{bpev}{EnhancedInputAction IA\_Interact}{-}{exec/Triggered,exec/Started}
+\bpnode{st}{\sotto{ia}{0}{-0.4}}{bppure}{Camera Loc ; Camera Loc + Forward $\cdot$ 260}{-}{vec/Start,vec/End}
+\maxx{m1}{ia,st}
+\bpnode{sp}{\dxy{m1}{ia}{0.6}{0}}{bpfn}{Sphere Trace By Channel}{exec/,vec/Start,vec/End,float/Radius 45,enum/Trace Channel: Interact}{exec/,struct/Out Hit,bool/Return Value}
+\bpnode{bh}{\sotto{sp}{0}{-0.4}}{bpstruct}{Break Hit Result}{struct/}{obj/Hit Actor}
+\bpnode{impl}{\dx{bh}{0.6}{0}}{bppure}{Does Implement Interface}{obj/Test Object,class/BPI\_Interagibile}{bool/}
+\maxx{m2}{sp,impl}
+\bpnode[2.4]{br}{\dxy{m2}{ia}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{msg}{\dx{br}{0.6}{0}}{bpfn}{Interagisci (Message)}{exec/,obj/Target: Hit Actor,obj/Chi: self}{exec/}
+\bpexec{ia-out2}{sp-in1}\bpwire{vec}{st-out1}{sp-in2}\bpwire{vec}{st-out2}{sp-in3}\bpwire{struct}{sp-out2}{bh-in1}\bpwire{obj}{bh-out1}{impl-in1}
+\bpexec{sp-out1}{br-in1}\bpwire{bool}{impl-out1}{br-in2}\bpexec{br-out1}{msg-in1}
+\end{bpgraph}
+
+Nella leva, l'evento dell'interfaccia:
+
+\begin{bpgraph}
+\bpnode{ev}{(0,0)}{bpev}{Event Interagisci}{-}{exec/,obj/Chi}
+\bpnode{st}{\dx{ev}{0.6}{0}}{bpcustom}{ImpostaStato}{exec/,bool/NOT Acceso}{exec/}
+\bpnode{tl}{\dx{st}{0.6}{0}}{bptl}{TL\_Leva (0,3 s)}{exec/Play,exec/Reverse}{exec/Update,float/Alpha}
+\bpnode{r}{\dx{tl}{0.6}{0}}{bpfn}{Set Relative Rotation (Perno)}{exec/,rot/Pitch: Lerp($-$40 ; 40 ; Alpha)}{exec/}
+\bpexec{ev-out1}{st-in1}\bpexec{st-out1}{tl-in1}\bpexec{tl-out1}{r-in1}
+\end{bpgraph}
+(Se \var{Acceso} è vero si fa \emph{Play}, altrimenti \emph{Reverse}: un \nodo{Branch} fra \var{ImpostaStato} e la timeline.) La funzione \var{GetPrompt} restituisce ``Tira la leva'': l'HUD la mostra quando la sfera colpisce qualcosa di interagibile, facendo la stessa traccia nel Tick.
+
+\subsection{La porta}
+
+\begin{bpgraph}
+\bpnode{a}{(0,0)}{bpev}{Event Attiva}{-}{exec/}
+\bpnode{d}{\sotto{a}{0}{-0.4}}{bpev}{Event Disattiva}{-}{exec/}
+\maxx{m1}{a,d}
+\bpnode{tl}{\dxy{m1}{a}{0.6}{0}}{bptl}{TL\_Apri (1 s)}{exec/Play,exec/Reverse}{exec/Update,exec/Finished,float/Alpha}
+\bpnode{l}{\dx{tl}{0.6}{0}}{bpfn}{Set Relative Location (AntaSx)}{exec/,vec/Lerp((0 0 0) ; (0 $-$120 0) ; Alpha)}{exec/}
+\bpnode{r}{\dx{l}{0.6}{0}}{bpfn}{Set Relative Location (AntaDx)}{exec/,vec/Lerp((0 0 0) ; (0 120 0) ; Alpha)}{exec/}
+\bpexec{a-out1}{tl-in1}\bpexec{d-out1}{tl-in2}\bpexec{tl-out1}{l-in1}\bpexec{l-out1}{r-in1}
+\end{bpgraph}
+
+La porta scorrevole del C++ è questa; per quella a battente si usa \nodo{Set Relative Rotation} sulle cerniere con Yaw fra 0 e 95. La luce attivabile fa \nodo{Set Intensity} con lo stesso Alpha; l'ascensore \nodo{Set Actor Location} con \nodo{Lerp} fra la posizione iniziale e \var{FineOffset} (0, 0, 400).
+
+\ninja{Interfaccia o Event Dispatcher? L'interfaccia serve quando \emph{chi chiama} sceglie a chi parlare (la leva parla ai suoi bersagli). Il dispatcher serve quando \emph{chi ascolta} sceglie di chi fidarsi (un HUD che vuole sapere ``una leva qualsiasi è cambiata'' fa \nodo{Bind Event to OnCambiato}). Nel dubbio: interfaccia.}

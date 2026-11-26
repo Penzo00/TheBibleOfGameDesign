@@ -1,0 +1,80 @@
+\section{Tre vite e il posto sicuro}
+
+Cadere nel vuoto non fa ricominciare il livello: si perde una vita e si torna all'ultimo punto \emph{sicuro} su cui si stava in piedi. Finite le tre vite, si riparte dal livello 1. Nel C++ è \texttt{UPlatformerSafeSpotComponent} più \texttt{AFallZone}.
+
+\begin{ricetta}
+  \item Actor Component \var{AC\_PostoSicuro} su \var{BP\_Eroe}. Variabili: \var{PostoSicuro} (Vector), \var{HoPosto} (Bool), \var{Margine} (Float, 50), \var{CadutaMax} (Float, 2500).
+  \item Un tag \var{NoSafeSpot} da mettere sugli actor su cui non si deve ricomparire (piattaforme mobili, che crollano, porte).
+  \item Blueprint \var{BP\_ZonaCaduta}: un \nodo{Box Collision} grande sotto il livello.
+\end{ricetta}
+
+\subsection{Ricordare dove si stava bene}
+
+Non serve il Tick: un timer ogni 0,2\,s basta e costa molto meno.
+
+\begin{bpgraph}
+\bpnode{bp}{(0,0)}{bpev}{Event BeginPlay}{-}{exec/}
+\bpnode{tm}{\dx{bp}{0.6}{0}}{bpfn}{Set Timer by Event}{exec/,del/Event,float/Time 0.2,bool/Looping true}{exec/,struct/Return Value}
+\bpnode{ev}{\sotto{bp}{0}{-1.7}}{bpcustom}{Custom Event: Campiona}{-}{exec/,del/}
+\bpnode{gr}{\sotto{ev}{0}{-0.4}}{bppure}{Is Moving On Ground}{obj/Move}{bool/}
+\maxx{m1}{ev,gr}
+\bpnode[2.4]{br}{\dxy{m1}{ev}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{ok}{\dx{br}{0.6}{0}}{bpfn}{PavimentoSicuro?}{exec/}{exec/,bool/Sicuro}
+\bpnode[2.4]{br2}{\dx{ok}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{set}{\dx{br2}{0.6}{0}}{bpvarh}{Set PostoSicuro}{exec/,vec/Get Actor Location}{exec/}
+\bpexec{bp-out1}{tm-in1}
+\bpdraw[bpdataw, draw=bpc-del] (ev-out2) .. controls +(1,0) and +(-1,0) .. (tm-in2);
+\bpexec{ev-out1}{br-in1}\bpwire{bool}{gr-out1}{br-in2}\bpexec{br-out1}{ok-in1}\bpexec{ok-out1}{br2-in1}\bpwire{bool}{ok-out2}{br2-in2}\bpexec{br2-out1}{set-in1}
+\end{bpgraph}
+(Dopo \var{Set PostoSicuro} mettete anche \var{HoPosto} = true.)
+
+\subsection{Che cosa è un pavimento sicuro}
+
+Non basta essere a terra: se si è sul bordo, ricomparire lì vuol dire ricadere subito. La funzione \var{PavimentoSicuro?} spara quattro raggi verso il basso, spostati di 50\,cm avanti, indietro, a destra e a sinistra: devono colpire \emph{tutti} un pavimento buono.
+
+\begin{bpgraph}
+\bpnode{f}{(0,0)}{bpcustom}{PavimentoSicuro?}{-}{exec/}
+\bpnode{arr}{\sotto{f}{0}{-0.4}}{bppure}{Make Array}{vec/(50 0 0),vec/($-$50 0 0),vec/(0 50 0),vec/(0 $-$50 0)}{wild/Array}
+\bpnode{fe}{\dxy{arr}{f}{0.6}{0}}{bpflow}{For Each Loop}{exec/Exec,wild/Array}{exec/Loop Body,wild/Array Element,int/Array Index,exec/Completed}
+\bpnode{lt}{\dx{fe}{0.6}{0}}{bpfn}{Line Trace By Channel}{exec/,vec/Start: Loc + Offset,vec/End: Start $-$ (0 0 150),enum/Visibility,bool/Ignore Self}{exec/,struct/Out Hit,bool/Return Value}
+\bpexec{f-out1}{fe-in1}\bpwire{wild}{arr-out1}{fe-in2}\bpexec{fe-out1}{lt-in1}
+\end{bpgraph}
+
+\begin{bpgraph}
+\bpnode{bh}{(0,0)}{bpstruct}{Break Hit Result}{struct/Out Hit}{bool/Blocking Hit,obj/Hit Actor,obj/Hit Component}
+\bpnode{c1}{\dx{bh}{0.6}{0.6}}{bppure}{NOT Actor Has Tag (NoSafeSpot)}{obj/Hit Actor}{bool/}
+\bpnode{c2}{\sotto{c1}{0}{-0.3}}{bppure}{NOT Is Valid (Cast To BP\_PiattaformaMobile)}{obj/Hit Actor}{bool/}
+\bpnode{c3}{\sotto{c2}{0}{-0.3}}{bppure}{Component Velocity (VLungo) $<$ 1}{obj/Hit Component}{bool/}
+\maxx{m1}{c1,c2,c3}
+\bpnode{and}{\dxy{m1}{c1}{0.6}{-0.3}}{bppure}{AND}{bool/Blocking Hit,bool/,bool/,bool/}{bool/Buono}
+\bpnode[2.4]{br}{\dxy{and}{bh}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Buono}{exec/True,exec/False}
+\bpnode{rf}{\dx{br}{0.6}{0}}{bpflow}{Return Node}{exec/,bool/Sicuro: false}{-}
+\bpwire{bool}{bh-out1}{and-in1}\bpwire{obj}{bh-out2}{c1-in1}\bpwire{obj}{bh-out2}{c2-in1}\bpwire{obj}{bh-out3}{c3-in1}
+\bpwire{bool}{c1-out1}{and-in2}\bpwire{bool}{c2-out1}{and-in3}\bpwire{bool}{c3-out1}{and-in4}\bpwire{bool}{and-out1}{br-in2}
+\bpdraw[bpexecw] (br-out2) .. controls +(0.5,0) and +(-0.5,0) .. (rf-in1);
+\end{bpgraph}
+Se un raggio fallisce si esce subito con \emph{False}; se il \nodo{For Each} arriva a \emph{Completed} si esce con \emph{True}.
+
+\subsection{La zona di caduta}
+
+\begin{bpgraph}
+\bpnode{ov}{(0,0)}{bpev}{On Component Begin Overlap (Box)}{-}{exec/,obj/Other Actor}
+\bpnode{cast}{\dx{ov}{0.6}{0}}{bpcast}{Cast To BP\_Eroe}{exec/,obj/Object}{exec/,exec/Cast Failed,obj/As BP Eroe}
+\bpnode{gc}{\dx{cast}{0.6}{0}}{bpfn}{GestisciCaduta}{exec/,obj/Target: AC\_PostoSicuro}{exec/}
+\bpexec{ov-out1}{cast-in1}\bpwire{obj}{ov-out2}{cast-in2}\bpexec{cast-out1}{gc-in1}\bpwire{obj}{cast-out3}{gc-in2}
+\end{bpgraph}
+
+\begin{bpgraph}
+\bpnode{f}{(0,0)}{bpcustom}{GestisciCaduta}{-}{exec/}
+\bpnode{pv}{\dx{f}{0.6}{0}}{bpfn}{PerdiVita}{exec/,obj/Target: GI}{exec/,bool/Continua}
+\bpnode{c}{\sotto{pv}{0}{-0.4}}{bppure}{Continua AND HoPosto}{bool/}{bool/}
+\maxx{m1}{pv,c}
+\bpnode[2.4]{br}{\dxy{m1}{f}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{sl}{\dx{br}{0.6}{0}}{bpfn}{Set Actor Location}{exec/,obj/Target: Eroe,vec/PostoSicuro + (0 0 20),bool/Teleport true}{exec/}
+\bpnode{sv}{\dx{sl}{0.6}{0}}{bpvarh}{Set Velocity}{exec/,obj/Move,vec/(0 0 0)}{exec/}
+\bpexec{f-out1}{pv-in1}\bpexec{pv-out1}{br-in1}\bpwire{bool}{pv-out2}{c-in1}\bpwire{bool}{c-out1}{br-in2}\bpexec{br-out1}{sl-in1}\bpexec{sl-out1}{sv-in1}
+\end{bpgraph}
+
+Sul ramo \emph{False} non serve fare niente: se le vite sono finite, \var{GameOver} della Game Instance sta già riaprendo il primo livello. Come rete di sicurezza, nel timer \var{Campiona} controllate anche la quota: se l'eroe è sceso più di \var{CadutaMax} (2500\,cm) sotto \var{PostoSicuro}, chiamate \var{GestisciCaduta} lo stesso (serve nei punti dove avete dimenticato la zona di caduta).
+
+\ninja{Il tag \var{NoSafeSpot} è il modo più economico di dire ``qui no'' senza toccare il codice: lo si mette con due clic nel pannello Details $\rightarrow$ Actor $\rightarrow$ Tags. Fatelo anche sulle casse generate, altrimenti si ricompare sopra una cassa che poi sparisce.}

@@ -1,0 +1,2395 @@
+% =====================================================================
+%  Fondamenti di Unreal Engine, lezione 3 — Texture, materiali e mesh:
+%  la parte grafica dentro Unreal e la torretta.
+%  Terza lezione del corso breve di introduzione a Unreal Engine, online
+%  su Zoom, condotta da Davide al posto di Igor (che "aveva un
+%  impiccio"). Davide terrà anche le ultime lezioni del corso, dedicate
+%  al level design.
+%  Contenuti, nell'ordine della lezione: l'attesa e le presentazioni
+%  (chi fa game design, 3D art, character animation, narrative design);
+%  che cosa fa un grafico dentro Unreal; il materiale didattico; la
+%  texture come "carta regalo" e le UV; i tipi di mappa (Diffuse o
+%  Albedo, Normal, Specular, la mappa di altezza per il displacement),
+%  il texturing procedurale, il bianco come 1 e il nero come 0; i
+%  canali RGB e le mappe impacchettate (AORM); il materiale come
+%  vernice e l'editor dei materiali; Material Domain, Blend Mode e
+%  Shading Model; i Material Expression Node; il problema della mappa
+%  vuota; dentro una texture; Texture Sample e i canali; le costanti e
+%  le scorciatoie (T, 1, 2, 3, A, M, D, S, U, L, P + clic); il colore e
+%  l'emissive, Multiply e il parametro Glow Intensity; il PBR, Metallic,
+%  Specular, Roughness, Normal; il Texture Coordinate e il tiling; il
+%  pavimento; le Material Instance (i tavoli, il Tiling Multiplier); le
+%  Material Function; Lerp e Panner; la pausa (il progetto che non si
+%  trova, Git e il lavoro a distanza); l'import delle mesh (le opzioni
+%  della finestra di import, la torretta in tre pezzi); vertici,
+%  spigoli e facce; dimensioni, unità di misura e formati; il pivot del
+%  cannone e il Reimport; le cartelle; lo Static Mesh Editor (gli slot
+%  dei materiali, le modalità di visualizzazione, le collisioni simple
+%  e complex); raggruppare e Merge Actors; i materiali della torretta;
+%  il pivot con la Modeling Mode; il merge e gli slot; lo stretch, lo
+%  z-fighting e i materiali World Aligned; l'esercizio della lava, il
+%  nodo Noise e la chiusura.
+%  Fonte: trascrizione automatica della terza lezione (UE3), circa tre
+%  ore. Integrazioni dal libro "Blueprints Visual Scripting for Unreal
+%  Engine 5" (Romero, Sewell), quinto capitolo, e nozioni tecniche
+%  generali su Unreal Engine 5, sempre segnalate come approfondimenti.
+%
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{amsmath},
+%  \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Fondamenti di Unreal Engine", terzo
+%  capitolo (numerazione propria 1.3). Nel file principale del libro,
+%  subito dopo la riga della seconda lezione:
+%
+%    \input{UE/UE3_texture_materiali_e_mesh}
+%
+%  Tutte le etichette di questo capitolo hanno il prefisso "ue3:"
+%  (ue3:cap:..., ue3:sec:..., ue3:fig:..., ue3:tab:...), e tutti gli
+%  stili TikZ hanno il prefisso "ue3" (ue3node, ue3arr, ...) per non
+%  collidere con chiavi native di TikZ né con quelli delle prime due
+%  lezioni. Il capitolo è autonomo: non contiene \ref verso altri
+%  capitoli (i rimandi alle lezioni precedenti sono a parole).
+%  Le figure sono ricostruzioni schematiche di quanto mostrato e detto a
+%  lezione, non copie delle slide o delle schermate del docente. Dove la
+%  trascrizione è troppo rovinata per ricostruire un dettaglio, il
+%  capitolo lo dice invece di inventarlo.
+% =====================================================================
+
+\chapter[Texture, materiali e mesh]{Texture, materiali e mesh: la grafica dentro
+Unreal e la torretta}
+\label{ue3:cap:materiali}
+
+Questa è la \textbf{terza lezione} del corso breve di \textbf{introduzione a Unreal
+Engine}, e cambia sia docente sia argomento. Al posto di Igor, che ``aveva un
+impiccio'', c'è \textbf{Davide}, che si presenta così: ``io sono Davide e in questa
+lezione, nello specifico, sostituisco Igor''. Davide tornerà più avanti: ``le ultime
+lezioni del corso le fate con me'', e saranno lezioni ``un po' più basate su
+\textbf{level design} e la creazione di mappe'', con qualche esercitazione insieme. Dopo
+due lezioni sull'editor e sulla logica (piazzare oggetti, i \emph{transform}, i
+Blueprint, la pallina sulla piattaforma), questa lezione guarda a ciò che ``fa il
+grafico all'interno di Unreal'': le \textbf{mesh}, le \textbf{texture}, i
+\textbf{materiali}, e ``qualche nodo, qualche cosa carina che potete fare'' combinando
+mesh e materiali.
+
+La lezione ha due metà separate da una pausa. La prima è sui \textbf{materiali}: che
+cos'è una texture e come si avvolge su un oggetto attraverso le \textbf{UV}; quali tipi
+di mappa esistono (\textbf{Diffuse}, \textbf{Normal}, \textbf{Specular}, la mappa di
+altezza per il \emph{displacement}) e perché in queste mappe il bianco vale 1 e il nero
+0; che cos'è un \textbf{materiale} e come si costruisce nell'\textbf{editor dei
+materiali}, ``nello stesso modo dell'editor dei Blueprint''; le impostazioni principali
+(\textbf{Material Domain}, \textbf{Blend Mode}, \textbf{Shading Model}); i nodi di base
+(\textbf{Texture Sample}, le costanti, le operazioni, il \textbf{Texture Coordinate},
+il \textbf{Lerp}, il \textbf{Panner}); il rendering \textbf{PBR} con Metallic,
+Specular e Roughness; e le \textbf{Material Instance}, il modo ``bon ton'' di applicare i
+materiali. La seconda metà è sulle \textbf{mesh}: si importa una \textbf{torretta} in
+tre pezzi dal materiale didattico, si guarda la finestra di \textbf{import}, si
+corregge il \textbf{pivot} del cannone con un \textbf{Reimport}, si esplorano lo Static
+Mesh Editor e le \textbf{collisioni}, si fondono i pezzi con \textbf{Merge Actors}, si
+creano a mano i materiali della torretta, e si chiude con i materiali \textbf{World
+Aligned}, che non si deformano quando si stira l'oggetto. In fondo, un esercizio libero:
+un materiale di \textbf{lava}.
+
+La lezione è \textbf{online}, su Zoom, come le precedenti, e finisce poco prima delle
+19 (``si sono fatte le 7''). La pausa, una decina di minuti, arriva dopo ``un'oretta e
+mezza''. Davide, alla sua prima volta con questa classe, combatte per tutta la lezione
+con la condivisione dello schermo (``io sto facendo a cazzotti da tutta la lezione con
+la finestra di Zoom'', ``quanto non sono abituato a streamare'') e con un PC di
+emergenza: ``il fisso mi è esploso letteralmente tre giorni fa'', e a metà della seconda
+parte il computer ``inizia ad accusare la stream'', tanto che Davide gira il
+ventilatore verso di lui. Chiede spesso conferma che gli studenti vedano quello che
+mostra: ``mi impanicherò ogni tanto a caso e vi chiederò conferma delle robe''.
+
+Tre avvertenze di lettura, le stesse delle prime due lezioni. La prima: la trascrizione
+è automatica e storpia moltissimi nomi. Unreal diventa ``ArrayLink'', ``ArrayL4'',
+``Arial Engine'' e ``a Real''; la \textbf{Material Instance} è quasi sempre
+``materialistance'', ``Material Distance'' e una volta ``mie dire distanze''; il
+\textbf{Panner} è ``panel'', ``planner'' e ``banner''; il \textbf{Lerp} è ``l'ERP'';
+\emph{World Aligned} è ``word aligned'' e ``word.allocation''; la texture
+\textbf{T\_Bark} (una corteccia) è ``Arc'', ``barca'', ``Barc'' e ``park''; ``strecciare''
+e ``si straccia'' stanno per lo \emph{stretch}, lo stiramento; ``traccare'' sta per
+\emph{tracciare} un bersaglio (\emph{to track}); la \textbf{mappa di altezza}
+(\emph{height map}) è quasi sempre ``light map'' o ``lightmap''. Dove la ricostruzione
+è sicura il capitolo usa la forma corretta e, la prima volta, lo segnala in nota; dove
+non lo è riporta la forma della trascrizione e lo dice. La seconda: durante la pausa e
+verso la fine il riconoscimento vocale produce lunghi blocchi di testo senza senso e
+ripetuto (``qual è la risposta che ci può essere?'', discorsi sulla ``vita data per
+scontata'' e su ``vittime''): sono artefatti, non parole di nessuno, e il capitolo li
+ignora. La terza: gran parte della lezione è una dimostrazione dal vivo nell'editor dei
+materiali e nello Static Mesh Editor. Il capitolo ricostruisce i grafi di nodi da ciò
+che Davide dice mentre li costruisce, e li completa, dove serve, con i nomi esatti dei
+nodi e dei comandi di Unreal Engine 5.
+
+\paragraph{Come leggere questo capitolo.} Il capitolo segue l'ordine della lezione. Le
+figure ricostruiscono gli schemi spiegati a voce, sulle slide o nell'editor: le mappe
+della torretta, i canali di una texture, il rapporto tra texture, materiale e mesh, i
+grafi dei materiali costruiti a lezione, le Material Instance, la struttura di una
+mesh, il pivot del cannone. Le tabelle riassumono i tipi di mappa, le impostazioni del
+materiale, le opzioni di import, le collisioni e le scorciatoie dell'editor dei
+materiali. Qua e là, dei paragrafi di \textbf{approfondimento} collegano la lezione al
+libro \emph{Blueprints Visual Scripting for Unreal Engine 5} di Marcos Romero e Brenden
+Sewell, il testo di riferimento per questa parte del libro, e a qualche nozione tecnica
+generale su Unreal Engine 5; sono segnalati come tali e non fanno parte della lezione.
+
+Il percorso del capitolo:
+\begin{enumerate}
+  \item l'attesa, le presentazioni e il programma; che cosa fa un grafico dentro
+        Unreal; il materiale didattico (sezioni \ref{ue3:sec:attesa}
+        e~\ref{ue3:sec:didattico});
+  \item le \textbf{texture}: la carta regalo, le \textbf{UV}, i tipi di mappa, il
+        bianco e il nero, i \textbf{canali RGB} (sezioni da~\ref{ue3:sec:texture}
+        a~\ref{ue3:sec:canali});
+  \item i \textbf{materiali}: la vernice, l'editor, Material Domain, Blend Mode e
+        Shading Model, i nodi (sezioni da~\ref{ue3:sec:materiale}
+        a~\ref{ue3:sec:nodi});
+  \item in Engine: la mappa vuota, dentro una texture, il \textbf{Texture Sample}, le
+        costanti e le scorciatoie, il colore e l'\textbf{emissive} (sezioni
+        da~\ref{ue3:sec:mappavuota} a~\ref{ue3:sec:emissive});
+  \item il \textbf{PBR} e la Normal (sezione \ref{ue3:sec:pbr});
+  \item il \textbf{Texture Coordinate}, il tiling e il pavimento (sezione
+        \ref{ue3:sec:tiling});
+  \item le \textbf{Material Instance} e le Material Function (sezioni
+        \ref{ue3:sec:instance} e~\ref{ue3:sec:function});
+  \item il \textbf{Lerp} e il \textbf{Panner}, poi la pausa (sezioni
+        da~\ref{ue3:sec:lerp} a~\ref{ue3:sec:pausa});
+  \item l'\textbf{import} e la torretta; che cos'è una \textbf{mesh}; dimensioni e
+        formati (sezioni da~\ref{ue3:sec:import} a~\ref{ue3:sec:regole});
+  \item il \textbf{pivot} del cannone e il \textbf{Reimport} (sezione
+        \ref{ue3:sec:pivot});
+  \item lo \textbf{Static Mesh Editor} e le \textbf{collisioni}; raggruppare e
+        \textbf{Merge Actors} (sezioni \ref{ue3:sec:sme} e~\ref{ue3:sec:merge});
+  \item i \textbf{materiali della torretta} e le domande sul Reimport e sul merge
+        (sezioni \ref{ue3:sec:matturret} e~\ref{ue3:sec:domande});
+  \item lo stretch, lo \textbf{z-fighting} e i materiali \textbf{World Aligned}
+        (sezione \ref{ue3:sec:world});
+  \item l'esercizio della \textbf{lava}, il nodo \textbf{Noise} e la chiusura
+        (sezione \ref{ue3:sec:lava}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'attesa, le presentazioni e il programma}
+\label{ue3:sec:attesa}
+
+``Ok, buonasera.'' La registrazione parte subito (``sta registrando? Sì, sta
+registrando, perfetto''), e Davide aspetta ``qualche minutino'' che entrino tutti. Uno
+studente avvisa che dovrà staccarsi venti minuti prima per andare a lavorare: ``nessun
+problema'', tanto la lezione resta registrata, e anzi a Davide piacerebbe finire ``con
+voi che fate qualcosina'', quindi andare via un po' in anticipo ``non è neanche un
+problema''. Davide chiede quante persone c'erano alle lezioni precedenti (``una dozzina,
+credo''), ringrazia chi accende la telecamera (``almeno so che non parlo da solo'') e
+controlla che non si senta il ventilatore in sottofondo (``inizia a far caldo, inizia a
+essere complicato'').
+
+\paragraph{Che cosa avete fatto con Igor?} Prima di cominciare, Davide vuole sapere a
+che punto è la classe, per non ripetere cose già viste. Dal Discord ha capito che si è
+``ancora all'inizio'': le schede, le finestre, i \emph{transform} sugli oggetti, i
+tavolini, ``qualcosa con gli input, con la pallina che si muove''. ``Se vediamo
+qualcosa che avete già visto, ditemelo.''
+
+\paragraph{Il programma.} La lezione di oggi guarda a quello che fa ``il grafico
+all'interno di Unreal'': ``un po' di nozioni base per quanto riguarda le mesh, un po' di
+nozioni base per quanto riguarda i materiali, le texture'', e ``già qualche nodo,
+qualche cosa carina che potete fare'' usando mesh e materiali.
+
+\paragraph{Chi c'è.} Davide chiede a che cosa sono iscritti gli studenti, ``per capire
+chi ho davanti''. Le risposte: \textbf{game design} (più d'uno), \textbf{3D art}
+(tre persone), \textbf{character animation} (due), \textbf{narrative design}. ``Beh, in
+realtà siamo abbastanza assortiti.''
+
+\paragraph{Che cosa fa un grafico dentro Unreal.} Ai futuri grafici 3D Davide mette
+``le mani avanti'': la maggior parte del lavoro di un grafico \textbf{non} si svolge
+dentro Unreal, ma in altri strumenti, che verranno spiegati nei rispettivi corsi.
+Quello che si vede oggi è ciò che un grafico fa ``nel momento in cui va a lavorare con
+altre persone'' dentro Unreal Engine: \textbf{importare} gli oggetti e creare gli
+\textbf{shader} dentro l'engine.
+
+\paragraph{Come si struttura la lezione.} Davide chiede come lavorava Igor: tutta
+teoria e poi tutta pratica, o un po' e un po'? ``Andava prima con la presentazione e poi
+con Unreal.'' Davide prova a replicare: ``ci facciamo prima una chiacchiera sulla parte
+un po' più teorica e poi passiamo al progetto''. Nella pratica, come si vedrà, teoria
+ed engine si alterneranno di continuo.
+
+% ---------------------------------------------------------------------
+\section{Il materiale didattico}
+\label{ue3:sec:didattico}
+
+Sul Discord c'è stato ``un po' di casino'' per il \textbf{materiale didattico}. ``Non è
+molta roba'': è un piccolo progetto di Unreal, ``un progetto che Unreal usa per
+spiegare alcune cose'', e probabilmente quello che Igor farà usare nelle lezioni
+successive ogni volta che si implementa qualcosa. Gli altri file della cartella sono
+\textbf{asset} da importare nel progetto poco alla volta: oggi la \textbf{torretta};
+quando si farà l'audio, l'audio; ``poi vediamo se aggiungere altre cose''.
+
+Dove si trova, Davide lo spiega più avanti a una studentessa: sul Discord, ``il 19
+maggio, se non ricordo male'', c'è un link a una pagina di Drive con un file che si
+chiama, più o meno, ``materiale didattico Unreal Engine Intro''\footnote{La trascrizione
+dice ``IVE, materiale didattico, a Real Engine Intro'' e, poco prima, ``Hive Unreal
+Engine 5 intro'': la parola iniziale non è ricostruibile con certezza.}. Lo si
+scarica, lo si \textbf{decomprime}, e dentro c'è ``un progettino con un
+\emph{character}'': sono soprattutto cose per le prossime lezioni con Igor, e per oggi
+serve poco.
+
+% ---------------------------------------------------------------------
+\section{Che cos'è una texture}
+\label{ue3:sec:texture}
+
+\paragraph{La carta regalo.} ``Che cos'è una texture? La texture fondamentalmente è il
+\emph{wrap}, è la \textbf{carta regalo} in cui è avvolto il nostro oggetto.'' Sulla
+slide c'è la torretta del materiale didattico e, accanto, le sue texture: un'immagine
+``tutta scomposta e segmentata e divisa in varie parti''. Perché divisa in parti?
+Perché quelle parti poi ``si avvolgeranno sopra la mesh''. Le texture sono ``una serie
+di mappe, una serie di informazioni che vanno a dare delle qualità specifiche
+all'oggetto''. Con un'altra immagine: la texture ``non è altro che una
+\textbf{decalcomania}'' dell'oggetto, della \emph{mesh} che si mette in scena.
+
+\paragraph{Le UV.} Perché una texture funzioni bene su un oggetto, deve essere pensata
+``con in mente le \textbf{UV} dei modelli su cui si lavora''. Le UV ``sono le
+coordinate'', tutto quello che riguarda ``la struttura dell'oggetto'': la \textbf{mappa
+delle UV} è la \textbf{prima parte} del processo di creazione di una texture. Dal
+modello 3D si estraggono informazioni che poi servono a creare ``tutti i vari tipi di
+texture che esistono'': sulla slide le texture della torretta sono diverse, e ognuna
+porta informazioni diverse, ``ma sono tutte texture pensate per la stessa torretta''.
+
+\paragraph{L'UV mapping.} L'\textbf{UV mapping} è la tecnica che serve a
+\textbf{mappare le texture 2D su modelli 3D}: si assegnano le coordinate dette UV ``ai
+vertici e agli \emph{edge} del modello'', e tutte le texture applicate dopo usano quelle
+informazioni ``per precisione''. È un lavoro che si fa \textbf{prima} di entrare in
+Unreal, in un altro software ``come Blender, come Maya''. Se si usa una texture che non
+è stata pensata per le UV di quell'oggetto, ``la texture verrà strecciata''
+(\emph{stretched}, stirata) o comunque non darà il risultato voluto.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  ue3box/.style={draw, thick, align=center, minimum height=0.9cm},
+  ue3arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  % il cubo 3D
+  \draw[thick, fill=orange!25] (0,0) -- (1.6,0) -- (1.6,1.6) -- (0,1.6) -- cycle;
+  \draw[thick, fill=orange!40] (0,1.6) -- (0.7,2.2) -- (2.3,2.2) -- (1.6,1.6) -- cycle;
+  \draw[thick, fill=orange!15] (1.6,0) -- (2.3,0.6) -- (2.3,2.2) -- (1.6,1.6) -- cycle;
+  \node[font=\footnotesize, align=center] at (1.15,-0.5) {modello 3D\\(la mesh)};
+  % l'apertura
+  \draw[ue3arr] (2.8,1.1) -- node[above, font=\footnotesize]{si ``apre''}
+    node[below, font=\footnotesize]{(UV mapping)} (5.0,1.1);
+  % la mappa UV a croce
+  \begin{scope}[shift={(5.4,-0.6)}]
+    \draw[step=0.75, gray!40, thin] (0,0) grid (3.75,3.0);
+    \foreach \x/\y in {0.75/0, 0/0.75, 0.75/0.75, 1.5/0.75, 2.25/0.75, 0.75/1.5}
+      \draw[thick, fill=orange!25] (\x,\y) rectangle ++(0.75,0.75);
+    \draw[->, thick] (0,0) -- (4.0,0) node[right, font=\footnotesize]{U};
+    \draw[->, thick] (0,0) -- (0,3.25) node[above, font=\footnotesize]{V};
+    \node[font=\footnotesize, align=center] at (1.9,-0.5) {mappa UV: le facce\\
+      stese sul piano $[0,1]^2$};
+  \end{scope}
+  % la texture
+  \draw[ue3arr] (9.4,1.1) -- node[above, font=\footnotesize]{si dipinge} (10.6,1.1);
+  \node[ue3box, minimum width=2.3cm, minimum height=2.3cm, fill=orange!10,
+    text width=2.1cm] (tx) at (12.0,1.1) {\footnotesize texture 2D\\
+    \footnotesize (Diffuse, Normal,\\\footnotesize Roughness\ldots)\\[3pt]
+    \footnotesize si ``riavvolge''\\\footnotesize sulla mesh};
+\end{tikzpicture}
+\caption{La texture come ``carta regalo'': le facce del modello vengono stese su un
+piano (la mappa UV, fatta in Blender o in Maya), le texture si dipingono su quel piano,
+e poi si ``riavvolgono'' sull'oggetto. È per questo che la texture della torretta, sulla
+slide, appare ``tutta scomposta e segmentata''. Schema ricostruito; le lettere U e V
+indicano i due assi della texture, per distinguerli da X, Y e Z del mondo.}
+\label{ue3:fig:uv}
+\end{figure}
+
+\paragraph{Approfondimento: perché U e V.} Le lettere U e V sono scelte solo per non
+confondere gli assi della texture con gli assi X, Y e Z dello spazio 3D. Una coordinata
+UV è una coppia di numeri, di solito tra 0 e 1: $(0,0)$ è un angolo della texture e
+$(1,1)$ l'angolo opposto. Ogni vertice della mesh riceve una coppia $(u,v)$, e per i
+punti interni a una faccia il motore interpola le coordinate dei vertici. Se una mesh
+non ha UV (o ne ha di sbagliate), il motore non sa ``quale pezzo di carta regalo'' va
+su quale faccia: di qui le texture stirate di cui parla Davide.
+
+% ---------------------------------------------------------------------
+\section{I tipi di mappa}
+\label{ue3:sec:mappe}
+
+Davide passa in rassegna, sulla slide della torretta, le texture una per una, ``piano
+piano'', con le informazioni che portano.
+
+\paragraph{La Diffuse, o Albedo.} La prima è la \textbf{Diffuse}, ``in alcuni casi
+detta anche \textbf{Albedo}''. Nei file la si riconosce dalla \textbf{nomenclatura}:
+``T maiuscolo, \emph{underscore}, nome dell'oggetto, \emph{underscore}, A'', o D: A per
+\emph{albedo}, D per \emph{diffuse} (per esempio \texttt{T\_Turret\_D}). La Diffuse è
+il \textbf{colore}: ``tutti i dettagli estetici colorati''. Sulla slide è quella in alto
+a destra, con l'arancione: è la texture che dà alla torretta l'arancione sulla base, il
+nero negli altri dettagli e il bianco in alcune zone. Più avanti Davide ne completa la
+descrizione: la Diffuse applica ``i colori e i dettagli di base'' sulle superfici 3D, e
+dà l'informazione del colore, del tipo di materiale, dei dettagli (``queste linee che
+vedete qua'') e di quanto un oggetto sia ruvido o levigato, se per esempio si applica la
+texture di una roccia o di un metallo.
+
+\paragraph{La Normal.} Poi c'è la \textbf{Normal}, la \textbf{Normal Map}, che ``serve
+a simulare una tridimensionalità'' dentro un'informazione che è 2D. Si riconosce
+subito: è \textbf{blu}, ``sempre mappe blu con delle sfumature di rosso e di verde''.
+L'esempio classico è un \textbf{muro di mattoni}: in gioco il muro è \textbf{piatto}, ma
+quando gli si applica la Normal il calcolo delle luci e delle ombre ``prende in
+considerazione la normal map'' e proietta le ombre in base a lei, dando l'illusione che
+i mattoni siano davvero tridimensionali. La Normal dà informazioni sulla
+tridimensionalità ``senza appesantire particolarmente il calcolo'', perché non deforma
+davvero l'oggetto come fa una mappa di altezza.
+
+Più avanti Davide ci torna con un esempio sulla torretta. Su una delle gambe della base
+servono dei \textbf{graffi}. Si potrebbe cambiare il modello aggiungendo i graffi, ma
+questo aggiungerebbe \textbf{poligoni}, e quindi ``potenza di calcolo non
+necessaria''. Si può invece aggiungere il dettaglio ``direttamente in 2D'', con la
+Normal: protuberanze, graffi, rughe. ``Per un singolo oggetto non è un appesantimento
+così importante. Ma considerate quanti oggetti ci sono all'interno di una mappa quando
+andate a creare un livello'': se ogni oggetto non è creato con la giusta accortezza,
+``si fa molto velocemente ad appesantire il progetto più di quanto dovrebbe essere
+pesante''.
+
+\paragraph{La Specular.} Lo \textbf{Specular mapping} riguarda ``la brillantezza e la
+riflettività dell'oggetto'': come l'oggetto gestisce la luce, come la luce ``rimbalza''
+su di lui. Un oggetto può avere parti metalliche, parti in pietra e altre ancora, e ``a
+seconda del tipo di materiale di cui l'oggetto è fatto, rifrangerà la luce in una
+maniera diversa''. Queste mappe sono quelle ``in bianco e in nero''. La texture
+determina come si calcolano i riflessi ``sui singoli pixel proprio dell'oggetto'',
+quanta luce viene riflessa; tornerà utile quando si vedranno le luci in Unreal, perché
+``cambiando un materiale la luce ha un effetto completamente diverso''.
+
+\paragraph{La mappa di altezza.} Poi c'è la mappa che serve a creare
+\textbf{displacement}\footnote{Nella trascrizione è sempre ``light map'' o
+``lightmap'', ma la descrizione (rialza e abbassa zone dell'oggetto, crea
+\emph{tessellation}, è ``una normal sotto steroidi'') è quella della \textbf{height
+map}, la mappa di altezza o di \emph{displacement}. Le \emph{lightmap} vere sono
+un'altra cosa: texture in cui il motore salva l'illuminazione precalcolata.}: crea
+``una \emph{tessellation} nell'oggetto'', rialza alcune zone, ne abbassa altre,
+``modifica leggermente l'oggetto''. Davide la chiama ``una normal sotto steroidi'',
+perché fa davvero \emph{displacement}: aggiunge profondità e dettagli tridimensionali
+alle superfici piane, e usa le scale di grigio per creare scanalature e protuberanze.
+``Nelle parti in cui vedete il bianco è sempre il sì'', la protuberanza; nel nero,
+l'effetto opposto.
+
+\paragraph{Il texturing procedurale.} Infine il \textbf{procedural texturing}: il
+processo di creare texture, materiali o \textbf{shader} ``attraverso degli
+algoritmi''. ``Andando ad utilizzare dei calcoli matematici, noi andiamo a modificare
+delle informazioni per avere un risultato.'' È esattamente quello che fa l'editor dei
+materiali di Unreal.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.5cm}p{2.4cm}p{8.1cm}@{}}
+\toprule
+\textbf{Mappa} & \textbf{Aspetto} & \textbf{Che cosa porta} \\
+\midrule
+Diffuse (Albedo) & a colori & il colore e i dettagli estetici; suffisso \_D o \_A \\
+Normal & blu, con sfumature rosse e verdi & l'illusione del rilievo: la luce e le
+  ombre si calcolano come se la superficie avesse graffi, mattoni, rughe, senza
+  aggiungere poligoni \\
+Specular & bianco e nero & quanto e come la superficie riflette la luce \\
+Roughness & bianco e nero & quanto la superficie è ruvida (1) o liscia (0) \\
+Metallic & bianco e nero & dove la superficie è metallo (1) e dove no (0) \\
+Ambient Occlusion & bianco e nero & le zone in ombra perché ``chiuse'' (pieghe,
+  angoli) \\
+Height (displacement) & bianco e nero & deforma davvero la superficie: il bianco
+  rialza, il nero abbassa \\
+\bottomrule
+\end{tabular}
+\caption{I tipi di mappa nominati a lezione. Diffuse, Normal, Specular e la mappa di
+altezza sono quelle della slide; Roughness, Metallic e Ambient Occlusion compaiono
+nella parte sulle mappe impacchettate e nei materiali della torretta.}
+\label{ue3:tab:mappe}
+\end{table}
+
+\paragraph{Il bianco è 1, il nero è 0.} La cosa importante da capire, insiste Davide, è
+che nelle mappe in bianco e nero ``dovete sempre considerare il \textbf{bianco come un
+1}, il \textbf{nero come uno 0} e il \textbf{grigio come dei valori nel mezzo} fra lo 0 e
+l'1''. Che cosa vuol dire? Che in Unreal, per esempio, il valore dello Specular va
+soltanto tra 0 e 1: a 1 riflette la luce, a 0 no. Una mappa di Specular, quindi, va
+letta come una griglia di numeri: ``ci sono degli 1 in queste parti e degli 0 nel resto
+delle parti''. È la chiave per capire quasi tutto il resto della lezione.
+
+\paragraph{Approfondimento: la mappa di altezza, la Normal e Unreal Engine 5.} La
+differenza tra Normal e mappa di altezza è la differenza tra \emph{sembrare} e
+\emph{essere}. La Normal Map memorizza, per ogni pixel, la direzione in cui ``guarda''
+la superficie (la sua \emph{normale}): i tre numeri X, Y e Z della direzione sono
+salvati nei canali rosso, verde e blu, e siccome la maggior parte dei pixel guarda
+``dritto fuori'' dalla superficie (Z alto) la mappa appare blu. La geometria non
+cambia: di profilo, un muro con Normal Map resta piatto. La mappa di altezza invece
+sposta davvero i vertici, e per farlo servono vertici da spostare: di qui la
+\emph{tessellation}, che suddivide la superficie in molti triangoli. In Unreal Engine 5
+il \emph{displacement} vero si fa soprattutto con le mesh \textbf{Nanite}, ed è più
+costoso della Normal: per questo, per graffi e piccoli dettagli, la Normal resta la
+scelta di default, come dice Davide.
+
+% ---------------------------------------------------------------------
+\section{I canali RGB e le mappe impacchettate}
+\label{ue3:sec:canali}
+
+``Chiaramente, queste texture utilizzano l'\textbf{RGB}'': non hanno un solo canale, ma
+\textbf{tre canali} su cui passano le informazioni. Sulla slide c'è una Diffuse
+scomposta in rosso, verde e blu: ognuno porta informazioni separate, che combinate
+danno il colore che serve.
+
+Ma c'è un altro modo di vedere la cosa. \textbf{Singolarmente}, ogni canale appare come
+un'immagine in \textbf{bianco, nero e grigio}. E bianchi, neri e grigi ``sono
+combinazioni di 0 e di 1'': quindi ogni canale si può usare per trasmettere
+\textbf{un'informazione diversa}. È il \textbf{multichannel}. Una pratica comune,
+nell'esportare e importare texture, è avere una singola mappa ``che spesso e volentieri
+viene siglata come \textbf{AORM}'', per \textbf{Ambient Occlusion, Roughness e
+Metallic}: tre mappe in bianco e nero, ognuna in un canale. ``Magari noi vogliamo
+utilizzare questa mappa qui sopra per l'ambient occlusion, questa mappa qui sotto per
+le metallic'', e così via. Una sola mappa con più informazioni invece di tante mappe
+diverse: ``va ad alleggerire il progetto, va a rendere più veloce, più modulare''
+l'export delle texture.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  ue3ch/.style={draw, thick, minimum width=2.4cm, minimum height=1.0cm,
+                align=center},
+  ue3arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  \node[draw, very thick, minimum width=2.6cm, minimum height=3.6cm, align=center,
+    fill=gray!10] (tex) at (0,0) {\textbf{una texture}\\\textbf{RGB}\\[4pt]
+    \footnotesize es. T\_Turret\_ORM};
+  \node[ue3ch, fill=red!15] (r) at (4.2,1.3) {canale \textbf{R}};
+  \node[ue3ch, fill=green!15] (g) at (4.2,0) {canale \textbf{G}};
+  \node[ue3ch, fill=blue!15] (b) at (4.2,-1.3) {canale \textbf{B}};
+  \draw[ue3arr] (tex.east) ++(0,1.0) -- (r.west);
+  \draw[ue3arr] (tex.east) -- (g.west);
+  \draw[ue3arr] (tex.east) ++(0,-1.0) -- (b.west);
+  \node[ue3ch, text width=3.4cm] (ao) at (8.6,1.3) {\textbf{Ambient Occlusion}\\
+    \footnotesize grigi tra 0 e 1};
+  \node[ue3ch, text width=3.4cm] (ro) at (8.6,0) {\textbf{Roughness}\\
+    \footnotesize grigi tra 0 e 1};
+  \node[ue3ch, text width=3.4cm] (me) at (8.6,-1.3) {\textbf{Metallic}\\
+    \footnotesize grigi tra 0 e 1};
+  \draw[ue3arr] (r) -- (ao);
+  \draw[ue3arr] (g) -- (ro);
+  \draw[ue3arr] (b) -- (me);
+  \node[font=\footnotesize, align=center, text width=11cm] at (4.3,-2.5)
+    {ogni canale, da solo, è un'immagine in bianco e nero: tre ``mappe'' diverse in
+    un solo file};
+\end{tikzpicture}
+\caption{Una mappa impacchettata (\emph{channel packing}). La lezione la chiama AORM;
+nella pratica di Unreal la convenzione più diffusa è ORM, con l'Ambient Occlusion nel
+rosso, la Roughness nel verde e il Metallic nel blu, ma l'ordine dipende da chi
+esporta le texture.}
+\label{ue3:fig:canali}
+\end{figure}
+
+\paragraph{Approfondimento: sRGB e compressione.} Quando si importa in Unreal una
+texture impacchettata (o qualunque mappa ``di dati'', come Roughness o Metallic), conviene
+aprirla e \textbf{togliere la spunta a sRGB}: l'opzione sRGB dice al motore che
+l'immagine è un \emph{colore} da correggere per la percezione dell'occhio, mentre una
+mappa di dati contiene numeri da leggere così come sono. Nelle stesse impostazioni, il
+campo \emph{Compression Settings} si mette su \textbf{Masks} per le mappe impacchettate
+e su \textbf{Normalmap} per le Normal (Unreal di solito lo riconosce da solo per le
+texture con suffisso \_N). Se ci si dimentica, il materiale funziona lo stesso, ma i
+grigi vengono letti un po' sbagliati e la superficie risulta più lucida o più opaca del
+previsto.
+
+% ---------------------------------------------------------------------
+\section{Il materiale: la vernice}
+\label{ue3:sec:materiale}
+
+\paragraph{Le texture non si modificano.} ``Quello che possiamo fare con le texture in
+Unreal è relativamente poco, perché non possiamo andare a modificare effettivamente le
+texture all'interno dell'engine.'' E allora come si danno qualità visive alle mesh?
+``Lo facciamo con i \textbf{materiali}.''
+
+\paragraph{Il materiale è uno shader.} I materiali ``sono degli \textbf{shader}''. E
+l'\textbf{editor dei materiali}, quello che si vedrà ``principalmente'' oggi, ``funziona
+praticamente nello stesso modo dell'editor dei Blueprint'': una serie di \textbf{nodi}
+collegati, che trasportano informazioni fino a un \textbf{nodo risultante}.
+
+\paragraph{Vernice, non carta regalo.} La distinzione è netta: ``il materiale è
+effettivamente la \textbf{vernice} che viene applicata sulla mesh, non la texture''. Sugli
+oggetti si applicano \textbf{materiali}. Le texture servono a \textbf{costruire} i
+materiali: si combinano le texture in un unico materiale, che poi si applica
+sull'oggetto finale. Il materiale dice all'oggetto ``come dovrebbe interagire con la
+luce, che tipo di informazioni visive dovrebbe portare'', dove ci sono
+tridimensionalità e così via: ``tutto quello che abbiamo visto dalle varie texture
+precedentemente viene tutto convogliato all'interno dei materiali''. Questo, precisa
+Davide, se si parla di \textbf{oggetti fisici}. I materiali hanno anche altre funzioni:
+servono per esempio a fare \textbf{effetti speciali}, e un materiale per un effetto
+speciale ``dovrà essere costruito in maniera diversa'' da quello che riveste una
+torretta.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  ue3tex/.style={draw, thick, minimum width=2.3cm, minimum height=0.7cm,
+                 align=center, fill=gray!10},
+  ue3big/.style={draw, very thick, rounded corners=4pt, align=center},
+  ue3arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  \node[ue3tex] (t1) at (0,1.5) {T\_Turret\_D};
+  \node[ue3tex] (t2) at (0,0.5) {T\_Turret\_N};
+  \node[ue3tex] (t3) at (0,-0.5) {T\_Turret\_R};
+  \node[ue3tex] (t4) at (0,-1.5) {T\_Turret\_M};
+  \node[font=\footnotesize, align=center] at (0,2.4) {\textbf{texture}\\(immagini)};
+  \node[ue3big, minimum width=3.4cm, minimum height=3.6cm, fill=blue!6,
+    text width=3.2cm] (mat) at (4.4,0) {\textbf{materiale}\\M\_Turret\\[6pt]
+    \footnotesize un grafo di nodi\\\footnotesize (uno \emph{shader})\\[6pt]
+    \footnotesize la ``vernice''};
+  \foreach \tn in {t1,t2,t3,t4} \draw[ue3arr] (\tn.east) -- (mat.west |- \tn);
+  \node[ue3big, minimum width=2.8cm, minimum height=1.6cm, fill=orange!12,
+    text width=2.6cm] (mi) at (8.4,0) {\textbf{Material}\\\textbf{Instance}\\
+    \footnotesize MI\_Turret\\\footnotesize (parametri)};
+  \draw[ue3arr] (mat) -- (mi);
+  \node[ue3big, minimum width=2.4cm, minimum height=1.6cm, fill=green!8,
+    text width=2.2cm] (mesh) at (11.8,0) {\textbf{mesh}\\\footnotesize SM\_Turret\\
+    \footnotesize slot del\\\footnotesize materiale};
+  \draw[ue3arr] (mi) -- node[above, font=\footnotesize]{si applica} (mesh);
+\end{tikzpicture}
+\caption{Texture, materiale, istanza e mesh. Le texture non si applicano direttamente
+agli oggetti: entrano in un materiale, che è la ``vernice''; dal materiale si crea
+un'istanza, ed è l'istanza che si applica allo slot del materiale della mesh
+(sezione~\ref{ue3:sec:instance}). I nomi seguono la nomenclatura suggerita a lezione
+(T\_, M\_, MI\_, SM\_).}
+\label{ue3:fig:pipeline}
+\end{figure}
+
+\paragraph{Approfondimento: il materiale nel libro di Romero e Sewell.} Il quinto
+capitolo del libro (``Object Interaction with Blueprints'') usa la stessa immagine di
+Davide: un materiale è un \emph{asset} che si aggiunge alla mesh di un actor per
+crearne l'aspetto, ``come uno strato di vernice''. Il libro crea un materiale rosso,
+\texttt{M\_TargetRed}, in una cartella Materials (``non è necessario, ma è buona
+pratica tenere ordinata la gerarchia del progetto''), e nota che l'editor dei
+materiali ``condivide molte caratteristiche e convenzioni con i Blueprint'': al centro
+c'è il grafo; il nodo grande con il nome del materiale è il \textbf{result node}; con il
+tasto destro si apre un menu di nodi con una ricerca sensibile al contesto; i fili si
+tirano trascinando dai pin, gli ingressi a sinistra e le uscite a destra. Il colore lo
+dà un \textbf{VectorParameter} collegato a Base Color; due \textbf{ScalarParameter} a
+0,1 danno un po' di Metallic e di Roughness. Poi, in un Blueprint, il nodo \textbf{Set
+Material} cambia il materiale di un bersaglio quando viene colpito: un primo esempio di
+come la logica (le lezioni di Igor) e la grafica (questa lezione) si incontrino.
+
+% ---------------------------------------------------------------------
+\section{Material Domain, Blend Mode e Shading Model}
+\label{ue3:sec:dettagli}
+
+Come gli oggetti nella \emph{viewport}, anche il materiale ha i suoi
+\textbf{Details}. Dentro l'editor si possono selezionare i singoli nodi, per i dettagli
+del nodo, oppure vedere i \textbf{dettagli generali del materiale}. Tra questi ce ne
+sono alcuni, evidenziati sulla slide, che ``cambiano proprio effettivamente come
+funziona il materiale'' e ne definiscono la struttura e le possibilità.
+
+\paragraph{Material Domain.} Il \textbf{Material Domain} dice \textbf{per che cosa}
+verrà usato il materiale: una \textbf{superficie}, l'\textbf{interfaccia} (la UI), il
+\textbf{post process}, un effetto.
+
+\paragraph{Blend Mode.} La \textbf{Blend Mode} è il modo in cui il materiale
+``\emph{blenda}'' (si mescola) con i pixel calcolati nel resto della scena. La modalità
+\textbf{Opaque}, quella di default, \textbf{occlude completamente} ciò che c'è dietro.
+Per un effetto speciale, per esempio un \textbf{fuoco}, serve invece la Blend Mode
+\textbf{Translucent}, che permette di aggiungere parametri per l'\textbf{opacità} del
+materiale.
+
+\paragraph{Shading Model.} Lo \textbf{Shading Model}\footnote{Nella trascrizione una
+volta ``scaling model''.} definisce come il materiale \textbf{reagisce alla luce}.
+\textbf{Default Lit} vuol dire che segue le regole di base dell'illuminazione: il
+materiale viene illuminato. Per un effetto speciale, in cui non si vuole che la luce
+influenzi la resa, lo si mette invece su \textbf{Unlit}\footnote{Nella trascrizione
+``lo metterò un lit''.}. Ci sono ``diverse tipologie'' di Shading Model, a seconda di
+cosa si vuole realizzare.
+
+\paragraph{I pin cambiano.} Queste impostazioni si applicano sul nodo risultante, e
+cambiarle cambia i \textbf{pin} del nodo. L'\textbf{Opacity} non si può modificare in
+Blend Mode Opaque, perché un materiale opaco ``dà per scontato che l'oggetto sia sempre
+opaco'': non c'è bisogno di dire dove e quando sarà trasparente. Viceversa, la Blend
+Mode Translucent toglie la possibilità di modificare Metallic, Specular, Roughness e
+così via: se il materiale deve essere potenzialmente trasparente, ``non ha senso andare
+a calcolare come rifletterà la luce''.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.6cm}p{3.3cm}p{7.1cm}@{}}
+\toprule
+\textbf{Impostazione} & \textbf{Valori citati} & \textbf{Che cosa decide} \\
+\midrule
+Material Domain & Surface, User Interface, Post Process\ldots & per che cosa si usa
+  il materiale: una superficie, la UI, il post process, un effetto \\
+Blend Mode & \textbf{Opaque} (default), Masked, Translucent & come il materiale si
+  mescola con ciò che ha dietro: Opaque nasconde tutto; Masked ritaglia con una
+  maschera; Translucent sfuma con l'Opacity (fuoco, fili d'erba) \\
+Shading Model & \textbf{Default Lit} (default), Unlit\ldots & come reagisce alla luce:
+  Default Lit viene illuminato, Unlit no (effetti speciali) \\
+\bottomrule
+\end{tabular}
+\caption{Le tre impostazioni ``più importanti'' dei dettagli di un materiale. Cambiarle
+accende e spegne i pin del nodo risultante.}
+\label{ue3:tab:dettagli}
+\end{table}
+
+\paragraph{La prova in Engine.} Per far vedere la cosa, Davide apre il progetto del
+materiale didattico e invita chi vuole a seguirlo: nel \textbf{Content Browser} si crea
+un nuovo materiale (``va bene anche chiamarlo New Material''), lo si apre con un
+\textbf{doppio clic} e si entra nell'editor. Le impostazioni di cui si parlava sono nei
+dettagli, in basso a sinistra. Se la Blend Mode passa da Opaque a \textbf{Translucent},
+il nodo risultante cambia: spariscono Metallic, Specular, Roughness, Anisotropy, e
+compare \textbf{Opacity}. È utile, per esempio, per una \textbf{fiamma} che verso l'alto
+diventa trasparente (le informazioni grafiche alla base, e in alto ``piano piano va a
+dissolversi''), o per un \textbf{filo d'erba} che parte con il suo colore e poi va in
+trasparenza. Con la Blend Mode \textbf{Masked}, ``mascherata'', si crea invece una
+\textbf{maschera}, un \emph{layer} che funziona in modo diverso dal resto della
+superficie. Per ora si resta su \textbf{Opaque}, perché i materiali di oggi andranno su
+oggetti 3D. A metà spiegazione arriva uno studente in ritardo: ``Chat, buon pomeriggio,
+Lorenzo. Noi qui abbiamo già cominciato, ma in realtà abbiamo parlato di cose
+principalmente teoriche.''
+
+\paragraph{Approfondimento: Masked o Translucent?} Le due modalità sembrano simili ma
+lavorano in modo opposto. \textbf{Masked} decide pixel per pixel se il materiale
+\emph{c'è o non c'è}: l'ingresso Opacity Mask viene confrontato con una soglia (di
+default 0,333), e sotto la soglia il pixel non viene disegnato affatto. È la modalità
+delle foglie, delle reti e dell'erba ``ritagliata'': economica, compatibile con la
+luce e con le ombre, ma senza sfumature. \textbf{Translucent} invece \emph{mescola} il
+colore del materiale con ciò che sta dietro, secondo un valore di Opacity tra 0 e 1:
+permette le sfumature (fumo, vetro, fiamme), ma costa di più, perché ogni strato
+traslucido va sommato a quelli dietro, e gestisce peggio luce e ordinamento. Regola
+pratica: Masked quando basta un ``sì o no'', Translucent solo quando serve davvero la
+sfumatura.
+
+% ---------------------------------------------------------------------
+\section{I nodi: le Material Expression}
+\label{ue3:sec:nodi}
+
+``Come per i Blueprint, anche l'editor dei materiali ha dei nodi, delle
+\textbf{espressioni}.'' I \textbf{Material Expression Node} sono ``dei piccoli set di
+istruzioni preprogrammate che eseguono delle cose nello specifico, esattamente come i
+nodi dei Blueprint'', o, con un'altra formula, ``pezzi di codice statico''.
+
+\paragraph{Il primo grafo.} Sulla slide c'è un piccolo grafo
+(figura~\ref{ue3:fig:primografo}), e Davide lo legge nodo per nodo:
+\begin{itemize}
+  \item il \textbf{Texture Sample} comunica l'informazione della texture: ``sta dicendo
+        che la texture che c'è in questo nodo è la texture che determina il
+        \textbf{base color}''; permette di usare un'immagine e farla diventare la
+        texture del materiale;
+  \item il \textbf{Texture Coordinate}, il nodo \textbf{rosso}, restituisce le
+        coordinate U e V del materiale, e serve a decidere ``quanto è grande il
+        \textbf{tiling} della mia texture, quindi quante volte si ripete'';
+  \item il \textbf{Multiply} è programmato per moltiplicare due valori: ``moltiplica A
+        per B e dà una risultante'';
+  \item il quadratino è una \textbf{costante}, ``un singolo \emph{float}'', una variabile
+        singola.
+\end{itemize}
+Il grafo dice: ``moltiplica le coordinate per uno e comunica queste cose alle UV della
+texture''. Così com'è, quindi, ``è come se non ci fosse'': moltiplicare per 1 lascia le
+coordinate di default. Ma è così che si costruiscono i grafi: combinando nodi si
+ottengono risultati molto diversi. Si può moltiplicare, si può fare
+un'\textbf{interpolazione}, si possono far \textbf{muovere} le texture per suggerire un
+movimento nel materiale, ``eccetera, eccetera, eccetera''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  ue3node/.style={draw, thick, rounded corners=4pt, align=center,
+                  minimum height=0.9cm},
+  ue3uv/.style={-{Stealth[length=2mm]}, thick, red!60!black},
+  ue3flt/.style={-{Stealth[length=2mm]}, thick, green!50!black},
+  ue3col/.style={-{Stealth[length=2mm]}, thick, blue!60!black}
+]
+  \node[ue3node, fill=red!12, text width=2.2cm] (tc) at (0,0.6)
+    {\textbf{TexCoord}\\\footnotesize UTiling 1, VTiling 1};
+  \node[ue3node, fill=green!8, minimum width=1.0cm] (k) at (0,-1.0) {\textbf{1}};
+  \node[font=\footnotesize] at (0,-1.75) {costante};
+  \node[ue3node, fill=gray!10, text width=1.6cm] (mul) at (3.0,0)
+    {\textbf{Multiply}\\\footnotesize A $\times$ B};
+  \node[ue3node, fill=gray!10, text width=2.4cm, minimum height=1.8cm] (ts)
+    at (6.4,0) {\textbf{Texture}\\\textbf{Sample}\\\footnotesize (T\_Bark)};
+  \node[ue3node, fill=blue!6, text width=2.4cm, minimum height=2.6cm] (res)
+    at (10.4,0) {\textbf{M\_NewMaterial}\\[3pt]\footnotesize\textbf{Base Color}\\
+    \footnotesize Metallic\\\footnotesize Specular\\\footnotesize Roughness\\
+    \footnotesize Emissive Color\\\footnotesize Normal\ldots};
+  \draw[ue3uv] (tc.east) -- ++(0.4,0) |- node[pos=0.75, above, font=\scriptsize]{A}
+    ([yshift=2mm]mul.west);
+  \draw[ue3flt] (k.east) -- ++(0.6,0) |- node[pos=0.75, below, font=\scriptsize]{B}
+    ([yshift=-2mm]mul.west);
+  \draw[ue3uv] (mul.east) -- node[above, font=\scriptsize]{UVs}
+    (ts.west |- mul.east);
+  \draw[ue3col] (ts.east) -- node[above, font=\scriptsize]{RGB}
+    (res.west |- ts.east);
+\end{tikzpicture}
+\caption{Il primo grafo della slide: le coordinate UV, moltiplicate per una costante,
+entrano nel Texture Sample, il cui colore va nel Base Color del nodo risultante. Con la
+costante a 1 il Multiply ``è come se non ci fosse''; cambiando la costante cambia il
+tiling (sezione~\ref{ue3:sec:tiling}). Schema ricostruito.}
+\label{ue3:fig:primografo}
+\end{figure}
+
+\paragraph{I parametri.} Non solo le costanti, ma i nodi in generale ``possono essere
+utilizzati come \textbf{parametri}''. Per rendere un nodo un parametro si fa
+\textbf{tasto destro} sul nodo e \textbf{Convert to Parameter}, gli si dà un nome, e
+questo permette di modificare in seguito il valore ``senza dover ricalcolare da capo il
+materiale''. I parametri torneranno utili con le \textbf{Material Instance}
+(sezione~\ref{ue3:sec:instance}).
+
+\paragraph{Come si chiama un nodo.} ``Tasto destro, scriviamo il nome'', per esempio
+\emph{texture sample}, ed ecco il nodo. C'è poi ``tutta una serie di \emph{shortcut}''
+per i nodi più usati, che si vedranno tra poco.
+
+% ---------------------------------------------------------------------
+\section{Il problema della mappa vuota}
+\label{ue3:sec:mappavuota}
+
+Una studentessa interrompe: non riesce più ad aprire la mappa, ``me la apre totalmente
+vuota, senza titolo''. Davide le chiede di condividere lo schermo, ma lei segue da due
+computer diversi. Prima ipotesi: ha creato un \textbf{nuovo livello}, e un \emph{New
+Level} appena caricato è tutto nero, perché non c'è niente in scena (``potremmo andare
+a popolarla mettendoci cose''). Ma il problema è un altro: ha aperto il progetto del
+materiale didattico, cliccato sulla mappa del personaggio in terza persona
+(\emph{Third Person Map}), e non succede niente. Davide sospetta che il progetto sia
+ancora in una \textbf{cartella zippata} (``di solito questa cosa succede quando il
+progetto è una cartella che è ancora zippata''), e le consiglia di
+\textbf{riscaricarlo}. Poco dopo il problema è risolto: ``sono riuscita a risolvere
+adesso''. ``Meno male, meno male.''
+
+\paragraph{Approfondimento: aprire un progetto da una cartella.} Un progetto di Unreal
+è una cartella che contiene un file \texttt{.uproject} e le sottocartelle
+\texttt{Content}, \texttt{Config} e altre. Unreal non può aprire un progetto che sta
+ancora dentro un archivio \texttt{.zip}: Windows mostra il contenuto dello zip come se
+fosse una cartella, ma l'editor non ci può scrivere, e il risultato tipico è proprio
+una mappa vuota o mancante. La soluzione è estrarre tutto (``Estrai tutto'') e aprire il
+\texttt{.uproject} estratto con un doppio clic. Se il progetto non compare nell'elenco
+dell'Epic Games Launcher o nel Project Browser, basta aprirlo dal \texttt{.uproject}
+la prima volta: da lì in poi compare tra i progetti recenti.
+
+% ---------------------------------------------------------------------
+\section{Dentro una texture e il Texture Sample}
+\label{ue3:sec:sample}
+
+``Facciamo le cose in ordine, se no io mi confondo e mi impiccio.'' Davide torna al
+punto saltato: com'è fatta \textbf{dentro} una texture.
+
+\paragraph{La finestra della texture.} Con un doppio clic su una texture nel Content
+Browser (Davide ne prende una a caso, una corteccia, \textbf{T\_Bark}) si apre una
+finestra in cui ``non possiamo fare grandi modifiche'', ma si possono vedere i
+\textbf{canali}: il blu, il verde, il rosso, ciascuno fatto a modo suo. ``Questa texture
+non è particolarmente interessante'', ma si rivedrà meglio con la torretta.
+
+\paragraph{Il Texture Sample.} Nel grafo del materiale si mette un \textbf{Texture
+Sample}, si seleziona il nodo, e nei dettagli, in basso, si sceglie quale texture
+metterci. Cercando T\_Bark e mettendola nel nodo, la \emph{preview} mostra la corteccia:
+``il nostro materiale sarà così, perché è effettivamente la texture che ci abbiamo
+messo''.
+
+\paragraph{Le uscite separate.} Il Texture Sample non ha una sola uscita: oltre
+all'\textbf{RGB} ci sono \textbf{R}, \textbf{G} e \textbf{B} separati (e l'alfa, A). Si
+può quindi usare, per esempio, solo il canale \textbf{rosso} (``non quella completa, ma
+questa qui'') per trasportare un'informazione: collegandolo allo \textbf{Specular} si
+ottiene un materiale che in alcune parti riflette la luce più che in altre. ``Con
+questo materiale in realtà è un po' complicato farlo vedere'', ma il principio è quello
+dei canali visto sulle slide.
+
+\paragraph{Come si mette una texture nel nodo.} Una studentessa non ha capito come si
+aggiunge la texture ``al quadratino nero'' del Texture Sample. Davide rifà il
+percorso: si clicca il nodo, e nei suoi dettagli c'è il campo \textbf{Texture}, con il
+quadratino e una lista. Due modi:
+\begin{itemize}
+  \item se una texture è già \textbf{selezionata nel Content Browser}, la freccetta
+        \textbf{Use Selected Asset from Content Browser} la inserisce automaticamente
+        nel nodo;
+  \item più spesso, si clicca sul \textbf{nome} della texture nel campo e si fa un
+        \emph{browse}: si cerca il nome (``T underscore Bark'') e lo si sceglie dalla
+        lista di tutte le texture disponibili.
+\end{itemize}
+``Voi lo vedete questo pop-up che esce?'' Sì: perfetto.
+
+% ---------------------------------------------------------------------
+\section{Le costanti, le operazioni e le scorciatoie}
+\label{ue3:sec:costanti}
+
+``Chiaramente ne vediamo un po', non li vediamo tutti, perché sono tanti, sono
+veramente tanti.'' Ci sono ``tantissime possibilità, tante cose che vanno studiate'',
+ma per ora servono le basi.
+
+\paragraph{La regola delle scorciatoie.} Il Texture Sample si può chiamare cercandolo
+con il tasto destro, oppure \textbf{tenendo premuto il tasto T e facendo clic
+sinistro} nel grafo. ``Questa struttura dello shortcut funziona per ogni singolo nodo
+che ha uno shortcut'': un tasto, tenuto premuto, più clic sinistro. Il tasto è
+``molto spesso l'iniziale del nome del nodo''.
+
+\paragraph{Le costanti.} Cercando \emph{vector} compare, per esempio, il Vector
+Noise; cercando \emph{constant} compaiono le costanti: \textbf{Constant},
+\textbf{Constant2Vector}, \textbf{Constant3Vector} (e Constant4Vector). Le scorciatoie
+sono i numeri: \textbf{1 + clic} per la costante singola, \textbf{2 + clic} per quella
+a due valori, \textbf{3 + clic} per quella a tre. La costante a due ``la utilizzerete
+relativamente poco''. Le altre due moltissimo:
+\begin{itemize}
+  \item la \textbf{costante singola} è un \textbf{valore numerico}, che si usa ``per
+        andare a fare qualsiasi tipo di calcolo, qualsiasi tipo di costruzione'';
+  \item la \textbf{costante a tre} è un \textbf{colore}: l'engine usa i tre valori come
+        \textbf{R}, \textbf{G} e \textbf{B}. Si sceglie un colore (Davide prende un
+        arancione) e l'engine modifica X, Y e Z per ottenerlo. ``Qualcuno di voi l'aveva
+        anche già fatto nel test con la pallina.''
+\end{itemize}
+Collegando l'arancione al \textbf{Base Color} si ottiene un materiale arancione,
+``perché effettivamente è l'unica cosa che gli sto passando''. Ma ``molto raramente''
+si usa un colore piatto come Base Color: lo si usa piuttosto per fare
+\textbf{operazioni}. Più avanti una studentessa chiederà di nuovo come si crea il colore:
+``è come la costante singola, che è uno clic sinistro, ma è a tre, quindi è tre clic
+sinistro''.
+
+\paragraph{Staccare i fili.} Per rompere un collegamento: \textbf{Alt + clic sinistro}
+sul pin, ``e si rompono''.
+
+\paragraph{Le operazioni.} Le operazioni utili sono ``le classiche'': addizione,
+moltiplicazione, divisione, sottrazione. Le scorciatoie: \textbf{A + clic} per
+\textbf{Add}, \textbf{M + clic} per \textbf{Multiply}, \textbf{D + clic} per
+\textbf{Divide}. La sottrazione (\textbf{Subtract}) non ha scorciatoia: si cerca. Il
+motivo lo spiega Davide più avanti: \textbf{S + clic} crea automaticamente un
+\textbf{parametro} (uno Scalar Parameter), ``quindi questo potrebbe tornarvi utile''.
+
+\paragraph{Quali si usano davvero.} In chiusura di lezione Davide aggiunge un consiglio
+d'esperienza: ``l'operazione che utilizzerete di più in assoluto è la
+\textbf{moltiplicazione}''. Moltiplicazione e addizione sono le più usate; divisione e
+sottrazione servono soprattutto per cose più complesse, ``tipo sugli effetti
+speciali''.
+
+% ---------------------------------------------------------------------
+\section{Il colore che brilla: Emissive, Multiply e Glow Intensity}
+\label{ue3:sec:emissive}
+
+``A cosa ci servono'' le operazioni? Per esempio ad \textbf{aumentare il valore} di
+qualcosa. Il nodo risultante ha diversi pin, ``diverse cose su cui andare a collegare
+dei valori'': il \textbf{Base Color}, e più in basso l'\textbf{Emissive Color}, che
+controlla ``quali parti del materiale emetteranno una piccola luce'', un
+\textbf{\emph{glow}}.
+
+\paragraph{L'arancione nell'Emissive.} Davide stacca l'arancione dal Base Color e lo
+collega all'Emissive: il materiale ``sarà leggermente luminoso''. ``Adesso è molto poco
+luminoso, ma è comunque un emissive.''
+
+\paragraph{Moltiplicare.} Come si ottiene un'emissione maggiore? ``Moltiplichiamo.''
+L'arancione entra nella A di un \textbf{Multiply}, il Multiply va nell'Emissive. Il
+secondo valore si può scrivere direttamente nel nodo Multiply (``invece di 1 mettiamo
+100''): ``verrà decisamente più luminoso''. Ma così ``è meno controllabile''. Meglio
+attaccare alla B una \textbf{costante} separata, darle il valore 100 e convertirla in
+\textbf{parametro}, con un nome come \textbf{Glow Intensity}: quando più avanti ci sarà
+una Material Instance, il valore si potrà cambiare ``direttamente da lì''. ``Ci andiamo
+a estrapolare un parametro.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  ue3node/.style={draw, thick, rounded corners=4pt, align=center,
+                  minimum height=0.9cm},
+  ue3col/.style={-{Stealth[length=2mm]}, thick, blue!60!black},
+  ue3flt/.style={-{Stealth[length=2mm]}, thick, green!50!black}
+]
+  \node[ue3node, fill=orange!30, text width=2.5cm] (col) at (0,0.7)
+    {\textbf{Constant3Vector}\\\footnotesize arancione (3 + clic)};
+  \node[ue3node, fill=green!8, text width=2.5cm] (gi) at (0,-0.9)
+    {\textbf{Glow Intensity}\\\footnotesize parametro = 100};
+  \node[ue3node, fill=gray!10, text width=1.6cm] (mul) at (3.6,0)
+    {\textbf{Multiply}\\\footnotesize (M + clic)};
+  \node[ue3node, fill=blue!6, text width=2.6cm, minimum height=2.2cm] (res)
+    at (7.4,0) {\textbf{nodo risultante}\\[3pt]\footnotesize Base Color\\
+    \footnotesize Metallic, Specular\\\footnotesize Roughness\\
+    \footnotesize\textbf{Emissive Color}};
+  \draw[ue3col] (col.east) -- ++(0.4,0) |- node[pos=0.75, above, font=\scriptsize]{A}
+    ([yshift=2mm]mul.west);
+  \draw[ue3flt] (gi.east) -- ++(0.4,0) |- node[pos=0.75, below, font=\scriptsize]{B}
+    ([yshift=-2mm]mul.west);
+  \draw[ue3col] (mul.east) -- ++(0.6,0) |- ([yshift=-7mm]res.west);
+\end{tikzpicture}
+\caption{Un materiale che brilla. Il colore, collegato all'Emissive Color, emette ``una
+piccola luce''; moltiplicato per 100 diventa molto più luminoso. Il valore 100 sta in
+una costante convertita in parametro (Glow Intensity), così che si possa cambiare da
+una Material Instance senza toccare il grafo. Ricostruzione dalla dimostrazione.}
+\label{ue3:fig:emissive}
+\end{figure}
+
+\paragraph{Approfondimento: perché 100 funziona.} I colori di un materiale non sono
+limitati tra 0 e 1. Nel Base Color valori oltre 1 non hanno senso fisico (nessuna
+superficie riflette più luce di quella che riceve), ma nell'Emissive sì: un'emissione di
+$(1; 0{,}5; 0)$ moltiplicata per 100 diventa $(100; 50; 0)$, una sorgente molto intensa
+che il \emph{post process} di Unreal trasforma in un alone luminoso (il \emph{bloom}).
+Il Multiply tra un colore e un numero moltiplica ciascun canale per quel numero, quindi
+la tinta resta la stessa e cresce solo l'intensità. Con Lumen, il sistema di
+illuminazione globale di Unreal Engine 5, un materiale emissivo può anche illuminare un
+po' le superfici vicine.
+
+% ---------------------------------------------------------------------
+\section{Il PBR: Metallic, Specular, Roughness e Normal}
+\label{ue3:sec:pbr}
+
+``Mi rendo conto che sto andando un po' a destra e a sinistra'', ammette Davide, e
+torna ai pin del nodo risultante. Base Color ed Emissive si sono visti. Restano
+\textbf{Metallic}, \textbf{Specular} e \textbf{Roughness}, ``degli input abbastanza
+interessanti'', perché sono quelli che \textbf{determinano la superficie} del
+materiale.
+
+\paragraph{Il PBR.} Il rendering dei materiali in Unreal è \textbf{PBR},
+\emph{Physically Based Rendering}: per decidere come si comporta una superficie, il
+motore mette insieme una serie di informazioni fisiche. Tutti questi parametri vanno
+\textbf{da 0 a 1}.
+
+\paragraph{Roughness.} La \textbf{Roughness} dice quanto una superficie è
+\textbf{liscia} o \textbf{ruvida}. Una \textbf{roccia} vuole una Roughness molto alta,
+cioè 1: il materiale sarà ruvido ``e non rifletterà la luce in nessun modo''. Uno
+\textbf{specchio} vuole una Roughness a 0: il più liscio possibile, il meno ruvido, il
+più riflettente.
+
+\paragraph{Specular e Metallic.} ``Per aiutare in questa situazione'' ci sono Specular e
+Metallic, che ``si alternano a seconda del tipo di materiale''. Lo
+\textbf{Specular}, come si è visto con le mappe, determina quanta luce viene riflessa e
+l'angolazione a cui viene riflessa. Per creare uno \textbf{specchio} serve un materiale
+molto, molto liscio e molto, molto riflettente: Davide abbassa la Roughness e alza la
+riflessione, e la \emph{preview} comincia ad assomigliare ``a una parete riflettente'';
+con altre cose che si vedranno in seguito ``iniziamo ad avere un riflesso''.
+
+\paragraph{Emissive e Normal.} L'\textbf{Emissive Color} restituisce un colore che è
+``effettivamente una luce''. La \textbf{Normal} è l'ultimo parametro utile, e richiede
+la texture blu vista prima: si usa sempre un Texture Sample, ma con
+\textbf{T\_Bark\_N}, la Normal della corteccia, invece della Diffuse. Davide toglie
+tutto il resto e mette a confronto il materiale con e senza Normal: ``vedete la
+differenza?'' La Normal aggiunge un dettaglio tridimensionale ``molto semplice da
+vedere'', eppure ``la mappa è 2D, non c'è tridimensionalità'': crea solo l'illusione.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small]
+  \foreach \i/\rr in {0/0, 1/0.25, 2/0.5, 3/0.75, 4/1} {
+    \pgfmathsetmacro{\hs}{0.12+0.35*\rr}
+    \pgfmathsetmacro{\op}{1-0.85*\rr}
+    \shade[ball color=gray!70] (\i*2.4,0) circle (0.8);
+    \fill[white, opacity=\op] (\i*2.4-0.28,0.3) circle (\hs);
+    \node[font=\footnotesize] at (\i*2.4,-1.2) {Roughness $=\rr$};
+  }
+  \draw[-{Stealth[length=2.5mm]}, thick] (-0.6,-1.8) -- (10.2,-1.8);
+  \node[font=\footnotesize, anchor=north west] at (-0.6,-1.85) {liscio, riflessi netti
+    (lo specchio)};
+  \node[font=\footnotesize, anchor=north east] at (10.2,-1.85) {ruvido, nessun
+    riflesso netto (la roccia)};
+\end{tikzpicture}
+\caption{La Roughness, da 0 a 1, in uno schema qualitativo: più la superficie è liscia,
+più il riflesso della luce è piccolo e netto; più è ruvida, più la luce si sparpaglia
+fino a sparire come riflesso. Disegno indicativo, non un rendering di Unreal.}
+\label{ue3:fig:roughness}
+\end{figure}
+
+\paragraph{Approfondimento: Metallic e Specular nella pratica.} Nel modello PBR di
+Unreal i due parametri non hanno lo stesso peso. \textbf{Metallic} è quasi sempre
+\emph{binario}: 1 per i metalli, 0 per tutto il resto (legno, pietra, plastica, pelle);
+i valori intermedi servono soprattutto per i bordi tra metallo e vernice o per lo
+sporco. Lo \textbf{Specular} ha un default di 0,5, che va bene per la grande maggioranza
+dei materiali non metallici, e la documentazione di Unreal consiglia di toccarlo poco:
+per i metalli viene ignorato, perché il loro riflesso dipende dal Base Color. Lo
+specchio della lezione, in termini PBR, è quindi Metallic $=1$, Roughness $=0$, Base
+Color chiaro. È il senso dell'``alternarsi'' di cui parla Davide: nei materiali metallici
+si lavora con il Metallic, negli altri, se proprio serve, con lo Specular, e quasi
+sempre con la Roughness, che è il parametro che cambia di più l'aspetto di una
+superficie.
+
+% ---------------------------------------------------------------------
+\section{Il Texture Coordinate e il tiling}
+\label{ue3:sec:tiling}
+
+``Chiaramente ogni nodo funziona a sé.'' Il \textbf{Texture Coordinate}, il nodo rosso
+della prima slide, ha i suoi parametri. La scorciatoia è ``un po' \emph{tricky} da
+ricordare'', perché T + clic è già preso dal Texture Sample: è \textbf{U + clic},
+``perché il Texture Coordinate lavora sulle UV''.
+
+\paragraph{UTiling e VTiling.} Selezionando il nodo, nei dettagli compaiono
+\textbf{UTiling} e \textbf{VTiling}: i parametri ``molto comodi'' con cui si aumenta o
+si diminuisce il tiling di un oggetto. Davide collega il Texture Coordinate alle UV
+della Normal e della Diffuse, e chiede: se metto UTiling a 2, che cosa succede? ``Vediamo
+due volte la texture applicata all'oggetto'', risponde uno studente. ``Sì, però c'è un
+\emph{catch}, perché è soltanto sulle U'': la texture si ripete due volte
+sull'\textbf{asse orizzontale} e una sola volta su quello verticale. Con anche VTiling a
+2, la texture si ripete \textbf{quattro} volte: ``ce n'è una qua, una qua, una qui e una
+qua''.
+
+\paragraph{Lo zoom.} Si può fare anche il contrario, per ``zoomare'' sulla texture: con
+0,5 la si vede ``la metà delle volte. Anzi, non la metà delle volte, scusate: un
+quarto'' (0,5 su entrambi gli assi). E questo non vuol dire che una parte della
+texture ``viene mangiata'': viene semplicemente ``applicata in uno spazio differente''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small]
+  \newcommand{\uetreTile}[5]{% x0, y0, nu, nv, etichetta
+    \begin{scope}[shift={(#1,#2)}]
+      \pgfmathsetmacro{\du}{2.2/#3}
+      \pgfmathsetmacro{\dv}{2.2/#4}
+      \foreach \i in {1,...,#3} \foreach \j in {1,...,#4} {
+        \draw[fill=brown!25] ({(\i-1)*\du},{(\j-1)*\dv}) rectangle
+          ({\i*\du},{\j*\dv});
+        \draw[brown!70!black, thick] ({(\i-1)*\du+0.15*\du},{(\j-1)*\dv+0.2*\dv})
+          -- ({(\i-1)*\du+0.85*\du},{(\j-1)*\dv+0.8*\dv});
+      }
+      \draw[very thick] (0,0) rectangle (2.2,2.2);
+      \node[font=\footnotesize, align=center] at (1.1,-0.5) {#5};
+    \end{scope}}
+  \uetreTile{0}{0}{1}{1}{U = 1, V = 1}
+  \uetreTile{3.0}{0}{2}{1}{U = 2, V = 1}
+  \uetreTile{6.0}{0}{2}{2}{U = 2, V = 2}
+  % zoom: un quarto della texture, ingrandito
+  \begin{scope}[shift={(9.0,0)}]
+    \draw[fill=brown!25] (0,0) rectangle (2.2,2.2);
+    \draw[brown!70!black, thick] (0.66,0.88) -- (2.2,2.2);
+    \draw[very thick] (0,0) rectangle (2.2,2.2);
+    \node[font=\footnotesize, align=center] at (1.1,-0.5) {U = 0,5, V = 0,5};
+  \end{scope}
+\end{tikzpicture}
+\caption{Il tiling sulla stessa faccia. Con UTiling a 2 la texture si ripete solo in
+orizzontale; con entrambi a 2 si ripete quattro volte; con entrambi a 0,5 si vede un
+quarto della texture, ingrandito: non è ``mangiata'', è applicata in uno spazio più
+grande. Schema ricostruito dalla dimostrazione.}
+\label{ue3:fig:tiling}
+\end{figure}
+
+\paragraph{Il pavimento.} ``Il tiling, però, va visto.'' Nella mappa c'è un
+\textbf{pavimento}, e Davide ne cambia il materiale: lo seleziona, e nei
+\textbf{Details}, sotto \textbf{Materials}, al posto della \emph{material instance}
+della griglia grigia di prototipazione\footnote{Nella trascrizione ``Materialistance
+Prototype Grid Gray'': è l'istanza della griglia grigia dei progetti modello di
+Unreal.} trascina il \textbf{master material} appena creato. Il risultato: la corteccia
+è ``molto, molto grande'' (``io non so neanche qual è l'utilizzo di questa texture che
+sto usando, ci ho preso Bark a caso, ma va bene così''). Davide porta il tiling a 3,
+poi a 10: ``iniziamo a vederla più spesso, questa corteccia. Sembrano anche delle dune,
+vagamente.'' Il pavimento è probabilmente un cubo allargato, con UV ``molto, molto
+piccole'' rispetto alle sue dimensioni: per questo nella \emph{preview} sferica del
+materiale la texture si ripete ``diecimila volte'', mentre sul pavimento ``abbiamo un
+pavimento che è più dimensionato''.
+
+\paragraph{Una domanda che apre il tema successivo.} Uno studente chiede: si possono
+modificare U e V in base all'oggetto su cui è applicata la texture, per esempio 10 su un
+pavimento e 0,5 su un altro oggetto? ``Sì, è possibile, non facendolo dallo stesso
+materiale. Questo è il momento in cui entrano in gioco le \textbf{Material
+Instance}.''
+
+\paragraph{Approfondimento: il tiling in una formula.} Il Texture Coordinate restituisce
+per ogni punto la sua coppia $(u, v)$; il Multiply la scala: $(u', v') = (k_u\,u,\;
+k_v\,v)$. Una texture è definita sull'intervallo $[0,1]$ e si ripete fuori da lì (è il
+comportamento di default, \emph{wrap}): quando $u'$ va da 0 a 2, la texture viene letta
+due volte. Con $k < 1$ la faccia ``vede'' solo un pezzo dell'intervallo, e quel pezzo
+viene ingrandito. Per questo il tiling dipende dalle UV della mesh: se le UV di un
+pavimento enorme occupano comunque tutto il quadrato $[0,1]^2$, una texture con tiling
+1 si stende una volta sola su tutta la superficie, ed è ``molto, molto grande''.
+Moltiplicare per una costante e usare UTiling e VTiling nel nodo sono due modi di fare
+la stessa cosa; il primo ha il vantaggio che la costante può diventare un parametro.
+
+% ---------------------------------------------------------------------
+\section{Le Material Instance}
+\label{ue3:sec:instance}
+
+Davide torna alle slide (``passiamo un attimo alle Material Instance, visto che ne
+stavamo parlando''). Quello costruito finora è un \textbf{master material}: tutto ciò
+che sta nel grafo. Se si modifica il grafo, si modifica il materiale. Per avere lo
+\textbf{stesso materiale con una piccola differenza} si possono creare due
+\textbf{istanze} e cambiare in ciascuna il parametro collegato al Texture Coordinate.
+
+\paragraph{Che cos'è un'istanza.} Una \textbf{Material Instance} è ``un'istanza di un
+materiale che noi possiamo utilizzare per modificare quel materiale \textbf{senza
+modificare la sorgente}''. Ha diversi vantaggi, ``oltre a essere \emph{bon ton}'', cioè
+il modo in cui si dovrebbero applicare i materiali in generale: ``non dovreste prendere
+il master material e applicarlo agli oggetti in scena. È sempre consigliabile applicare
+un'istanza.''
+
+\paragraph{Perché è più leggera: i tavoli.} L'istanza è ``molto più leggera''. Davide
+lo spiega con i \textbf{tavolini} della prima lezione. Tre tavoli in scena con lo
+stesso materiale del legno: per ogni tavolo l'engine carica la mesh e carica il
+materiale, quindi ``tavolo, tavolo, tavolo'' e ``materiale, materiale, materiale''. Se
+invece sui tavoli ci sono tre Material Instance, l'engine carica le tre mesh, ma trova
+tre istanze che puntano \textbf{tutte allo stesso master material}, e ``va a
+renderizzare un solo materiale''. ``Chiaramente, su tre tavoli non cambia niente. Ora
+immaginate che invece di tre tavoli ci siano diecimila oggetti in scena'' e che mille
+condividano lo stesso materiale: si capisce perché ``torna comodo avere un'istanza
+piuttosto che avere un materiale generale''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  ue3tab/.style={draw, thick, minimum width=1.5cm, minimum height=0.7cm,
+                 fill=brown!20, align=center},
+  ue3mat/.style={draw, thick, rounded corners=3pt, minimum width=1.5cm,
+                 minimum height=0.7cm, align=center},
+  ue3arr/.style={-{Stealth[length=2mm]}, thick}
+]
+  % senza istanze
+  \node[font=\footnotesize\bfseries] at (2.0,2.2) {come la racconta Davide: master
+    material su ogni tavolo};
+  \foreach \i in {0,1,2} {
+    \node[ue3tab] (t\i) at (\i*2.0,1.2) {tavolo};
+    \node[ue3mat, fill=blue!15] (m\i) at (\i*2.0,0) {M\_Legno};
+    \draw[ue3arr] (t\i) -- (m\i);
+  }
+  \node[font=\footnotesize, align=center] at (2.0,-0.8) {tre mesh e ``materiale,
+    materiale, materiale''};
+  % con istanze
+  \begin{scope}[shift={(7.6,0)}]
+    \node[font=\footnotesize\bfseries] at (2.0,2.2) {con le Material Instance};
+    \foreach \i in {0,1,2} {
+      \node[ue3tab] (u\i) at (\i*2.0,1.2) {tavolo};
+      \node[ue3mat, fill=orange!15, font=\footnotesize] (i\i) at (\i*2.0,0)
+        {MI\_Legno\_\i};
+      \draw[ue3arr] (u\i) -- (i\i);
+    }
+    \node[ue3mat, fill=blue!15] (mm) at (2.0,-1.3) {\textbf{M\_Legno}};
+    \foreach \i in {0,1,2} \draw[ue3arr] (i\i) -- (mm);
+    \node[font=\footnotesize, align=center] at (2.0,-2.1) {tre mesh, tre istanze, un
+      solo materiale da compilare};
+  \end{scope}
+\end{tikzpicture}
+\caption{L'esempio dei tavoli. A sinistra, il master material applicato direttamente;
+a destra, tre istanze (che possono avere parametri diversi: un legno più chiaro, un
+tiling più fitto) che rimandano tutte allo stesso master material. Schema ricostruito
+dalla spiegazione; sul costo reale si veda l'approfondimento.}
+\label{ue3:fig:tavoli}
+\end{figure}
+
+\paragraph{Come si crea.} ``Come lo facciamo su Unreal?'' Si fa \textbf{tasto destro}
+sul materiale nel Content Browser e \textbf{Create Material Instance}, ``qui in
+alto''. L'istanza appare \textbf{vuota}: ``non c'è un grafo per modificarlo, perché
+chiaramente non posso modificare nessun grafo quando sono qui dentro''. Per avere
+qualcosa da cambiare, bisogna estrarre dei \textbf{parametri} dal master material.
+Davide torna nel grafo, fa tasto destro sul Texture Sample del colore, \textbf{Convert
+to Parameter}, e lo chiama più o meno \emph{Diffuse Color}\footnote{Nella trascrizione
+``discolor'': il nome esatto non si ricostruisce, ma è il parametro della texture del
+colore.}; lo stesso per l'altro Texture Sample, chiamato \textbf{Normal Map}. Salvato il
+materiale, nell'istanza compaiono \textbf{due parametri} selezionabili.
+
+\paragraph{La nomenclatura.} ``Normalmente dovreste chiamarlo'' non \emph{New Material}
+ma \textbf{M\_NewMaterial}, e l'istanza \textbf{MI\_NewMaterial}: ``per nomenclatura,
+insomma, per ritrovare facilmente tutto quello che ci serve''.
+
+\paragraph{Cambiare la texture dall'istanza.} Davide applica MI\_NewMaterial al
+pavimento: è identico a prima. Ma se nell'istanza si cambia il parametro della texture,
+da Bark a un'altra, il materiale cambia, senza toccare il grafo. Si potrebbe avere un
+master material senza texture, ``delle texture assenti o base'', e tre o quattro
+istanze in cui si cambiano le texture: un muro arancione, uno blu, uno rosso e uno verde
+sono quattro istanze. ``Quando io renderizzo la scena, non andrò a chiamare cinque
+materiali diversi, chiamerò sempre M\_NewMaterial, perché sono tutte istanze dello
+stesso materiale.'' ``Non vorrei stare complicando troppo la cosa, però insomma, ditemi
+voi se è chiaro il discorso.''
+
+\paragraph{Il Tiling Multiplier.} Ed ecco la risposta alla domanda sul tiling diverso
+per ogni oggetto. Nel master material Davide prende un \textbf{Multiply}, ci collega il
+Texture Coordinate, collega il Multiply alle UV dei due Texture Sample e attacca alla B
+una \textbf{costante}, che converte in parametro con il nome \textbf{Tiling
+Multiplier}. Nell'istanza, il Tiling Multiplier portato a 10 dà ``lo stesso risultato di
+prima''; ma ora è un parametro. Una copia dell'istanza con il Tiling Multiplier a 5
+darebbe un tiling diverso con lo stesso materiale. ``È chiaro il discorso?''
+``Perfetto.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  ue3node/.style={draw, thick, rounded corners=4pt, align=center,
+                  minimum height=0.9cm},
+  ue3uv/.style={-{Stealth[length=2mm]}, thick, red!60!black},
+  ue3flt/.style={-{Stealth[length=2mm]}, thick, green!50!black},
+  ue3col/.style={-{Stealth[length=2mm]}, thick, blue!60!black}
+]
+  \node[ue3node, fill=red!12, text width=1.9cm] (tc) at (0,0.7)
+    {\textbf{TexCoord}\\\footnotesize (U + clic)};
+  \node[ue3node, fill=green!8, text width=1.9cm] (tm) at (0,-0.9)
+    {\textbf{Tiling}\\\textbf{Multiplier}\\\footnotesize parametro};
+  \node[ue3node, fill=gray!10, text width=1.5cm] (mul) at (3.0,0)
+    {\textbf{Multiply}};
+  \node[ue3node, fill=orange!12, text width=2.4cm] (ts1) at (6.2,1.0)
+    {\textbf{Diffuse Color}\\\footnotesize Texture Sample,\\
+    \footnotesize parametro};
+  \node[ue3node, fill=orange!12, text width=2.4cm] (ts2) at (6.2,-1.0)
+    {\textbf{Normal Map}\\\footnotesize Texture Sample,\\\footnotesize parametro};
+  \node[ue3node, fill=blue!6, text width=2.2cm, minimum height=2.6cm] (res)
+    at (10.0,0) {\textbf{M\_NewMaterial}\\[4pt]\footnotesize Base Color\\[14pt]
+    \footnotesize Normal};
+  \draw[ue3uv] (tc.east) -- ++(0.4,0) |- ([yshift=2mm]mul.west);
+  \draw[ue3flt] (tm.east) -- ++(0.4,0) |- ([yshift=-2mm]mul.west);
+  \draw[ue3uv] (mul.east) -- ++(0.5,0) |- node[pos=0.8, above, font=\scriptsize]{UVs}
+    (ts1.west);
+  \draw[ue3uv] (mul.east) -- ++(0.5,0) |- node[pos=0.8, below, font=\scriptsize]{UVs}
+    (ts2.west);
+  \draw[ue3col] (ts1.east) -- ++(0.6,0) |- ([yshift=6mm]res.west);
+  \draw[ue3col] (ts2.east) -- ++(0.6,0) |- ([yshift=-6mm]res.west);
+  % istanze
+  \node[ue3node, fill=yellow!15, text width=3.6cm, font=\footnotesize] (mi1)
+    at (3.0,-2.9) {\textbf{MI\_NewMaterial}\\Tiling Multiplier = 10\\Diffuse = T\_Bark};
+  \node[ue3node, fill=yellow!15, text width=3.6cm, font=\footnotesize] (mi2)
+    at (8.0,-2.9) {\textbf{MI\_NewMaterial\_2}\\Tiling Multiplier = 5\\
+    Diffuse = un'altra texture};
+  \draw[dashed, thick] (mi1.north) -- ++(0,0.4) -| (res.south);
+  \draw[dashed, thick] (mi2.north) -- (mi2.north |- res.south);
+\end{tikzpicture}
+\caption{Il master material con tre parametri (le due texture e il Tiling Multiplier)
+e due istanze che li impostano in modo diverso. Le istanze non hanno un grafo: hanno
+solo le caselle dei parametri. Ricostruzione dalla dimostrazione.}
+\label{ue3:fig:instance}
+\end{figure}
+
+\paragraph{Il vantaggio principale.} Ricapitolando dalle slide: le Material Instance
+permettono di \textbf{personalizzare velocemente} le superfici ``senza andare a
+modificare il grafico che avete fatto'', e le modifiche si vedono
+\textbf{immediatamente}, ``senza dover aspettare la ricompilazione del materiale''.
+
+\paragraph{Approfondimento: che cosa si risparmia davvero.} La spiegazione dei tavoli
+va presa come un'immagine. Il costo principale di un materiale non è ``caricarlo'' una
+volta per oggetto, ma \textbf{compilarlo}: ogni master material diventa uno o più
+\emph{shader}, programmi per la scheda video che Unreal deve compilare (e che fanno
+comparire, nella prima apertura di un progetto, il famoso contatore ``Compiling
+Shaders''). Un'istanza \textbf{non} genera un nuovo shader: riusa quello del genitore e
+cambia solo i valori dei parametri. Cento istanze dello stesso master material sono
+quindi un solo shader con cento ``schede'' di valori; cento materiali diversi sono cento
+shader. Per questo cambiare un parametro in un'istanza è istantaneo, mentre cambiare un
+nodo nel master material richiede la ricompilazione, come dice la slide. Le istanze del
+Content Browser si chiamano \textbf{Material Instance Constant}; esistono anche le
+\textbf{Material Instance Dynamic}, create durante il gioco da un Blueprint (nodo
+\emph{Create Dynamic Material Instance}) per cambiare i parametri a \emph{runtime}, per
+esempio con \emph{Set Scalar Parameter Value}: un materiale che si accende quando la
+torretta di Igor ha un bersaglio nel mirino.
+
+% ---------------------------------------------------------------------
+\section{Le Material Function}
+\label{ue3:sec:function}
+
+``Per chiudere il discorso materiali'', l'ultima voce delle slide: le \textbf{Material
+Function}, che oggi non si useranno. Sono funzioni che raccolgono ``una serie di calcoli
+un po' più complessi'': invece di rifare ogni volta dei calcoli che si fanno spesso, li
+si mette dentro una funzione e si usa la funzione ``a vostra discrezione''. ``È come se
+fossero delle \textbf{parentesi}: voi prendete queste parentesi, le spostate in giro. È
+un pacchetto che potete portarvi in giro.'' Servono a velocizzare lo sviluppo quando ci
+sono cose da ripetere, e possono essere usate e condivise ``fra membri del team, fra
+materiali diversi''.
+
+\paragraph{Approfondimento: Material Function e Material Instance.} Le due cose
+risolvono problemi diversi. L'istanza riusa \emph{un intero materiale} cambiandone i
+valori; la funzione riusa \emph{un pezzo di grafo} dentro materiali diversi. Unreal
+stesso è pieno di Material Function già pronte (si trovano nel menu dei nodi con
+l'icona della funzione), e i nodi World Aligned Texture e World Aligned Normal che
+compaiono alla fine della lezione (sezione~\ref{ue3:sec:world}) sono, appunto, Material
+Function del motore.
+
+% ---------------------------------------------------------------------
+\section{Il Lerp: interpolare}
+\label{ue3:sec:lerp}
+
+Restano ``un paio di nodi che possono essere carini''. Davide ricapitola quelli visti
+(la costante singola, il colore, il Texture Sample, le operazioni, il Texture
+Coordinate) e ne aggiunge due: il \textbf{Lerp} e il \textbf{Panner}. ``Se abbiamo
+capito la regola degli shortcut, questi saranno quale lettera più clic sinistro?''
+``L.'' ``Esatto'': \textbf{L + clic} per il Lerp, \textbf{P + clic} per il Panner. ``Volevo
+essere sicuro che era arrivata la cosa.''
+
+\paragraph{Due colori.} Il \textbf{Lerp} si occupa dell'\textbf{interpolazione
+lineare} (\emph{linear interpolation}). Per farlo vedere Davide usa due colori, ``una
+roba che non farete mai, non con due colori perlomeno'': un \textbf{blu} nella
+\textbf{A} e un \textbf{rosso} nella \textbf{B}. Il Lerp, collegato al Base Color, dà il
+\textbf{viola}. Perché è inutile farlo con i colori? ``Perché potevo cercarmi il viola
+direttamente dal colore.'' Ma mostra come funziona l'interpolazione. Il Lerp si può fare
+anche con i numeri, ``per fare operazioni matematiche'', e anche con le texture.
+
+\paragraph{L'alfa.} L'operazione è ``gestita interamente dall'\textbf{alfa}'', il terzo
+ingresso. L'alfa va \textbf{da 0 a 1} e decide quale colore prevale, con A che vale 0 e
+B che vale 1: con l'alfa a 0 si ha il blu, a 1 il rosso, e in mezzo ``una percentuale di
+quel colore'', per esempio 0,7. Modificando l'alfa si va sempre più verso il rosso, o
+sempre più verso il blu.
+
+\paragraph{Una texture come alfa.} Ma l'alfa non deve essere un numero fisso. Davide
+prende ``il nostro fidato Bark'' e collega \textbf{un suo canale} all'alfa: ``vi ricordate
+il discorso dei canali sulle texture?'' Ora quella sequenza di 0 e di 1, di bianco e di
+nero, ``è l'\textbf{arbitro} nel decidere dove ci sarà più A e dove ci sarà più B'':
+nelle zone più nere il Lerp mette più blu, in quelle più bianche più rosso. Questa
+texture è ``estremamente bianca'', quindi il risultato tende al rosso; con altre
+texture, o lavorando su questa, si otterrebbero risultati diversi. E collegando il
+Multiply delle coordinate anche al Texture Sample dell'alfa, si ottiene un tiling
+anche dell'alfa, cioè di dove va il blu e dove il rosso. ``Chiaro questo processo?''
+``Sì.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  ue3node/.style={draw, thick, rounded corners=4pt, align=center,
+                  minimum height=0.9cm},
+  ue3col/.style={-{Stealth[length=2mm]}, thick, blue!60!black},
+  ue3flt/.style={-{Stealth[length=2mm]}, thick, green!50!black}
+]
+  \node[ue3node, fill=blue!30, text width=1.9cm] (a) at (0,1.4) {\textbf{blu}\\
+    \footnotesize Constant3Vector};
+  \node[ue3node, fill=red!30, text width=1.9cm] (b) at (0,0) {\textbf{rosso}\\
+    \footnotesize Constant3Vector};
+  \node[ue3node, fill=gray!10, text width=1.9cm] (al) at (0,-1.5)
+    {\textbf{Alpha}\\\footnotesize 0,7 oppure\\\footnotesize un canale di T\_Bark};
+  \node[ue3node, fill=gray!10, text width=1.6cm, minimum height=2.2cm] (lerp)
+    at (3.6,0) {\textbf{Lerp}\\\footnotesize (L + clic)\\[4pt]\footnotesize A\\
+    \footnotesize B\\\footnotesize Alpha};
+  \node[ue3node, fill=violet!30, text width=2.0cm] (res) at (7.0,0)
+    {\textbf{Base Color}\\\footnotesize viola, più o\\\footnotesize meno rosso};
+  \draw[ue3col] (a.east) -- ++(0.6,0) |- ([yshift=5mm]lerp.west);
+  \draw[ue3col] (b.east) -- ([yshift=0mm]lerp.west);
+  \draw[ue3flt] (al.east) -- ++(0.6,0) |- ([yshift=-5mm]lerp.west);
+  \draw[ue3col] (lerp) -- (res);
+  % la scala dell'alfa
+  \begin{scope}[shift={(9.4,-0.6)}]
+    \shade[left color=blue!60, right color=red!60] (0,0) rectangle (3.4,0.6);
+    \draw[thick] (0,0) rectangle (3.4,0.6);
+    \node[font=\footnotesize] at (0,-0.3) {0};
+    \node[font=\footnotesize] at (3.4,-0.3) {1};
+    \node[font=\footnotesize] at (1.7,-0.3) {Alpha};
+    \node[font=\footnotesize] at (0,0.95) {A};
+    \node[font=\footnotesize] at (3.4,0.95) {B};
+    \draw[thick] (2.38,-0.05) -- (2.38,0.65);
+    \node[font=\scriptsize] at (2.38,0.95) {0,7};
+  \end{scope}
+\end{tikzpicture}
+\caption{Il Lerp della dimostrazione: con l'alfa a 0 esce A (il blu), a 1 esce B (il
+rosso), in mezzo una miscela. Se l'alfa è un canale di una texture, ogni pixel ha la sua
+miscela: blu dove la texture è nera, rosso dove è bianca.}
+\label{ue3:fig:lerp}
+\end{figure}
+
+\paragraph{L'esercizio della pausa.} ``Provateci voi.'' Durante la pausa, chi vuole può
+prendere \textbf{due texture}, collegarle a un Lerp e, giocando con l'alfa, vedere quale
+parte delle due texture viene presa di più e quale di meno.
+
+\paragraph{Approfondimento: la formula del Lerp.} L'interpolazione lineare tra A e B
+con peso $\alpha$ è
+\[
+  \operatorname{lerp}(A, B, \alpha) = A\,(1-\alpha) + B\,\alpha .
+\]
+Con colori, il calcolo si fa canale per canale. Blu $=(0,0,1)$ e rosso $=(1,0,0)$ con
+$\alpha = 0{,}5$ danno $(0{,}5;\,0;\,0{,}5)$, il viola della lezione; con $\alpha =
+0{,}7$ danno $(0{,}7;\,0;\,0{,}3)$, un viola più rosso. Quando l'alfa è una texture, la
+formula si applica pixel per pixel, ed è così che si mescolano due materiali su una
+stessa superficie: erba e terra su un terreno, vernice e ruggine su un metallo, con una
+maschera in bianco e nero a fare da ``arbitro''.
+
+% ---------------------------------------------------------------------
+\section{Il Panner: far muovere le texture}
+\label{ue3:sec:panner}
+
+Il \textbf{Panner}\footnote{Nella trascrizione ``panel'', ``planner'' e ``banner''.}
+``si occupa di far muovere le texture''. Davide riprende il Base Color, stacca il resto,
+e collega il Panner alle \textbf{UV} del Texture Sample, ``perché lui lavora sulle UV
+della texture''. Selezionando il nodo (o direttamente sul nodo) si vedono
+\textbf{Speed X} e \textbf{Speed Y}. Con Speed X a 1 la \emph{preview} comincia a
+muoversi sull'asse X, ``anche un po' troppo veloce per i miei gusti''; con 0,3 in X e
+0,1 in Y si ha un Panner che si muove su entrambi gli assi.
+
+\paragraph{A che cosa serve.} ``Che materiale potremmo volerci fare con questo nodo?''
+``Dell'acqua.'' ``Dell'acqua. Qualsiasi fluido, qualsiasi cosa che si muove.'' Il Panner
+ha il parametro di velocità e l'ingresso delle \textbf{coordinate}: per combinarlo con il
+tiling si collega il Texture Coordinate (o il Multiply) all'ingresso Coordinate. C'è
+poi l'ingresso \textbf{Time}, con cui si può decidere ``quando e come deve muoversi'';
+altrimenti, di default, usa il \emph{game time}, ``cioè è sempre in movimento''.
+
+\paragraph{Il master material cambia, l'istanza segue.} Mentre il Panner lavora, il
+pavimento nella scena \textbf{si muove}: sul pavimento c'è la Material Instance, e
+``nonostante stiamo facendo delle modifiche al materiale originale e non alla Material
+Instance, la Material Instance continua a modificarsi''. È il rovescio del rapporto tra
+master e istanze: quello che cambia nel genitore cambia in tutte le istanze.
+
+\paragraph{Approfondimento: il Panner in una formula.} Il Panner non fa altro che
+sommare alle coordinate un tempo moltiplicato per una velocità:
+\[
+  (u', v') = (u + s_x\,t,\; v + s_y\,t),
+\]
+dove $t$ è il tempo in secondi e $s_x, s_y$ le velocità in ``texture al secondo'': con
+Speed X a 1 la texture scorre di una larghezza intera ogni secondo, per questo era
+troppo veloce. Siccome la texture si ripete, lo scorrimento è infinito e senza salti,
+purché la texture sia \emph{tileable}, cioè con i bordi che combaciano. Due Panner con
+velocità e tiling diversi sommati tra loro sono il trucco classico per l'acqua e per la
+lava: il movimento non si ripete mai uguale.
+
+% ---------------------------------------------------------------------
+\section{La pausa: il progetto che non si trova, e Git}
+\label{ue3:sec:pausa}
+
+``Visto che comunque ci siamo fatti un'oretta e mezza'', Davide chiude per ora il
+discorso materiali e propone una pausa di una decina di minuti. Al ritorno: l'import,
+le mesh, e ``una cosina con la torretta che c'è nei file che vi abbiamo passato'', così
+che Igor, quando torna, potrà farci ``un piccolo sistema di puntamento''.
+
+\paragraph{Il progetto che Unreal non vede.} Al rientro, in attesa degli altri, una
+studentessa racconta il suo problema: ha scaricato e decompresso la cartella del Drive,
+ma aprendo Unreal il progetto non compare, e deve aprirlo ``a mano'' da un'altra parte.
+Davide spiega che dipende probabilmente dal percorso in cui è salvata la cartella: se la
+si mette dove sono salvati gli altri progetti, Unreal dovrebbe trovarla; in ogni caso,
+aprire il progetto dal file eseguibile nella cartella funziona. ``Se non è un problema
+che ti impedisce di accedere al progetto, fa niente.''
+
+\paragraph{Come si lavora insieme a distanza?} Uno studente, programmatore, fa una
+domanda ``fuori dall'argomento'': i programmatori usano \textbf{Git}, ma i file di un
+progetto di Unreal sembrano troppo pesanti per lavorarci in contemporanea da lontano.
+Davide conferma che \textbf{Git}, ``o diciamo repository di sorta'', è ``la cosa
+principale che utilizzerai''. Con \textbf{Unity} ha sempre avuto meno problemi, perché
+Unreal ``va gestito in maniera un po' più delicata'', ma entrambi supportano senza
+problemi repository e \emph{source control}. Esistono anche altri metodi, che Davide non
+ha mai provato: per Unreal, ``una cosa che io sento da una vita'', un modo per lavorare
+\textbf{contemporaneamente} sulla stessa cosa, tramite \textbf{VPN} o in \textbf{LAN} e
+con dei \emph{plugin} specifici, in modo che due colleghi modifichino attivamente lo
+stesso livello. Con Git invece ``ognuno lavora sul suo e poi si \emph{merge} tutto
+insieme''. ``Git è quello che ho utilizzato sempre, è il più comodo, quindi dovresti
+trovarti abbastanza a casa.''
+
+\paragraph{Approfondimento: Git LFS, Perforce e Multi-User Editing.} I timori dello
+studente sono fondati. Git nasce per file di testo, e gli \emph{asset} di Unreal
+(\texttt{.uasset}, \texttt{.umap}) sono file \textbf{binari}, spesso grandi, che Git non
+sa fondere: se due persone modificano lo stesso livello, una delle due modifiche va
+persa. Per questo con Unreal si usa \textbf{Git LFS} (\emph{Large File Storage}), che
+tiene i file pesanti fuori dalla cronologia normale e permette di \textbf{bloccare}
+(\emph{lock}) un file mentre lo si modifica. Nell'industria, per i progetti Unreal, è
+molto diffuso \textbf{Perforce} (Helix Core), il sistema che Epic stessa usa e che
+l'editor supporta direttamente, proprio per la gestione dei file binari e dei blocchi.
+Il sistema ``sentito da una vita'' di cui parla Davide esiste: è il plugin
+\textbf{Multi-User Editing}, con cui più editor connessi in rete (in LAN o via VPN)
+condividono una stessa sessione e vedono le modifiche degli altri in tempo reale; nato
+per la produzione virtuale nel cinema, si può usare anche nello sviluppo di giochi, ma
+non sostituisce il \emph{source control}, a cui le modifiche vanno comunque consegnate
+alla fine.
+
+% ---------------------------------------------------------------------
+\section{L'import e la torretta}
+\label{ue3:sec:import}
+
+Passato ``il nostro quarto d'ora'', si riparte: si importano le prime mesh, la
+\textbf{torretta}, ``le tre parti della torretta, perché l'abbiamo divisa in tre
+parti''.
+
+\paragraph{La finestra di import, sulla slide.} Quando si importa una mesh compare una
+finestra (``che può essere più larga, può essere più stretta'') piena di parametri. Le
+cose principali che si possono fare da lì:
+\begin{itemize}
+  \item \textbf{generare automaticamente le collisioni}, se non sono presenti nel file
+        FBX, perché magari gli oggetti non sono stati creati con le collisioni;
+  \item \textbf{modificare il transform} dell'oggetto importato ``proprio di base'':
+        ruotarlo sul suo \textbf{pivot}, traslarlo. ``Avete già parlato di cos'è il
+        pivot con Igor, giusto? Il fulcro che vi permette di traslare e ruotare gli
+        oggetti all'interno della scena.'' Con la funzione di \textbf{reimport}, si
+        vedrà, questa possibilità diventa molto utile;
+  \item adattare le \textbf{unità} e gli \textbf{assi} tra il software di origine e
+        Unreal: \textbf{convertire la scena} dalle coordinate FBX a quelle di Unreal,
+        \textbf{convertire le unità} (Unreal lavora in centimetri), oppure usare
+        \textbf{Force Front X Axis}, che cambia l'asse che Unreal considera come
+        ``fronte'' dell'oggetto. Davide l'ha usato poche volte: una volta il modello di
+        un \emph{character}, importato normalmente, ``veniva rivoltato, come se il
+        dentro fosse fuori'', e cambiare l'asse frontale gli ha restituito la mesh
+        com'era stata esportata (``mi pare fosse Blender'');
+  \item decidere se importare anche i \textbf{materiali} e le \textbf{texture}
+        collegati alla mesh, e \textbf{dove} cercarli: in locale, in un'altra cartella,
+        e così via.
+\end{itemize}
+
+\paragraph{Il pulsante Import.} Prima di importare, Davide spegne il Panner (``facciamo
+che smetto di far muovere il pavimento'') e il pavimento torna normale. Nel Content
+Browser c'è ``questo pulsantone con \textbf{Import}'', che apre l'esplora risorse del
+computer per cercare i file. Nella cartella del materiale didattico c'è una cartella
+\textbf{torretta}, con tre \textbf{static mesh}: \textbf{SM\_Turret\_Base},
+\textbf{SM\_Turret\_Cannon} e \textbf{SM\_Turret\_Pivot}\footnote{Nella trascrizione
+``Turret Base, Turret Cannon e Turret Pivo''; il prefisso SM\_ è detto a voce.}.
+
+\paragraph{La finestra di import, dal vivo.} Importandole si apre la finestra (``nel
+mio caso è così enorme, ma perché io tendo a usarla così''), e si ritrovano le opzioni
+della slide: la possibilità di modificare traslazione e rotazione, ``anche
+singolarmente sui vari assi'' (``questo è qualcosa che faremo più tardi''); i
+\textbf{LOD} (``decidere il gruppo dei LOD''); le collisioni, se e come importarle. Se si
+importa una \textbf{Skeletal Mesh}\footnote{Nella trascrizione ``scheda dal Mesh'' e
+``Scheletal Mesh'', come nella seconda lezione.}, come un personaggio, la finestra
+permette di collegarla a uno \textbf{scheletro} esistente, di generarne uno, oppure di
+importare solo delle \textbf{animazioni}: ``faremo una lezione specifica sulle
+animazioni, quindi per il momento glissiamo''. In alto ci sono anche le sezioni per
+andare più veloci, tra cui \textbf{Import Materials} e \textbf{Import Textures}, con la
+\textbf{Search Location} in cui cercarli.
+
+\paragraph{Niente materiali e texture, per ora.} La consegna di Davide: \textbf{togliere
+la spunta} a Import Materials e Import Textures, e fare \textbf{Import}. Unreal importa i
+tre oggetti (Davide elimina quelli della prova precedente e salva). Perché togliere le
+spunte? Se si fossero importati gli oggetti con materiali e texture, Unreal avrebbe
+importato automaticamente tutte le texture, creato i materiali adatti e li avrebbe
+anche \textbf{applicati}, ``in modo da averli già precisi sulla torretta''. Ed è
+proprio quello che si farà, ma \textbf{a mano}, ``così vediamo effettivamente anche il
+processo''. ``Ci sono stati problemi? Tutto a posto con la torretta?'' ``Sì, nessun
+problema.''
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{4.2cm}p{8.8cm}@{}}
+\toprule
+\textbf{Opzione} & \textbf{A che cosa serve} \\
+\midrule
+Generate Missing Collision & genera le collisioni se il file FBX non le ha \\
+Import Translation / Rotation / Uniform Scale & sposta, ruota, scala l'oggetto ``alla
+  radice'': cambia dove sta il pivot rispetto alla geometria \\
+LOD Group & sceglie un gruppo di livelli di dettaglio (\emph{Level Of Detail}) \\
+Convert Scene, Convert Scene Unit & adattano assi e unità di misura del file FBX a
+  quelli di Unreal (centimetri) \\
+Force Front X Axis & cambia l'asse considerato come ``fronte'' \\
+Skeleton / Import Animations & per le Skeletal Mesh: scheletro esistente o nuovo, solo
+  animazioni \\
+Import Materials, Import Textures & importano e applicano materiali e texture
+  collegati \\
+Search Location & dove cercare materiali e texture da importare \\
+\bottomrule
+\end{tabular}
+\caption{Le opzioni della finestra di import citate a lezione, con i nomi della
+finestra di Unreal Engine 5 (FBX Import Options; il raggruppamento può variare tra le
+versioni). Per la torretta: Import Materials e Import Textures senza spunta.}
+\label{ue3:tab:import}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Che cos'è una mesh}
+\label{ue3:sec:mesh}
+
+Mentre la torretta è importata, Davide torna sulle slide per ``le ultime cose sulle
+mesh''. Sulla slide c'è un \textbf{vaso} in \emph{wireframe} e, sotto, una
+semplificazione. Una mesh è ``un insieme di \textbf{vertici}, \textbf{spigoli} e
+\textbf{facce} che vanno a creare un oggetto in tre dimensioni''.
+\begin{itemize}
+  \item I \textbf{vertici} sono i \textbf{punti} che costituiscono gli angoli
+        dell'oggetto, punti nello spazio.
+  \item Gli \textbf{spigoli} (\emph{edge}) sono i \textbf{segmenti} che collegano due
+        vertici.
+  \item Le \textbf{facce} sono le \textbf{superfici piatte} definite da più segmenti:
+        sulla slide, ``tutti i triangoli''.
+\end{itemize}
+Il \textbf{triangolo} è ``la forma più comoda che esiste a livello di calcolo'', e
+tendenzialmente tutti gli oggetti saranno composti da ``un insieme di triangolini''. Più
+triangoli insieme, più facce, formano dei \textbf{poligoni}; i poligoni combinati formano
+delle \textbf{superfici}; e la superficie determina la mesh. Tutto questo si può vedere
+anche nell'engine, con la visualizzazione \textbf{wireframe}: l'oggetto non ``come
+appare'', ma ``come griglia, come insieme di tutti i poligoni, vertici e spigoli''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small]
+  \coordinate (A) at (0,0);
+  \coordinate (B) at (2.6,0.3);
+  \coordinate (C) at (3.2,2.2);
+  \coordinate (D) at (0.6,2.6);
+  \coordinate (E) at (1.7,1.3);
+  \fill[orange!15] (A) -- (B) -- (E) -- cycle;
+  \fill[orange!30] (B) -- (C) -- (E) -- cycle;
+  \fill[orange!20] (C) -- (D) -- (E) -- cycle;
+  \fill[orange!10] (D) -- (A) -- (E) -- cycle;
+  \draw[very thick] (A) -- (B) -- (C) -- (D) -- cycle;
+  \draw[very thick] (A) -- (E) (B) -- (E) (C) -- (E) (D) -- (E);
+  \foreach \p in {A,B,C,D,E} \fill (\p) circle (2.5pt);
+  \draw[-{Stealth[length=2mm]}] (4.3,2.8) node[right, font=\footnotesize]
+    {\textbf{vertice}: un punto} -- (C);
+  \draw[-{Stealth[length=2mm]}] (4.3,1.6) node[right, font=\footnotesize]
+    {\textbf{spigolo} (\emph{edge}): un segmento tra due vertici} -- ($(B)!0.5!(C)$);
+  \draw[-{Stealth[length=2mm]}] (4.3,0.4) node[right, font=\footnotesize]
+    {\textbf{faccia}: un triangolo} -- (1.45,0.55);
+  \node[font=\footnotesize, align=center, text width=4cm] at (1.6,-0.8)
+    {4 facce triangolari\\formano un poligono};
+\end{tikzpicture}
+\caption{Vertici, spigoli e facce, come nella semplificazione della slide. Il triangolo
+è l'unità di calcolo: anche le facce a quattro lati dei programmi di modellazione,
+quando arrivano in Unreal, vengono divise in triangoli.}
+\label{ue3:fig:mesh}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Dimensioni, unità di misura e formati}
+\label{ue3:sec:regole}
+
+Quando si porta una mesh in Unreal, mentre la si produce o mentre la si cerca, bisogna
+rispettare alcune cose.
+
+\paragraph{Le dimensioni.} La cosa più comune: si decide di fare ``una mappa molto
+carina'' su Unreal, si cercano mesh su internet o su \textbf{Fab} (``su Fab questo
+problema c'è meno, però utilizzando siti esterni può capitare''), e la mesh importata è
+\textbf{gigantesca} o \textbf{incredibilmente piccola}, perché chi ha fatto l'export, o
+chi ha fatto l'import, non ha rispettato ``le misure di adattamento e transizione da un
+software all'altro''. Unreal usa come unità di misura i \textbf{centimetri}; Blender,
+per esempio, ``usa altra roba''. Nel passaggio da Blender a Unreal bisogna controllare
+che la conversione delle dimensioni sia corretta.
+
+\paragraph{FBX.} ``Altra cosa molto importante'': Unreal ``tendenzialmente legge
+soltanto \textbf{FBX}''. Sono supportati anche altri formati, come gli \textbf{OBJ}, ``ma
+non assicurano un corretto funzionamento all'interno dell'engine''. Il consiglio:
+``importate sempre unicamente FBX''.
+
+\paragraph{I formati delle texture.} Per le texture i formati supportati sono molti
+(sulla slide c'è un elenco), ma nella pratica si usano soprattutto \textbf{JPEG} e
+\textbf{PNG}, ``i più comuni, a meno che non state facendo qualcosa di molto
+specifico''.
+
+\paragraph{Approfondimento: Blender, i metri e il fattore 100.} Blender lavora di default
+in metri, con una ``unità'' uguale a un metro; Unreal lavora in centimetri. Un cubo di
+lato 2 in Blender è quindi un cubo di 2~m, cioè 200 unità di Unreal: se l'export non
+converte, l'oggetto arriva cento volte troppo piccolo (o, con altre impostazioni, cento
+volte troppo grande). La soluzione standard è nell'esportatore FBX di Blender
+(l'opzione \emph{Apply Scalings} su \emph{FBX Units Scale}) o, lato Unreal, nella
+scala uniforme e nella conversione delle unità della finestra di import. Un controllo
+rapido: un personaggio umano in Unreal è alto circa 180 unità, come il manichino dei
+progetti modello; se la mesh appena importata è molto diversa, c'è un problema di scala.
+Oltre a FBX, le versioni recenti di Unreal Engine 5 importano anche \textbf{glTF} e
+\textbf{USD}, ma FBX resta il formato più collaudato, come dice Davide.
+
+% ---------------------------------------------------------------------
+\section{Il pivot del cannone e il Reimport}
+\label{ue3:sec:pivot}
+
+Davide apre le tre mesh (la base, la torretta e il pivot) e le piazza in scena. Sono
+state esportate con il \textbf{pivot nello stesso punto}: per sovrapporle senza
+spostarle a mano basta \textbf{copiare la X e la Y} di un pezzo negli altri. Ed ecco la
+torretta, ``a parte il fatto che non c'ha il materiale''.
+
+\paragraph{I problemi della torretta.} Ma ``sta torretta ha dei problemi: quali sono?''
+Il primo si vede: per qualche motivo \textbf{non è allineata}, ed è ``scomodamente''
+ruotata: trovare la rotazione giusta sarà scomodo. Il secondo è più sottile. Si
+supponga di mettere i tre pezzi insieme in un \textbf{Blueprint}. Che cosa deve fare una
+torretta? Deve \textbf{tracciare dei bersagli}: ruotare su sé stessa, ma anche andare su
+e giù, se il bersaglio è in alto o in basso. E qui c'è il problema: il \textbf{pivot del
+cannone} non è in una posizione comoda per la rotazione verticale, perché sta
+\textbf{in basso}, in fondo. Ruotare sul piano orizzontale non dà problemi, ma per
+alzare e abbassare la canna il pivot dovrebbe essere ``più o meno all'altezza di questo
+\textbf{bullone}'', il fulcro, e da lì il cannone dovrebbe essere manipolato e ruotato
+(figura~\ref{ue3:fig:pivot}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small,
+  ue3arr/.style={-{Stealth[length=2.5mm]}, thick}]
+  \foreach \xs/\titolo/\px/\py/\ang in {0/{pivot in basso (com'era)}/1.25/0.0/0,
+                                         6.6/{pivot nel fulcro (dopo il Reimport)}/1.25/1.75/0} {
+    \begin{scope}[shift={(\xs,0)}]
+      % base
+      \draw[thick, fill=orange!35] (0.3,0) -- (2.2,0) -- (1.9,0.5) -- (0.6,0.5) -- cycle;
+      % pivot (supporto)
+      \draw[thick, fill=gray!30] (0.8,0.5) rectangle (1.7,1.5);
+      % cannone
+      \draw[thick, fill=orange!20] (0.7,1.5) rectangle (1.8,2.1);
+      \draw[thick, fill=orange!20] (1.8,1.6) rectangle (4.0,1.95);
+      % bullone
+      \fill[black] (1.25,1.75) circle (2pt);
+      % il pivot del cannone
+      \draw[red, very thick] (\px-0.18,\py) -- (\px+0.18,\py) (\px,\py-0.18) -- (\px,\py+0.18);
+      \draw[red, thick] (\px,\py) circle (0.18);
+      \node[font=\footnotesize, align=center] at (2.0,-0.6) {\titolo};
+    \end{scope}
+  }
+  % archi di rotazione
+  \draw[ue3arr, red] (3.4,0.5) arc[start angle=-20, end angle=25, radius=2.6];
+  \node[font=\scriptsize, red, align=center] at (4.6,0.55) {la canna ruota\\attorno al
+    piede};
+  \draw[ue3arr, red] (6.6+3.6,1.0) arc[start angle=-30, end angle=30, radius=1.6];
+  \node[font=\scriptsize, red, align=center] at (6.6+4.75,1.75) {la canna ruota\\
+    attorno al bullone};
+  % assi
+  \draw[ue3arr, blue] (-0.6,0) -- (-0.6,1.2) node[above, font=\scriptsize]{Z};
+\end{tikzpicture}
+\caption{Il problema del pivot del cannone, visto di lato (schema non in scala). Con il
+pivot (il mirino rosso) in fondo, alzare la canna la farebbe girare attorno al piede,
+staccandola dal supporto; con il pivot nel fulcro, all'altezza del bullone, la canna
+si alza e si abbassa come una vera torretta. La rotazione orizzontale, attorno all'asse
+Z, funziona invece in entrambi i casi.}
+\label{ue3:fig:pivot}
+\end{figure}
+
+\paragraph{Come si sposta un pivot.} ``In realtà possiamo farlo in tutta una miriade di
+modi.'' Con la \textbf{Modeling Mode} si potrebbe rimodellare l'oggetto. Ma lo si può
+fare anche \textbf{nell'import}: si fa tasto destro sulla mesh e \textbf{Reimport Mesh
+With Dialog}, che riapre la finestra di import vista prima. Unreal importa lo stesso
+oggetto e lo \textbf{sovrascrive}, ma permette di cambiare come verrà posizionato:
+l'\textbf{offset della rotazione} e l'\textbf{offset della traslazione}.
+
+\paragraph{I numeri.} Davide se li era scritti, ma non li ricorda, e li ricava. Per
+sapere quale asse toccare, guarda il \emph{gizmo}: il cannone deve essere allineato con
+il resto della torretta (e lo stesso il pivot), e il pivot del cannone deve stare non
+``qui giù in fondo'', ma allineato con il fulcro, sull'\textbf{asse Z}, ``perché è
+questo blu''. Per questa torretta, ``quindi anche per voi'', i parametri sono:
+\begin{itemize}
+  \item per il \textbf{cannone}: traslazione Z $= -135$, che reimporta il cannone ``più
+        attaccato al pivot'', e rotazione $= 113$, che lo riallinea\footnote{La
+        trascrizione dice prima ``113 per la traslazione'' e poi si corregge: ``e 113
+        sulla rotazione''. L'asse della rotazione non è detto; trattandosi di
+        riallineare la torretta nel piano orizzontale, è con ogni probabilità la
+        rotazione attorno a Z (il \emph{yaw}).};
+  \item per il \textbf{pivot}: ``questa volta non serve modificare la traslazione'', ma
+        solo la rotazione, sempre 113.
+\end{itemize}
+Dopo il reimport il cannone ``sta sotto'' (la sua origine ora è nel fulcro, quindi
+nella posizione di prima risulta più basso) e va rimesso a posto; ma ora, ruotandolo, si
+alza e si abbassa nel modo giusto. ``E chiaramente poi questo farete più avanti, con dei
+Blueprint.'' Si salva tutto.
+
+\paragraph{Approfondimento: perché il pivot conta così tanto.} In Unreal ogni rotazione
+e ogni scala di un componente avvengono \textbf{attorno alla sua origine}, cioè al
+pivot della mesh. Un Blueprint di torretta, di solito, ha la base come componente
+radice, il supporto come figlio che ruota attorno a Z (il \emph{yaw}, per seguire il
+bersaglio a destra e a sinistra) e il cannone come figlio del supporto che ruota attorno
+a Y (il \emph{pitch}, su e giù). Per questo ogni pezzo deve avere l'origine esattamente
+nel punto in cui gira nella realtà: se l'origine è sbagliata, nessun nodo di rotazione
+potrà correggerla senza calcoli aggiuntivi. Il ``piccolo sistema di puntamento'' che
+Igor farà con questa torretta (con nodi come \emph{Find Look at Rotation}, che calcola
+la rotazione necessaria per guardare un punto) si appoggia interamente a questo lavoro
+preparatorio.
+
+% ---------------------------------------------------------------------
+\section{Mettere ordine: le cartelle}
+\label{ue3:sec:cartelle}
+
+Prima di importare le \textbf{texture}, ``per dare un po' di ordine'', Davide crea nel
+Content Browser una nuova cartella, \textbf{Torretta}, ci sposta dentro tutto
+(``muoviamo, così è un po' più pulito''), e dentro crea un'ulteriore cartella,
+\textbf{Texture}, in cui importare le texture della torretta. ``Questo non è
+obbligatorio, è solo una questione di \emph{best practice}, cioè è come il discorso
+delle Material Instance. Non vi vengo a trovare a casa se non lo fate, però vi risulta
+tutto più comodo.''
+
+% ---------------------------------------------------------------------
+\section{Lo Static Mesh Editor e le collisioni}
+\label{ue3:sec:sme}
+
+Con un doppio clic su una mesh si apre lo \textbf{Static Mesh Editor}: ``andiamoci a
+vedere effettivamente un po' qui dentro cosa possiamo vedere delle mesh''.
+
+\paragraph{Gli slot dei materiali.} A destra, nei \textbf{Material Slots}, queste mesh
+hanno \textbf{due slot}: ``non è la normalità''. (Una delle tre ne ha uno solo.) Il modo
+in cui la torretta è stata suddivisa fa sì che, per rendere bene i materiali, servano
+due slot: la base e il cannone condividono in parte il materiale del \textbf{pivot}. Nei
+due slot si inseriranno i materiali più avanti. Altre impostazioni (Davide accenna a
+quelle sui LOD e sulla \emph{Nanite}\footnote{La trascrizione dice ``per quanto riguarda
+la night'': la ricostruzione come Nanite, la tecnologia di geometria virtualizzata di
+Unreal Engine 5 che ha una sua sezione nei dettagli della mesh, è probabile ma non
+certa.}) non si vedono oggi.
+
+\paragraph{Le modalità di visualizzazione.} Dal menu della \emph{viewport} (la
+prospettiva ``non ci interessa'') si cambia la modalità: \textbf{Lit}, quella normale;
+\textbf{Unlit}, ``com'è il mio oggetto se non è colpito dalla luce?''; e
+\textbf{Wireframe}: ``vedete quello che dicevamo prima?'' Vertici, facce ed \emph{edge}
+della mesh, che si potrebbero modificare con la \textbf{Modeling Mode} (``se avanzerà
+il tempo con le lezioni, sarebbe carino vederla più avanti''). Ci sono anche
+\textbf{Lighting Only}, le \textbf{Reflections} e altre ancora. Dal menu \textbf{Show}
+si possono mostrare i \textbf{vertici}: ``dove sono i vertici di questo oggetto?''
+
+\paragraph{Simple e complex.} Un'altra cosa utile ``da un punto di vista di gameplay''
+sono le \textbf{collisioni}. Dal menu Show si attiva la \textbf{Simple Collision}: ``queste
+sono le collisioni del mio oggetto''. In scena, il \emph{character} interagirà con
+queste: ci salterà sopra, o lo dovrà scavalcare. Ma oltre alle \textbf{simple
+collision} ci sono le \textbf{complex collision}. La differenza:
+\begin{itemize}
+  \item le \textbf{simple collision} sono forme che si possono posizionare a mano,
+        anche da qui, e rifare da capo;
+  \item le \textbf{complex collision} usano la struttura in vertici della mesh stessa
+        come collisione. ``È qualcosa che è molto più pesante rispetto a una collisione
+        semplice, e torna utile solo in alcuni casi specifici.''
+\end{itemize}
+
+\paragraph{Modificare le collisioni.} La collisione semplice si può selezionare,
+spostare, anche eliminare; e se ne possono \textbf{aggiungere} altre: una
+\textbf{sfera}, di cui si decide la grandezza; una \textbf{capsula}, che ``è
+tendenzialmente la collisione che usano i vostri \emph{character}'': il personaggio di
+solito non ha una collisione super precisa, ``è un capsulone'', a meno che non si voglia
+davvero il contrario; una \textbf{box}. E una box, per questa mesh, ``è più ottimizzata
+rispetto alla collisione che questa aveva di base'': all'atto pratico fa la stessa cosa
+``con molti meno vertici''. Su una singola mesh cambia poco; su molte mesh aiuta le
+prestazioni. Ci sono anche collisioni più complesse, ma ``idealmente, il modo migliore
+per fare delle simple collision è letteralmente prendere delle \textbf{forme base}'',
+magari più d'una, ``piuttosto che avere tanti vertici sulla stessa collisione''.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.3cm}p{4.4cm}p{5.3cm}@{}}
+\toprule
+\textbf{Collisione} & \textbf{Com'è fatta} & \textbf{Quando} \\
+\midrule
+Box & un parallelepipedo & oggetti squadrati; spesso basta anche per oggetti più
+  complessi, ed è la più leggera \\
+Sphere & una sfera & oggetti tondi, palle \\
+Capsule & un cilindro con due semisfere & i \emph{character}: ``un capsulone'' \\
+Convex (più forme) & poliedri convessi, magari più d'uno & quando una forma sola non
+  basta; meglio poche forme base che tanti vertici \\
+Complex & i triangoli della mesh stessa & casi specifici: precisione massima, costo
+  molto più alto \\
+\bottomrule
+\end{tabular}
+\caption{Le collisioni di una static mesh viste nello Static Mesh Editor. Le prime
+quattro sono \emph{simple collision}, che si aggiungono e si modificano dal menu
+Collision dell'editor; l'ultima è la \emph{complex collision}.}
+\label{ue3:tab:collisioni}
+\end{table}
+
+\paragraph{Approfondimento: chi usa quale collisione.} Unreal tiene le due collisioni
+separate perché le usa per cose diverse. La \textbf{simple} è quella della
+\textbf{fisica}: la pallina della seconda lezione che rotola sulla piattaforma, il
+\emph{character} che cammina e salta, gli oggetti che cadono; i calcoli fisici su forme
+semplici sono molto più veloci. La \textbf{complex} si usa soprattutto per le
+\textbf{interrogazioni} precise, come un \emph{line trace} (un ``raggio'' lanciato per
+sapere che cosa colpisce un proiettile o che cosa sta guardando il giocatore), quando
+la precisione al triangolo serve davvero. Nei dettagli della mesh, il campo
+\emph{Collision Complexity} decide come combinarle; l'opzione \emph{Use Complex
+Collision As Simple} usa i triangoli anche per la fisica, ed è comoda per oggetti
+statici di forma strana, ma va usata con giudizio, per il costo di cui parla Davide.
+
+% ---------------------------------------------------------------------
+\section{Raggruppare e fondere: Merge Actors}
+\label{ue3:sec:merge}
+
+``Se ad esempio vogliamo avere tutti e tre gli oggetti assieme'', o semplicemente
+spostarli insieme, ci sono due strade.
+
+\paragraph{Raggruppare.} Si selezionano tutti e tre e li si \textbf{raggruppa} con
+\textbf{Ctrl+G}; si spostano insieme; con \textbf{Shift+G} si toglie il gruppo.
+
+\paragraph{Fondere.} Oppure li si \textbf{fonde} (\emph{merge}). Si evidenziano i tre
+pezzi in scena, si va nel menu \textbf{Actor} in alto e si sceglie \textbf{Merge
+Actors}. Unreal chiede dove salvare il nuovo oggetto e con che nome (per esempio
+\textbf{SM\_Turret}\footnote{Nella trascrizione ``smTourette''.}), e crea una
+\textbf{nuova mesh}, ``che è semplicemente la fusione delle tre mesh precedenti'': una
+somma, un \emph{merge}, appunto.
+
+\paragraph{Il merge, di nuovo.} Più tardi uno studente dice di essersi perso come si fa
+il merge, e Davide lo rifà con calma. I tre oggetti (il cannone, la base e il pivot)
+sono in scena. Con il \textbf{tasto destro} su di essi ci sono delle opzioni, ``però
+queste sono opzioni limitate''. Per averle tutte si usa il menu \textbf{Actor} in alto:
+mostra gran parte delle stesse opzioni, ma in basso, nella sezione degli strumenti di
+Unreal Engine, c'è \textbf{Merge Actors}. Al merge Unreal chiede dove salvare e con che
+nome, e ``ti fonde i tre oggetti''. Nello stesso menu c'è anche \textbf{Chaos}, che
+``serve per gli oggetti distruttibili'': cose più avanzate, che probabilmente non si
+vedranno nel corso, ma da approfondire ``se vi capiterà di voler mettere distruttibilità
+all'interno del vostro gioco''.
+
+\paragraph{Approfondimento: gruppo, merge o Blueprint?} Le tre soluzioni non sono
+equivalenti. Il \textbf{gruppo} è solo una comodità dell'editor: gli actor restano
+separati, e in gioco non cambia nulla. Il \textbf{merge} crea una mesh nuova, una sola:
+meno oggetti da disegnare (utile per le prestazioni, per esempio con tanti pezzi di
+arredo statici), ma i pezzi \textbf{non si possono più muovere uno rispetto
+all'altro}. Per la torretta di Igor, che deve ruotare il supporto e alzare la canna, il
+merge è quindi la scelta sbagliata: serve un \textbf{Blueprint} con i tre pezzi come
+\textbf{componenti} separati, imparentati tra loro, come si è visto nella seconda
+lezione. Il merge della lezione è una dimostrazione dello strumento, e serve anche a
+rispondere alla domanda sui materiali (sezione~\ref{ue3:sec:domande}).
+
+% ---------------------------------------------------------------------
+\section{I materiali della torretta}
+\label{ue3:sec:matturret}
+
+``Ora abbiamo importato le texture. Creiamoci i materiali di queste torrette.'' Tre
+materiali, uno per pezzo: \textbf{M\_Turret\_Base}, \textbf{M\_Turret\_Pivot} e
+\textbf{M\_Turret\_Cannon}. Si potrebbero fare molto elaborati, ``ma partiamo
+semplicemente andando a utilizzare le texture che ci sono state date''.
+
+\paragraph{Quattro Texture Sample.} Nel materiale della base Davide prende \textbf{quattro
+Texture Sample} e ci mette le texture della base: \textbf{Base Color},
+\textbf{Metallic}, \textbf{Roughness} e \textbf{Normal} (Turret Base Color, Turret Base
+Metallic, Turret Base Roughness, Turret Base Normal). Poi le collega ai pin
+corrispondenti del nodo risultante: il colore al Base Color, la Metallic al Metallic, la
+Roughness alla Roughness, la Normal alla Normal (figura~\ref{ue3:fig:turret}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  ue3node/.style={draw, thick, rounded corners=4pt, align=center,
+                  minimum height=0.85cm, text width=3.6cm},
+  ue3col/.style={-{Stealth[length=2mm]}, thick, blue!60!black},
+  ue3flt/.style={-{Stealth[length=2mm]}, thick, green!50!black}
+]
+  \node[ue3node, fill=orange!20] (c) at (0,2.1) {\textbf{Texture Sample}\\
+    \footnotesize T\_Turret\_Base\_Color};
+  \node[ue3node, fill=gray!15] (m) at (0,0.7) {\textbf{Texture Sample}\\
+    \footnotesize T\_Turret\_Base\_Metallic};
+  \node[ue3node, fill=gray!15] (r) at (0,-0.7) {\textbf{Texture Sample}\\
+    \footnotesize T\_Turret\_Base\_Roughness};
+  \node[ue3node, fill=blue!15] (n) at (0,-2.1) {\textbf{Texture Sample}\\
+    \footnotesize T\_Turret\_Base\_Normal};
+  \node[draw, very thick, rounded corners=4pt, fill=blue!6, minimum width=3.0cm,
+    minimum height=5.2cm] (res) at (6.2,0) {};
+  \node[font=\small\bfseries] at (6.2,2.3) {M\_Turret\_Base};
+  \foreach \lab/\y in {Base Color/2.1, Metallic/0.7, Specular/0.0, Roughness/-0.7,
+                       Emissive Color/-1.4, Normal/-2.1}
+    \node[font=\footnotesize, anchor=west] at (4.85,\y) {\lab};
+  \draw[ue3col] (c.east) -- (4.8,2.1);
+  \draw[ue3flt] (m.east) -- node[above, font=\scriptsize]{R} (4.8,0.7);
+  \draw[ue3flt] (r.east) -- node[above, font=\scriptsize]{R} (4.8,-0.7);
+  \draw[ue3col] (n.east) -- (4.8,-2.1);
+\end{tikzpicture}
+\caption{Il materiale della base della torretta, fatto a mano: quattro Texture Sample,
+quattro pin. Metallic e Roughness sono mappe in bianco e nero, e basta un canale (per
+esempio R). M\_Turret\_Pivot e M\_Turret\_Cannon sono identici, con le loro texture.
+Ricostruzione dalla dimostrazione; i nomi esatti dei file sono indicativi.}
+\label{ue3:fig:turret}
+\end{figure}
+
+\paragraph{Le preview.} ``Mi ero dimenticato di farvi vedere una cosa.'' Nella
+\emph{preview} del materiale si può scegliere la forma: il \textbf{cilindro}, la
+\textbf{sfera}, il \textbf{piano}, il \textbf{cubo} e il \textbf{custom}. Con il custom,
+se si seleziona una mesh nel Content Browser e si clicca il pulsante, la preview mostra
+\textbf{quella mesh} con il materiale applicato. La prima volta non la mostra: ``sta
+compilando''. Poi compare (Davide aveva collegato una texture ``dalla parte sbagliata'',
+e la sistema).
+
+\paragraph{Gli slot.} Il materiale è salvato e compilato. Sulla mesh della torretta ci
+sono i \textbf{due slot}: in uno c'è M\_Turret\_Base, ma ``per come è stata strutturata
+la torretta'' nell'altro va il materiale del \textbf{pivot}. ``Sta rallentando
+veramente tanto il PC.''
+
+\paragraph{Un grafico, un engine.} Davide si ferma su che cosa si è fatto: ``qui non
+abbiamo fatto altro che utilizzare le mesh che ci sono state fornite da un grafico''.
+Idealmente un grafico, in un software a parte, ha realizzato la mesh e le texture, e ce
+le ha passate; noi le abbiamo inserite. Si potrebbe lavorare ancora sull'estetica della
+torretta modificando i materiali, ``tuttavia, in questo caso non è necessario''.
+
+\paragraph{Il pivot e il cannone, più furbi.} Per il materiale del pivot Davide è ``un
+po' più furbo'': cerca la texture \emph{Turret Pivot Color}, e le altre le copia da lì,
+perché nella lista ``stanno direttamente dopo''. Collega Metallic, Roughness e Normal,
+salva, ``e abbiamo anche il materiale del nostro pivot''. Poi lo stesso per il cannone:
+la texture \emph{Cannon Color}, \textbf{Ctrl+C}, \textbf{Ctrl+V}. Lì Davide ricorda le
+scorciatoie classiche: ``tutti i classici shortcut di Control'', Ctrl+C, Ctrl+V, Ctrl+Z,
+Ctrl+Y, Ctrl+A, ``sono applicabili anche a Unreal nella maggior parte dei casi''.
+
+\paragraph{Salvate spesso.} Uno studente chiede perché il suo non si è applicato:
+``Salvalo.'' E Davide ne fa una regola: ``puntualmente mi capita di vedere gente che sta
+lavorando a qualcosa, non salva per qualche motivo, Unreal crasha e perde tipo tutto il
+lavoro che stava facendo. E quindi salvate spesso.''
+
+\paragraph{La torretta finita.} Nei due slot vanno il pivot e il cannone. ``Oh, eccoci
+qua. Bello lucido.'' Salvato tutto, la torretta ha i suoi materiali.
+
+\paragraph{Ritoccare il colore con un Lerp.} ``Se volete che la torretta sia meno
+lucida, o che sia meno nitido l'arancione'', si può intervenire sui singoli materiali.
+Davide improvvisa sul cannone: non è sicuro di volere il colore ``così netto'', quindi
+prende un \textbf{nero} e un \textbf{Lerp}, collega il nero e la texture del colore alle
+due entrate e mette nell'alfa un parametro con cui decidere ``quanto si deve vedere'',
+per esempio 0,6. Si può convertire in parametro, creare una \textbf{Material
+Instance}, e regolarlo da lì. Al posto del nero si può mettere un altro colore, un
+verde: ``viene un po' più verdastra, è troppo verde'', e con l'alfa a 0,8 viene ``questo
+verde mezzo, insomma, un po' scuro, un po' cromato''. ``Qui chiaramente sto improvvisando
+cose, ma cose anche stupide. Ma nel momento in cui voi avete un'idea un po' più chiara,
+un po' più specifica di quello che volete, potete andare a fare un po' più di cose.''
+
+\paragraph{Approfondimento: lo stesso lavoro con un master material.} I tre materiali
+della torretta hanno lo stesso identico grafo: cambiano solo le texture. È il caso da
+manuale per le Material Instance della prima parte della lezione: un solo master
+material (per esempio \texttt{M\_Turret}) con quattro Texture Parameter (colore,
+metallic, roughness, normal) e magari un Lerp per la tinta, e tre istanze
+(\texttt{MI\_Turret\_Base}, \texttt{MI\_Turret\_Pivot}, \texttt{MI\_Turret\_Cannon}) che
+impostano le texture di ciascun pezzo. Un solo shader da compilare, e il ritocco
+verdastro del cannone diventa una casella da regolare nell'istanza. Se le texture
+fossero state importate insieme alle mesh (Import Materials e Import Textures), Unreal
+avrebbe creato da solo i materiali, uno per slot, con un grafo simile a quello della
+figura~\ref{ue3:fig:turret}.
+
+% ---------------------------------------------------------------------
+\section{Le domande: il Reimport e il merge}
+\label{ue3:sec:domande}
+
+``Ora tutto chiaro il discorso dell'import e dei materiali?'' Due domande.
+
+\paragraph{Perché il Reimport con la Z?} Una studentessa non ha capito il reimport
+modificando la Z. Davide riapre il cannone. Il reimport è servito a \textbf{modificare la
+mesh} alla radice. L'oggetto importato, modellato da qualcun altro, era fatto in un
+certo modo, e non è un problema in sé: lo si può abbassare e girare a mano, in scena.
+``Però poi, tutte le volte che io prendo e rimetto in scena l'oggetto, l'oggetto sarà
+sempre posizionato in quel modo e ruotato in quel modo.'' Il reimport invece ``modifica
+proprio alla radice il modo in cui funziona l'oggetto''. E il problema principale non
+era la rotazione (``so che l'angolo è 113, allora lo rimodifico''), ma il
+\textbf{pivot}, ``in una posizione scomoda'': il reimport è un modo per spostarlo.
+
+\paragraph{La Modeling Mode.} ``Non è l'unico modo.'' Davide apre la \textbf{Modeling
+Mode}, cerca lo strumento del \textbf{pivot}, e mostra che lo si può mettere al centro,
+a sinistra, a destra, oppure ``nel punto specifico che dico io: lo prendo e me lo
+sposto''. Ma questa è ``una soluzione che hanno aggiunto con Unreal Engine 5'': prima la
+Modeling Mode non c'era, e in Unreal Engine 4 reimportare era il modo comodo per farlo
+``senza avere bisogno di rimodellare l'oggetto a posteriori''. ``Fai la stessa cosa,
+semplicemente non hai fatto un'operazione extra.''
+
+\paragraph{Una prova.} Davide stesso è curioso: se si reimporta di nuovo con $-135$ e
+113? Il reimport \textbf{sovrascrive} quello che c'era prima, ma il cannone in scena
+conserva la rotazione che gli era stata data a mano. Davide lo rimette dove stava (``io
+sto facendo a cazzotti da tutta la lezione con la finestra di Zoom, se non si fosse
+capito'').
+
+\paragraph{Che cosa succede ai materiali con il merge?} Era la domanda arrivata in chat
+durante la costruzione dei materiali: se faccio il merge e i pezzi della torretta hanno
+texture diverse? Davide prova: seleziona i tre oggetti, \textbf{Actor}, \textbf{Merge
+Actors}, nome \emph{Turret}, salva. Il risultato è un oggetto con \textbf{tre slot} per i
+materiali: lo slot 0 è tutta la parte del cannone, lo slot 1 il pivot ``e tutta questa
+zona qui'', e così via. Se in uno slot si mette un materiale vuoto, ``diventa tutto
+nero'': ``vedete, tutta questa zona adesso viene influenzata da quel materiale lì''.
+Risposta: con il merge l'actor viene fuso, e i materiali vengono \textbf{riposizionati
+negli slot} della nuova mesh.
+
+% ---------------------------------------------------------------------
+\section{Lo stretch, lo z-fighting e i materiali World Aligned}
+\label{ue3:sec:world}
+
+``Mi è venuto in mente un'ultima cosa che vi potrei far vedere per quanto riguarda i
+materiali, e poi vi vorrei far fare una cosina.'' Manca una mezz'oretta, ``visto che
+Igor vi ha fatto fare delle cose, ho visto che siete molto partecipi. Quindi vorrei
+fomentare questa cosa.''
+
+\paragraph{M\_Test.} Davide ricrea il materiale della corteccia, cancellato per sbaglio:
+\textbf{M\_Test}, con due Texture Sample (Bark e la sua Normal) e un Texture
+Coordinate, ``proprio la roba più facile del mondo'', con il tiling a 10.
+
+\paragraph{Ingrandire e stirare.} ``Ora vediamo se abbiamo capito come funziona tutto
+quanto.'' I materiali sono collegati alle \textbf{UV} di un oggetto. Quindi se
+l'oggetto si \textbf{ingrandisce}, al materiale ``non dovrebbe succedere granché'': si
+ingrandisce anche lui (``la risoluzione non ne giova particolarmente''). E se l'oggetto
+si \textbf{stira} (\emph{stretch}), tirandolo verso destra? ``Credo si stira anche
+lui.'' Esatto: il materiale si allunga. ``In alcuni casi non è neanche particolarmente
+brutto'', ma la corteccia ``non sembra più corteccia''; e tirando di più, ``così è
+brutto''.
+
+\paragraph{Il pavimento grande.} Se si vuole fare un pavimento per una zona molto
+ampia, dover pensare a questo ``può essere una noia'': per non stirare il materiale si
+dovrebbero fare tante copie dello stesso pezzo, una attaccata all'altra, ``che
+tendenzialmente non è quello che voglio'', perché è scomodo.
+
+\paragraph{Una digressione: lo z-fighting.} ``Visto che è una domanda che arriverà,
+anticipo'': se due piani si trovano \textbf{nella stessa posizione}, ``clippano'': la
+superficie sfarfalla a chiazze, perché l'engine ``non sa se utilizzare il materiale
+dell'oggetto a destra o dell'oggetto a sinistra''. Le soluzioni: separarli davvero,
+oppure spostarne uno di pochissimo in \textbf{Z}, per esempio di 0,1: ``è
+impercettibile, non si nota, però uno è leggermente più sopra rispetto all'altro'', e il
+problema sparisce.
+
+\paragraph{Allineato al mondo.} ``C'è un modo per far sì che il mio materiale non si
+stiri quando stiro l'oggetto? Chiaramente sì, perché se no non avrei fatto questa
+domanda.'' Bisogna fare un materiale che non è allineato con le coordinate
+dell'oggetto, ma con quelle del \textbf{mondo}. Davide lo spiega con il \emph{gizmo}
+di spostamento: un oggetto ruotato si può muovere lungo gli assi del mondo o lungo i
+suoi assi locali, e il pulsante in alto passa dall'uno all'altro. ``Più o meno il
+discorso è lo stesso'': nel caso del materiale non si parla di assi, ma di UV.
+
+\paragraph{I nodi World Aligned.} Davide copia il materiale (\textbf{M\_Test1}) e usa
+due nodi, \textbf{World Aligned Texture} e \textbf{World Aligned Normal}. Non hanno
+scorciatoie: si cercano per nome. Hanno ``un sacco di parametri'', ma per ora ne servono
+due: \textbf{Texture Object} e \textbf{Texture Size}. World Aligned Texture va nel
+\textbf{Base Color}, World Aligned Normal nella \textbf{Normal}, usando l'uscita
+\textbf{XYZ}, ``perché almeno prendo tutti gli assi'': il materiale è allineato al
+mondo su tutti e tre.
+
+\paragraph{Texture Size e Texture Object.} Il \textbf{Texture Size}, un vettore a tre
+valori, ``fa la stessa cosa del Texture Coordinate'': regola la grandezza della
+ripetizione. Perché allora non tenere il Texture Coordinate sulle UV del Texture
+Sample? Perché i nodi World Aligned \textbf{non prendono} un Texture Sample: vogliono un
+\textbf{Texture Object}. Si converte: tasto destro sul Texture Sample, \textbf{Convert to
+Texture Object}. Il Texture Object ``è un oggetto molto più semplice'': non ha
+ingressi, ha una sola uscita, niente RGB; ``è molto più limitato in quello che può
+fare'', ma è il ``messaggio'' che serve ai nodi World Aligned.
+
+\paragraph{La prova.} Davide prova diversi valori di Texture Size (1, 2, 10) per avvicinarsi
+al risultato dell'altro materiale, con qualche esitazione su quale sia ``troppo'' e quale
+``troppo poco'' (``è proprio piccola la texture, allora''), e applica il nuovo
+materiale a un secondo oggetto. Poi \textbf{stira} entrambi: il primo si stira; il
+secondo ``semplicemente genera nuove texture'', rimane orientato con il mondo,
+``rimane sempre della stessa proporzione''.
+
+\paragraph{Dov'è la fregatura.} ``Se questo rimane sempre proporzionato anche quando
+stiriamo le cose, perché non dovremmo avere tutti i materiali World Aligned? Dov'è la
+fregatura?'' Eccola: essendo allineato al mondo, se l'oggetto si \textbf{muove} o
+\textbf{ruota}, il materiale \textbf{resta fermo}. Una \textbf{porta} con un materiale
+normale si apre e il materiale resta attaccato alla porta; una porta con un materiale
+World Aligned si apre e ``il materiale sembra scorrere sulla porta'', ``come se il
+materiale fosse animato''. ``Ci siamo? Ho rotto le palle? Datemi un feedback.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small]
+  % materiale UV: stiramento
+  \node[font=\footnotesize\bfseries] at (2.6,2.6) {materiale normale (UV)};
+  \draw[thick, fill=brown!20] (0,1.0) rectangle (1.2,2.2);
+  \foreach \i in {0.2,0.6,1.0} \draw[brown!70!black, thick] (\i,1.15) -- (\i,2.05);
+  \draw[-{Stealth[length=2mm]}, thick] (1.5,1.6) -- (2.1,1.6);
+  \draw[thick, fill=brown!20] (2.4,1.0) rectangle (5.4,2.2);
+  \foreach \i in {0.5,1.5,2.5} \draw[brown!70!black, thick] (2.4+\i,1.15) --
+    (2.4+\i,2.05);
+  \node[font=\footnotesize, align=center] at (2.7,0.55) {stirato: le venature si
+    allargano};
+  % materiale world aligned
+  \begin{scope}[shift={(6.6,0)}]
+    \node[font=\footnotesize\bfseries] at (2.6,2.6) {materiale World Aligned};
+    \draw[thick, fill=brown!20] (0,1.0) rectangle (1.2,2.2);
+    \foreach \i in {0.2,0.6,1.0} \draw[brown!70!black, thick] (\i,1.15) -- (\i,2.05);
+    \draw[-{Stealth[length=2mm]}, thick] (1.5,1.6) -- (2.1,1.6);
+    \draw[thick, fill=brown!20] (2.4,1.0) rectangle (5.4,2.2);
+    \foreach \i in {0.2,0.6,...,3.0} \draw[brown!70!black, thick] (2.4+\i,1.15) --
+      (2.4+\i,2.05);
+    \node[font=\footnotesize, align=center] at (2.7,0.55) {stirato: ``genera nuove
+      texture'', stessa scala};
+  \end{scope}
+  % la porta
+  \node[font=\footnotesize, align=center, text width=12.5cm] at (5.9,-0.3)
+    {la fregatura: se l'oggetto si muove o ruota (una porta che si apre), il materiale
+    World Aligned resta fermo nel mondo e ``sembra scorrere'' sull'oggetto};
+\end{tikzpicture}
+\caption{Materiale legato alle UV e materiale World Aligned a confronto. Il primo
+segue l'oggetto e si deforma con lui; il secondo non si deforma, ma non segue
+l'oggetto quando si muove. Va bene per pavimenti, muri e rocce statici; non per porte,
+veicoli o la torretta.}
+\label{ue3:fig:world}
+\end{figure}
+
+\paragraph{Le linee nere.} Una studentessa vede delle \textbf{linee nere} al confine tra
+una ripetizione della texture e l'altra, sul pavimento. Davide guarda il suo grafo:
+stessa texture, Bark, ma ha collegato l'uscita \textbf{XY} invece di \textbf{XYZ}. ``In
+quel modo lui aveva due assi che erano allineati col mondo, e l'altro no'', e il
+risultato era diverso. ``Ok, grazie.''
+
+\paragraph{Approfondimento: come funziona un World Aligned.} Il nodo World Aligned
+Texture, una Material Function del motore, non usa le UV della mesh: per ogni pixel
+prende la sua \textbf{posizione nel mondo} e la usa come coordinata della texture. Lo fa
+tre volte, proiettando la texture lungo i tre assi (dall'alto, di lato, di fronte), e
+mescola le tre proiezioni secondo la direzione della superficie: è la tecnica detta
+\textbf{triplanar mapping}. L'uscita XY usa una sola proiezione (dall'alto, buona per i
+pavimenti), l'uscita XYZ le mescola tutte; per questo, su un oggetto con facce in tutte
+le direzioni, con XY le pareti laterali ricevono una texture ``stirata'' a strisce, che
+può dare proprio le linee scure viste dalla studentessa. Il \textbf{Texture Size} è
+espresso in \textbf{unità del mondo}, cioè in centimetri: è la grandezza di una
+ripetizione della texture. Funziona quindi al contrario del tiling: un tiling più alto
+fa ripetere di più la texture, un Texture Size più alto la fa ripetere di meno (una
+texture di 100 si ripete ogni metro, una di 10 ogni dieci centimetri). È la ragione
+delle esitazioni di Davide su quale valore fosse ``troppo''. Il costo: tre letture della
+texture invece di una, quindi un materiale un po' più pesante.
+
+% ---------------------------------------------------------------------
+\section{L'esercizio della lava, il nodo Noise e la chiusura}
+\label{ue3:sec:lava}
+
+``Allora, ci siamo visti un po' di cose, fatto un miscuglione di cose per quanto riguarda
+materiali, texture e import delle mesh.'' Nessuna domanda: ``sembra tutto a posto''.
+
+\paragraph{La consegna.} Per esercitarsi con i materiali, e magari scoprire qualche nodo
+non usato a lezione (il nodo \textbf{Noise}, qualche \textbf{maschera}), Davide propone
+una prova di una decina di minuti, da continuare poi a casa come le cose di Igor:
+\textbf{un materiale di lava}. Di che componenti avrà bisogno? Deve \textbf{muoversi}
+un po', quindi bisognerà gestire la velocità del \textbf{Panner}, ``a meno che non vi
+cercate proprio la texture della lava''. Ma la richiesta è di improvvisare: ``provate a
+vedere cosa riuscite a combinare andando a fare delle operazioni fra colori e fra altre
+texture'', con un po' di movimento, un \textbf{Base Color}, ``ma anche un
+\textbf{Emissive}, perché la lava comunque deve emettere luce''.
+
+\paragraph{Il ripasso dei nodi.} Una studentessa non ricorda il nome della funzione
+``che abbiamo usato per collegare rosso e blu'': il Lerp. Davide ricondivide lo schermo
+e fa il riepilogo dei nodi della giornata: la \textbf{costante}, il \textbf{colore}, la
+\textbf{texture}, il \textbf{nodo risultante}, il \textbf{Texture Coordinate}, i
+\textbf{World Aligned}, le \textbf{operazioni} (con il consiglio sulla moltiplicazione
+visto nella sezione~\ref{ue3:sec:costanti}), il \textbf{Panner}, il \textbf{Lerp}.
+Divisione e sottrazione servono soprattutto per gli effetti speciali, e Davide vorrebbe
+fare una lezione su \textbf{Niagara}, ``il tool che usa Unreal per fare gli effetti
+speciali'', se ci sarà tempo.
+
+\paragraph{Le prossime lezioni con Davide.} Davide annuncia come saranno le sue
+lezioni finali: ci sarà ``una lezione che sarà un'esercitazione intera'' in cui si
+proverà a fare dei \textbf{livelli}, e chiederà agli studenti di condividere lo schermo
+e di \emph{streamare} a turno (``se per voi è un problema, magari lo facciamo solo con le
+persone per cui non è un problema'', e lo dirà in anticipo). Per esempio, ``un livello
+\textbf{platform}'', con le interazioni che si faranno nelle lezioni di Igor e quello che
+si vedrà insieme per il \emph{level design}.
+
+\paragraph{Il nodo Noise.} Un nodo ``un po' più complicato'', per chi vuole provare: il
+\textbf{Noise}, che ``serve per simulare un \emph{noise}'': il \emph{Voronoi}, il
+\emph{White Noise}, un'alternanza di bianco e nero ``che si usa molto spesso per fare
+delle distorsioni''. Ha molti parametri: la scala del \emph{noise}, e la possibilità di
+filtrarlo con dei vettori o con delle mappe. ``Potete smanettarci un pochino.''
+
+\paragraph{Lo stream della studentessa.} ``C'è qualcuno che, nel mentre sta provando a
+fare qualcosa, vuole streamare in questi ultimi cinque minuti?'' Una studentessa ha
+provato, ma non riesce a trasformare la texture in World Aligned: è perché usa un
+Texture Sample, e serviva un Texture Object. ``Prova a non usare il World Aligned, e
+farlo così, diciamo, semplice.'' Senza World Aligned le viene ``questa cosa'', sempre
+con il Bark. Davide la guida:
+\begin{itemize}
+  \item nella lava servono ``delle zone più scure e delle zone più luminose'': quindi
+        un \textbf{Lerp} tra un \textbf{colore} e un \textbf{nero}, gestito da un'alfa
+        che sia una texture con dei bianchi e dei neri ``posizionati come vuoi'', da
+        mandare nell'\textbf{Emissive Color};
+  \item l'alfa va cercata tra le texture del progetto, ``qualcosa per dare un effetto
+        tipo di distorsione''; le \textbf{Normal}, invece, ``lasciale perdere'': per
+        un'alfa si usano le Diffuse o le mappe come Specular e Roughness;
+  \item se una texture fa da alfa, nelle entrate del Lerp ci vogliono \textbf{due
+        colori}, ``uno che sia molto scuro, uno che sia più chiaro''; ricordando che
+        l'alfa ``prende i bianchi e i neri e dice: nei bianchi vai più verso B, nei neri
+        vai più verso A'';
+  \item il risultato va ``forse più nell'Emissive che non nel Base Color'', perché la
+        lava la si vuole ``infuocata, accesa, luccicante''; il Base Color si può anche
+        non usare, o usarlo con una texture adatta (``il Bark, per come è fatto, forse
+        non è proprio la texture più adatta per fare una lava'');
+  \item nell'Emissive si può \textbf{moltiplicare} il risultato, in modo che le zone
+        accese siano molto luminose.
+\end{itemize}
+La studentessa nota che il nero, nell'Emissive, quasi non si vede: ``esatto'', il nero
+non emette niente. E usandolo come colore ``non si vede molto'', perché il Bark come alfa
+``è molto bianco'', e finisce per scurire un po' il tutto. ``È comunque una cosa
+complicata, quindi vedete effettivamente se riuscite a tirar fuori qualcosa.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  ue3node/.style={draw, thick, rounded corners=4pt, align=center,
+                  minimum height=0.85cm},
+  ue3uv/.style={-{Stealth[length=2mm]}, thick, red!60!black},
+  ue3flt/.style={-{Stealth[length=2mm]}, thick, green!50!black},
+  ue3col/.style={-{Stealth[length=2mm]}, thick, blue!60!black}
+]
+  \node[ue3node, fill=red!12, text width=1.7cm] (tc) at (0,0) {\textbf{TexCoord}};
+  \node[ue3node, fill=gray!10, text width=1.9cm] (pan) at (2.6,0) {\textbf{Panner}\\
+    \footnotesize Speed 0,05; 0,02};
+  \node[ue3node, fill=gray!15, text width=2.3cm] (msk) at (5.6,0)
+    {\textbf{Texture Sample}\\\footnotesize maschera in b/n\\\footnotesize (o un
+    Noise)};
+  \node[ue3node, fill=black!70, text=white, text width=1.9cm] (dark) at (5.6,2.0)
+    {\textbf{scuro}\\\footnotesize quasi nero};
+  \node[ue3node, fill=orange!60, text width=1.9cm] (hot) at (5.6,-2.0)
+    {\textbf{chiaro}\\\footnotesize arancione};
+  \node[ue3node, fill=gray!10, text width=1.3cm, minimum height=2.0cm] (lerp)
+    at (8.6,0) {\textbf{Lerp}\\[3pt]\footnotesize A\\\footnotesize B\\
+    \footnotesize Alpha};
+  \node[ue3node, fill=green!8, text width=1.6cm] (k) at (8.6,-2.4)
+    {\footnotesize intensità\\\footnotesize (parametro)};
+  \node[ue3node, fill=gray!10, text width=1.4cm] (mul) at (10.9,-0.6)
+    {\textbf{Multiply}};
+  \node[ue3node, fill=blue!6, text width=2.0cm, minimum height=1.6cm] (res)
+    at (13.4,0) {\footnotesize Base Color\\[6pt]\footnotesize\textbf{Emissive}};
+  \draw[ue3uv] (tc) -- (pan);
+  \draw[ue3uv] (pan) -- node[above, font=\scriptsize]{UVs} (msk);
+  \draw[ue3col] (dark.east) -- ++(0.7,0) |- ([yshift=5mm]lerp.west);
+  \draw[ue3col] (hot.east) -- ++(0.9,0) |- ([yshift=0mm]lerp.west);
+  \draw[ue3flt] (msk.east) -- ++(0.35,0) |- ([yshift=-5mm]lerp.west);
+  \draw[ue3col] (lerp.east) -- ++(0.3,0) |- ([yshift=2mm]mul.west);
+  \draw[ue3flt] (k.east) -- ++(0.5,0) |- ([yshift=-2mm]mul.west);
+  \draw[ue3col] (mul.east) -- ++(0.4,0) |- ([yshift=-3mm]res.west);
+  \draw[ue3col, dashed] (lerp.north) |- ([yshift=4mm]res.west);
+\end{tikzpicture}
+\caption{Una possibile soluzione dell'esercizio della lava, costruita con i soli nodi
+della lezione e con i consigli dati alla studentessa: una maschera in bianco e nero che
+scorre con il Panner fa da alfa a un Lerp tra uno scuro e un arancione; il risultato,
+moltiplicato, va nell'Emissive (e, tratteggiato, eventualmente anche nel Base Color).
+Non è un grafo mostrato a lezione: i valori sono indicativi.}
+\label{ue3:fig:lava}
+\end{figure}
+
+\paragraph{La chiusura.} ``Vabbè, io in realtà adesso ho gettato questa bomba, e penso
+che vi lascerò fare. Prendetevi tutto il tempo che volete, nessuna pressione.'' Davide
+rivedrà la classe ``a luglio, probabilmente'', per le ultime quattro o cinque lezioni del
+corso, sul \textbf{level design} e sulla \textbf{creazione di livelli}. ``Si sono fatte
+le 7.'' ``Direi che è stato un piacere, mi sembrate tutti abbastanza interessati,
+sicuramente belli, belli, belli attivi.'' E forse ci si rivedrà prima, ``se Igor ha
+bisogno di un'altra sostituzione''. ``Ciao a tutti, arrivederci.''
+
+\paragraph{Approfondimento: una lava più convincente.} Partendo dallo schema della
+figura~\ref{ue3:fig:lava}, tre accorgimenti, tutti con nodi già visti, rendono la lava
+molto più viva. Primo: \textbf{due Panner} con velocità e tiling diversi sulla stessa
+maschera, sommati o moltiplicati, così che il movimento non si ripeta mai uguale (lo
+stesso trucco dell'acqua). Secondo: un Multiply sull'Emissive con valori ben oltre 1
+(10, 20), perché solo così il \emph{bloom} fa ``bruciare'' le zone calde, come nel
+materiale con il Glow Intensity. Terzo: usare la \textbf{stessa} maschera per la
+\textbf{Roughness}, con un Lerp tra 0,3 (la lava liquida, lucida) e 1 (la crosta
+raffreddata, opaca): il materiale cambia così non solo colore ma anche superficie, che è
+il senso del PBR. Il nodo Noise di Davide può sostituire la texture della maschera, ma è
+calcolato a ogni pixel e costa più di una texture: per un oggetto grande in scena, una
+texture di \emph{noise} è di solito la scelta più leggera.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{4.4cm}p{8.6cm}@{}}
+\toprule
+\textbf{Comando} & \textbf{Che cosa fa} \\
+\midrule
+Tasto destro nel grafo & menu dei nodi, con ricerca \\
+T + clic & Texture Sample \\
+1 + clic / 2 + clic / 3 + clic & Constant, Constant2Vector, Constant3Vector (il
+  colore) \\
+A / M / D + clic & Add, Multiply, Divide \\
+S + clic & Scalar Parameter (per questo Subtract non ha scorciatoia) \\
+U + clic & Texture Coordinate (``lavora sulle UV'') \\
+L + clic & Lerp (Linear Interpolate) \\
+P + clic & Panner \\
+Alt + clic su un pin & stacca i collegamenti \\
+Tasto destro su un nodo, Convert to Parameter & trasforma il nodo in un parametro,
+  regolabile dalle Material Instance \\
+Tasto destro su un Texture Sample, Convert to Texture Object & per i nodi World Aligned \\
+Use Selected Asset from Content Browser & mette nel nodo la texture selezionata nel
+  Content Browser \\
+Tasto destro su un materiale, Create Material Instance & crea un'istanza \\
+Reimport Mesh With Dialog & reimporta una mesh riaprendo la finestra di import \\
+Ctrl+G / Shift+G & raggruppa e separa gli actor selezionati \\
+Actor, Merge Actors & fonde gli actor selezionati in una nuova mesh \\
+Ctrl+C, Ctrl+V, Ctrl+Z, Ctrl+Y, Ctrl+A & le scorciatoie classiche, valide quasi
+  ovunque \\
+Ctrl+S & salvare: ``salvate spesso'' \\
+\bottomrule
+\end{tabular}
+\caption{I comandi della terza lezione nell'editor dei materiali, nel Content Browser e
+nel Level Editor di Unreal Engine 5. Le scorciatoie con il clic si usano tenendo premuto
+il tasto e cliccando nel grafo; World Aligned Texture e World Aligned Normal non ne
+hanno.}
+\label{ue3:tab:scorciatoie}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Il grafico lavora soprattutto fuori da Unreal (Blender, Maya); dentro Unreal
+        \textbf{importa} gli oggetti e costruisce gli \textbf{shader}.
+  \item Una \textbf{texture} è la ``carta regalo'' dell'oggetto: si avvolge sulla mesh
+        attraverso le \textbf{UV}, che si creano prima, nel software di modellazione.
+        Una texture non pensata per quelle UV si stira.
+  \item Le mappe principali: \textbf{Diffuse/Albedo} (il colore, suffisso \_D o \_A),
+        \textbf{Normal} (blu: l'illusione del rilievo senza poligoni in più),
+        \textbf{Specular}, \textbf{Roughness}, \textbf{Metallic}, la mappa di
+        \textbf{altezza} (\emph{displacement} vero, ``una normal sotto steroidi'').
+  \item Nelle mappe in bianco e nero il \textbf{bianco è 1}, il \textbf{nero è 0}, il
+        grigio sta in mezzo. Ogni canale RGB è una mappa a sé: una texture
+        \textbf{AORM}/ORM impacchetta tre mappe in un file.
+  \item Il \textbf{materiale} è la ``vernice'', uno \textbf{shader}: si costruisce con
+        nodi, come un Blueprint, e combina le texture. Sugli oggetti si applicano
+        materiali, non texture.
+  \item \textbf{Material Domain} (per che cosa), \textbf{Blend Mode} (Opaque, Masked,
+        Translucent) e \textbf{Shading Model} (Default Lit, Unlit) cambiano i pin del
+        nodo risultante.
+  \item Nodi di base: \textbf{Texture Sample} (T), costanti (1, 2, 3), \textbf{Add},
+        \textbf{Multiply}, \textbf{Divide} (A, M, D), Scalar Parameter (S),
+        \textbf{Texture Coordinate} (U), \textbf{Lerp} (L), \textbf{Panner} (P). La
+        moltiplicazione è l'operazione più usata.
+  \item Il rendering è \textbf{PBR}: Roughness 1 è la roccia, 0 lo specchio; Metallic
+        e Specular decidono come la superficie riflette; l'\textbf{Emissive}
+        moltiplicato fa brillare il materiale.
+  \item \textbf{UTiling} e \textbf{VTiling} (o un Multiply sulle coordinate) decidono
+        quante volte si ripete la texture: 2 e 2 sono quattro ripetizioni, 0,5 e 0,5 un
+        quarto della texture.
+  \item Un nodo diventa un \textbf{parametro} con Convert to Parameter. Le
+        \textbf{Material Instance} (MI\_) cambiano i parametri senza toccare il grafo
+        del \textbf{master material} (M\_), si aggiornano subito e sono più leggere:
+        sugli oggetti si applicano sempre le istanze.
+  \item Le \textbf{Material Function} sono ``parentesi'' di calcoli riusabili tra
+        materiali e tra membri del team.
+  \item Il \textbf{Lerp} interpola tra A e B secondo un'\textbf{alfa} da 0 a 1, che può
+        essere una texture (``l'arbitro''); il \textbf{Panner} fa scorrere la texture
+        (acqua, fluidi, lava).
+  \item Importare \textbf{FBX}, controllare le \textbf{unità} (Unreal usa i
+        centimetri), texture in PNG o JPEG. La finestra di import genera collisioni,
+        corregge il transform, importa materiali e texture.
+  \item Una mesh è fatta di \textbf{vertici}, \textbf{spigoli} e \textbf{facce}
+        (triangoli). Il \textbf{pivot} deve stare dove il pezzo ruota: con
+        \textbf{Reimport Mesh With Dialog} (cannone: Z $-135$, rotazione 113) o con la
+        \textbf{Modeling Mode} di Unreal Engine 5.
+  \item Le \textbf{simple collision} (box, sfera, capsula: il ``capsulone'' dei
+        \emph{character}) sono leggere; le \textbf{complex} usano i triangoli della mesh
+        e costano molto di più.
+  \item \textbf{Ctrl+G} raggruppa; \textbf{Merge Actors} fonde in una nuova mesh, con
+        tanti slot quanti i materiali dei pezzi.
+  \item Due piani nella stessa posizione sfarfallano (\textbf{z-fighting}): basta
+        alzarne uno di 0,1. I materiali \textbf{World Aligned} (Texture Object, Texture
+        Size, uscita XYZ) non si stirano, ma restano fermi se l'oggetto si muove.
+  \item \textbf{Salvate spesso.} E per esercizio: un materiale di \textbf{lava}, con
+        Panner, Lerp ed Emissive.
+\end{itemize}

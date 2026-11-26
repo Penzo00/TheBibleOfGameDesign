@@ -1,0 +1,1944 @@
+% =====================================================================
+%  Lezione zero 7 — Hackerare un gioco: la giornata pratica del workshop
+%  sul mindset del game designer
+%  Fonte: trascrizione della settima "lezione zero" (GD0_7): la seconda
+%  giornata (circa tre ore, di mattina) del workshop online, su Zoom,
+%  tenuto da Daniele, game narrative designer e world builder, con l'aiuto
+%  di Michele, studente del terzo anno di Game Design. È il seguito diretto
+%  della lezione zero 6 (GD0_6_il_mindset_del_game_designer), di cui
+%  riprende strumenti e terminologia: è la parte pratica, in cui i
+%  partecipanti, divisi in quattro gruppi in stanze separate di Zoom,
+%  fanno l'hack di un gioco esistente. La trascrizione registra la stanza
+%  principale: le presentazioni dei gruppi e il lavoro, in diretta, del
+%  relatore e di Michele; il lavoro interno degli altri gruppi non è
+%  registrato.
+%  Pacchetti richiesti nel preambolo del libro:
+%    \usepackage[italian]{babel}, \usepackage[T1]{fontenc},
+%    \usepackage[utf8]{inputenc} (solo pdfLaTeX), \usepackage{booktabs}
+%
+%  Collocazione nel libro: parte "Lezioni zero", subito dopo
+%  GD0_6_il_mindset_del_game_designer e prima di
+%  GD0_8_esplorare_il_metaverso, con la stessa numerazione propria (0.7).
+%  Nel file principale del libro:
+%
+%    \part{Lezioni zero: il game designer nell'industria}
+%    \renewcommand{\thechapter}{0.\arabic{chapter}}
+%    \setcounter{chapter}{0}
+%    \input{Seminari/GD0_1_cultura_del_feedback}
+%    \input{Seminari/GD0_2_tempo_idee_e_leadership}
+%    \input{Seminari/GD0_3_agile_e_scrum_nella_pratica}
+%    \input{Seminari/GD0_4_publisher_e_producer}
+%    \input{Seminari/GD0_5_il_game_producer}
+%    \input{Seminari/GD0_6_il_mindset_del_game_designer}
+%    \input{Seminari/GD0_7_hackerare_un_gioco}
+%    \input{Seminari/GD0_8_esplorare_il_metaverso}
+%    \part{Il corso di Game Design}
+%    % ...
+%
+%  (Con hyperref aggiungere anche \renewcommand{\theHchapter}{z.\arabic{chapter}}
+%  nella parte zero, per evitare ancore duplicate.)
+%  Con questo capitolo inserito, in GD0_8 va cancellata la riga
+%  \setcounter{chapter}{7} marcata "DA RIMUOVERE".
+%  Tutte le etichette di questo capitolo hanno il prefisso "z7:"
+%  (z7:cap:..., z7:sec:..., z7:subsec:...). Il capitolo rimanda alle
+%  etichette del capitolo 0.6 (cap:z6-..., sec:z6-..., subsec:z6-...),
+%  che deve quindi essere incluso nello stesso documento.
+% =====================================================================
+
+\chapter[Hackerare un gioco]{Hackerare un gioco: la giornata pratica del
+workshop}
+\label{z7:cap:hack}
+
+Questa settima lezione zero è la \textbf{seconda giornata} del workshop sul
+mindset del game designer cominciato nel capitolo~\ref{cap:z6-mindset}. Se la
+prima era la parte ``discorsiva'', questa è la parte \textbf{pratica}: ``tutta
+la parte teorica ce la siamo tolta ieri''. I partecipanti, divisi in
+\textbf{quattro gruppi da tre}, scelgono uno dei tre giochi annunciati il giorno
+prima (\emph{Lasers \& Feelings}, \emph{Ticket to Ride} e \emph{Super Mario
+Bros.}), ne analizzano le \textbf{azioni} e il \textbf{core loop}, immaginano
+un \textbf{hack}, cioè una versione modificata del gioco, ne definiscono la
+\textbf{visione}, l'\textbf{esperienza desiderata} e il \textbf{pubblico}, e
+infine provano a cambiarne le \textbf{meccaniche}, fermandosi prima delle
+dinamiche e delle estetiche. Il tutto deve confluire in un \textbf{one page
+High Vision Document}, secondo il programma esposto alla fine della prima
+giornata (sezione~\ref{sec:z6-workshop-domani}).
+
+Conducono ancora \textbf{Daniele}, game narrative designer e world builder, e
+\textbf{Michele}, studente del terzo anno di Game Design, che stavolta non fa
+solo da assistente: mentre i gruppi lavorano nelle loro stanze, i due
+\textbf{svolgono l'esercizio in diretta}, nella stanza principale, costruendo
+su Miro un loro \emph{hack} di Super Mario, il ``Bromance Mario'', che fa da
+esempio per tutti. Il workshop si svolge di nuovo \textbf{online, su Zoom},
+di mattina, e si chiude all'ora di pranzo, come il giorno prima; lo scenario
+temporale è quindi lo stesso, \textbf{novembre 2022}\footnote{Si veda la nota
+sulla datazione nel capitolo~\ref{cap:z6-mindset}. Il congedo finale della
+trascrizione è ``ciao a tutti, ciao, domenica'': se va letto ``buona
+domenica'', la seconda giornata cadeva di domenica e la prima di sabato. È
+un'ipotesi.}.
+
+Valgono le stesse avvertenze di lettura del capitolo precedente. La trascrizione
+è automatica: storpia i nomi propri e i termini inglesi (il \emph{core loop}
+diventa ``corlupo'' o ``corru'', l'High Vision Document ``iVision'' o
+``revision document'', Bartle ``Bartol'', Ticket to Ride ``Stick it to Ride'' o
+``Ticatoride''), ripete in loop alcune frasi\footnote{Per esempio, alla
+riapertura delle stanze, ``Grazie a tutti'' ripetuto una ventina di volte.} e a
+volte mescola le voci di persone diverse. In più, questa giornata ha una
+difficoltà propria: \textbf{il lavoro nelle stanze separate non è
+registrato}\footnote{Lo dice lo stesso relatore verso la fine: la registrazione
+riguarda la stanza principale; le stanze secondarie ``credo che siano
+teoricamente private''.}. Di ciascun gruppo si conosce quindi solo ciò che
+riferisce in plenaria, mentre il ragionamento di Daniele e Michele è riportato
+quasi per intero, compresi i passaggi in cui le due voci si alternano
+rapidamente; dove non è chiaro chi parli, si attribuisce l'idea alla coppia.
+Molti nomi dei partecipanti sono quelli già incontrati nella
+sezione~\ref{subsec:z6-partecipanti}.
+
+Il percorso del capitolo segue quello della giornata:
+\begin{enumerate}
+  \item l'attesa iniziale e gli \textbf{strumenti di lavoro}, Miro e le altre
+        lavagne digitali (sezione~\ref{z7:sec:avvio});
+  \item il \textbf{programma} della giornata e che cosa ci si aspetta dai gruppi
+        (sezione~\ref{z7:sec:programma});
+  \item i \textbf{tre giochi} presentati da vicino, con le loro regole
+        (sezione~\ref{z7:sec:tre-giochi});
+  \item la formazione dei \textbf{gruppi} (sezione~\ref{z7:sec:gruppi});
+  \item il primo passo, l'\textbf{analisi di azioni e core loop}: l'esempio
+        di Daniele e Michele e le presentazioni dei gruppi (sezioni
+        da~\ref{z7:sec:analisi-esempio} a~\ref{z7:sec:analisi-gruppi});
+  \item il secondo passo, \textbf{visione, esperienza desiderata e pubblico}:
+        come fare ricerca, l'esempio del Bromance Mario e le visioni dei gruppi
+        (sezioni da~\ref{z7:sec:visione} a~\ref{z7:sec:visioni-gruppi});
+  \item il terzo passo, le \textbf{meccaniche}: glossari, icone e idiomi, dadi e
+        probabilità, e le meccaniche del Bromance Mario (sezioni
+        da~\ref{z7:sec:meccaniche} a~\ref{z7:sec:bromance-meccaniche});
+  \item le \textbf{presentazioni finali} (sezione~\ref{z7:sec:presentazioni});
+  \item i consigli conclusivi, il \textbf{portfolio} e i saluti (sezioni
+        da~\ref{z7:sec:consigli} a~\ref{z7:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'attesa e gli strumenti di lavoro}
+\label{z7:sec:avvio}
+
+La registrazione comincia mentre i partecipanti rientrano nella videochiamata,
+tra saluti e caffè. Una partecipante racconta di aver dovuto uscire in anticipo
+il giorno prima per un imprevisto, e di essere stata buttata fuori da Zoom
+almeno una volta (``Zoom ogni tanto mi butta fuori anche a lezione''). Il
+relatore fa il punto sulla prima giornata: è andata secondo i piani, con una
+ventina di minuti di domande, ``più o meno un quarto d'ora'', e qualche minuto
+in più verso l'una. Oggi, conferma, c'è ``la parte pratica''. Chi non ha ancora
+le slide le trova in chat, e la segreteria le invierà comunque a
+tutti\footnote{Il relatore condivide lo schermo dal profilo dell'accademia
+(``me l'ha aperto con il profilo di Hive'', cioè di AIV, ``ma va bene'') e
+promette di mostrare più tardi anche alcune sue \emph{board}.}.
+
+Nell'attesa invita a fare domande sulla parte del giorno prima o a chiedere un
+breve riepilogo di ciò che si deve fare, e rassicura: la parte di oggi si vedrà
+\textbf{\emph{step by step}}, ``non vi faccio entrare nella parte pratica senza
+un minimo di orientamento''.
+
+\subsection{Servono strumenti particolari?}
+
+Un partecipante chiede se si debba installare qualcosa. No: il relatore si
+definisce ``una persona molto \emph{easy} sugli strumenti''. Basta l'accesso a
+\textbf{Google Drive}, magari per aprire qualche \textbf{Google Document} e
+lavorare in modo sincronizzato; per il resto ognuno usi gli strumenti con cui
+è più comodo. Questa parte non richiede tecnologie specifiche: i workshop
+dell'accademia che ne hanno bisogno le fanno installare molto prima. Chi vuole
+può registrarsi su \textbf{Miro} o su un altro strumento di visualizzazione;
+ma ``potete usare anche un Google Document, lo ripeto, anche carta e penna: io
+giro sempre con i quaderni, la tecnologia migliore del mondo''.
+
+\subsection{Miro e le altre lavagne digitali}
+\label{z7:subsec:miro}
+
+Il relatore mostra comunque Miro a chi non lo conosce. Lui ha un account privato
+con il piano da \textbf{freelance}, a \textbf{10 euro al mese}, che usa anche per
+lavoro; ma esiste un piano \textbf{gratuito}, con due limiti:
+\begin{itemize}
+  \item tutte le \emph{board} sono \textbf{condivise con tutti i membri del
+        team}: se si hanno altri utenti, tutti vedono le proprie lavagne;
+  \item si possono creare \emph{board} all'infinito, ma solo \textbf{le tre più
+        recenti sono modificabili}: creando la quarta, la prima diventa di sola
+        visualizzazione\footnote{Sono le condizioni del piano gratuito di Miro
+        descritte dal relatore nel 2022; potrebbero essere cambiate.}.
+\end{itemize}
+È uno strumento di visualizzazione, e ne esistono altri simili:
+\begin{itemize}
+  \item la piattaforma \textbf{Atlassian}, quella di \textbf{Jira}, ``uno dei
+        software più conosciuti per fare \emph{project management} e
+        \emph{product management}, uno dei tool più conosciuti nell'industria'',
+        che ha ``se non mi sbaglio'' un suo strumento di lavagna\footnote{La
+        frase nella trascrizione è corrotta (``Se mi sbarro, la piattaforma
+        Atlassian è uno''). Atlassian offre in effetti lavagne digitali
+        all'interno di Confluence.};
+  \item la lavagna digitale di \textbf{Microsoft}, \textbf{Whiteboard}, che gli
+        hanno detto essere stata potenziata di recente ed è molto simile;
+  \item la \textbf{Google Jamboard}, che invece non consiglia, ``a meno che non
+        l'abbiano cambiata recentemente''\footnote{Google ha poi annunciato la
+        chiusura di Jamboard, avvenuta alla fine del 2024.}: è carina ma
+        \textbf{molto limitata}. Si può disegnare, si possono mettere post-it,
+        ma bisogna prima creare il post-it e poi inserirlo, ``che è un po'
+        problematico quando si fa brainstorming''; si possono caricare file,
+        fare forme e disegni che però ``rimangono solo per un tot'', scrivere
+        testo.
+\end{itemize}
+
+Strumenti come Miro sono secondo lui molto più utili, anche perché hanno la
+tecnica del \textbf{frame}: una volta fatta una lavagna, la si può esportare
+come CSV (``una cosa nuova'') ma soprattutto \textbf{come immagine}. Si può
+quindi fare direttamente il \emph{one page} lì, lavorandoci in sincronia con
+il team, e una volta finito lo si esporta con un clic e lo si mette in
+qualsiasi strumento di lavoro: Slack (``adoro Slack''), Discord, ``qualsiasi
+cosa''.
+
+\subsection{Le slide di riepilogo}
+
+Il relatore si è preparato alcune \textbf{slide di riepilogo}, che servono a lui
+per spiegare la giornata: sono una parte delle slide del giorno prima,
+estratta e rimessa insieme. Ciò che servirà di più ai partecipanti è avere
+aperte le \textbf{slide di ieri}. Anche lui chiude le sue e apre la copia per
+gli studenti, condivisa su Google Slides, così vede dove sono tutti: se
+qualcuno ha problemi su una slide, gli basterà cliccare sul suo avatar e
+``teoricamente Google dovrebbe portarmi lì da voi. Non sempre funziona''.
+
+% ---------------------------------------------------------------------
+\section{Il programma della giornata}
+\label{z7:sec:programma}
+
+La prima slide di riepilogo ricorda che cos'è il game design: una
+\textbf{metodologia di sviluppo} (sezione~\ref{sec:z6-metodologia}). Ciò che il
+relatore vorrebbe vedere, quindi, è che i partecipanti \textbf{cerchino metodi}
+per sviluppare idee e arrivare a un'esperienza partendo dalla propria visione,
+usando gli strumenti visti il giorno prima ma anche la propria competenza, la
+propria \emph{expertise}, la propria esperienza ``multidisciplinare, tra
+virgolette'': ``potete prendere e rubare a qualsiasi disciplina, io lo faccio
+sempre''.
+
+Due raccomandazioni di metodo:
+\begin{itemize}
+  \item si fa design \textbf{per giocatori reali}, ``non per giocatori fittizi,
+        non per noi'': bisogna capire per chi lo si sta facendo;
+  \item non per forza partendo dal pubblico, ma \textbf{partendo dalla visione
+        dell'esperienza} che si vuole. Una volta che si ha la visione
+        dell'esperienza, si capisce qual è il tipo di giocatore.
+\end{itemize}
+E soprattutto: bisogna \textbf{applicare il mindset}, non solo i \emph{tool}.
+Uno degli obiettivi del workshop è proprio \textbf{lo strumento corretto per il
+giusto lavoro} (sezione~\ref{sec:z6-tre-idee}): non serve usare tutti gli
+strumenti visti. Si possono usare i player type di Bartle, o non usarli.
+
+\subsection{I passi}
+
+Il lavoro procede per passi, e a ogni passo i gruppi tornano in plenaria a
+presentare:
+\begin{enumerate}
+  \item \textbf{scelta e analisi del gioco}. Di ciascun gioco si cercano di
+        capire ``banalmente due cose, solo due'':
+        \begin{itemize}
+          \item le \textbf{azioni}, ed eventualmente, come \emph{nice to have},
+                le \textbf{regole}. Le azioni, ricorda il relatore, sono
+                traducibili in \textbf{verbi} e sono ciò che il personaggio, e
+                il giocatore, può fare; le regole sono tutto ciò che il
+                giocatore teoricamente non può fare: \textbf{vincoli e
+                rinforzi}. È la parte delle meccaniche dell'MDA
+                (sezione~\ref{sec:z6-meccaniche});
+          \item il \textbf{core loop}, che non deve essere super dettagliato:
+                basta una riflessione su quale sia, secondo il gruppo, il
+                \emph{core loop} del gioco.
+        \end{itemize}
+        Non serve costruire nulla: si può prendere uno \emph{screenshot} di
+        Super Mario, o uno dei tre giochi, e analizzarlo direttamente sopra;
+  \item creare una \textbf{visione per un hack} di quel gioco, cambiando
+        \textbf{un singolo elemento} del prodotto: il genere, qualcosa di
+        meccanico, di regolistico, di dinamico, di estetico, ``qualsiasi cosa di
+        importante'', purché se ne abbia subito una visione;
+  \item fare ``un pelino'' di \textbf{ricerca e sperimentazione}, cercando i
+        player type (il relatore darà ``qualche trucco in più'' su che cosa
+        cercare e dove guardare);
+  \item capire qual è l'\textbf{esperienza ludica} che si vuole ottenere, data
+        la visione e l'idea;
+  \item cominciare a sviluppare un \textbf{High Vision Document}.
+\end{enumerate}
+In termini di framework, l'obiettivo è andare \textbf{dalla A dell'ADMDA fino, al
+massimo, alla M}\footnote{``Arrivare dalla A di A-D-M-D-A fino al massimo alla M
+di A-D-M-D-A'': cioè dall'analisi, attraverso lo sviluppo, fino alle meccaniche
+(si veda la sezione~\ref{subsec:z6-admda}).}: \textbf{non si arriverà alle
+dinamiche e alle estetiche}.
+
+\subsection{Che cosa ci si aspetta}
+
+Alcuni studenti, con \emph{Lasers \& Feelings}, ``un gioco molto molto molto
+compatto'', riescono ad arrivare fino all'estetica e quindi a fare un
+\textbf{intero gioco}: è molto semplice da usare, è un PDF che si apre, oppure
+se ne copia il testo in un documento Google, ed è un attimo cambiare due o tre
+riferimenti, capire qual è la meccanica del \emph{core loop}, cambiare un paio
+di meccaniche. Alcuni ragazzi \textbf{non hanno nemmeno cambiato le meccaniche}:
+hanno cambiato solo i nomi, cioè \textbf{le icone, gli idiomi}
+(sezione~\ref{sec:z6-icone-idiomi}), i nomi importanti del gioco, un paio di
+dettagli, l'immagine di Star Trek in fondo alla pagina e il colore blu del
+gioco, ``e me l'hanno fatto in tre ore''. Ma è un caso speciale, ``non è la
+regola, è l'eccezione''\footnote{La trascrizione dice ``non è la regola, è
+l'ec, è la regola'': evidentemente ``è l'eccezione''.}.
+
+Con \emph{Ticket to Ride} e \emph{Super Mario Bros.} il massimo a cui si può
+aspirare è un High Vision Document che contenga, ``attenzione'', non tutta la
+ricerca e tutta l'analisi, ma \textbf{alcuni dati importanti}:
+\begin{itemize}
+  \item che cosa ha dato la \textbf{ricerca};
+  \item qual è l'\textbf{analisi}, soprattutto quella sul prodotto: quali
+        \textbf{azioni} e quale \textbf{core loop} si sono trovati;
+  \item qual è la \textbf{visione}, con un paio di \textbf{strumenti di
+        visualizzazione};
+  \item il \textbf{development}: quali \textbf{scelte di design} si vogliono
+        applicare per raggiungere l'esperienza voluta, e qual è la
+        \textbf{target audience};
+  \item facoltativa, un'ipotesi di \textbf{pipeline}: se si dovesse davvero
+        sviluppare il prodotto, dividendolo in grossi livelli di sviluppo, che
+        cosa verrebbe prima e che cosa dopo? Prima la parte narrativa o prima il
+        \emph{level design}? ``Così, ipoteticamente''
+        (sezione~\ref{sec:z6-pipeline});
+  \item una \textbf{riflessione su come i cambiamenti e l'esperienza voluta
+        porterebbero a modificare le meccaniche e le azioni}: si lavorerà ``molto
+        a stretto giro'' su meccaniche e \emph{core loop}.
+\end{itemize}
+``Io mi fermerò lì.'' Chi ha la voglia, il tempo e la dedizione di andare oltre
+nelle tre ore è libero di farlo; ma il relatore non si aspetta più di un High
+Vision Document con la visione, il concetto del gioco, ciò che si vuole
+ottenere, magari l'analisi del \emph{core loop} del gioco di partenza, le
+modifiche che si vogliono portare per arrivare all'esperienza voluta, un paio di
+riferimenti a come farlo, ``magari una bella immagine, una visualizzazione di
+tutto, fine''.
+
+% ---------------------------------------------------------------------
+\section{I tre giochi da vicino}
+\label{z7:sec:tre-giochi}
+
+\subsection{Lasers \& Feelings}
+\label{z7:subsec:lasers-feelings}
+
+\emph{Lasers \& Feelings} è un gioco di ruolo \emph{one page}, che si trova
+online \textbf{tradotto in italiano dal relatore} (``perdonatemi'') insieme alla
+sua ``cricca'' di giocatori di ruolo, sul sito \textbf{Storia del Ruolo}, il suo
+vecchio blog; ma lui passa direttamente il link al PDF su Drive, così non serve
+aprire il sito. ``È tutto qui, il gioco'':
+\begin{itemize}
+  \item una \textbf{parte introduttiva} che spiega che cos'è narrativamente il
+        gioco: si è l'equipaggio di un'astronave da esplorazione interstellare
+        ``molto simile all'\emph{Enterprise}''\footnote{Nella trascrizione
+        ``l'equipaggio di un incognito restellare'': nell'originale l'astronave
+        è l'\emph{interstellar scout ship} Raptor.};
+  \item la \textbf{creazione del personaggio}, che avviene scegliendo uno
+        \textbf{stile}, un \textbf{ruolo} e un \textbf{numero da 2 a 5}. Un
+        numero alto significa che il personaggio è bravo con i \textbf{laser}:
+        tecnologia, scienza, fredda razionalità, calma, azioni meticolose. Un
+        numero basso significa che è migliore nei \textbf{sentimenti}
+        (\emph{feelings}): intuizione, diplomazia, seduzione, azioni sfrenate e
+        passionali. Poi si dà un nome al personaggio, si dice che cosa possiede e
+        si fissa l'\textbf{obiettivo}. Qui il relatore si ferma: l'obiettivo è
+        ``importantissimo'', ``uno dei punti più dimenticati della costruzione di
+        un gioco da tavolo, ma di un gioco in generale''; a volte apre i
+        documenti degli studenti\footnote{Nella trascrizione ``apro delle
+        tasche di studenti'': forse ``le task'' o ``le cartelle''.} e dice:
+        ``ragazzi, ma non avete detto qual è l'obiettivo del gioco per il
+        giocatore''. Interessante, nota, che in \emph{Lasers \& Feelings}
+        \textbf{l'obiettivo del giocatore e quello del personaggio sono
+        separati}: sono due cose diverse;
+  \item la \textbf{creazione della nave};
+  \item la \textbf{meccanica di base}. Si usano \textbf{dadi a sei facce}: si
+        lancia un D6 per vedere come va, e si aggiunge un D6 extra se si è
+        preparati e uno se si è esperti. Se si usano i \textbf{laser}, cioè
+        scienza e ragione, bisogna tirare \textbf{sotto} il proprio numero:
+        più alto è il numero, più si è avvantaggiati. Con un personaggio molto
+        scientifico, con 5, si può fallire una prova di laser solo con un 6. Se
+        si usano i \textbf{sentimenti}, bisogna tirare \textbf{sopra} il proprio
+        numero. Si confronta ogni dado e si contano i successi: più successi si
+        fanno, più vantaggio si ottiene, e quindi è sempre possibile fallire ed
+        è sempre possibile avere successo. Caso speciale: se un dado fa
+        \textbf{esattamente il proprio numero} (si è scelto 4 ed esce un 4),
+        quel dado è un \textbf{``laser feelings''}, una sorta di risultato
+        speciale\footnote{Nel regolamento originale un risultato ``Laser
+        Feelings'' conta come successo e dà al personaggio un'intuizione: si può
+        fare al GM una domanda a cui deve rispondere sinceramente.};
+  \item come \textbf{creare un'avventura} in poco tempo, tirando alcuni D6 e
+        confrontando i risultati con le tabelle\footnote{Il relatore dice ``si
+        tirano 4 di 6''; nell'originale i dadi si tirano, uno per tabella, sulle
+        tabelle della minaccia, di ciò che vuole e del suo piano.}, e ``due o
+        tre indicazioni per il master''. ``Finisce qua.''
+\end{itemize}
+
+\subsection{Ticket to Ride}
+\label{z7:subsec:ticket-to-ride}
+
+Per \emph{Ticket to Ride}, cliccando sull'immagine della slide 162 si trova il
+\textbf{regolamento in PDF di Asmodee}, quello del gioco base. Sono
+\textbf{quattro pagine}: ``fantastica sta cosa, eh? Avere un gioco che si
+riassume in quattro pagine di regolamento, di cui una è la copertina, sfido''.
+L'unica critica che il relatore fa al PDF è che non hanno messo le pagine
+affiancate, per una lettura migliore; ``ma va bene, li perdoniamo''. Il
+contenuto della scatola:
+\begin{itemize}
+  \item una mappa della \textbf{rete ferroviaria del Nord America};
+  \item \textbf{240 vagoni} colorati, 45 per ogni colore\footnote{Così nel
+        regolamento: cinque colori da 45 vagoni, più alcuni vagoni di
+        ricambio.};
+  \item \textbf{144 carte illustrate}: le carte vagone divise in colori
+        (violetto, bianco, blu, giallo, arancio, nero, rosso, verde) più le
+        \textbf{locomotive}, che fanno da jolly; una \textbf{carta riassuntiva};
+        i \textbf{biglietti destinazione}, che sono gli obiettivi; una
+        \textbf{carta bonus} di 10 punti per il percorso più lungo;
+  \item i segnapunti in legno, per tenere il conto dei \textbf{punti vittoria},
+        segnati attorno al tabellone.
+\end{itemize}
+Ogni biglietto destinazione indica \textbf{due città che devono essere
+connesse}, ``in qualsiasi modo'': non dice quale strada fare, ``dovete
+connetterle, punto''. A fine partita si girano i biglietti e si prendono i
+punti. Un biglietto collega raramente due città vicine: di solito due città
+separate almeno da una terza, e ci sono biglietti che vanno, per dire, da
+Seattle fino a El Paso o a New York, e ``valgono un botto di punti''.
+
+L'\textbf{obiettivo} è accumulare il maggior numero di punti, in tre modi:
+\begin{itemize}
+  \item \textbf{controllando una tratta} tra due città adiacenti: si spendono
+        carte dello stesso colore (per esempio sei carte blu) e si posizionano
+        altrettanti vagoni; una tabella riassuntiva sul tabellone dice quanti
+        punti vale ogni tratta (una tratta da sei vagoni ne vale 15, e si avanza
+        di 15);
+  \item completando con successo un percorso tra le due città dei propri
+        \textbf{biglietti destinazione};
+  \item completando il \textbf{percorso più lungo}, che vale altri 10 punti.
+\end{itemize}
+
+Il \textbf{turno} del giocatore, ammette il relatore, prevede \textbf{tre azioni,
+non due}, e se ne deve eseguire \textbf{una soltanto}: pescare carte vagone,
+controllare una tratta (cioè posizionare i vagoni), pescare biglietti
+destinazione. La terza azione non era nella slide del giorno prima
+(sezione~\ref{subsec:z6-ticket-to-ride}) perché è \textbf{molto rara}: tutti i
+giocatori cominciano con delle destinazioni\footnote{Il relatore dice ``due
+destinazioni''; nel regolamento se ne ricevono tre e se ne tengono almeno
+due.}, e chi le ha finite può pescarne altre, ma chi pesca destinazioni nel suo
+turno non può fare nient'altro: è un'azione che si fa due o tre volte in una
+partita. Il regolamento spiega poi come pescare, come controllare una tratta e
+come posizionare i vagoni: si spendono, per esempio, tre carte blu e si mettono i
+propri vagoni verdi sulla tratta blu; sulle tratte \textbf{grigie} si possono
+spendere carte di qualsiasi colore, purché tutte dello stesso (``io avevo tre
+carte verdi e le ho spese''). Seguono la tabella dei punteggi, la fine della
+partita e il calcolo dei punti: ``nulla di eccezionale''.
+
+\subsection{Super Mario Bros.}
+
+Per \emph{Super Mario Bros.} il consiglio è di cercare online delle
+\emph{walkthrough}\footnote{Nella trascrizione ``ball through''.}, guardare
+video e ``quant'altro''. Michele, come si vedrà, lo gioca direttamente su un
+emulatore.
+
+\subsection{Domande prima di partire: i punti dell'analisi e la USP}
+
+Un partecipante chiede di ripetere i punti da dichiarare nell'analisi: uno è il
+\emph{target}? Teoricamente il relatore si aspetta:
+\begin{itemize}
+  \item la \textbf{visione};
+  \item l'\textbf{esperienza desiderata}, in termini di piaceri, emozioni,
+        ``quello che volete'';
+  \item il \textbf{target}, se si vuole, descritto brevemente;
+  \item il \textbf{core loop} originario e le \textbf{meccaniche originarie} del
+        gioco, e quelle che si vogliono cambiare e come, se se ne vogliono
+        cambiare;
+  \item tutto ciò che può essere utile.
+\end{itemize}
+``Vi sto buttando in una sorta di oceano pieno di squali'': in realtà la scelta
+dovrebbe essere dei partecipanti. Alla \textbf{slide 75}, quella sull'High
+Vision Document, si legge che contiene temi, pilastri, obiettivi, personaggi,
+regole, setting e narrativa di base (secondo il relatore ``il minimo
+possibile''), e sotto che può contenere anche pubblico, emozioni, stile, USP,
+design, setting, narrativa, estetiche: tutto ciò che può servire allo sviluppo
+(sezione~\ref{sec:z6-vision-document}). Analizzato il gioco, sarà più o meno
+chiaro che cosa serve e che cosa no. E, ``essendo stringati di tempo'', i
+partecipanti proveranno la sensazione che hanno tutti i game designer quando
+sviluppano: \textbf{dovranno fare delle scelte}. Non si può mettere tutto: si
+sceglie ciò che può essere utile.
+
+Un altro chiede che cosa fosse la \textbf{USP}. È l'\textbf{unique selling
+point}: in soldoni, l'elemento che, secondo chi lo progetta, rende il prodotto
+\textbf{unico al mondo}, o almeno per il pubblico di riferimento. Un prodotto
+può contenere tantissime cose che ricordano tanti giochi: un tripla A ``alla God
+of War'', con un barbaro vichingo come protagonista e un figlio, magari con il
+concetto degli Assassini e dei Templari (``vedi come sto mettendo dentro
+tantissime cose che sembrano tanti giochi'')\footnote{In mezzo all'esempio il
+relatore si interrompe: ``bravo Michele per l'emulatore di Super Mario, stavo per
+dirtelo''.}. Ma ci sarà sempre una cosa che lo rende unico: per esempio, il
+protagonista è stato \textbf{maledetto dagli dèi}, nel senso che è morto e
+ritorna in vita per salvare il figlio, e questo lo distingue, teoricamente, da
+God of War. Più l'elemento è unico nel suo genere, più il prodotto si distingue.
+Trovarlo è difficile, ma si pensi alla prima analisi: cercando online
+``\emph{Lasers \& Feelings hack}'' si trova ``un botto'' di giochi fatti su
+\emph{Lasers \& Feelings}; magari nessuno si è preso la briga di farne uno
+ispirato a \textbf{Tomb Raider}. La USP sarebbe allora: ``il mio è l'unico hack di
+\emph{Lasers \& Feelings} ispirato a Tomb Raider''.
+
+% ---------------------------------------------------------------------
+\section{I gruppi}
+\label{z7:sec:gruppi}
+
+Mentre cerca come aprire le stanze separate di Zoom (``ogni volta non mi ricordo
+mai dov'è il \emph{tick} da mettere''), il relatore conta i presenti: tolto
+l'organizzatore sono \textbf{quattordici}, quindi \textbf{quattro gruppi da tre},
+più lui e Michele, che resteranno nella stanza principale a disposizione per
+aiutare. Se le stanze non funzionassero, i gruppi possono usare altri canali, un
+Discord o qualunque luogo dove scambiarsi messaggi\footnote{Qualcuno, forse
+Andrea, commenta: ``noi di Bit9 non usiamo di solito Discord''. In attesa, un
+collega di Filippo non riesce ad accedere a Zoom, e il relatore manda a Filippo
+il link della stanza in privato perché glielo passi. Si legge anche
+l'avviso, probabilmente scritto in chat da Filippo, ``sono un bel po' stordito
+causa malattia, quindi non riesco a lavorare molto bene''; il relatore risponde
+che non c'è problema e lo invita a mettersi con i colleghi del primo anno di
+Roma.}. Le stanze, spiega, si chiamano ``sessioni secondarie'': lui le assegna
+manualmente, i partecipanti le trovano cliccando sui tre puntini o sulla voce
+``sessioni secondarie'' nella barra di Zoom e scorrendo fino a ``sessione 1'',
+``sessione 2'' e così via; chi non ci riesce viene inserito da lui.
+
+I gruppi sono composti cercando di \textbf{``pareggiare le esperienze''}
+(``perché sennò è un delirio''):
+\begin{description}
+  \item[Sessione 1.] \textbf{Andrea, Matteo e Luca}, i tre dello studio
+        indipendente, che qui confermano il nome: \textbf{Bit9
+        Studio}\footnote{Nella sezione~\ref{subsec:z6-partecipanti} il nome era
+        rimasto incerto. Qui il relatore chiede ``i ragazzi di Bit9, detto
+        giusto?'' e la risposta è ``sì, giusto, Bit9 Studio''. Più avanti il
+        relatore, ripetendo i gruppi, dice ``Andrea, Mattia e Luca'': è con ogni
+        probabilità un lapsus per Matteo.}.
+  \item[Sessione 2.] \textbf{Filippo, Luca Brunetti e Jacopo}, studenti del
+        primo anno di Roma. Filippo, ``da quello che ho capito'', non può
+        parlare molto, quindi lo si mette con i colleghi che conosce. Si
+        offrivano in quattro, ma i gruppi sono da tre, e uno di quelli che
+        possono parlare viene spostato in un altro gruppo\footnote{Nella
+        trascrizione, tra i nomi, compare anche ``Jacopo, Alessandro'': forse
+        il collega che non riusciva a entrare, o un errore di trascrizione. Il
+        gruppo definitivo è comunque quello indicato.}.
+  \item[Sessione 3.] \textbf{Flavio}, anche lui dell'accademia, \textbf{Claudio},
+        dal corso di programmazione, e \textbf{Francesco}.
+  \item[Sessione 4.] \textbf{Giulia, Alice e Giovanni}, i tre esterni.
+\end{description}
+
+Prima di entrare, il relatore ricorda che chi ha problemi può uscire dalla
+stanza e chiamare lui o Michele: ``siamo in due, quindi ci possiamo sfruttare''.
+\textbf{Primo compito} della giornata: scegliere il gioco, analizzarne le azioni e
+il \emph{core loop}. ``Non abbiamo fretta.'' Su richiesta, lo ripete: scelta del
+prodotto, analisi di meccaniche e \emph{core loop}, ``brevemente''; dieci minuti o
+un quarto d'ora, ``non deve essere un'analisi incredibile''. Dopo, il secondo
+passo sarà creare la visione. Ci si rivede ``alle 10.45, 10.50''.
+
+% ---------------------------------------------------------------------
+\section{Primo passo: l'esempio di Daniele e Michele}
+\label{z7:sec:analisi-esempio}
+
+Rimasti soli nella stanza principale, i due scelgono anche loro un gioco. Michele
+sta già giocando a Super Mario (``ah, che aveva il cranio, anche bisogna
+abbassarsi'': si può infatti \textbf{abbassare} Mario). Si scelgono quindi un
+\textbf{hack di Super Mario}, ``gioco storico'', e aprono una \emph{board} su
+Miro intitolata ``Super Mario Hack''.
+
+\subsection{Le azioni}
+
+Le azioni sono ``abbastanza \emph{easy}'': \textbf{jump} e \textbf{run}. Poi c'è
+un'azione speciale, abbassarsi. Il nome dà da discutere: \emph{crunch}? (``mi
+ricordi Tomb Raider 3?''), \emph{sink}, ``piegarsi, accorciarsi''\dots{} si
+scrive \textbf{crouch}, poi, cercando la lista ufficiale dei comandi, si scopre
+che in Super Mario Bros. si chiama \textbf{duck}. Il \emph{duck} si può fare
+\textbf{solo se si è cresciuti} (``\emph{only grow}''): ``non in tutti i titoli'',
+ma nel primo Mario ci si può abbassare solo da grandi\footnote{Michele gioca su
+emulatore e ricorda che si usa ``shift'' per lo scatto.}. Michele aggiunge il
+\textbf{dash}: quando si corre e si lascia il tasto dello scatto cambiando
+direzione, Mario scivola. Ma \textbf{run} e \textbf{sprint} vanno messi insieme,
+``perché è proprio l'azione di base''.
+
+\subsection{Il core loop}
+
+Il \emph{core loop} è: si corre, ogni tanto si salta. Nella slide del workshop
+(sezione~\ref{sec:z6-dinamiche}) c'era \emph{run, jump, beat}, ma ora il
+\emph{beat} sembra ai due ``poco efficace'': in realtà colpire i nemici è già
+dentro il salto, ``il \emph{beat} è una conseguenza del \emph{jump}''. Il loop
+è quindi molto semplice: \textbf{run, jump}. Ciò che cambia è \textbf{il motivo per
+cui si salta}, che può essere diverso:
+\begin{itemize}
+  \item \textbf{hit brick}, colpire il mattone;
+  \item \textbf{hit enemy}, colpire il nemico\footnote{Nella trascrizione ``eat
+        enemy'' e ``eat brick'': è chiaramente \emph{hit}.};
+  \item \textbf{overcome obstacle}, superare l'ostacolo;
+  \item \textbf{acquire item}, prendere un oggetto, aggiunto più tardi: di solito
+        si salta anche per acquisire gli oggetti.
+\end{itemize}
+Anche il \emph{crouch}, o \emph{duck}, si fa ``un po' di meno'', perché si può
+fare solo da grandi: lo mettono in \textbf{viola}, con le frecce, perché lo si
+può fare solo in certi momenti. E si può fare per più di un motivo: per
+\textbf{evitare un ostacolo} e basta nel primo Mario; nel secondo forse anche per
+passare in certi punti. Di base, comunque, per evitare un ostacolo, e quindi lo
+collegano a \emph{overcome obstacle}.
+
+\subsection{I power up}
+
+Michele propone di aggiungere lo \textbf{sparo}, con il fiore di fuoco: ``mi
+sembra che già nel primo livello c'è''. Ma per il momento i due
+\textbf{separano le azioni vere e proprie da quelle che vengono con i power
+up}. Cercano la lista dei \emph{power up} del primo Super Mario Bros.\
+(``proprio il primo primo primo''): il \textbf{fungo} (\emph{Magic Mushroom}), il
+\textbf{fiore di fuoco} (\emph{Fire Flower}), lo \textbf{Starman} e il
+\textbf{fungo 1-Up}, che dà una vita in più\footnote{Michele ricorda anche uno
+``scoiattolino'' che ``ti mettono in cima quando continui a morire'', ma lo
+colloca in titoli successivi: si tratta verosimilmente del potenziamento di
+aiuto (la foglia o la tuta da Tanooki bianca) che i Mario più recenti offrono a
+chi muore più volte nello stesso livello.}. Lo Starman rende invincibili: con lui
+si superano gli ostacoli e si colpiscono i nemici semplicemente correndo, ``ma
+questo non lo mettiamo''. Mettono invece \textbf{shoot fire}, che fa
+\emph{hit enemy} con la palla di fuoco e si sblocca \textbf{solo ed
+esclusivamente} con il fiore di fuoco. Il resto lo tengono come \emph{core loop}
+di base, ``molto molto normale''. Le azioni che si fanno con i comandi di base
+sono in \textbf{verde}.
+
+\subsection{Le emozioni: una correzione a Dillon}
+
+Il relatore riapre l'analisi di Super Mario con il framework 6-11 vista il giorno
+prima (sezione~\ref{subsec:z6-6-11}), che ``non gli torna molto''. Sul
+\emph{gameplay} è d'accordo: combattere i nemici, correre fino alla fine,
+scoprire aree nascoste; e acquisire \emph{power up} e monete, cioè \textbf{acquire
+item}, che è un'altra possibilità del salto. Ma non descriverebbe alcune cose con
+gli istinti scelti da Dillon:
+\begin{itemize}
+  \item non \textbf{greed}, l'avidità, ma \textbf{raccolta} (\emph{collection}):
+        la gestione delle risorse, raccogliere le risorse. Michele concorda: è
+        anche proprio il termine, \emph{greed} è uno dei sette peccati capitali,
+        detto di Super Mario, ``un gioco quasi innocente'', è troppo forte,
+        anche se \emph{greed} può avere vari livelli;
+  \item \textbf{curiosity}, d'accordo; \textbf{excitement}, ``d'accordissimo'';
+        \textbf{joy}, d'accordo;
+  \item ma non \textbf{pride}. Qui il 6-11 manca di una cosa che c'è nei piaceri
+        di LeBlanc, l'\textbf{evasione}: la gioia viene dall'evasione, ``l'istinto
+        di evasione e di libertà'';
+  \item e più che \textbf{protection}, ``probabilmente il raggiungimento di
+        qualcosa, ipotizzo''.
+\end{itemize}
+Sulla \emph{board} le etichette diventano commenti attaccati alle azioni
+(``volevo metterle come \emph{label}, ma non me lo fa fare''):
+\begin{center}
+\begin{tabular}{@{}lp{0.55\textwidth}@{}}
+  \toprule
+  \textbf{Azione} & \textbf{Emozione o istinto} \\
+  \midrule
+  run e sprint     & \emph{evasion}, \emph{joy} \\
+  hit brick        & \emph{curiosity}: c'è un punto interrogativo, ``chissà
+                     cosa viene fuori'' \\
+  hit enemy        & \emph{survival} \\
+  overcome obstacle & \emph{curiosity} \\
+  acquire item     & \emph{collection} \\
+  \bottomrule
+\end{tabular}
+\end{center}
+Su \emph{hit enemy} i due discutono: non lo assocerebbero a \emph{pride} o
+all'aggressività, perché Mario non è ``uno di quei giochi dove tu spari perché
+vuoi sparare'', ma perché vuoi sopravvivere: \textbf{survival}. Forse c'è un po'
+di \emph{excitement} quando si colpisce bene un nemico, ma per ora lasciano solo
+\emph{survival}.
+
+Poi il relatore chiude le stanze: ``mi sembra brutale chiudere tutte le sessioni
+di botto, ma chiuderò tutte le sessioni di botto''. Zoom dà ai gruppi sessanta
+secondi prima di riportarli nella stanza principale (``siamo stati risucchiati
+alla realtà'').
+
+% ---------------------------------------------------------------------
+\section{Primo passo: le analisi dei gruppi}
+\label{z7:sec:analisi-gruppi}
+
+Le scelte: \textbf{Super Mario} per le sessioni 1 e 3, \textbf{Lasers \&
+Feelings} per la sessione 2, \textbf{Ticket to Ride} per la sessione
+4\footnote{Prima delle presentazioni, saputo che la sessione 2 ha scelto
+\emph{Lasers \& Feelings}, qualcuno chiede al relatore, ``a titolo emotivo'',
+il suo capitano di Star Trek preferito. Risposta: Janeway, ``per motivi di
+cuore, perché sono cresciuto con \emph{Voyager}'', che deve riportare tutti a
+casa da una galassia lontana; anche se la protagonista di \emph{Discovery} gli
+piace molto.}. Il relatore mostra la \emph{board} sua e di Michele come
+``supporto visivo e immediato'', ma avverte: ``io non mi aspetto questo''. Basta
+aver identificato, anche solo a voce o per appunti, le azioni e magari il
+\emph{core loop}.
+
+\subsection{Sessione 1: Super Mario}
+
+Il gruppo di Bit9 ha fatto una lista delle azioni possibili e di alcune regole
+che le limitano e le inquadrano. Le azioni di base: \textbf{saltare},
+\textbf{correre}, \textbf{distruggere blocchi}, \textbf{schiacciare i nemici} per
+eliminarli, \textbf{acquisire power up}. In più hanno messo \textbf{cercare
+percorsi nascosti}, perché lo ritengono fondamentale per la
+\emph{replayability}, e \textbf{ottenere un punteggio finale}. Gli altri ricordano
+che hanno dimenticato il \emph{crouch}: ``alla fine è un'azione secondaria che
+prendi solo quando sei grande''.
+
+Il relatore si ritrova in tutto, tranne nel punteggio: più che un'azione del
+personaggio è un'azione del giocatore, ``una sorta di \textbf{dinamica}'', perché
+mette insieme più meccaniche. E fa notare come \textbf{sensibilità diverse creino
+analisi diverse} del \emph{core loop}, e che questo è ``un valore aggiunto, non è
+negativo'': quando si analizzano meccaniche, azioni e \emph{core loop},
+l'obiettivo non è solo ottenere la descrizione migliore, ma vedere come
+sensibilità diverse diano ipotesi di azioni differenti. Cercare le aree nascoste,
+per esempio, è qualcosa che si fa comunque con \emph{run}, \emph{sprint},
+\emph{jump} e \emph{crouch}, ed è una cosa che lui e Michele non avevano messo.
+Loro avevano distinto i \textbf{due comandi di base} (\emph{run/sprint} e
+\emph{jump}) dalle \textbf{quattro azioni che con quei comandi si compiono}
+(\emph{hit brick}, \emph{hit enemy}, \emph{overcome obstacle}, \emph{acquire
+item}), che non hanno un comando dedicato.
+
+\subsection{L'orgoglio è un'emozione emergente}
+
+Il gruppo era partito elencando emozioni e istinti, perché gli era rimasto in
+mente lo schema del 6-11 (``giustissimo''), e chiede: metterebbe l'\textbf{orgoglio}
+tra le emozioni desiderate? Secondo loro la raccolta di punti e la competizione
+con gli altri giocatori sono importanti nel Super Mario originale. Il relatore
+non metterebbe né \emph{greed} (preferisce \emph{collection}) né, in prima
+battuta, \emph{pride}. Certo, se si gioca con altre persone, uno contro uno, il
+\emph{pride} ci sta: ricorda che da giovanissimo si facevano le gare a Super
+Mario. Ma è un orgoglio \textbf{acquisito}, non insito: non è diretto, nasce dal
+fatto che, al di fuori del gioco, si può fare un'operazione di \emph{pride}. È,
+come suggerisce qualcuno, \textbf{emergente}: ``bravo, è emergente, sono
+d'accordo''. ``Ottima domanda, bellissima domanda''.
+
+\subsection{Miro, ancora}
+
+Un partecipante chiede che cosa sia ``il programmino simpatico'' sullo schermo.
+È \textbf{Miro}, gratuito con i limiti già detti
+(sezione~\ref{z7:subsec:miro}): quando si crea la quarta \emph{board}, la prima
+non è più modificabile, e la si può lasciare così, oppure si passa alla versione
+per freelance. Per il relatore è uno strumento di lavoro vero: lo usa con i
+clienti, e lo aiuta tantissimo a visualizzare e a ``fargli vedere qual è il
+problema logico nel processo mentale che hanno''. Ce ne sono tantissimi altri.
+
+\subsection{Avidità o raccolta?}
+
+Un altro partecipante avrebbe messo l'\textbf{avidità} in Super Mario, visto che
+ci sono le monete: il relatore preferisce raccolta perché il gioco non è
+multiplayer? Non proprio. È vero che la moneta spinge a giocare: la si vede, si
+dice ``ne voglio sempre di più'', ci si va e si muore ``brutalmente'' (``sono
+scarsissimo''), perché a un certo punto con le monete si guadagna una vita, o
+comunque si alza il punteggio. Ma \emph{greed} è una parola \textbf{molto forte}:
+il relatore non la userebbe per una raccolta di oggetti che si può fare o non
+fare, ma per \textbf{qualcosa che il gioco spinge effettivamente a cercare di
+acquisire}. ``Questa è la mia distinzione: come vedete, le sensibilità.''
+
+\subsection{Sessione 2: Lasers \& Feelings}
+
+Il gruppo ha fatto un Drive condiviso e, non conoscendo il gioco e volendo
+``farlo tutto'', ha cominciato analizzandone la struttura. Le azioni principali:
+\textbf{creare i personaggi}, \textbf{selezionare le statistiche}, con le varie
+specifiche, \textbf{personalizzare la nave}, \textbf{lanciare il dado}. Il gruppo
+aveva un dubbio sul terzo dado: ``questo è il limite dei \emph{one page}''. Il
+relatore chiarisce: un D6 se si è \textbf{preparati}, cioè se si possiede qualcosa
+che può aiutare, e un D6 se si è \textbf{esperti}, ed è il \textbf{GM} a dire
+quanti dadi si tirano, perché è lui a considerare esperto il personaggio.
+
+Due correzioni:
+\begin{description}
+  \item[Due azioni, non una.] Lanciare il dado è giusto come meccanica del
+        giocatore, ma ha due varianti: si lancia per essere \emph{laser} o si
+        lancia per essere \emph{feelings}. Il relatore metterebbe proprio due
+        azioni distinte, \textbf{lanciare il dado laser} e \textbf{lanciare il
+        dado feelings}, perché sono meccanicamente diverse: richiedono di
+        dichiarare quale dei due poli si vuole usare.
+  \item[Il GM è un giocatore.] Il gruppo pensava che una meccanica importante
+        fosse il GM che narra, ``un \emph{core element}''. Il relatore ribalta la
+        prospettiva: ``prima di tutto, ricordatevi sempre, quando fate analisi
+        di giochi di ruolo, il GM \textbf{è un giocatore}''. Molti non se ne
+        rendono conto: dicono ``ci sono i giocatori, poi c'è il GM''. È quello che
+        viene chiamato \textbf{\emph{over player}}, un giocatore con più poteri
+        degli altri e, di solito, con \textbf{discrezionalità}. Ma è un giocatore,
+        e quindi ha delle azioni: \textbf{creare un'avventura} e \textbf{condurre
+        il gioco}, da tenere separate e distinte da quelle degli altri
+        giocatori.
+\end{description}
+Il \emph{core loop}, per il gruppo, è \textbf{lancia e narra}: descrivere le
+proprie azioni, lanciare i dadi, il GM narra la reazione, si descrive, si lanciano
+i dadi. ``Sì, il core loop alla fine è quello.''
+
+\subsection{Partire da una board vuota}
+
+Nel frattempo\footnote{Nel mezzo, Michele configura qualcosa ``da mandare ai
+ragazzi'' (``vai, vai, non ti preoccupare'').} un partecipante chiede quale
+modello di Miro abbia usato il relatore. Nessuno: di solito parte \textbf{dal
+vuoto}. Se si vuole un modello, il consiglio, ``per esperienza'', è il
+\textbf{flowchart}, anche quando si deve fare una mappa concettuale: la
+\emph{mind map} e la \emph{concept map} sono ``un po' \emph{tricky}'' da usare e
+servono più ad altro; ``il \emph{flowchart} è il migliore'' (si veda anche la
+sezione~\ref{subsec:z6-brainstorming}). Per partire dal vuoto, Miro lo chiede
+alla prima \emph{board}, con un pulsante \emph{empty}; altrimenti si seleziona
+tutto il modello e lo si cancella. Lo strumento \textbf{frame}, in basso a
+sinistra, permette di creare anche un \emph{frame} personalizzato: ``il frame è
+proprio una lavagna su cui tu puoi creare cose''.
+
+\subsection{Sessione 3: Super Mario}
+
+Il gruppo di Flavio, Claudio e Francesco ha distinto:
+\begin{description}
+  \item[Azioni.] \textbf{Correre}, \textbf{saltare}, \textbf{colpire},
+        \textbf{raccogliere potenziamenti} e \textbf{scendere nei tubi}.
+  \item[Core loop.] \textbf{Correre, saltare e colpire}: ``senza di quello non
+        si procede''.
+  \item[Limitazioni.] Non si può andare a sinistra dell'inquadratura: l'unico
+        spostamento è verso destra. L'unico modo per affrontare i nemici è
+        saltarci sopra: non li si può toccare, altrimenti si prende danno. I
+        livelli hanno un \textbf{limite di tempo}.
+  \item[Sensazioni.] La \textbf{curiosità} nel trovare percorsi secondari o
+        nascosti e nel colpire i blocchi; l'\textbf{istinto di sopravvivenza} nel
+        platforming e nell'affrontare correttamente i nemici (``bravi sul
+        \emph{survival}, bravi sul \emph{survival}''); la \textbf{gioia} durante
+        lo \emph{sprint} e il salto, soprattutto quando riescono \emph{trick}
+        abbastanza complessi; la \textbf{sfida} (\emph{challenge}), cioè fare il
+        percorso nel minor tempo possibile e comunque concludere il livello,
+        ``che non è scontato''; la \textbf{raccolta} delle monete sparse nel
+        livello.
+\end{description}
+``Molto bravi, molto molto bravi.'' Hanno tutto in un \emph{one page}.
+
+\subsection{Sessione 4: Ticket to Ride}
+
+Per il gruppo di Giulia, Alice e Giovanni parla un membro del gruppo, ``visto
+che tu hai il Pod''\footnote{Così nella trascrizione (``che tu hai il pod''): il
+senso non è chiaro, forse un riferimento a chi ha il documento aperto o a un
+microfono migliore.}. Il gruppo si è soffermato anche sul \textbf{numero di
+giocatori}, per capire se il gioco sia cooperativo o competitivo: \emph{Ticket to
+Ride} è ovviamente competitivo, ma l'informazione potrà tornare utile per un
+\emph{hack}. Lo scopo è l'accumulo di punti, che si ottengono in tre modi: in
+base alla lunghezza del percorso, al numero di vagoni del singolo tragitto, e agli
+obiettivi raggiunti.
+
+Il \emph{core loop} scandisce anche la suddivisione dei turni, perché in un turno
+si devono per forza fare delle scelte, e le scelte ``sono due e mezzo''. La
+prima è \textbf{pescare carte} per accumulare risorse: se si pesca la
+\textbf{locomotiva} jolly scoperta se ne può pescare una sola, altrimenti due
+(``la carta locomotiva pescarla costa due'', conferma il relatore). Sempre
+pescando, si possono prendere \textbf{nuovi obiettivi}. L'altra opzione,
+conseguente all'accumulo di risorse nei turni precedenti, è \textbf{posizionare i
+vagoni}, che fa prendere i primi punti durante la partita.
+
+\subsection{Pescare è un'azione sola}
+
+``Bravi, bravi su questa cosa'': il gruppo ha colto che \textbf{pescare è
+un'azione unica}. ``Molti non ci arrivano.'' \emph{Ticket to Ride} non ha due
+azioni distinte: pescare carte vagone e pescare biglietti destinazione è sempre
+pescare, \textbf{cambia solo il mazzo}. Al contrario di \emph{Lasers \& Feelings},
+dove il dado laser e il dado feelings sono stati divisi perché sono
+\textbf{meccanicamente diversi} (uno si tira sotto il numero, l'altro
+sopra\footnote{Il relatore si confonde a voce (``il laser va verso l'alto e il
+feeling va verso il basso, cioè il contrario, scusate, il laser va verso l'alto'');
+la regola è quella esposta nella sezione~\ref{z7:subsec:lasers-feelings}.}),
+qui pescare non cambia nulla a livello tecnico. Forse cambia qualcosa per la
+locomotiva, a seconda che la si peschi dal mazzo o tra le carte scoperte: ``sì,
+ok''.
+
+\subsection{Dove sta l'avidità in Ticket to Ride}
+
+Chi parla ha una domanda sull'\textbf{avidità}, ``non come sentimento della
+vita reale, ma nell'ambito ludico''. Nel loro caso le sembra presente nella
+scelta tra pescare e mettere giù i primi vagoni: non avendo ancora interiorizzato
+la meccanica, sente il rischio di accumulare senza mai posare. Il relatore non
+metterebbe l'avidità sulle azioni, sulle meccaniche, sul \emph{core loop} di
+base: l'avidità in \emph{Ticket to Ride} è un istinto che scatta quando si fanno
+\textbf{strategie} con le tratte, cioè nelle \textbf{dinamiche}, quando si devono
+fare scelte. Pescare il jolly o due carte? Finiti i propri biglietti, se ne pesca
+un altro o si punta al percorso più lungo? \textbf{È avidità}, perché si vogliono
+accumulare molti più punti; se si pesca il quarto biglietto, è avidità, anche
+perché può capitare un obiettivo lunghissimo e delicatissimo. ``Pensate agli
+istinti umani e non sbagliate mai'': si può andare anche oltre gli undici
+elencati da Dillon.
+
+Un'altra partecipante aggiunge la \textbf{sopravvivenza}: giocando il giorno prima
+aveva l'angoscia che qualcuno occupasse la sua tratta più in fretta e le tagliasse
+la strada. ``Brava'': quando si nota che altri vanno verso le stesse città, gli
+stessi obiettivi, si comincia a pensare che quella tratta è una sola, non doppia,
+e che se la occupano bisognerà fare il giro, magari già occupato anche quello,
+``oddio, devo fare un giro enorme''. Il relatore aggiunge l'aspetto
+\textbf{visivo}: il tabellone ha un ritorno emotivo perché c'è tanto colore. Uno
+degli istinti è l'apprezzamento estetico (\emph{color appreciation}), o il
+concetto di \emph{appealing}: il gioco è molto colorato e invoglia a giocare;
+``non sarebbe la stessa cosa se fosse pieno di grigi, di cose brutte''.
+
+\subsection{I colori dei vagoni e i binari}
+
+Un dubbio, ``non avendoci giocato'' (``siamo qui per i dubbi''): chi parla
+non condivide la scelta di dare ai \textbf{giocatori gli stessi colori di alcune
+tratte}. Vedendolo, aveva pensato: ``io sono il giallo e devo metterli sui
+gialli''. Invece no. Se ne sono accorti anche gli autori, risponde il relatore:
+gli esempi del regolamento sono fatti apposta \textbf{invertendo i colori}, per
+far capire che i vagoni blu non c'entrano con le carte che si giocano. È d'accordo
+che sia una \textbf{dissonanza}\footnote{La trascrizione dice ``una dissonanza
+ludica, non ludica, ma solo ludica'': forse il relatore stava per dire
+``dissonanza ludonarrativa'' e si è corretto.}, che però in questo gioco non ha
+creato grossi problemi: i vagoni erano semplicemente un modo per indicare il
+possesso delle tratte, e il lavoro sui colori delle carte e dei vagoni è
+comunque buono. Aggiunge che il gioco è più giocabile da chi ha un'ottima
+percezione delle \textbf{sfumature di colore}\footnote{Il relatore dice ``lo dico
+proprio a livello di genetica''; il riferimento implicito è al daltonismo.}: il
+blu dei vagoni e quello delle carte sono uguali, forse anche il bianco, ma il
+giallo e il nero non sono esattamente identici. Anche lui avrebbe fatto
+diversamente: per esempio, avrebbe dato ai giocatori \textbf{colori metallici}.
+
+Chi parla proponeva di mettere, al posto dei vagoni, dei
+\textbf{binari}. Il relatore rivela un retroscena ``che non puoi sapere'': i
+binari erano previsti nella prima versione, ma \textbf{li hanno tolti}. In alcune
+espansioni e giochi successivi della serie\footnote{Il relatore cita, ``se non mi
+sbaglio'', ``Europa 1800''; non è stato possibile identificare con certezza il
+titolo a cui si riferisce.} ci sono tratte senza binari, che si devono costruire
+prima di metterci sopra il treno. Per un motivo di \textbf{scalabilità del
+progetto}, una decisione che di solito si prende nel brainstorming, nel gioco
+base hanno deciso di non metterli. Ma si può fare una variante in cui si è
+costruttori di binari anziché di treni.
+
+% ---------------------------------------------------------------------
+\section{Secondo passo: visione, esperienza desiderata e pubblico}
+\label{z7:sec:visione}
+
+Fatta l'analisi, si uniscono \textbf{ricerca} e \textbf{development}: un quarto
+d'ora, venti minuti. Il compito:
+\begin{enumerate}
+  \item ipotizzare uno, due o tre \emph{hack} e sceglierne uno, ``del tipo: ah,
+        ma perché non facciamo un Super Mario dove il protagonista non è un
+        idraulico ma un \textbf{boscaiolo}?'';
+  \item scrivere la \textbf{visione} come si crede meglio: può essere un
+        \emph{pitch} narrativo, una descrizione di meccaniche, ``non importa'';
+  \item ipotizzare le \textbf{esperienze}, cioè l'insieme di istinti ed emozioni
+        che si vogliono ottenere, rapidamente, ``perché poi cambierà'';
+  \item ma soprattutto \textbf{conoscere i giocatori}, la \textbf{target
+        audience}.
+\end{enumerate}
+
+\subsection{Come si conosce il pubblico}
+
+La cosa migliore che il relatore può dire è che conoscere il pubblico
+\textbf{passa per la ricerca di dati online}. Cercando ``\emph{player type}
+Super Mario'' o ``analisi \emph{player type} Ticket to Ride'' si trova
+sicuramente qualcosa. Ma il punto non è usare i player type di Bartle: se lui
+dicesse che Super Mario è un gioco per \emph{achiever} e \emph{killer}, i
+partecipanti gli direbbero ``ma Daniele, che cosa stai dicendo? Non è così''.
+Bisogna \textbf{trovare modi per descrivere il pubblico che si capiscano
+all'interno del team}. A volte basta descrivere l'utente: chi gioca questo gioco?
+Persone di una data età, con una data esperienza, a cui piacciono giochi di tipo
+X.
+
+Già le \textbf{\emph{wanted experience}} danno un'idea del player type. In un
+gioco \textbf{horror}, tra le esperienze volute ci sarà probabilmente lo
+\emph{scare}, ci sarà il \textbf{thrill}, la sensazione di quando si hanno tante
+emozioni addosso, come sulle montagne russe, e c'è anche
+l'\textbf{\emph{excitement}}, un po' nascosto, da distinguere dalla
+\emph{joy}: ``non è gioia, è eccitazione dovuta al fatto che sei stato
+spaventato''. È logico che chi non ama essere spaventato e non ama il
+\emph{thrill} difficilmente giocherà un gioco horror. Basta quindi la descrizione
+delle esperienze volute per fare un po' di analisi del player type.
+
+Ma si può fare di meglio:
+\begin{itemize}
+  \item \textbf{leggere i commenti dei giocatori} sui forum, su
+        \textbf{BoardGameGeek} e ``quant'altro'';
+  \item \textbf{non sottovalutare il potere di Google}. Molti dicono: cerco
+        ``Ticket to Ride player type analysis'' e magari non esce niente, o
+        escono cose inutili. Ma poi si vedono i commenti su BoardGameGeek, una
+        recensione ``\emph{four-sided}'' di Ticket to Ride\footnote{Probabilmente
+        una recensione del sito \emph{The Opinionated Gamers}, che pubblica
+        recensioni a più voci, o di un sito analogo; il titolo letto è ``Ticket
+        to Ride: A Four-Sided Game Review''.}, perfino uno studio di
+        \emph{intelligenza artificiale} per costruire mappe di Ticket to
+        Ride\footnote{Il titolo letto è ``Artificial Intelligence Approach to
+        Build Ticket to Ride Maps''.};
+  \item \textbf{non sottovalutare le schede Notizie e Libri} della ricerca.
+\end{itemize}
+Ovviamente non bisogna fermarsi alla prima ricerca, ma andare a fondo: ``voi non
+sapete quello che potete trovare con una semplice ricerca Google'', e ogni tanto
+si trovano cose molto particolari.
+
+Ci si può anche \textbf{ispirare ai propri amici}: chi ha giocato a questi giochi
+con delle persone può descriverle, cambiando il nome (``avete giocato con Laura,
+potete mettere Luca''; cambiarlo davvero, ``non tenere solo l'iniziale''), e
+descrivere il tipo di persona che di solito gioca quel prodotto.
+
+\subsection{Un esempio sopra le righe}
+
+Un partecipante chiede conferma: in sostanza bisogna creare la visione di un
+\emph{hack}, trovare il tipo di esperienza che si vuole e il prototipo delle
+persone che vorranno giocarci? ``Assolutamente sì.'' L'esempio: la visione è
+\textbf{Super Mario Bros.\ con un boscaiolo} al posto dell'idraulico. Il
+boscaiolo avrà ostacoli e azioni diverse: magari \textbf{comincia con l'ascia},
+non ha il salto, che prende dopo, ma ha subito il lancio dell'ascia. Qual è la
+\emph{wanted experience}? Cambia rispetto a Super Mario? E qual è l'audience? Se il
+gioco va molto sopra le righe, diventa ``un po' truzzo'': un Super Mario con il
+boscaiolo che incrocia \emph{Fast and Furious}, dove a fine livello il boscaiolo
+si strappa la camicia e mostra i peli. Si capisce subito che quell'esperienza ha un
+\textbf{player type molto preciso}: un pubblico nerd, con senso dell'umorismo, a
+cui piacciono le cose ``un po' trash'' e probabilmente \emph{Fast and Furious}. E
+queste cose ``mi possono dare un fracco di idee''.
+
+Un altro chiede se nell'\emph{hack} si debba cambiare una sola meccanica o più di
+una. Per il momento \textbf{le meccaniche non si toccano}: si va \emph{step by
+step}, visione, \emph{wanted experience} e audience. Le meccaniche sono il passo
+successivo. Se però viene in mente una possibile meccanica, come il lancio
+dell'ascia, la si annota e la si lascia lì: tornerà utile dopo. ``È molto utile
+per andare un po' più sul focus e non avere troppe idee.''
+
+% ---------------------------------------------------------------------
+\section{Secondo passo: il Bromance Mario}
+\label{z7:sec:bromance-visione}
+
+Riaperte le stanze, Daniele e Michele prendono proprio il boscaiolo.
+
+\subsection{La visione}
+
+Michele teme che salvare il mondo, o il bosco, sia un tema troppo grande. Allora
+il boscaiolo è un \textbf{amante degli animali}, ``di quei boscaioli un po'
+druidi'', che non caccia ma si nutre di ciò che raccoglie; e qualcuno \textbf{gli
+ruba gli animali}, i suoi compagni, che lui deve salvare. Il relatore ci vede
+subito \textbf{John Wick} (``com'è che si chiama quel film con Keanu Reeves?''):
+``un John Wick fiabesco, dove in ogni mondo c'è qualcuno che ha sottratto un
+compagno animale al boscaiolo''. Ma chi? Un John Wick boscaiolo sarà
+probabilmente un \textbf{ex guerriero}: Michele propone un ex operaio
+dell'azienda che andava a disboscare; meglio, uno che era bravissimo a uccidere,
+tanto che qualcuno, per farlo tornare in azione, ``dalla sua parte'', gli porta
+via qualcosa. Risultato:
+\begin{quote}
+  Un \textbf{ex mercenario boscaiolo}, in un mondo \textbf{trash fiabesco}, deve
+  recuperare i suoi \textbf{compagni animali}, sottrattigli da un
+  \textbf{\emph{trust} di villain} per farlo tornare a lavorare per loro.
+\end{quote}
+
+\subsection{L'esperienza voluta}
+
+Si parte dalla tabella delle emozioni di Super Mario (evasione, gioia,
+curiosità, sopravvivenza, raccolta) e la si cambia, separando gli istinti dalle
+emozioni:
+\begin{description}
+  \item[Emozioni.] Non c'è più l'evasione, la gioia della corsa: c'è il fatto
+        che si deve sopravvivere e soprattutto ``spaccare roba''. Quindi
+        \textbf{rabbia} (\emph{anger})? Meglio una sua declinazione: il
+        \textbf{rancore}, come quello del Kratos della nuova saga di God of War,
+        ``non quello che è arrabbiato''. Poi un po' di \textbf{tristezza}
+        (\emph{sadness}), perché gli hanno sottratto gli amici animali, e la
+        \textbf{curiosità}: magari ha lasciato il mercenariato perché voleva
+        davvero andare in giro per il mondo a trovare la pace.
+  \item[Istinti.] \textbf{Sopravvivenza}, sicuramente; \textbf{raccolta}, che ci
+        può stare (si trovano \emph{power up}); \textbf{avidità} ``sicuramente
+        no''. Scorrendo la lista di Dillon: \textbf{aggressività} sì, il
+        \emph{fight or flight} di fronte ai nemici; competizione no;
+        \textbf{vendetta} sì, forse più del \emph{fight or flight}; e, con la
+        vendetta, la \textbf{protezione}, perché una volta recuperati alcuni
+        animali li si vuole proteggere; \textbf{curiosità}; e
+        l'\textbf{apprezzamento estetico}, perché c'è molto il tema della pace,
+        dell'andare a trovare luoghi belli e fantastici.
+\end{description}
+
+\subsection{L'audience e i riferimenti}
+
+Per descrivere l'audience si parte dai giochi che quel pubblico gioca, anche se
+non simili al proprio:
+\begin{itemize}
+  \item \textbf{God of War}, sicuramente, se il protagonista sarà ``un bel
+        barbuto con un'ascia'';
+  \item ``paradossalmente'' \textbf{The Binding of Isaac}, per il tema della
+        sopravvivenza più che della vendetta, e perché è un prodotto molto
+        sicuro della propria estetica, che la porta fino in fondo\footnote{I
+        due ricordano anche che il gioco è molto focalizzato sul tema della
+        religione.};
+  \item \textbf{Alto's Adventure} e \textbf{Alto's Odyssey}, che Michele
+        presenta: si è uno sciatore o uno \emph{snowboarder} che deve fare
+        \emph{trick}, prendere punti e arrivare fino in fondo. È un gioco con
+        pochissimi feedback loop negativi (sezione~\ref{sec:z6-loop}), basato
+        sull'apprezzamento estetico, sulle combo, con una grafica 2D molto
+        minimale ma molto curata;
+  \item il gioco del \textbf{taglialegna} in cui si devono schivare i rami che
+        cadono\footnote{Nella trascrizione ``Lumberjack'' e poi ``Timberman'':
+        si tratta di \emph{Timberman}.}.
+\end{itemize}
+Qui Michele osserva che quel gioco, pur parlando di un taglialegna, è
+\textbf{amichevole}, ``anche per la forma che ha'', ed è l'occasione per
+ripassare la \textbf{teoria delle forme} (sezione~\ref{sec:z6-forme}): il
+\textbf{tondo} è amichevole, gioioso; il \textbf{triangolo} è pericoloso, ostile;
+il \textbf{quadrato} di solito è molto schematico, ``robotico'', ``è il robot''.
+Si possono fare anche gli \textbf{incroci}: un tondo con gli occhi quadrati e la
+bocca triangolare crea una \textbf{dissonanza} che genera ambiguità, utile per
+personaggi complessi. E si possono mischiare le forme: un quadrato con gli angoli
+tondi, un esagono, un poligono.
+
+Poi, ricordando che il gioco è ``un po' più trash'', l'audience si allarga ai
+riferimenti non videoludici: \textbf{John Wick}, \textbf{Fast and Furious}, le cose
+``sopra le righe'' (``tipo Fast and Furious dove saltano con la macchina dentro
+l'aereo''), e tra i videogiochi l'esagerazione massima, \textbf{Devil May Cry}.
+
+\subsection{Il player type}
+
+``E visto che siamo tecnici'': che player type è? Date le \emph{reference}, il
+\textbf{killer}, per l'\emph{excitement} e per l'unicità del protagonista, ``quasi
+una forza della natura''. Non \emph{achiever}. C'è però l'elemento del
+recuperare gli animali, la \textbf{relazione con l'animale}, che lo avvicina al
+\emph{socializer}; e un'esplorazione implicita. Il risultato, con i sottotipi
+della slide sui player type avanzati\footnote{Sono i sottotipi del modello a otto
+tipi che Bartle ha proposto dopo la tassonomia originale, distinguendo per ogni
+tipo un comportamento implicito e uno esplicito: tra gli \emph{explorer} lo
+\emph{hacker} (implicito) e lo \emph{scientist} (esplicito), tra i
+\emph{socializer} il \emph{friend} e il \emph{networker}, tra i \emph{killer} il
+\emph{griefer} e il \emph{politician}, tra gli \emph{achiever}
+l'\emph{opportunist} e il \emph{planner}.}:
+\begin{itemize}
+  \item tipo principale: \textbf{killer};
+  \item secondari: \textbf{hacker}, cioè un \textbf{esploratore implicito}, con
+        una comprensione intuitiva del mondo, ``non razionale''; e
+        \textbf{friend}, un socializzatore che gode della compagnia degli altri.
+\end{itemize}
+``Molto bene, molto molto bene.'' C'è infatti molto il tema della
+\textbf{bromance}, come in \emph{Fast and Furious} e in John Wick. Da qui il
+nome: non più \emph{Super Mario Bros.}, ma ``\textbf{Super Bro Mario}'', o
+\textbf{Bromance Mario}, ``proprio per essere trash di brutto''\footnote{I due
+scherzano anche sui \emph{meme} di \emph{Fast and Furious} sulla famiglia (``l'ho
+fatto per la mia famiglia''). Il passaggio è molto disturbato nella
+trascrizione.}.
+
+\subsection{Genere, gimmick e mood}
+
+Resta da capire la \textbf{gimmick}, l'elemento che lo rende unico (``il problema
+delle gimmick è poi capirle''). Il genere è un \textbf{platformer 2D a
+scorrimento}: non per forza in \emph{pixel art}, ma oggi fare un gioco in
+\emph{pixel art} è un po' più semplice, perché tante persone vendono anche
+\emph{reference} e risorse su itch.io. Il mondo è quello dei mercenari, quindi uno
+\textbf{spionaggio sopra le righe}. Il \textbf{mood} è quel tipo di ironia che
+però si prende molto sul serio, come in \textbf{One Piece} (Michele lo conosce, ma
+``lo odio'': non l'ha mai visto). Per le \emph{gimmick} il relatore trova un video,
+``\emph{Every unique level gimmick in Super Mario}'', da guardare come ispirazione.
+
+Poi chiude le sessioni, stavolta senza conto alla rovescia: ``quante volte io
+spavento i miei studenti''. Chi rientra dice di non aver nemmeno toccato il
+compito; ``non è un problema'', si recupererà.
+
+\subsection{La presentazione}
+
+Il relatore presenta a tutti l'idea sua e di Michele: la visione dell'ex
+mercenario boscaiolo. ``Avrete notato tutti che è \textbf{John Wick che incontra
+Super Mario}.'' Quando un gioco si riassume così, ``questo gioco che incontra
+quest'altro gioco'', si parla di \textbf{high concept}\footnote{Nella trascrizione
+``Ike Concept''. Il relatore aggiunge: ``è un'idea molto \emph{mainstream}'', e,
+sembra, ``lo so anch'io''.}. È un platformer 2D a scorrimento, di spionaggio sopra
+le righe, con un \emph{mood} alla One Piece: molta comicità, ma anche molta
+``serietà'', e molta \emph{bromance}.
+
+Dall'esperienza di Super Mario hanno tolto l'\emph{excitement} e la \emph{joy} e
+hanno messo il \textbf{rancore}, ``che non è la rabbia: è una declinazione del
+concetto di rabbia molto simile al rancore che prova Kratos'', la
+\textbf{tristezza} per gli amici animali sottratti e la \textbf{curiosità}, perché
+il mondo è esplorativo e naturale. Gli istinti: sopravvivenza, raccolta (i
+\emph{power up}), vendetta, protezione e percezione estetica. Il mercenario si è
+ritirato non per una vita di \emph{retirement} come John Wick, ma \textbf{per
+viaggiare}: andare in posti molto belli, fare il nomade digitale, fare
+\emph{hiking}; lo si immagina tornare da quei luoghi per andare a combattere.
+
+L'audience l'hanno descritta partendo ``dalla cosa più visiva'' che potevano
+trovare: che prodotti giocano e guardano i giocatori di questo ipotetico Bromance
+Mario? God of War, The Binding of Isaac (prodotti molto sicuri della loro
+estetica), Alto's Adventure (``una saga molto legata all'estetica'': nei sequel
+hanno trovato modi nuovi per inserire ``cose molto fighe''; l'estetica sarà uno
+dei principali elementi distintivi del gioco), John Wick, Fast and Furious, Devil
+May Cry. E, conoscendo Bartle, hanno preso da lì i player type: un giocatore
+\textbf{killer}. ``Attenzione a non pensare che è un assassino'': il killer è una
+categoria un po' problematica. I \emph{killer} sono quelli che vogliono
+\textbf{forti emozioni}, molto legati al protagonista: nella mappa della
+\textbf{slide 72} il killer è legato al \emph{player} e all'\emph{acting}, cioè
+all'agire e al concetto di \emph{main character}\footnote{Nella trascrizione ``il
+killer è molto legato a player e al ducking'': nella mappa di Bartle i
+\emph{killer} sono collocati sugli assi \emph{acting} e \emph{players}.}. Come
+sottotipo esploratore, l'esploratore istintivo, l'\emph{hacker}; come socializer,
+non il \emph{networker} ma l'\textbf{amico}, che gode della compagnia dell'altro.
+Per questo nel primo capitolo della saga (``perché sarà una saga, ovviamente'')
+ci sarà probabilmente uno \textbf{Yoshi}: un animale, uno dei primi che si
+recuperano, che si può cavalcare, ``probabilmente un cervo con le corna
+cromate''.
+
+% ---------------------------------------------------------------------
+\section{Secondo passo: le visioni dei gruppi}
+\label{z7:sec:visioni-gruppi}
+
+\subsection{Sessione 1: Creepy Mario}
+
+Il gruppo di Bit9 propone \textbf{Creepy Mario}: ``un Mario platformer dal gusto
+\textbf{horror}, inquietante e angosciante, che \textbf{obblighi il giocatore ad
+avanzare} nonostante le difficoltà''. Meccaniche e dinamiche non le hanno ancora
+discusse, ma immaginano di sostituire la libertà estrema di percorso e di
+movimento di Mario con l'\textbf{incertezza} di non sapere che cosa c'è davanti,
+dovendo però avanzare perché \textbf{qualcosa arriva da dietro}. Hanno sostituito
+la gioia con la \textbf{paura}; le emozioni desiderate sono quindi paura,
+\textbf{eccitazione} e \textbf{orgoglio}, inteso come punteggio e competizione tra
+utenti su chi sopravvive di più. Tra gli istinti, la \textbf{sopravvivenza} passa
+in primo piano; restano la \textbf{curiosità} e la \textbf{competizione}; stavano
+discutendo di aggiungere la \textbf{protezione}, con persone da salvare lungo la
+strada, che altrimenti ``finiranno molto male'': salvandole si sacrifica
+qualcosa, si rallenta. ``Interessante.''
+
+Qualcuno ricorda la \emph{creepypasta} sul gioco di Godzilla\footnote{Nella
+trascrizione ``la creepypasta su quel gioco di Godzilla che fece Frows'' e poi
+``Plaggemon''. La \emph{creepypasta} più nota su un gioco di Godzilla è la
+\emph{NES Godzilla Creepypasta}; ``Plaggemon'' potrebbe essere una storpiatura di
+un'altra \emph{creepypasta} o di un titolo legato ai Pokémon, a cui il gruppo fa
+riferimento subito dopo. Il riferimento resta incerto.} (``bravo Filippo''): il
+gruppo ha delle \emph{reference}. Il \textbf{player type}: un pubblico di
+\textbf{adolescenti}, appassionati di horror \emph{creepy cute}, come i
+Pokémon inquietanti, \textbf{Five Nights at Freddy's}, \textbf{Poppy Playtime}; un
+pubblico \textbf{\emph{streamer friendly}}. Con Bartle, il gruppo propone gli
+\textbf{achiever}, perché il gioco può attirare chi vuole fare un \emph{high
+score}. Il relatore aggiunge di \textbf{non sottovalutare il killer}: con molto
+\emph{thrill}, molto horror, ``il killer per forza''.
+
+\subsection{I falsi amici di Bartle}
+
+Il killer, insiste il relatore, è un \textbf{falso amico}: ``Bartle ha il
+problema che molti di questi sono falsi amici''. Guardando l'asse \emph{acting} e
+\emph{players}, il killer non è l'idea che il nome suggerisce: infatti in
+versioni successive del modello il killer comprende anche il concetto di
+\textbf{artigiano}, di \textbf{tattico}, di chi \textbf{cerca sensazioni forti}.
+Per questo lui i player type li usa ``fino a un certo punto''. Il gruppo ammette di
+non avere molta dimestichezza (``non ci spingiamo troppo''), e va bene così:
+``senz'altro qualcuno che vuole un'emozione forte io lo metterei nella lista''.
+Qualcuno vede anche un aspetto da \textbf{socializer}: il piacere di guardare
+l'amico che ``sbrocca'' mentre è inseguito. ``Può essere, assolutamente.''
+
+Il relatore ricorda i sottotipi: i \emph{socializer} si dividono in
+\textbf{networker} e \textbf{amico}; i \emph{killer} nel \textbf{politico}, che
+grazie alla sua buona reputazione sa trascinare le persone (``il killer dovrebbe
+essere più il leader, la prima donna''), e nel \textbf{griefer}, che invece ha una
+cattiva reputazione. Alla \textbf{slide 73} ci sono i player type avanzati,
+modificati, ``e questa è una delle cose più\dots'': ogni volta che fa lezione sui
+player type, ``i nomi traggono in inganno''. ``Bravi, ottimo, non vedo l'ora di
+vedere quello che farete nella prossima fase.''
+
+\subsection{Sessione 2: Thunder and Prophecies}
+
+Il gruppo di \emph{Lasers \& Feelings} è ``leggermente indietro, ma ce la
+faremo''. L'idea è rifare il gioco con il nome di \textbf{Thunder and
+Prophecies}\footnote{Più avanti il relatore lo chiama anche ``Thunder and
+Prophecy''.}, riprendendo il tema degli \textbf{dèi greci in stile pop}, ``alla
+Percy Jackson'', in chiave leggermente moderna. L'obiettivo è creare una
+\textbf{competizione tra gli dèi}. Le prime ipotesi:
+\begin{itemize}
+  \item nel caso di un solo giocatore, il GM (``va bene GM come denominazione?'',
+        ``va benissimo'') userebbe un avversario specifico\footnote{Nella
+        trascrizione ``un ghost specifico'': forse un personaggio ombra, o un
+        \emph{boss}, contrapposto al protagonista.} da contrapporre al
+        personaggio principale; con più giocatori, i personaggi si scontrano
+        tra loro;
+  \item meccaniche ``aleatorie'': ogni dio ha un \textbf{valore predefinito} e,
+        con l'aggiunta di due dadi, si creano azioni specifiche, ancora da
+        definire;
+  \item l'\textbf{obiettivo è segreto} per ciascun personaggio.
+\end{itemize}
+L'ultima idea ricorda al relatore \textbf{Lupus in Tabula} e \textbf{Werewolf},
+quei giochi sociali in cui nessuno sa chi è il lupo (e nelle varianti ci sono
+anche la strega e altri ruoli): qui nessuno sa l'obiettivo degli altri e ognuno
+``tira l'acqua al proprio mulino''. Quindi c'è competizione di base.
+
+Ma il relatore avverte: ``questa è la classica cosa che succede quando si prendono
+persone molto esperte di videogiochi e gli si fa fare un \emph{hack} di un gioco
+di ruolo \emph{one page}''. Il rischio di andare \textbf{fuori scope} è
+altissimo\footnote{Il relatore dice ``overscope'' (``andare in overscope''): è
+l'\emph{out of scope} della sezione~\ref{subsec:z6-out-of-scope}, con una
+sfumatura di ``fare troppo''.}: quante volte vede gli studenti del corso di Milano
+fare \emph{hack} di giochi di ruolo e mettere ``ottomila cose''. Carina l'idea di
+\textbf{scegliere il numero in base alla divinità}, ``non male''; bello il nome,
+``mi piace molto, devo dire la verità''. Ma due cose:
+\begin{itemize}
+  \item in un gioco di ruolo \textbf{non esiste il single player}: c'è un gruppo
+        di persone, c'è un GM, e il GM narra;
+  \item i giocatori possono essere in competizione: esistono giochi di ruolo
+        \textbf{non cooperativi}, in cui ognuno è contro gli altri; sono più
+        difficili da costruire, ma si possono fare. La competizione ha senso: ogni
+        scena giocata, suggerisce, potrebbe essere \textbf{una delle prove che gli
+        dèi danno}. ``Vi sto dando anche dei suggerimenti per come costruire il
+        prodotto dopo.''
+\end{itemize}
+Dalla regia arriva una precisazione: \textbf{Dungeon Master} è un marchio
+registrato di Wizards of the Coast, mentre \textbf{Game Master} si può usare; per
+questo si tende a evitare il primo. GM va bene.
+
+Le emozioni e gli istinti del gruppo: la \textbf{gioia} dell'avventura,
+l'\textbf{eccitazione} dei dadi e della competizione,
+l'\textbf{identificazione} (perché c'è la creazione del personaggio, con la scelta
+di una serie di caratteristiche), la \textbf{competizione}, la
+\textbf{comunicazione}, l'\textbf{orgoglio}. Il relatore azzarda la
+\textbf{vendetta}: ``pensateci, non è necessariamente tale, dipende''; è un tema
+molto legato al mondo delle divinità, anche per via di Kratos. Gli archetipi di
+giocatore non li hanno ancora fatti: ``non è un problema''.
+
+\subsection{Sessione 3: Gloomy Mario}
+
+``Incredibilmente'' anche il gruppo 3 fa una versione tenebrosa di Mario. L'idea
+di partenza è un'\textbf{inversione}, cioè non Mario che va a destra e insegue, ma
+\textbf{Mario che va verso sinistra ed è inseguito} (``molto bene''). La seconda
+idea viene da \textbf{Darkest Dungeon}, sia per gli elementi lovecraftiani sia per
+la \textbf{meccanica della torcia}. Il gioco è ambientato in una
+\textbf{caverna}: Mario è un grande esploratore, ``tipo Indiana Jones'', che
+esplora una caverna maledetta e, trovando un artefatto, risveglia
+\textbf{Bowser}, un'entità malevola che comincia a inseguirlo. Nella grotta la
+torcia si scarica, e man mano che la barra si svuota il \textbf{campo visivo}
+diminuisce; la si ricarica trovando cariche nei blocchi o tra gli oggetti lasciati
+dai nemici.
+
+La \emph{wanted experience} è una versione \textbf{molto più dark} di Mario, più
+\textbf{claustrofobica}, con la sensazione di pericolo data dalla maggiore presenza
+e aggressività dei nemici: \textbf{paura} e \emph{thrill} (``\emph{fear},
+\emph{thrill}, certo''), la \textbf{sfida} anche nello scappare, la
+\textbf{sopravvivenza} nel fuggire da Bowser verso sinistra, la
+\textbf{curiosità}, perché restano le meccaniche di esplorazione di Super Mario, e
+la \textbf{competizione} per il punteggio più alto nel percorrere il livello. La
+\emph{target audience} è più adulta di quella del Super Mario classico, dai
+\textbf{16 anni} in su, \emph{millennial}; e anche quella a cui piacciono le
+\emph{creepypasta}, ``i giochetti vecchi modificati con quel sapore horror''. Come
+player type, anche loro il \textbf{killer}, chi cerca sensazioni forti, e come
+sottotipo l'\textbf{achiever}, per la ricerca dei segreti nel gioco.
+
+Il relatore sottolinea il confronto con Creepy Mario: ``io lo dico sempre in
+narrativa: \textbf{due concept identici portano}, date le sensibilità, \textbf{a
+cose completamente diverse}''. \emph{Idea is nothing, implementation is
+everything} (sezione~\ref{sec:z6-tre-idee}).
+
+\subsection{Sessione 4: un Ticket to Ride con i saccheggiatori}
+
+Per il gruppo di \emph{Ticket to Ride} parla, con ogni probabilità, Giovanni\footnote{Il nome non è
+pronunciato; chi parla alla fine chiede aiuto ``ad Alice e Giulia'', le altre due
+componenti del gruppo, e quindi è verosimilmente Giovanni.}. Il
+gruppo è partito dall'``ansia da \emph{survival}'' emersa prima, in un gioco che è
+invece ``un po' gioioso'', di viaggio. Facendo un po' di ricerca, non tanto sul
+tipo di giocatore quanto sugli \textbf{stili di gioco} che i giocatori assumono, ha
+trovato il \textbf{thrasher}: quello che vuole mettere i bastoni tra le ruote agli
+altri. L'idea di partenza è quindi \textbf{far entrare nel regolamento}, negli
+obiettivi e nelle future meccaniche, \textbf{quel comportamento}. E, visto questo
+nuovo tipo di obiettivo, aggiungere alla competizione, con cui \emph{Ticket to
+Ride} nasce, anche una \textbf{cooperazione}, con una divisione in fazioni.
+
+Il relatore approva: un gioco in cui il \emph{thrasher} è ``prima donna'' rischia di
+piacere a nessuno, e il modo per renderlo accettabile è probabilmente renderlo anche
+competitivo, come nel gioco da tavolo di \textbf{Game of Thrones}, dove tutti sono
+contro tutti ma ci sono anche i Bruti. Gli viene in mente anche
+\textbf{Nemesis}, ``fatto un botto su Kickstarter'', dove ognuno ha il suo
+obiettivo, gli umani devono sopravvivere all'obiettivo principale, ma ci si può
+anche lasciar morire qualcuno alle spalle per riuscire a fuggire.
+
+Le emozioni: sopravvivenza, competizione e cooperazione con divisione; la
+\textbf{paura} di perdere, di essere sostituiti; un po' di \emph{excitement}.
+``Ci sta, per il momento va benissimo.'' Il gruppo ragiona anche sul fatto che il
+gioco parla di viaggio: che cosa diventa se, invece del viaggio, si introduce
+\textbf{la fuga}? Magari con un \textbf{tempo} che non è scandito solo dai turni,
+e quindi dai vagoni che finiscono. Il player type: da un lato la fazione dei
+\textbf{fuggitivi}, che deve avere una forte impronta \textbf{strategica} per
+raggiungere il prima possibile la meta della fuga; dall'altro i
+\textbf{thrasher}, che godono nell'ostacolare l'altra fazione. ``Quindi
+\emph{killer} e giocatori strategici.'' Un nome non c'è ancora: per un refuso era
+uscito ``\textbf{Ticket to Busan}'', con un'allusione agli zombi di \emph{Train to
+Busan}. ``Amate molto tutti quanti l'horror. Io sono molto contento.''
+
+% ---------------------------------------------------------------------
+\section{Terzo passo: le meccaniche}
+\label{z7:sec:meccaniche}
+
+Per l'ultima ora, il passo successivo. Arrivati qui i partecipanti hanno già idee
+di meccaniche e di dinamiche, e magari hanno dovuto trattenersi dal buttarle giù.
+Ora si comincia: si parte dalle \textbf{meccaniche di base}, cioè da come spostare i
+piccoli mattoncini analizzati, facendo piccoli cambiamenti, per
+\textbf{raggiungere e sostenere la \emph{wanted experience}}.
+
+\subsection{I glossari}
+
+Costruendo l'elenco delle azioni, uno schema, un \emph{core loop}, si farà
+un'altra cosa fondamentale, che il relatore ``non ripeterà mai abbastanza'': i
+\textbf{glossari}, i \textbf{lessici} (sezione~\ref{sec:z6-estetiche}). Non serve un
+glossario vero e proprio: già avere parole che identificano le cose, e chiedersi
+se il comando \emph{run} resta \emph{run} o cambia nome, se abbassarsi si dice
+\emph{crouch} o \emph{duck}, che danno ipotesi e \textbf{sensazioni diverse},
+significa creare glossari. È importantissimo avere \textbf{glossari di
+produzione}, e anche quelli minimi andrebbero nel \emph{one page}. La \emph{board}
+del Bromance Mario è già un \emph{one page}: c'è l'analisi del gioco di base, c'è
+la visione, la \emph{wanted experience}, l'audience, e lì si metterà l'ipotesi del
+\emph{core loop} successivo.
+
+Per chi ha scelto giochi molto diretti, come \emph{Lasers \& Feelings}, è
+semplicissimo prendere il testo e cambiarne delle parti. Il consiglio è di
+\textbf{partire proprio dal glossario}, come il gruppo ha già fatto con il titolo:
+non è \emph{Lasers \& Feelings}, è \emph{Thunder and Prophecy}. Che cos'è
+\emph{Thunder}? Che cos'è \emph{Prophecy}? Non è per forza ciò che è scritto tra
+parentesi nell'originale. Che cosa si possiede? Non la nave, probabilmente
+qualcos'altro. Si ottiene davvero un D6 perché si è preparati ed esperti, o lo si
+ottiene perché l'azione si svolge \textbf{nell'area di influenza della propria
+divinità}? Un campione di Ade avrà aree di influenza diverse da un campione di
+Ares. Già ragionando su questo testo si vede come \textbf{cambiare il testo
+direttamente aiuti a costruire l'\emph{hack}}. Per Super Mario e Ticket to Ride è
+un po' più difficile.
+
+\subsection{Dal D6 al D12: dadi e probabilità}
+\label{z7:subsec:dadi}
+
+Il gruppo di \emph{Thunder and Prophecy} pensa di passare a un \textbf{D12}, ma
+teme per il \emph{testing}: cambiando il dado, il gioco resta equilibrato? Il
+relatore spiega che cambiare un dado da sei a dodici facce non lo rende solo
+\textbf{più granulare}: la probabilità cambia nei momenti in cui si tirano
+\textbf{più dadi}. Consiglia a tutti \textbf{AnyDice}, ``un sito bellissimo'' per
+calcolare le probabilità dei dadi:
+\begin{itemize}
+  \item con un \textbf{solo dado}, D6 o D20 che sia, non c'è una campana: ogni
+        faccia ha la stessa probabilità di uscire. Per questo si dice che
+        \emph{Dungeons \& Dragons} è ``troppo legato al dado'': con il D20 ogni
+        faccia è identica; il bonus sposta la probabilità verso l'alto (se esce
+        1, con il bonus si fa 7), ma resta piatta;
+  \item con \textbf{due dadi} sommati, per esempio 2D6, si ottiene una
+        \textbf{campana}: i risultati intermedi sono molto più probabili;
+  \item AnyDice permette anche di \textbf{tenere il dado più alto} tra due D20, di
+        fare collezioni di dadi e altro; la sua documentazione spiega come
+        fare\footnote{Con due D20 sommati la distribuzione è triangolare; tenendo
+        il più alto dei due (il ``vantaggio'' della quinta edizione di
+        \emph{Dungeons \& Dragons}) non si ottiene una campana, ma una
+        distribuzione sbilanciata verso i valori alti. Il relatore unisce i due
+        casi in una sola frase (``se tu prendi due di 20 ti viene fuori una
+        campana; tra l'altro non è due di 20, è output 2 di 20, tieni il più
+        alto''); la sintassi di AnyDice per il secondo è
+        \texttt{output [highest 1 of 2d20]}.}.
+\end{itemize}
+Ma ``non perdetevici'': strumenti come questi possono far andare \emph{out of
+scope}, ``è talmente carino fare sta roba che\dots''. ``Sì, è molto simpatico.''
+Ed è comunque molto utile.
+
+Per il caso concreto: se si passa \textbf{dal D6 al D12 con un dado solo non cambia
+niente}, la probabilità resta uniforme\footnote{Uniforme sì, ma su dodici
+valori: cambia la granularità, cioè quanto pesa ogni punto del numero del
+personaggio (con il D12 un punto vale 1/12 di probabilità invece di 1/6).}. Il
+consiglio è di \textbf{non mettere molti dadi}: il D12 va benissimo. Attenzione
+però a una cosa: con un meccanismo ``sopra o sotto il proprio numero'', i valori
+estremi, \textbf{1 e 12}, non si possono usare come numero del personaggio,
+``perché se no non puoi fallire''. Il gruppo vuole comunque lasciare simili alcune
+meccaniche di base: ``cambiate il resto'', e il tutto deve \textbf{stare in una
+pagina}.
+
+\subsection{Che cosa consegnare}
+
+Bisogna rifare il PDF di \emph{Lasers \& Feelings}? No: si possono incollare alcune
+parti del PDF in un documento Google semplicissimo, in verticale, \textbf{senza
+replicare la grafica}. Da consegnare entro un'ora, ``quello che riuscite''. Ma ciò
+che il relatore vorrebbe da tutti i gruppi è che riescano a fare
+\textbf{almeno le meccaniche e il \emph{core loop}}: le meccaniche, come ha fatto
+lui sulla \emph{board}, con un po' di \textbf{regole} e i \textbf{power up}, cioè
+le risorse.
+
+Le \textbf{risorse}, precisa, non sono proprio meccaniche: sono qualcosa che fa da
+\textbf{vincolo o rinforzo} delle meccaniche (sezione~\ref{sec:z6-meccaniche}). Il
+\emph{power up}, se ci si pensa, è un rinforzo al fatto che Mario diventa più
+grande, quindi più potente. Se si riesce a fare un copia e incolla di quella
+struttura e a usarla ``un po' come se fosse il vostro \textbf{design principle}''
+(sezione~\ref{sec:z6-pilastri}), il lavoro è impostato. Lui, nel Bromance Mario,
+farà così: cambierà i nomi, ragionerà sul glossario, sui verbi, sulle parole.
+
+\subsection{Icone e idiomi nel glossario}
+
+Nel glossario si può fare anche il ragionamento su \textbf{icone e idiomi}
+(sezione~\ref{sec:z6-icone-idiomi}). L'ascia dell'ex mercenario probabilmente non
+si chiamerà ``ascia'', ma avrà un \textbf{nome specifico}, perché è un
+\textbf{idioma}: si vuole creare \textbf{identificazione} nel prodotto. Ma se si
+rende tutto un idioma, se si cambia il nome a ogni comando (\emph{run} e
+\emph{sprint} diventano ``foot'', \emph{jump} diventa ``leg''), il giocatore
+\textbf{non capirà niente}. ``Mi raccomando, state attenti a questi elementi.''
+
+\subsection{Dove ci si ferma}
+
+C'è un'ora, tutto il resto della sessione. Chi finisce le meccaniche, magari con le
+dinamiche, nel \emph{one page} e le visualizza bene, può andare oltre e porsi dubbi e
+domande sulle \textbf{scelte} dei giocatori e sulle procedure. Ed è qui, dice il
+relatore usando ``una parola vietata, ma bella'', la parte più
+\textbf{divertente}: ragionando sulle meccaniche di base (``non mettete troppe
+meccaniche extra, state sulle meccaniche base e fate qualche cambiamento''),
+guardando il \emph{core loop}, si noteranno sempre più \textbf{\emph{behavior}},
+comportamenti, \textbf{scelte implicite} che, una volta esplicitate al team di
+sviluppo, richiedono magari di trovare modi per limitarle. E lì comincia il
+ragionamento sui \textbf{feedback loop}, positivi e negativi
+(sezione~\ref{sec:z6-loop}): che cosa fare perché l'esperienza vada nella
+direzione giusta. ``Io mi voglio fermare lì.''
+
+% ---------------------------------------------------------------------
+\section{Terzo passo: le meccaniche del Bromance Mario}
+\label{z7:sec:bromance-meccaniche}
+
+Riaperte le stanze, Daniele e Michele si chiedono come raggiungere la loro
+esperienza.
+
+\subsection{Camminare e colpire, invece di correre e saltare}
+
+Michele si chiede se il colpo d'ascia, che non è più il fuoco del fiore ma
+un'ascia, debba diventare una meccanica \textbf{quasi principale}: non c'è più il
+senso di evasione, c'è un senso di attacco ``da killer'', di rancore, quindi di
+rabbia. Il relatore immagina un boscaiolo che \textbf{non corre}, ma fa
+\textbf{passi pesanti}: quindi \textbf{walk}, non \emph{run}; ``però
+\emph{walk} spedito, \emph{walk} veloce''. E, anziché saltare, il \textbf{colpo
+d'ascia}: da vicino, ``tu alzi l'ascia e fai pam''.
+
+Con il colpo d'ascia si potrebbero far crollare i muri e creare punti da cui
+salire; ma il gioco ``non è molto \emph{puzzling}'', è più per \emph{explorer} e
+\emph{socializer}, e l'idea non regge. Ha senso invece \textbf{colpire gli alberi
+per creare passaggi}: si butta giù l'albero e si crea un \textbf{ponte}. Al posto
+dei mattoni, le \textbf{rocce} a terra, che si spaccano con i colpi. Più che
+\emph{overcome obstacle}, quindi, si \textbf{trasforma un ostacolo nel suo
+contrario}: l'albero da ostacolo diventa\dots\ ``Qual è il contrario di
+ostacolo?'' ``Non lo so, sinceramente.'' ``\textbf{Asset}: una parola molto
+mercenaria.'' Il relatore nota che \textbf{trasformare gli ostacoli in asset}
+ricorda i Pokémon con la mossa \textbf{Taglio}, che abbatte gli alberi, ``e questo
+mi fa molto piacere'': ognuno porta i suoi strumenti, la sua
+disciplinarietà\footnote{Qui il relatore aggiunge che non si aspetta che tutti
+imparino i player type subito, ``assolutamente no'': si potrebbe fare una lezione di
+tre ore solo su quelli, ed è giusto far capire che chi fa il corso di game design
+ci mette tempo a ragionare su queste cose.}.
+
+\subsection{Colpire o lanciare}
+
+\emph{Hit enemy}: con l'ascia, ``senza ombra di dubbio''. \emph{Acquire item}:
+rompendo le rocce? No: nel primo Mario si salta anche per prendere gli oggetti
+(il fungo esce dal blocco, va a destra o a sinistra, lo si insegue e ci si salta
+sopra), e l'ascia da vicino non permette di prenderli. Forse il salto bisogna
+rimetterlo? Michele propone un'altra strada: visto che si colpisce, si potrebbe
+colpire l'oggetto \textbf{guardando verso l'alto}. Il relatore la sviluppa: se si
+preme ``su'' e si attacca, invece di colpire in orizzontale \textbf{si lancia
+l'ascia in alto}. Nasce così la distinzione:
+\begin{description}
+  \item[Axe hit.] Il colpo da vicino, che fa tutto (colpire nemici, rocce,
+        alberi) tranne \emph{acquire item}.
+  \item[Axe throw.] Il lancio dell'ascia, verso l'alto ma anche in orizzontale,
+        con cui si acquisiscono gli oggetti\footnote{In mezzo, Michele nota che il
+        \emph{jump} di Mario potrebbe chiamarsi \emph{jump/fist}, perché quando
+        Mario salta colpisce con il pugno (sezione~\ref{sec:z6-meccaniche}).}.
+\end{description}
+Michele teme che il lancio cambi molto il gameplay, se i nemici muoiono con un colpo
+solo come in Mario. Allora si diversificano i nemici: bisogna capire \textbf{se
+colpirli da vicino o da lontano}, e ``ci può stare''. Gli oggetti non stanno più in
+blocchi o rocce, che ``non sono proprio un \emph{brick}'', ma in \textbf{elementi
+naturali}: un frutto in cima a un albero da far cadere, ``magari una volta un
+alveare'' (``bravo, bravo, bravissimo'').
+
+\subsection{Il pastrano e il duck}
+
+Serve un potere come il \emph{duck}, che si usa solo in certi casi. Al posto del
+crescere con il fungo: che cos'hanno i boscaioli? La cuffia, il cappotto pesante.
+Michele ha un'idea legata a vendetta, raccolta, sopravvivenza e rancore: la
+possibilità di \textbf{chinarsi} solo in certi casi, per esempio vicino a un
+nemico ucciso, il cui cadavere resta lì, per \textbf{trovare un oggetto}. Stimola il
+rancore, perché fa vedere il nemico ucciso, la curiosità, e la tristezza, ``perché
+hai ucciso comunque una persona''. Il relatore pensa a una \textbf{dinamica
+emergente} dei giochi multiplayer, il \textbf{\emph{teabagging}}\footnote{Nella
+trascrizione ``T-Bag''.}: abbassarsi ripetutamente sul cadavere dell'avversario in
+segno di scherno. ``Comunque è killer.''
+
+La forma definitiva: il boscaiolo indossa un \textbf{pastrano} pesante, che lo
+distingue dal Mario con il fungo. Finché ha il pastrano, cammina e uccide i nemici;
+la prima volta che viene colpito \textbf{perde il pastrano}, ``quindi è come se tu
+avessi una doppia vita''. Ma, una volta perso il pastrano, \textbf{può fare
+\emph{duck}}: chinarsi sui nemici, schivare. Solo in quel momento, per bilanciare
+il fatto di aver perso una vita: si è molto più deboli, perché al primo colpo si è
+fuori, ma si ha il vantaggio di trasformare i cadaveri dei nemici in oggetti.
+Michele aggiunge che chinandosi si può cercare di recuperare dal nemico proprio un
+\textbf{cappotto}: il pastrano diventa un'\textbf{armatura} che si può trovare
+anche sui nemici. ``Ci sta, mette più profondità al gameplay.''
+
+\subsection{Le tracce degli animali}
+
+Le \textbf{monete} danno troppo l'idea dell'avidità, e l'esperienza voluta è
+tristezza, rancore, curiosità. Al loro posto Michele propone \textbf{ciuffi di pelo
+degli animali}, il relatore le \textbf{tracce} degli animali rapiti. Rompendo le
+rocce a terra si possono trovare tracce, ma l'importante è che siano legate agli
+animali e restino nell'ambito naturalistico. Più tracce si trovano, più si è sulla
+strada giusta per arrivare agli animali, e le tracce, ``che ne so'', danno punti.
+
+\subsection{I richiami degli animali}
+
+E il fiore di fuoco, o lo Starman? Lo Starman potrebbe essere non la birra, ma una
+\textbf{bevanda proteica}, ``la bevanda delle dodici uova''\footnote{Nella
+trascrizione segue ``Eggnog'', proposto forse come nome; l'idea viene poi
+scartata.}. Michele ricorda un'arma nascosta di \textbf{Battlefield}: la mano che
+diventa una pistola, con il personaggio che fa i versi dello sparo. Da qui l'idea: il
+boscaiolo usa i \textbf{versi degli animali} per colpire i nemici. ``Mi piace, i
+versi degli animali.'' Non troppi, tre o quattro.
+
+Michele racconta un aneddoto dal lavoro per la sua startup americana: dovendo
+creare gli effetti sonori degli animali marini, lui e una collega cercavano il verso
+dello \textbf{squalo} e non trovavano niente; dopo un po' di ricerca hanno scoperto
+che \textbf{lo squalo non fa nessun rumore}. Da allora, in fase di ricerca, prima di
+cercare il suono di un animale si verifica che l'animale faccia un suono.
+``Perfetta questa modalità.''
+
+I richiami (\textbf{animal call}) diventano una categoria della \emph{board}: il
+\textbf{ruggito dell'orso} (\emph{bear's roar}), lo \textbf{strido dell'aquila}
+(\emph{eagle screech}), l'\textbf{ululato del lupo}; il \textbf{cervo}, che più che
+un verso suggerisce l'incornata, diventa invece un \textbf{compagno animale da
+cavalcare}, come Yoshi, che magari carica i nemici. Lo squittio dello scoiattolo
+non va bene. Che cosa fanno? Non bisogna complicare troppo un gioco ``che alla fine
+è Mario'' (Michele ricorda un gioco in cui l'urlo abbassava la resistenza dei
+nemici, e lo scarta). La regola: sono \textbf{\emph{one shot}}. Quando si trova il
+richiamo, lo si attiva una volta e fa il suo effetto, ma su tutto:
+\begin{itemize}
+  \item il \textbf{ruggito dell'orso} uccide tutti i nemici \textbf{in mischia},
+        cioè vicini;
+  \item l'\textbf{ululato del lupo} uccide tutti i nemici \textbf{a distanza}, in
+        un certo raggio\footnote{All'inizio il relatore pensava che l'ululato
+        rivelasse tutte le tracce sullo schermo, per legarlo all'olfatto del lupo;
+        poi la distinzione mischia/distanza ``taglia la testa al toro''.};
+  \item lo \textbf{strido dell'aquila} rompe tutti gli oggetti sopra il
+        boscaiolo, anche quelli nascosti, che però non cadono: restano lì, e
+        bisogna trovare il modo di raggiungerli.
+\end{itemize}
+Uno per tipo, ``per dinamica di gameplay''; in arancione, ``un arancio più
+pesante'', sulla \emph{board}\footnote{Riordinando la \emph{board} il relatore scherza
+sul proprio bisogno di ordine (``per la mia OCD non va bene'') e risolve
+cambiando il colore di un elemento in blu.}. Michele propone anche di far
+ricominciare il livello a chi sbaglia, come in certi \emph{runner} per telefono e in
+\emph{Geometry Dash}; ``no, così no''.
+
+\subsection{Le regole}
+
+Come regole restano quelle di Mario: \textbf{non si può andare a sinistra},
+\textbf{non si può saltare} e c'è il \textbf{limite di tempo} del livello, perché
+si devono salvare gli amici animali prima che il tempo finisca. ``Così rimaniamo
+fedelissimi a Mario, togliendogli comunque una \emph{core mechanic}.'' Anzi, Michele
+nota che \textbf{Diego} ``sarebbe molto orgoglioso'' di un gioco \textbf{senza la
+meccanica del salto}: era una sua sfida\footnote{Si tratta con ogni probabilità di
+Diego Ricchiuti, il direttore del corso di game design citato nel
+capitolo~\ref{cap:z6-mindset}. La trascrizione dice ``era la sfida
+dell'Interball'': il nome della sfida, o dell'occasione in cui è stata lanciata, non
+è ricostruibile. ``Un incubo'', commentano i due.}. Restano anche tutte le regole
+implicite, ``le basi basi basi'' di Mario, per esempio che un nemico uscito dallo
+schermo è uscito.
+
+\subsection{Le tre avvertenze}
+
+Il relatore si annota due cose da dire alla fine. La prima: l'esperienza di oggi è
+stata \textbf{semplificata}, perché si è partiti dall'analisi di un gioco molto
+simile a quello che si produrrà; quando si deve creare un gioco nuovo \textbf{da
+zero}, è molto più difficile. La seconda: di solito \textbf{un hack espande un
+po' rispetto all'originale}, ``infatti noi stiamo molto espandendo''. Prima di
+passare alle dinamiche, il relatore va a fare un giro nelle stanze dei gruppi per
+vedere come procede.
+
+\subsection{Nella stanza principale}
+
+Al ritorno dei partecipanti\footnote{La trascrizione registra qui una ventina di
+``grazie a tutti'' ripetuti, durante la riapertura delle stanze.}, Michele parla con
+due di loro (``Michele Bosio e Marco Ronchi'')\footnote{Così nella trascrizione;
+``Michele Bosio'' potrebbe essere il cognome di Michele o di un altro partecipante.}:
+racconta che hanno tolto il salto e messo il lancio dell'ascia (``hai rimosso il
+salto?'', ``ammazzato''). Marco, arrivato tardi, si è perso il lavoro sul campo;
+quanto alla registrazione, il relatore conferma che Zoom mostrava ``\emph{recording
+in progress}'', ma le singole stanze non sono registrate; si vedrà comunque il lavoro
+suo e di Michele.
+
+% ---------------------------------------------------------------------
+\section{Le presentazioni finali}
+\label{z7:sec:presentazioni}
+
+\subsection{Il Bromance Mario}
+
+Il relatore riassume l'\emph{hack}, che a lui e a Michele ``è piaciuto molto
+fare''. Il protagonista \textbf{non salta}: cammina e può \textbf{lanciare
+l'ascia} oppure \textbf{colpire i nemici vicini}; alcuni nemici si possono colpire
+solo da vicino, altri solo da lontano. Può \textbf{accucciarsi} solo quando è a
+petto nudo: comincia con un cappotto che perde la prima volta che viene colpito,
+come una vita extra, e da quel momento può accucciarsi per raccogliere dai cadaveri
+dei nemici, magari, un cappotto di riserva. Ha \textbf{tre poteri speciali}, i
+\textbf{richiami degli animali}, che a differenza di quelli di Mario si usano
+direttamente una volta presi: bisogna essere bravi a usarli nel momento migliore.
+Il richiamo del lupo uccide tutti i nemici a distanza, in un certo raggio, ma non
+quelli vicini; il ruggito dell'orso, al contrario, uccide tutti i nemici vicini;
+l'urlo dell'aquila distrugge tutti gli oggetti sopra il boscaiolo e apre ``un fracco''
+di oggetti nascosti, che poi si possono prendere.
+
+E c'è già una \textbf{dinamica}: si può decidere di \textbf{farsi colpire apposta}
+per perdere il cappotto e potersi accucciare all'occorrenza. ``Quella è una
+strategia, quella è una dinamica.'' Il \emph{one page design} li soddisfa molto; da
+Miro lo si può esportare come immagine, o come PDF con la versione a pagamento.
+
+Non c'è tempo per far presentare tutti i progetti: il relatore dice che tutti
+quelli che ha visto nelle stanze sono stati ``veramente eccezionali''. Chiede quindi
+solo ai due gruppi di Super Mario di spiegare brevemente la loro idea, perché ne ha
+parlato poco con loro, e poi chiuderà; chi deve andare può andare.
+
+\subsection{Creepy Mario: la barra del panico}
+
+Il gruppo 1 ha introdotto una \textbf{barra del panico} come meccanica principale.
+La barra \textbf{sale}:
+\begin{itemize}
+  \item ogni volta che si colpisce un blocco con la testa, perché ci si fa male e
+        cresce la confusione;
+  \item ogni volta che si tocca per sbaglio un mostro.
+\end{itemize}
+Più la barra sale, più \textbf{aumenta la capacità di correre e saltare}; ma se la
+barra arriva al massimo, \textbf{si muore}. Quando invece non si è in panico si è più
+lenti e goffi, ma al sicuro dal \emph{game over}. La barra \textbf{scende}
+schiacciando i mostri, che restituiscono una piccola parte della barra, e soprattutto
+\textbf{salvando altri sopravvissuti}, che prendono il posto dei \emph{power up}:
+bisogna prima distruggere la gabbia e poi prenderli, e restituiscono una grossa parte
+della barra. È così che il giocatore si bilancia.
+
+Il relatore apprezza molto: è un \textbf{bilanciamento di feedback loop}. Da un lato
+il panico avvicina al \emph{game over}; dall'altro, ``e qua è la bellezza'', il fatto
+che renda più veloci non è un \emph{positive feedback loop} ma un \textbf{negative
+feedback loop}: è un potere positivo per il personaggio, ma un feedback negativo,
+perché alla lunga stabilizza il gioco, dato che si è più veloci e quindi più capaci
+di schivare i nemici; però ogni volta che, da quel momento in poi, non si schiva un
+nemico, si è un passo più vicini alla morte, e la destabilizzazione è
+maggiore\footnote{La lettura del relatore è sottile: lo stesso stato (il panico) ha
+un effetto stabilizzante (più velocità, quindi più capacità di evitare danni) e uno
+destabilizzante (ogni errore avvicina al \emph{game over} più che nello stato calmo).
+Si è riportata la sua spiegazione così come la dà; per la terminologia si veda la
+sezione~\ref{sec:z6-loop}.}. ``Ragazzi, perfetto, bellissimo.''
+
+Sarebbe bello, aggiunge, vedere anche le dinamiche e le scelte di gioco. Lì entrano
+i \textbf{nemici}: non fanno solo parte delle meccaniche, ma \textbf{spingono il
+giocatore a compiere determinate scelte}, determinati \emph{behavior}. Ogni volta che
+si entra nell'ambito dei nemici e degli ostacoli si entra nelle \textbf{dinamiche}.
+
+Il gruppo cita un'ultima idea: il comportamento dei nemici. Il classico percorso
+fisso dei nemici di Mario, intervallato da \textbf{azioni casuali}: uscire dal
+percorso, fare uno scatto verso il personaggio, per ricreare il \textbf{jumpscare} o
+comunque la situazione inaspettata, in cui conviene avere un controllo reattivo e
+quindi essere più vicini al \emph{game over}. Il relatore lo collega
+all'\textbf{action feedback} (sezione~\ref{sec:z6-dinamiche}), di cui non si era
+parlato direttamente: questo effetto casuale dovrebbe avere effetti speciali ``molto
+molto molto presenti, visibili''. Mettere tanta reattività e tanto feedback visivo è
+il concetto di \textbf{juice}\footnote{Nella trascrizione ``il concetto di juiz'':
+il \emph{juice}, o \emph{game feel}, è l'insieme di effetti visivi e sonori che
+rendono un'azione ricca di risposta.}: rendere una meccanica, una dinamica, molto
+visibile. Lui si immagina un \textbf{fantasma} bianco che, quando scatta la cosa
+casuale, diventa improvvisamente trasparente e orrorifico, ``tipo pum'', e deve essere
+fatto molto bene; qualcuno aggiunge ``un \emph{flash}, un'immagine a tutto schermo''.
+``Bravissimo.''
+
+\subsection{Gloomy Mario: la torcia, la pala e Bowser}
+
+Il gruppo 3 riprende il progetto: l'obiettivo è \textbf{risalire dalla grotta}. Il
+\emph{core loop} è leggermente modificato, con l'aggiunta di una meccanica di
+\textbf{raccolta e colpo} (\emph{gather and hit}). La meccanica fondamentale è
+\textbf{Bowser}, il mostro che \textbf{insegue il giocatore}, prima dalla parte
+destra e poi, hanno pensato, dalla sinistra, per dare l'idea di una risalita a
+zig-zag; non può essere danneggiato e \textbf{sta sempre al limite della luce}.
+
+La \textbf{torcia} è il nuovo oggetto, e anche la meccanica fondamentale: illumina lo
+schermo in base alla carica, con stadi al 100\%, 75\%, 50\% e 25\%; a 0\% è
+\emph{game over}. Bowser si comporta in base a quanto illumina la torcia:
+\begin{itemize}
+  \item al 100\% e al 75\% si limita a stare al limite della luce e a inseguire;
+  \item al 50\% attira verso di sé i funghetti e potenzia la velocità dei Koopa
+        e la velocità di sparo delle piante piranha;
+  \item al 25\% fa comparire degli \textbf{ostacoli} davanti a Mario, come
+        blocchi, con cui si può interagire e che si possono rompere\footnote{Nella
+        trascrizione ``a 0\% Wipe, mi sono dimenticato il 25'': lo 0\% è il
+        \emph{game over}, e la correzione riguarda il 25\%.}.
+\end{itemize}
+Gli altri nemici:
+\begin{description}
+  \item[Dark Koopa.] Le tartarughe camminano su un percorso predefinito, ma quando
+        vedono il giocatore cominciano a correre verso di lui e ogni tanto si
+        fermano. Se le si uccide \textbf{saltandoci sopra} lasciano il guscio, che è
+        una \textbf{carica della pala}; se le si uccide con la pala non lasciano
+        nulla.
+  \item[Funghetti.] In versione più oscura, camminano sul percorso prestabilito,
+        a meno che Bowser non li attiri a sé.
+  \item[Piante piranha.] Sempre davanti al giocatore, sul terreno: si affrontano
+        con la pala, scavandole da sotto, oppure si evitano del tutto con il
+        platforming.
+\end{description}
+
+La \textbf{pala} piace al relatore: se richiede tempo per essere usata, cioè se è
+molto forte (per esempio distrugge gli oggetti) ma lenta, diventa interessante
+strategicamente, perché mentre si scava non si può reagire, e se ci si deve salvare
+bisogna ricominciare da capo. C'è un elemento di \textbf{rischio}: scavo e aspetto, o
+non scavo? Il gruppo ha pensato anche alle cariche: la pala parte da \textbf{zero
+cariche}; la prima volta che la si trova, in un blocco, ne dà \textbf{cinque}, che
+non si ricaricano col tempo: si ricaricano solo uccidendo i Koopa \textbf{nel modo
+corretto}, saltandoci sopra. A un certo punto bisogna quindi scegliere se usare una
+carica come via di fuga, per rompere il blocco davanti dopo aver sbagliato il
+platform, o per uccidere un nemico.
+
+Nella costruzione delle mappe c'è il \textbf{blocco crepato}: ha una
+\emph{texture} simile a quella normale, ma colpito con la pala, usando una carica,
+rivela passaggi segreti, scorciatoie, blocchi. Anche loro avevano pensato
+all'\textbf{albero che crolla} e fa da ponte, o all'albero che si taglia per entrarci
+dentro. Gli oggetti, sempre nei blocchi, che si rompono con il salto o con la pala:
+\begin{itemize}
+  \item la \textbf{stella}, che blocca per un certo tempo la diminuzione della
+        torcia;
+  \item il \textbf{fungo}, che dà una vita extra;
+  \item il \textbf{fiore di fuoco}, che ricarica del 25\% la torcia, ``la fonte di
+        luce'', e sarà molto presente perché è la meccanica di base per andare
+        avanti;
+  \item le \textbf{monete}, raccoglibili come nel Super Mario classico.
+\end{itemize}
+Le monete servono perché tra un livello e l'altro c'è una \textbf{zona di scambio}, una
+zona di riposo con le casette del funghetto, dove le si scambiano con potenziamenti
+\emph{una tantum} (``avevamo pensato a un cappellino'').
+
+\subsection{La zona di scambio e le convenzioni di genere}
+
+Sulla zona di scambio il relatore invita a ragionare. Da un lato è vicina agli
+istinti e alle priorità del gruppo, alla sfida; ma \textbf{abbassa molto la sensazione
+di sopravvivenza e di paura}: ``sono in una zona sicura, posso fare degli scambi''.
+In alternativa, propone un \textbf{PNG}, un mostro che \textbf{scappa}: se lo si
+acchiappa, blocca un attimo lo schermo e permette di fare scambi, ma con un
+\textbf{timer}, quindi con poco tempo a disposizione.
+
+È un caso tipico. Quando si gioca un gioco e c'è qualcosa che ``non convince
+troppo'', di solito è perché gli sviluppatori hanno messo qualcosa di molto legato al
+\textbf{genere} e allo \textbf{stile di riferimento}, pensando di doverlo inserire per
+necessità: ``tutti gli RPG hanno quella roba lì, quindi la devo mettere''. Ma, se si
+ragiona bene, \textbf{non c'entra molto con il player type}\footnote{Nella
+trascrizione ``con il player tag''; come nel capitolo precedente, si intende il
+\emph{player type}.}.
+
+% ---------------------------------------------------------------------
+\section{I consigli conclusivi}
+\label{z7:sec:consigli}
+
+Un partecipante chiede il contatto Telegram del relatore, che lo dà
+volentieri\footnote{Il relatore detta il proprio nome utente Telegram e, più tardi,
+il proprio indirizzo di posta elettronica dell'accademia; non vengono riportati qui.
+I contatti suoi e di Michele sono comunque all'inizio delle slide del primo giorno.}.
+Poi chiude, ``così se qualcuno deve andare a pranzo facciamo libera tutti''.
+
+\subsection{Non perdersi}
+
+Bravi anche i ragazzi di \emph{Ticket to Ride}, che hanno avuto ``un'ottima idea'':
+\textbf{carovane e carrozze nell'Ottocento, con i banditi}. Erano un gruppo senza
+esperienza di game design, e hanno avuto la \textbf{sensazione di perdizione}:
+``tenetevela'', perché è una sensazione che hanno anche i game designer. ``Essere
+parte di un team significa anche \textbf{aiutare le persone a non perdersi}.''
+
+I punti da ricordare:
+\begin{itemize}
+  \item \textbf{visione}, \textbf{esperienza}, \textbf{sensazioni};
+  \item il \textbf{\emph{budget design}}: un \emph{hack} è il modo più veloce per
+        fare un prodotto, e allora bisogna \textbf{modificare il meno possibile}
+        il prodotto originale. In un gioco da tavolo o di ruolo, \textbf{modificare
+        direttamente il testo}, partendo dalle icone e dagli idiomi, cioè dai
+        nomi delle cose;
+  \item \textbf{se si fissano dei punti, fissarli e non cambiarli}, a meno che non
+        si abbia un'idea \emph{out of the box}: se, invece di tenere punti fermi e
+        cardini, si comincia improvvisamente a fare solo brainstorming, ci si perde.
+\end{itemize}
+
+Anche \emph{Thunder and Prophecy} è un'ottima idea. Il gruppo aveva un po' meno
+esperienza nella scrittura di giochi di ruolo, ed è normale: ogni volta che il
+relatore vede game designer di videogiochi fare un design per un gioco di ruolo da
+tavolo, il problema è che il gioco di ruolo è \textbf{molto più minimale} di un
+videogioco, e bisogna ragionare molto di più sul \textbf{player type}, su
+\textbf{l'esperienza che i giocatori di ruolo si aspettano}. ``Anche voi avete fatto
+un ottimo lavoro.''
+
+% ---------------------------------------------------------------------
+\section{Il portfolio}
+\label{z7:sec:portfolio}
+
+Qualche ``domanda secca''. Come si presenta il lavoro nel \textbf{portfolio}? Lo
+schema fatto oggi, ``sistemato, messo nome e cognome, la data e quant'altro, messo un
+paio di immagini'', può diventare automaticamente un \textbf{one page design
+document} da mettere in portfolio.
+
+Per chi lavora su \emph{Lasers \& Feelings}, il relatore consiglia
+\textbf{itch.io}: un sito dove ci sono giochi indipendenti e ``un fracco'' di
+\emph{hack} di videogiochi e di giochi di ruolo. Cercando ``\emph{Lasers \& Feelings
+hack}'' se ne trovano moltissimi: un \emph{hack} ispirato a \emph{Squid Game}, e
+altri dai titoli come \emph{Schemes \& Teams}, \emph{Gun \& Elf}, \emph{Diablo \&
+Seraph}\footnote{I titoli sono letti a schermo e riportati come compaiono nella
+trascrizione; potrebbero essere imprecisi.}. È ``molto \emph{easy} da usare''.
+Mostra anche la sua pagina itch.io, con alcuni suoi giochi: giochini piccoli fatti
+per le \emph{jam}, che fa ogni tanto, tranne uno ``un po' più grossino''; e promette
+di mandare il link.
+
+La cosa migliore, dice, è \textbf{pubblicare il gioco su itch.io}, con una bella
+pagina di descrizione, e poi metterlo nel portfolio, che ``per chi non lo sapesse
+\textbf{è la cosa più importante nel mondo del game design}''. Nel portfolio si
+possono mettere il \emph{one page}, la pagina itch.io, l'High Vision Document, e far
+vedere \textbf{come si è passati da questo al prodotto vero e proprio}. Va bene anche
+mettere il PDF originale di \emph{Lasers \& Feelings} accanto alla versione
+modificata, per mostrare la struttura: ``uno più l'altro, sì, assolutamente''.
+
+\subsection{La licenza}
+
+Ultima raccomandazione: \textbf{mettere la licenza}. \emph{Lasers \& Feelings} è un
+gioco gratuito di cui si possono fare \emph{hack}, \textbf{purché si citi
+l'originale}\footnote{\emph{Lasers \& Feelings} di John Harper è distribuito con
+una licenza Creative Commons che consente le opere derivate con attribuzione; i
+dettagli della licenza vanno verificati sulla versione che si usa.}. Bisogna quindi
+scrivere che il proprio gioco, \emph{Thunder and Prophecy}, è un \emph{hack} di
+\emph{Lasers \& Feelings}, gioco di tale autore, con tale licenza: ``basta scrivere
+l'ultima parte alla fine''.
+
+% ---------------------------------------------------------------------
+\section{Chiusura}
+\label{z7:sec:chiusura}
+
+``Ragazzi, è stato un piacere: credo che sia stato uno dei workshop migliori,
+\textbf{con più \emph{outcome}}, che io abbia mai fatto.'' Il relatore spera che sia
+stato utile (``a me è stato utilissimo''), di ricontattare tutti e di vedere che cosa
+faranno in futuro. Lo si può aggiungere su \textbf{LinkedIn}, come qualcuno ha già
+fatto; Facebook lo usa poco, usa soprattutto Telegram e LinkedIn. Giovanni chiede
+l'indirizzo e-mail, e il relatore lo dà, ricordando che tutti i suoi contatti, e quelli
+di Michele, sono all'inizio delle slide del giorno prima. Poi, ``un minutino ancora'' per
+le ultime domande, e i saluti: deve scappare a pranzo.
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item La seconda giornata del workshop è pratica: quattro gruppi da tre fanno
+        l'\textbf{hack} di un gioco esistente (\emph{Lasers \& Feelings},
+        \emph{Ticket to Ride} o \emph{Super Mario Bros.}), andando, nell'ADMDA,
+        \textbf{dall'analisi fino alle meccaniche}, senza arrivare a dinamiche ed
+        estetiche. Il risultato è un \textbf{one page High Vision Document}.
+  \item Gli strumenti contano poco: Google Docs, Miro (o un'altra lavagna digitale,
+        meglio se con i \emph{frame} e l'esportazione in immagine), ``anche carta e
+        penna''. Conta \textbf{lo strumento corretto per il giusto lavoro}.
+  \item I passi: \textbf{analisi} di azioni (verbi) e regole (vincoli e rinforzi) e
+        del \textbf{core loop}; \textbf{visione} dell'hack, cambiando un elemento;
+        \textbf{esperienza desiderata} (emozioni e istinti); \textbf{pubblico};
+        \textbf{meccaniche}. Si fa design per giocatori reali, partendo dalla visione
+        dell'esperienza.
+  \item Nell'analisi \textbf{sensibilità diverse producono analisi diverse}, ed è un
+        valore. Distinguere i \textbf{comandi di base} dalle azioni che con essi si
+        compiono; distinguere le azioni dalle \textbf{dinamiche} (il punteggio, le
+        strategie).
+  \item Due azioni sono distinte se sono \textbf{meccanicamente diverse} (il dado
+        laser e il dado feelings), non se cambia solo l'oggetto (in Ticket to Ride
+        \textbf{pescare è un'azione sola}, cambia il mazzo).
+  \item Nei giochi di ruolo \textbf{il GM è un giocatore}, un \emph{over player} con
+        più poteri e discrezionalità, con azioni proprie: creare l'avventura,
+        condurre il gioco. Non esiste il single player.
+  \item Le emozioni vanno scelte con cura: in Mario \textbf{raccolta} più che
+        avidità, \textbf{evasione} più che orgoglio; l'\textbf{orgoglio} del
+        punteggio è \textbf{emergente}; l'avidità nasce nelle \textbf{dinamiche},
+        quando il gioco spinge a rischiare per avere di più. ``Pensate agli istinti
+        umani e non sbagliate mai.''
+  \item Il pubblico si conosce con la \textbf{ricerca}: le esperienze volute già
+        suggeriscono il player type; poi Google (anche Notizie e Libri),
+        BoardGameGeek, i commenti dei giocatori, gli amici. I player type di Bartle
+        sono \textbf{falsi amici} (il killer non è un assassino, ma chi cerca
+        emozioni forti): vanno descritti in termini che il team capisca.
+  \item ``X incontra Y'' è un \textbf{high concept}. La \textbf{USP} è ciò che rende
+        il prodotto unico per il suo pubblico.
+  \item Due concept identici (Creepy Mario e Gloomy Mario) portano a giochi diversi:
+        \textbf{l'idea è nulla, l'implementazione è tutto}.
+  \item Per cambiare le meccaniche si parte dai \textbf{glossari}: i nomi danno
+        sensazioni diverse; gli oggetti chiave possono diventare \textbf{idiomi}, ma
+        se tutto è idioma il giocatore non capisce niente.
+  \item Le \textbf{risorse} e i \emph{power up} sono vincoli e rinforzi delle
+        meccaniche. Togliere una \emph{core mechanic} (il salto) e sostituirla
+        (l'ascia) cambia l'esperienza; un vantaggio può avere un costo (il duck solo
+        senza pastrano), e da lì nascono le dinamiche (farsi colpire apposta).
+  \item I dadi: un dado solo dà probabilità uniforme, più dadi danno una
+        \textbf{campana}; AnyDice aiuta, ma non bisogna perdercisi.
+  \item Le scelte implicite dei giocatori portano ai \textbf{feedback loop}: la barra
+        del panico di Creepy Mario è un esempio di bilanciamento. I nemici portano
+        nelle dinamiche; gli eventi improvvisi richiedono \textbf{juice}, un forte
+        \emph{action feedback}.
+  \item Attenzione alle \textbf{convenzioni di genere} inserite per abitudine (la zona
+        di scambio sicura in un gioco di sopravvivenza): se non c'entrano con il player
+        type, stonano.
+  \item In un hack: \textbf{budget design}, modificare il meno possibile, partire dal
+        testo, \textbf{fissare dei punti e non cambiarli}; un team serve anche ad
+        aiutare a non perdersi. Il \textbf{portfolio} è la cosa più importante: one
+        page, pagina itch.io, il percorso fino al prodotto, e sempre \textbf{la
+        licenza} dell'originale.
+\end{itemize}

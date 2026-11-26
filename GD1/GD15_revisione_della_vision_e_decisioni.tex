@@ -1,0 +1,2275 @@
+% =====================================================================
+%  Capitolo 15 — La revisione di compendium e vision di Metroid Dread
+%  (pilastri, must do, must not, nice to have) e le decisioni nel gioco:
+%  tipi di decisione e le tre trappole (meaningless, obvious, blind)
+%  (Game Design, primo anno)
+%  Fonte: trascrizione della lezione GD15 (Game Design, primo anno),
+%  stesso docente dei capitoli 9 e 10 (corso di design methods), di cui
+%  la lezione riprende il filo dopo i quattro capitoli di level design.
+%  La lezione si è svolta da remoto, su Zoom, con una lavagna condivisa
+%  su Miro.
+%  Contenuti, nell'ordine della lezione: l'apertura da remoto e la
+%  lavagna Miro; il programma (design methods, una lezione importante
+%  venerdì prossimo, il deep dive sui flowchart); la comunicazione
+%  ufficiale sulle intrusioni esterne e l'invito a parlare; la webcam;
+%  la revisione dei task su Metroid Dread: dove si documentano le
+%  posizioni di nemici e oggetti (domanda di Valerio: il level design
+%  document, la mappa 2D e il blockout, il Master Asset Document, lo
+%  hero asset); lo stealth non è un pilastro, gli EMMI sì (le zone
+%  EMMI come spina dorsale, lo stealth come strategia e non meccanica,
+%  gli unique selling point); il target audience e il doppio senso di
+%  ``estetiche''; i must do, must not e nice to have lato design (la
+%  colpa del mock-up, il counter, la camera, le abilità, gli EMMI, i
+%  biomi, la mappa, le puntine di Hollow Knight, l'economy sink); il
+%  tempo dedicato alla ricerca (Federica); dividere i must per
+%  dipartimento e la vestizione (Francesca; le tre camere di Zelda, il
+%  numero di abilità e i costi, lo skill tree); gli esempi non sono la
+%  regola; il task dei feedback su Zoe; l'annuncio del flowchart di
+%  Grotte e i due errori più comuni; il calendario e il task di
+%  pitching; la pausa; il Beer to Peer; le tre porte; che cos'è una
+%  decisione; i tipi di decisione (tema, meccaniche, meta); le tre
+%  trappole (meaningless, obvious, blind) con BioShock Infinite,
+%  l'Anfora dell'Avidità e i doni iniziali di Dark Souls; la
+%  discussione sulla ricompensa emotiva (Federica, Valerio, Francesca:
+%  Silksong, Life is Strange, The Walking Dead di Telltale); le
+%  decisioni ben fatte (Oxenfree, The Witcher, Fire Emblem, Pokémon,
+%  Life is Strange); il riepilogo delle leve per tipo; il task (un
+%  gioco breve dello stesso autore di The Stanley Parable) e la
+%  chiusura.
+%  Integrazioni da "Challenges for Game Designers" (Brathwaite e
+%  Schreiber), "The Art of Game Design" (Jesse Schell) e "An
+%  Architectural Approach to Level Design" (Christopher W. Totten),
+%  segnalate come approfondimenti.
+%
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{amsmath},
+%  \usepackage{enumitem}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Tutte le etichette di questo capitolo hanno il prefisso "gd15:"
+%  (gd15:sec:..., gd15:fig:..., gd15:tab:...) e tutti gli stili TikZ
+%  il prefisso "gd15", per non collidere con gli altri capitoli.
+%
+%  Nota sulla fonte: la trascrizione automatica è buona nelle parti
+%  discorsive, ma storpia moltissimi nomi propri e termini inglesi
+%  (``Mero'' per Miro, ``MassDu''/``Mass2'' per must do, ``Nice2EV''
+%  per nice to have, ``Unix all-end point'' per unique selling point,
+%  ``Enni''/``M''/``Lemmy'' per gli EMMI, ``Holonite''/``Ullonite'' per
+%  Hollow Knight, ``Singsong''/``Salesong''/``Silzong'' per Silksong,
+%  ``Kazin'' per cutscene, ``Aux Free'' per Oxenfree e così via). Dove
+%  il riferimento è ricostruibile con certezza lo si riporta nella
+%  forma corretta; dove non lo è, lo si segnala in nota invece di
+%  indovinare. Come nei capitoli 9 e 10, durante la pausa la
+%  registrazione ha trascritto in loop una frase senza senso
+%  (``Grazie a tutti per l'attenzione... Qual è la risposta che ci può
+%  essere?''): è un artefatto, omesso. Le slide non sono nella fonte:
+%  figure e tabelle sono ricostruzioni schematiche di ciò che il
+%  docente descrive e mostra, non le slide originali.
+% =====================================================================
+
+\chapter[Vision, must have e decisioni nel gioco]{La revisione della vision
+e le decisioni nel gioco: meaningless, obvious, blind}
+\label{gd15:cap:decisioni}
+
+Dopo i quattro capitoli di level design (dal capitolo~\ref{gd8:cap:leveldesign}
+in avanti), si torna al corso di \emph{design methods} con lo stesso docente
+dei capitoli~\ref{gd9:cap:agency-visione} e~\ref{gd10:cap:feedback}. La
+lezione si svolge \textbf{da remoto}, su Zoom, per ragioni esterne (``avrei
+gradito fare lezione in presenza, come potete immaginare; purtroppo non mi è
+stato possibile''), e ha due anime ben distinte, che il capitolo rispecchia:
+\begin{enumerate}
+  \item una lunga \textbf{prima parte di revisione}: le comunicazioni di
+        servizio, poi i dubbi sui task di \textbf{compendium e vision di
+        \emph{Metroid Dread}} (capitolo~\ref{gd9:cap:agency-visione}),
+        lasciati apposta aperti nei commenti per discuterne a lezione: dove
+        si documentano le posizioni di nemici e oggetti, perché lo stealth
+        non è un pilastro ma gli EMMI sì, il target audience, e soprattutto
+        che cosa va nei \textbf{must do}, nei \textbf{must not} e nei
+        \textbf{nice to have} dal punto di vista del design; infine il task
+        dei feedback su ``Zoe'' e l'annuncio di un flowchart da fare insieme
+        (sezioni~\ref{gd15:sec:apertura}--\ref{gd15:sec:calendario});
+  \item dopo la pausa, la \textbf{lezione nuova}: le \textbf{decisioni}.
+        Che cos'è una decisione in un gioco, quali \textbf{tipi} di
+        decisione esistono (legate al tema, alle meccaniche, meta), quali
+        sono le \textbf{tre trappole} da evitare (decisioni
+        \emph{meaningless}, \emph{obvious} e \emph{blind}), come si fanno
+        invece le decisioni ben costruite e con quali leve; poi il task
+        (sezioni~\ref{gd15:sec:porte}--\ref{gd15:sec:task}).
+\end{enumerate}
+Il flowchart collettivo, previsto per l'ultima mezz'ora, alla fine
+\textbf{non si farà}: la discussione sulle decisioni si prende tutto il
+tempo, e il docente lo rimanda alla lezione successiva
+(sezione~\ref{gd15:sec:prossima}).
+
+% ---------------------------------------------------------------------
+\section{In apertura: una lezione da remoto}
+\label{gd15:sec:apertura}
+
+\subsection{Presenze e una lavagna condivisa}
+
+Il docente saluta gli studenti man mano che si collegano (Mattia, Francesca,
+Alberto, Federica, poi Valerio e, in ritardo, Daniele), ammette di non aver
+segnato le presenze la volta precedente e chiede chi manca: di sicuro
+Lorenzo, forse Francesco. In attesa degli altri chiede a tutti di entrare in
+un \textbf{link} a una lavagna condivisa su \textbf{Miro}:\footnote{Nella
+trascrizione ``Mero''; dal contesto (una board condivisa in cui ``scrivere e
+fare disegni'', che chiede la creazione di un account e un'email di lavoro)
+si tratta quasi certamente di Miro, la lavagna collaborativa online.} può
+chiedere di creare un account, e in effetti a qualcuno risponde che il
+progetto è privato. Il docente cambia le impostazioni di condivisione (``è
+uno dei tanti motivi per cui io odio profondamente'' questo strumento: per
+l'accesso chiede un'email di lavoro), e alla fine tutti riescono a entrare,
+scrivere e disegnare. Valerio aveva chiesto l'accesso via email, ma è
+riuscito a entrare comunque; a Daniele, arrivato dopo e che non vede la
+cronologia della chat di Zoom, il docente rimanda i messaggi.\footnote{Nella
+trascrizione, durante l'attesa, compare anche un frammento senza alcun
+legame con la lezione (``la situazione è questa, la migliore dal 2005
+all'inizio della storia della città\ldots la guerra civile\ldots''): è con
+ogni probabilità audio esterno o un errore del riconoscimento vocale, e viene
+omesso.}
+
+\subsection{Il programma della giornata}
+
+Prima ancora di condividere lo schermo, il docente ``smarca'' le cose
+veloci.
+\begin{itemize}
+  \item Oggi si fa ancora \textbf{design methods}, non
+        \emph{documentation and pitching}.\footnote{Nella trascrizione ``non
+        documentation and peaching, ma design methods''. ``Peaching'' è
+        quasi certamente \emph{pitching}: le due anime del corso del docente
+        sono la documentazione e la presentazione da un lato e i metodi di
+        design dall'altro.}
+  \item Dopo questa lezione si entra in un nuovo blocco, che parte con la
+        lezione di \textbf{venerdì prossimo}: una lezione
+        \textbf{particolarmente importante}, che il docente chiede di seguire
+        in presenza ``se possibile'', anche perché vuole discutere di
+        altre questioni (sezione~\ref{gd15:sec:comunicazioni}).
+  \item Avendo notato \textbf{una serie di problemi sui flowchart} (lo aveva
+        scritto anche su Discord), il docente vuole fare un \textbf{deep
+        dive} e un \textbf{flowchart tutti insieme}, come era stato fatto
+        all'inizio del corso con il documento di formattazione, su un gioco
+        più contenuto e semplice. ``Non ho mai nascosto'' che il task di
+        tradurre \emph{Pac-Man} in flowchart (sezione~\ref{sec:task-gd6})
+        ``non era semplice''.
+  \item Lo stesso vale per il task su \emph{Dread}: non tanto il compendium
+        quanto la \textbf{vision}, su cui il docente ha lasciato commenti
+        apposta per aprire discussioni in aula. Il compendium e la vision si
+        discutono \textbf{per primi}, il flowchart dopo.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Comunicazioni: niente più intrusioni, e parliamone}
+\label{gd15:sec:comunicazioni}
+
+\subsection{L'informazione ufficiale}
+
+C'è una sola informazione ufficiale (per il resto il docente rimanda alla
+lezione di venerdì, ``la prossima volta che mi ritroverete in carne ed
+ossa''), e dovrebbe essere già arrivata anche con un comunicato: gli studenti
+\textbf{non avranno più intrusioni} in nessuna lezione del primo anno.
+Che ci sia lui, Alessandro, Stefano, oppure Daniele o Giacomo per le lezioni
+di narrativa, nessun membro esterno entrerà più in aula, \textbf{a meno che
+non lo richieda l'intera classe}: basta che una sola persona non sia
+d'accordo, e serve il lasciapassare di tutti. È una cosa che gli studenti
+avevano chiesto, che è passata dal corpo docenti e che è stata risolta
+``anche fin troppo velocemente''; il docente si dice d'accordo con
+``tutto ciò che è positivo per voi e che voi richiedete''.
+
+\subsection{Un invito a parlare}
+
+Il docente ha parlato velocemente con Alessandro (Alessandro Pregnolato, il
+docente di programmazione, ``che magari non era chiaro'') di alcune
+questioni emerse, quindi non ha informazioni ``a 360 gradi''. Ma alcune di
+queste problematiche lui è ben disposto a discuterle, perché la scuola cerca
+sempre di venire incontro alle esigenze degli studenti, soprattutto per il
+loro benessere. Per questo li invita a \textbf{parlarne}, anche con lui e
+non solo con altri docenti: da remoto è più difficile, quindi rimanda a
+venerdì, quando sarà presente sia durante la lezione sia dopo.
+
+Una delle questioni riguarda \textbf{il rapporto con il docente durante la
+lezione registrata}. La registrazione è ``uno strumento sempre per voi'':
+serve a riprendere le lezioni o a far interagire chi non può essere presente
+(o, come oggi, a fare lezione quando non si può farla in presenza per
+fattori esterni). Gli studenti non devono preoccuparsi di visualizzazioni
+esterne, che sarebbero illegali, né di osservazioni da parte di altri
+docenti: ``non funziona così''. Il docente è sempre disponibile a qualsiasi
+discorso, dentro o fuori lezione; gli studenti possono anche dirgli di no,
+``però vi chiederei di dirmi di no'', cioè di dirlo esplicitamente.
+
+\subsection{Tenete accesa la webcam}
+
+Sempre per via della lezione da remoto, il docente chiede a tutti di
+\textbf{tenere accesa la webcam}: gli serve per capire se gli studenti lo
+stanno seguendo, ``se siete vivi'', per vedere le facce, le perplessità,
+``qualche ciglio alzato''. La richiesta vale per tutti i docenti, non solo
+per lui: da remoto è molto difficile capire se si è capito ``o se vi state
+addormentando''. Se qualcuno non ha la webcam, pazienza: sono casi limite.
+
+% ---------------------------------------------------------------------
+\section{Il compendium: dove stanno le posizioni di nemici e oggetti?}
+\label{gd15:sec:posizioni}
+
+\subsection{La domanda di Valerio}
+
+Il docente ha commentato tutto, anche i feedback sugli \emph{zombie game}
+(sezione~\ref{gd15:sec:zoe}), e lascia la parola agli studenti. Valerio
+apre: nel compendium aveva previsto documenti per le \textbf{location dei
+nemici e degli oggetti}, e il commento diceva che era ``un caso in cui le
+cose descritte vanno insieme'', da chiarire a lezione. Il docente condivide
+lo schermo e apre il task.
+
+\subsection{Documenti accorpati}
+
+Molti studenti hanno fatto la stessa cosa: documenti separati, sia nella
+categoria di game design sia in quella di level design, per ogni aspetto.
+La risposta del docente parte da una premessa già vista
+(sezione~\ref{gd9:sec:compendium}): nelle produzioni moderne il \textbf{GDD
+completo} del gioco non è più legato tanto all'operatività, cioè a
+\emph{fare} il gioco, quanto a \emph{spiegarlo}: appartiene più al reame
+della produzione, della visione o del generale, ``qualsiasi altra cosa
+vogliate chiamarla''.
+\begin{itemize}
+  \item Nel \textbf{game design} è normale che esistano documenti che
+        uniscono o spiegano \textbf{tante meccaniche} insieme: una board di
+        Miro, oppure un documento sul \emph{combat system} generale che
+        contiene molte meccaniche spiegabili singolarmente.
+  \item Nel \textbf{level design} la cosa diventa più problematica. Il
+        docente premette di avere meno esperienza lato level di, per
+        esempio, Stefano; ma anche nelle produzioni con un level design
+        ``molto massiccio'' non si parla mai di \textbf{documenti specifici}
+        per le location o per gli oggetti. Si ha di solito un \textbf{level
+        design document generale}, oppure quello \textbf{di un livello} o
+        \textbf{di un bioma}, che contiene al suo interno tutti questi
+        piazzamenti.
+\end{itemize}
+
+\subsection{Dalla mappa 2D al blockout, e la discrepanza}
+
+Il docente chiede a Valerio se intendesse la posizione specifica (per
+esempio dei punti delle spline lungo cui si muovono i nemici) o il numero
+generale di nemici per livello. Valerio intendeva la \textbf{posizione
+specifica}: e lì la documentazione diventa ancora più problematica.
+
+Il level design, come il game design, è una disciplina in cui si fa
+\textbf{documentazione a monte}: c'è un level design document, o una
+\textbf{mappa 2D} (tra gli strumenti ce ne sono tanti, per esempio la
+\textbf{bubble map}). Poi la mappa la si \textbf{riporta in engine con un
+blockout}, esattamente come Stefano ha chiesto agli studenti di fare per la
+loro stanza (sezione~\ref{gd11:sec:blockout}): in engine, senza
+documentazione di per sé. Ma tra le due cose c'è \textbf{quasi sempre una
+discrepanza molto grossa}: ciò che si era previsto sulla mappa 2D, quando si
+passa al 3D (a meno che il gioco non sia top-down), va spesso modificato.
+
+Sulla carta si avrà quindi un'idea del \textbf{numero generico} di nemici e
+di \textbf{dove} dovrebbero essere: si sa che il boss è in quella stanza, o
+che prima della porta ci devono essere due guardie. Ma \textbf{che percorsi
+fanno} o \textbf{quanto sono lontane} l'una dall'altra è qualcosa che si
+vede solo in engine, e che è molto più facile modificare lì senza dover poi
+aggiornare il documento. I documenti di level design accorpano dunque tante
+cose, il cui \textbf{dettaglio sta in engine}.
+
+\paragraph{Approfondimento: i diagrammi di prossimità.} La bubble map citata
+dal docente ha un parente stretto in architettura, che Totten descrive in
+\emph{An Architectural Approach to Level Design}: il \textbf{diagramma di
+prossimità}. Come i diagrammi a molecola, è fatto di bolle collegate da
+linee: le bolle sono gli spazi richiesti (in un livello: la stanza del boss,
+la postazione da cecchino, il traguardo), dimensionate in base alla loro
+importanza o grandezza, e le linee dicono quanto è importante che due spazi
+siano vicini e che tipo di connessione hanno. Totten insiste però su un
+punto che è esattamente la ``discrepanza'' del docente: questi diagrammi
+\textbf{non sono piante}, ma strumenti per analizzare l'idea funzionale; il
+risultato finale ``può (e deve) avere un aspetto drasticamente diverso''.
+
+\subsection{Quando un oggetto sta nel game design}
+
+C'è una differenza da fare. Per il \textbf{funzionamento} di porte o di
+meccaniche come gli \textbf{oggetti di vaulting}, la documentazione sta di
+solito nel \textbf{game design}. L'esempio: c'è una staccionata alta tot
+unità di Unreal; se il character si avvicina esce un \emph{prompt}; se il
+giocatore preme il tasto parte l'animazione, il salto e l'arrivo dall'altra
+parte. Il funzionamento di questo oggetto in gioco l'ha definito qualcuno
+del game design, anche se oggetti del genere stanno a cavallo dei due
+dipartimenti. Questa è l'unica eccezione.
+
+\subsection{Il Master Asset Document}
+
+Il \textbf{numero} di porte in una data zona o sezione del livello, o il
+numero di oggetti di gioco (nemici inclusi), sta invece di solito in un
+\textbf{documento unico}. La nomenclatura non è sempre condivisa, ma nella
+sua esperienza il termine più ricorrente è \textbf{MAD}, acronimo di
+\textbf{Master Asset Document}: per ogni zona specifica del livello
+racchiude ``proprio una lista, un Excel enorme'' (gli studenti non lo
+vedranno) con tutti gli elementi necessari e i \textbf{dipartimenti
+coinvolti}. Per esempio:
+\begin{itemize}
+  \item c'è l'oggetto di vault, e servirà chiaramente la sua
+        \textbf{animazione specifica};
+  \item c'è un cosiddetto \textbf{hero asset}: un oggetto unico, modellato
+        specificamente, che fa da punto guida, \textbf{punto di interesse},
+        \textbf{landmark} per orientare il giocatore.
+\end{itemize}
+Tutte queste cose sono necessarie, ma \textbf{molto più accorpate che
+separate}, e spesso più in engine che in un documento. Come sempre, conclude
+il docente, l'obiettivo del task non era la precisione di un momento della
+produzione che gli studenti non hanno ancora affrontato, ma iniziare a farli
+ragionare. Valerio conferma che ora è più chiaro.
+
+% ---------------------------------------------------------------------
+\section{I pilastri: lo stealth no, gli EMMI sì}
+\label{gd15:sec:pilastri}
+
+\subsection{Le due cose difficili del task}
+
+Un'altra studentessa ricorda due commenti rimasti aperti: uno sui
+\textbf{pilastri}, in cui aveva indicato lo \textbf{stealth} e il docente
+aveva risposto che ``discutibilmente'' era un pilastro di \emph{Dread}
+(``non sono completamente d'accordo''), e uno sul \textbf{target audience}
+(``apprezzo il tentativo, ma ne riparliamo''). Il docente parte dai pilastri
+e confessa, in retrospettiva, che le due cose davvero difficili del task
+erano i \textbf{pilastri} (sezione~\ref{gd9:sec:pilastri}), ``tosti a
+prescindere'', e gli \textbf{unique selling point}.\footnote{Nella
+trascrizione ``gli unix all-end point'', poi ``Unix Endpoint'' e ``unix
+all'inpoint'': come nel capitolo~\ref{gd10:cap:feedback}, è una storpiatura
+di \emph{unique selling point} (USP).}
+
+\subsection{Esplorazione e combattimento}
+
+Due pilastri sono sicuri, e molti li hanno colti, anche con formulazioni
+diverse: \textbf{esplorazione} e \textbf{combattimento}.
+\begin{itemize}
+  \item Sul \textbf{combattimento}, Francesca è rimasta vicina all'esempio
+        di \emph{God of War} visto a lezione (tabella~\ref{gd9:tab:gow}).
+        Ma il combattimento di \emph{Dread} è lontano da quello di
+        \emph{God of War}: è un sistema \textbf{molto più snello}, anche se
+        è vero ciò che hanno scritto lei e altri sul \textbf{melee}, sul
+        \textbf{counter} e sul modo più ravvicinato di combattere di Samus
+        (che ``guarda caso'' sembra ancora più spinto nel prossimo
+        capitolo).
+  \item Sull'\textbf{esplorazione} ``niente da fare'': si parla di un
+        \emph{metroidvania}, con la sua parte esplorativa e il suo mondo
+        interconnesso.
+\end{itemize}
+
+\subsection{Perché lo stealth non è un pilastro}
+
+Sullo stealth il docente non ha la risposta, ma azzarda un'ipotesi: lato
+marketing può funzionare, e probabilmente \textbf{voleva essere più spinto}
+di quanto sia risultato. Il gioco dà al giocatore, come secondo potenziamento
+(il primo, generalmente, è la \textbf{Morph Ball},\footnote{Nella
+trascrizione ``la morfosfera''. Il docente aggiunge subito che ``la
+morfosfera è da mettere nei must do'': ci si torna nella
+sezione~\ref{gd15:sec:must}.} il \textbf{Phantom Cloak}:\footnote{Nella
+trascrizione ``cloak stealth'' e poi ``Phantom Clock''; è il Phantom Cloak,
+il mantello che rende Samus invisibile.} se stai fermo, diventi invisibile.
+Funziona, sì: per aprire un paio di porte e per non farsi scoprire dagli
+\textbf{EMMI} nelle loro zone.\footnote{Nella trascrizione gli EMMI (i robot
+cacciatori di \emph{Metroid Dread}) compaiono come ``Emmy'', ``Enni'',
+``Lemmy'', ``M'' ed ``Envi''.} Ma:
+\begin{itemize}
+  \item quasi sempre le \textbf{zone EMMI} sono pensate in modo che il
+        giocatore \textbf{entri e poi esca}, più che si nasconda;
+  \item il cloak \textbf{smette di servire} a un certo punto: funziona solo
+        se sai già dove si trova l'EMMI, perché quando l'EMMI è \textbf{in
+        allerta}, anche se diventi invisibile ti trova comunque: scatta lo
+        stato di caccia;
+  \item non è così potente, e dalla metà dell'esperienza in poi viene
+        percepito come ulteriormente depotenziato.
+\end{itemize}
+
+\subsection{Le zone EMMI come spina dorsale}
+
+Il docente apre la mappa di \emph{Metroid Dread} e la percorre dall'inizio
+(figura~\ref{gd15:fig:emmi}). Il giocatore parte più o meno in una certa
+zona, fa un percorso con un'interazione narrativa, sale, trova il
+salvataggio, poi \textbf{entra nella zona EMMI} (c'è una tutorializzazione
+iniziale con gli EMMI, ma la si ignora), \textbf{esce dalla zona EMMI},
+salva, sale, \textbf{rientra} nella zona EMMI, \textbf{riesce}. E questo
+viene fatto $N$ volte in quasi tutti gli ambienti. È una cosa che, ricorda il
+docente, aveva scritto anche Lorenzo nel suo task, sebbene in modo diverso.
+
+Le zone EMMI sono ``come se fossero \textbf{la spina dorsale del livello}'':
+sono poste sempre a metà, in modo da \textbf{tagliare in due} il livello, così
+che il giocatore sia spinto a entrarvi non solo per proseguire, ma anche
+perché, ``permettetemi il francese'', \textbf{ha paura}: non può uccidere
+questi mostri, deve scappare verso la via di fuga più vicina appena viene
+visto. Già alla terza volta, però, il giocatore capisce come funziona lato
+strategia: l'EMMI non è più tanto il nemico unico della zona quanto un
+problema di \textbf{uscire dalla zona il prima possibile}. Non devo evitare
+l'EMMI: devo proprio scappare.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[
+      gd15zona/.style={draw, rounded corners, minimum width=1.9cm,
+        minimum height=0.9cm, align=center, font=\footnotesize},
+      gd15emmi/.style={gd15zona, fill=red!15, draw=red!60!black},
+      gd15save/.style={gd15zona, fill=blue!10, draw=blue!60!black},
+      gd15freccia/.style={-{Stealth[length=2.2mm]}, thick},
+      node distance=0.55cm]
+    \node[gd15zona] (start) {Partenza\\(narrativa)};
+    \node[gd15save, right=of start] (s1) {Salvataggio};
+    \node[gd15emmi, right=of s1] (e1) {Zona EMMI\\(entra/esce)};
+    \node[gd15save, right=of e1] (s2) {Salvataggio};
+    \node[gd15emmi, right=of s2] (e2) {Zona EMMI\\(rientra/riesce)};
+    \node[font=\footnotesize, right=0.35cm of e2] (dots) {$\cdots\ N$ volte};
+    \draw[gd15freccia] (start) -- (s1);
+    \draw[gd15freccia] (s1) -- (e1);
+    \draw[gd15freccia] (e1) -- (s2);
+    \draw[gd15freccia] (s2) -- (e2);
+    \draw[gd15freccia] (e2) -- (dots);
+    \draw[thick, gray] ($(e1.south west)+(0,-0.3)$) --
+      node[below, font=\footnotesize, text=black, align=center, text width=8cm]
+      {la zona EMMI taglia a metà ogni area: per proseguire bisogna
+       attraversarla, e una volta visti si scappa verso l'uscita più vicina}
+      ($(e2.south east)+(0,-0.3)$);
+  \end{tikzpicture}
+  \caption{Il ritmo di un'area di \emph{Metroid Dread} come lo descrive il
+  docente: le zone EMMI sono la ``spina dorsale'' del livello, alternate ai
+  salvataggi. Ricostruzione schematica, non la mappa del gioco.}
+  \label{gd15:fig:emmi}
+\end{figure}
+
+\subsection{Riformulare: gli EMMI come pilastro e come USP}
+
+Per tutte queste ragioni, dice il docente, \textbf{lo stealth non è un
+pilastro, ma gli EMMI lo sono}: è più un problema di \textbf{riformulazione}
+che un pilastro mancato, ``l'ordine è invertito''. Il fatto di avere un
+\textbf{predatore inattaccabile} (fino a un certo punto, chiaramente), da cui
+devi scappare, che pattuglia una zona specifica, e il fatto che esistano
+queste zone, \emph{è} un pilastro del gioco. Anche la formulazione che
+qualcuno ha usato, \textbf{``da predatore a preda''}, può essere un pilastro,
+ed è esposta in maniera abbastanza convincente.
+
+Non solo: questa minaccia degli EMMI, espansa, può diventare tranquillamente
+un \textbf{unique selling point}. L'altro USP è ``senza ombra di dubbio''
+un accorpamento di cose che molti studenti hanno scritto separatamente e che,
+unite, fanno l'USP ideale del gioco:
+\begin{itemize}
+  \item è il \textbf{capitolo conclusivo} della saga di Metroid;
+  \item è l'ennesimo capitolo \textbf{2D}, non legato alla serie
+        \emph{Prime};
+  \item è un \emph{metroidvania} di Nintendo su \textbf{Switch}.\footnote{Nella
+        trascrizione ``Metroidvania di P-Nintendo su Switch''; ``P-'' è
+        probabilmente un inciampo.}
+\end{itemize}
+
+\subsection{Lo stealth non è una meccanica}
+
+Un inciso ``non rilevante, ma utile per il futuro'': lo
+\textbf{stealth non è una meccanica}. Il \textbf{combattimento} è un
+\textbf{sistema} composto da una serie di meccaniche, e rimane un sistema;
+lo stealth è una \textbf{strategia}, un modo di affrontare la sfida (ci si
+torna nella sezione~\ref{gd15:sec:cos-e}).
+
+C'è anche un argomento storico a favore degli EMMI come pilastro. Dopo
+\emph{Metroid Fusion} si è tentato più volte di fare un Metroid con al
+centro \textbf{un predatore}, cioè un'intelligenza artificiale che dà la
+caccia al giocatore (``se non erro, anche su DS''), e più volte i progetti
+sono stati chiusi, a volte per limitazioni tecniche, a volte per i
+costi.\footnote{Il docente lo riporta con cautela (``se non erro'',
+``secondo me''). È noto che un \emph{Metroid Dread} era stato annunciato
+internamente e mai realizzato all'epoca del Nintendo DS, e che l'idea del
+predatore inarrestabile risale a \emph{Metroid Fusion} (con SA-X).} Poi è
+uscito \emph{Dread}, che fa questa cosa in misura minore: non si parla di un
+Nemesis\footnote{Il riferimento è al Nemesis di \emph{Resident Evil 3}, che
+insegue il giocatore per la mappa.} che ti segue per la mappa e può entrare
+più o meno ovunque. Gli EMMI sono confinati in zone ``per un discorso di
+design e di semplificazione della produzione''. Anche questo li rende un
+pilastro più della strategia stealth.
+
+% ---------------------------------------------------------------------
+\section{Il target audience e il doppio senso di ``estetiche''}
+\label{gd15:sec:target}
+
+\subsection{L'extra mile è benvenuto}
+
+Il docente aveva chiesto di escludere alcune cose dalla vision (per esempio
+la ``morale'', cioè il \emph{meaning}), ma è sempre contento se gli studenti
+fanno l'\textbf{extra mile}: benvenga quindi chi ha aggiunto il
+\textbf{target audience}. Va però detto che non era necessario, e che
+l'unica cosa vista finora sul target è la \textbf{segmentazione numerica}
+dell'utenza, per statistiche. Alberto conferma di aver diviso per età e
+sesso, ``molto in linea generale'', senza entrare in categorie specifiche.
+Ed è giusto così: nella costruzione di una vision quei campi fanno
+riferimento a dati che vengono dalla \textbf{pre-produzione} (la ricerca e
+la generazione di idee viste nei capitoli precedenti, capitolo~\ref{cap:ricerca-idee}),
+e che qui mancano.
+
+\subsection{Venerdì: i tipi di giocatori}
+
+Quel campo della vision è l'applicazione di uno strumento che si inizia a
+vedere \textbf{venerdì prossimo} (``per questo vi dicevo che è una lezione
+importante''): a partire da quei dati si inizieranno a \textbf{separare tipi
+di giocatori diversi} e ciò che chiedono in termini di emozioni e di
+\emph{game aesthetics}. Francesca ha già fatto ricerca sugli
+\textbf{archetipi} di base: si partirà da quelli e si espanderà.
+
+È il primo passo per avere una \textbf{classificazione dell'utenza}, che
+permette di prendere un'enorme mole di dati e approssimarla in grosse
+categorie di giocatori. Nel tempo, fino al terzo anno (``è un percorso molto
+lungo''), si arriverà a punti molto specifici di che cosa piace a un
+giocatore e soprattutto di che cosa \textbf{non} gli piace. Questi giocatori
+sono legati alla lista di emozioni già vista: ad alcuni piacerà soprattutto
+l'\emph{excitement}, l'\emph{action} (come nelle motivazioni di Quantic
+Foundry, sezione~\ref{sec:quantic-foundry}); altri saranno più legati alla
+\emph{discovery}, che si ramifica a sua volta in \textbf{esplorazione} e in
+\textbf{risoluzione di enigmi}. L'obiettivo è fare design \textbf{sempre
+mirato a un'utenza}, sapendo perché le piacerà: se si inserisce un
+combattimento action, sarà prediletto da un tipo di giocatore rispetto a un
+altro, che magari preferisce un gameplay più strategico.
+
+E non tutti i tipi di giocatori vanno accontentati allo stesso modo: per il
+discorso della curva normale (sezione~\ref{gd10:sec:gaussiana}), ``il
+vostro gioco non è per tutti'', quindi bisogna concentrarsi su
+\textbf{uno}, al massimo \textbf{due} archetipi specifici.
+
+\subsection{Attenzione alla parola ``estetiche''}
+
+Nella vision gli studenti hanno usato ``estetiche'' nel senso delle
+\emph{game aesthetics} legate alle emozioni; per ora va bene, ma per il
+futuro il docente invita a fare attenzione. Nello stesso documento, o si usa
+``estetiche'' \textbf{come Schell} (sezione~\ref{sec:schell}), cioè per
+l'\textbf{aspetto} visivo e sensoriale, principalmente legato all'arte,
+oppure la si usa per ciò che è legato alle \textbf{emozioni e alle
+motivazioni} dell'utenza. Non mescolare i due sensi serve a evitare
+confusione, ``non tanto per voi quanto per altri potenziali dipartimenti''.
+
+% ---------------------------------------------------------------------
+\section{Must do, must not, nice to have: il lato design}
+\label{gd15:sec:must}
+
+\subsection{Mea culpa: il mock-up fuorviante}
+
+Il terzo punto è la parte più critica della revisione. Rifacendo le slide,
+il docente ha mostrato nel \textbf{mock-up} di esempio della vision un blocco
+di must do e must not che \textbf{non era il suo intento}: quelli mostrati in
+primo piano erano legati alla \textbf{componente artistica} del gioco (le
+texture, le mesh, il sound, tutto il \emph{dressing}), mentre quelli lato
+design stavano più in basso. Averli messi davanti ha deviato l'attenzione,
+e molti studenti hanno trattato più gli aspetti artistici che quelli
+\textbf{meccanici e sistemici}. ``È colpa mia, mia colpa.'' ``Se fossi
+artista vi darei un'altra risposta'', ma per un game designer la cosa che
+interessa sono i must legati al \textbf{gameplay}.
+
+\subsection{Che cosa ci interessa sapere}
+
+Il lato design lo decide principalmente il dipartimento di design, o il
+direttore creativo, a seconda di quanto è grande il progetto. E ciò che
+interessa sapere è \textbf{quali meccaniche o quali sistemi ci sono per
+forza}, con il maggior dettaglio possibile (pur con un certo margine di
+creatività). Il docente prende un task a caso (quello di Francesco) e
+costruisce gli esempi; la tabella~\ref{gd15:tab:must-dread} li raccoglie.
+
+\begin{itemize}
+  \item \textbf{Il melee counter.} Sappiamo che ci deve essere (Francesca
+        l'ha messo nei pilastri), quindi va nei must do. Potremmo non
+        sapere \emph{a quali} nemici si può fare counter e a quali no; qualcuno
+        ha notato che i \textbf{boss} vengono tutti finiti con un QTE o un
+        counter finale, cioè che il sistema si riproduce in forma ridotta
+        anche lì, ma a quel punto della produzione potremmo non saperlo. Ci
+        interessa sapere chi fa il counter, che eventualmente riprende dal
+        capitolo precedente di MercurySteam;\footnote{Lo studio spagnolo che
+        ha sviluppato \emph{Metroid: Samus Returns} (2017), in cui il melee
+        counter è stato introdotto, e poi \emph{Metroid Dread}.} poi c'è
+        margine per modificare le meccaniche o fare documenti a seconda di
+        come sta uscendo il gioco.
+  \item \textbf{La camera.} Prima della vision ci sarà stato un prototipo,
+        quindi la camera è nota: molti hanno scritto \textbf{2.5D}. Camera
+        laterale; i modelli 3D e gli sfondi in profondità sono più lato arte
+        che design (``ve l'ho detto in maniera molto brutale e brutta''). Va
+        scritto quale camera e quali movimenti.
+  \item \textbf{Le abilità}, e se ritornano dai capitoli precedenti (magari
+        non tutte). Il Phantom Cloak, pur non essendo un pilastro, è utile
+        inserirlo qui; così come la Morph Ball, che c'è in tutti i Metroid
+        e probabilmente ci sarà anche in questo.
+  \item \textbf{Gli EMMI}: molti li hanno scritti nei pilastri e poi non li
+        hanno ripresi nei must. Nei must do si scrive: un'intelligenza
+        artificiale che insegue il giocatore, con una serie di
+        \textbf{stati}, che non può essere uccisa se non a determinate
+        condizioni. A quel punto della produzione potrebbe non essere chiaro
+        che gli EMMI sono legati a delle zone, ma la vision si fa a
+        posteriori, quindi si può segnare nei \textbf{must not}: gli EMMI
+        \textbf{non possono uscire} dalle loro zone.
+  \item \textbf{I boss}, chiaramente.
+  \item \textbf{La mappa interconnessa}, divisa in una serie di
+        \textbf{biomi}. Anche qui, a quel punto non si sa quanti. Alcuni
+        hanno scritto il numero giusto: in quel caso si possono mettere
+        ``tot biomi'' nei must do e un \textbf{``più o meno uno'' nei nice
+        to have}. Se c'è più tempo di produzione si aggiunge un bioma, se ce
+        n'è meno se ne toglie uno.
+  \item \textbf{I sistemi accessori}, che quasi tutti hanno colto: senza di
+        essi il gioco rimane lo stesso. L'\textbf{hard mode} (o \emph{dread
+        mode}, ``come volete chiamarla''), i \textbf{collezionabili}, gli
+        extra nel main menu: tutti tranquillamente togliibili.
+\end{itemize}
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}p{0.31\textwidth}p{0.31\textwidth}p{0.31\textwidth}@{}}
+    \toprule
+    \textbf{Must do} & \textbf{Must not} & \textbf{Nice to have} \\
+    \midrule
+    Camera laterale (2.5D) e suoi movimenti &
+    Gli EMMI non escono dalle loro zone &
+    Un bioma in più o in meno ($\pm 1$) \\
+    Movimento con locomozione specifica; combattimento melee e ranged &
+    Nessuna valuta spendibile, nessun mercante, nessuno skill tree,
+    nessun acquisto di oggetti &
+    Hard mode / \emph{dread mode} \\
+    Melee counter (eventualmente ereditato dal capitolo precedente) & &
+    Collezionabili ed extra nel main menu \\
+    Abilità, incluse quelle di ritorno (Morph Ball, Phantom Cloak) & &
+    Puntine/segnalini colorati sulla mappa \\
+    EMMI: IA cacciatrice a stati, uccidibile solo a certe condizioni & & \\
+    Boss & & \\
+    Mappa interconnessa a stanze, divisa in $N$ biomi; salvataggi e
+    checkpoint, con un certo pacing & & \\
+    Sistema di energia, missili & & \\
+    \bottomrule
+  \end{tabular}
+  \caption{Esempi di must do, must not e nice to have \textbf{lato design}
+  per \emph{Metroid Dread}, raccolti dagli esempi fatti a lezione. Non è una
+  soluzione completa del task, ma la direzione indicata dal docente:
+  sistemi e meccaniche, non texture e mesh.}
+  \label{gd15:tab:must-dread}
+\end{table}
+
+\subsection{La mappa è un must, le puntine no}
+
+L'esempio migliore della differenza tra must do e nice to have, però, sono
+le \textbf{puntine}. Il docente cerca di mostrarle su \emph{Dread} (``input
+database: no, non esiste''), poi ripiega su un altro gioco, ``tanto il
+discorso è uguale'': chi ha giocato \emph{Hollow
+Knight},\footnote{Nella trascrizione ``allo night'', ``Holonite'',
+``Ullonite'', ``Allunite'', ``Olo Night''.} ma anche \emph{Dread}, ricorderà
+che al giocatore vengono fornite \textbf{puntine, spilloni di colori
+diversi} per segnare sulla mappa punti di interesse e tornarci, usabili con
+una certa libertà, o \emph{agency}.
+\begin{itemize}
+  \item Avere la puntina in \emph{Dread} è un \textbf{nice to have}.
+  \item Avere la \textbf{mappa}, fondamentale per navigare il mondo, è un
+        \textbf{must do}. Un metroidvania senza mappa ``magari esiste,
+        sicuramente esiste'', e può anche funzionare come leva di
+        innovazione nel brainstorming con limitazioni; ma è problematico
+        immaginare un Metroid in cui non puoi aprire la mappa, o accedervi,
+        o sbloccarla in certi momenti.
+\end{itemize}
+Questa è la differenza, lato design di sistemi, tra i sistemi
+\textbf{necessari}, da elencare nei must do, e quelli \textbf{accessori}, da
+mettere nei nice to have.
+
+\subsection{La valuta: un must not di Metroid}
+
+In \emph{Hollow Knight} le puntine rientrano in un discorso più grosso, che
+\emph{Metroid} non ha (e nemmeno una serie di Castlevania): la
+\textbf{valuta spendibile di gioco}. In Metroid non c'è un mercante (come
+alcuni hanno giustamente scritto, per il discorso dell'\textbf{isolamento}),
+non puoi spendere nulla, non hai alberi delle abilità, non puoi comprare
+oggetti: potrebbe tranquillamente essere un \textbf{must not}. In
+\emph{Hollow Knight}, invece, è previsto.
+
+Per arrivare al punto, il docente fa un sondaggio: chi ha giocato
+\emph{Hollow Knight}? Solo Francesca (``non ditemi balle''). Allora:
+\textbf{che cosa vende il mercante}? In \emph{Silksong}, ricorda una
+studentessa, vende le puntine, vari tipi di segnalini (per i nemici, per i
+punti di interesse, per differenziare mentalmente le cose), forse il
+ciondolino per raggruppare le monete. Il docente aggiunge: anche in
+\emph{Silksong} ci sono gli equivalenti dei \emph{charm} di \emph{Hollow
+Knight}, passivi o attivi, e alcuni mercanti vendono anche le trappole.
+E in \emph{Zelda}? Dopo un attimo di vuoto collettivo, Federica ricorda il
+cibo da cucinare, qualcuno i semi per la fionda; il docente aggiunge le cose
+``importantissime'': i \textbf{cuori} e i portacuori, le \textbf{borse}, il
+potenziamento delle \textbf{bombe}, della \textbf{faretra} e così via. E in
+\emph{Hollow Knight}/\emph{Silksong} alcuni mercanti vendono le
+\textbf{chiavi}, i charm, il potenziamento della \textbf{maschera} (una vita
+in più) o del \textbf{mana} (che in \emph{Silksong} è la seta).
+
+\subsection{L'economy sink}
+
+La domanda vera: davanti a un mercante che vende il portacuori e la puntina,
+che cosa comprate? ``Se mi dite la puntina, siete dei matti.'' Una
+studentessa obietta che dipende da quanti soldi si hanno: con pochi soldi, a
+inizio gioco, forse prenderebbe la puntina per organizzarsi, sapendo che la
+maschera resta lì. Interessante, risponde il docente, ma per ``buon uso e
+costume di design'' il giocatore arriva al mercante avendo fatto una
+moderata strada, con abbastanza soldi \textbf{non} per comprare una maschera
+ma per arrivarci quasi. La scelta verte quindi sulla cosa più importante (la
+maschera, la chiave); la puntina costa poco, ed è uno di quegli
+\textbf{elementi accessori} che il giocatore compra quando ha \textbf{soldi
+in eccesso}: perché ha già comprato tutto ciò che conta, o perché deve
+spenderli da qualche parte (in \emph{Hollow Knight} e in \emph{Silksong} li
+perdi morendo), o perché ne ha accumulati in quantità esagerata.
+
+Non serviva quindi elencare proprio le puntine tra i nice to have (in quel
+momento della produzione si potrebbe non sapere di volerle); ma in una vision
+di \emph{Hollow Knight} ci sarebbe senz'altro, tra i nice to have, un qualche
+tipo di \textbf{economy sink}: qualcosa nei mercanti che \textbf{assorbe il
+denaro in eccesso} e lo ricambia con un oggetto di poco valore che però
+\textbf{migliora l'esperienza}. L'economia di \emph{Hollow Knight} o di
+\emph{Silksong} si regge in piedi anche senza gli oggetti accessori (``le
+torrette che ti fanno le collane di palline''); certamente la migliorano.
+(``Poi l'economia di \emph{Silksong} è un po' traballante, però\ldots
+questo non lo devo dire io.'')
+
+\paragraph{Il punto.} Il docente non voleva le puntine nel task: le ha usate
+per mostrare la differenza. Per un designer, i \textbf{must do} della vision
+sono soprattutto l'\textbf{elenco dei sistemi o delle meccaniche necessarie}
+al gioco, e i \textbf{must not} tutto ciò che \textbf{non deve esserci}. E se
+in un must do si scrive una cosa (per esempio ``mid poly''), non serve poi
+ripetere nei must not il suo contrario (``niente high poly''): si spreca uno
+spazio.
+
+% ---------------------------------------------------------------------
+\section{Fare ricerca su un gioco che non si conosce}
+\label{gd15:sec:ricerca}
+
+\subsection{L'osservazione di Federica}
+
+Federica fa un'osservazione sul proprio lavoro: la cosa davvero difficile è
+stata il tempo perso a \textbf{conoscere un gioco che non conosceva}; a
+sfumature come i mercanti o le puntine non è neanche arrivata. ``Va
+benissimo'', risponde il docente: le puntine erano un esempio, non una
+richiesta. Ma ne approfitta per un discorso ``estremamente alto'', da
+riprendere venerdì.
+
+\subsection{Non capire non è un problema; non chiedere sì}
+
+\textbf{Non è un problema non capire le cose; il problema è non chiedere},
+non domandare, non migliorare. Il docente invita a confrontare il
+\textbf{primo task consegnato} con quello di adesso: è presto per dirlo, ma
+il miglioramento è notevole, e se si rifacesse ora una revisione sarebbe
+completamente diversa, anche se è passata una settimana. Si va veloci per
+necessità (tre lezioni a settimana, e gran parte del lavoro è a casa), e il
+corso è iniziato da circa due mesi: ``c'è ancora tanto tempo, c'è ancora
+tanta strada''. Non è una corsa ma una \textbf{maratona}, quella degli
+studenti e quella del docente stesso, ``in generale nella disciplina che è il
+game design, o il design in generale''. Quindi pazienza, \textbf{soprattutto
+con se stessi}: chiedere ciò che non si è capito, ma anche darsi il tempo di
+indagare, curiosare, farsi domande.
+
+\subsection{La limitazione è voluta}
+
+Non conoscere il gioco è \textbf{fatto apposta}, come per \emph{Pac-Man}: la
+limitazione è voluta, la sfida è desiderata. In futuro capiterà spesso di
+dover fare design su giochi o sistemi legati a titoli che non si conoscono;
+quindi oltre a strutturare il documento c'è la \textbf{parte di ricerca}, e
+una buona proporzione del tempo (``una buona metà'') va dedicata a quella, a
+maggior ragione se il gioco è sconosciuto.
+
+Ci saranno anche task a gioco libero, ``ci mancherebbe'', ma con un occhio
+di riguardo: se il framework è adatto a un gioco basato sul level design e
+gli studenti analizzano \emph{Doki Doki Literature Club}, o il gioco di
+punizione dato a Valerio, ``quello dei piccioni''\footnote{Nella trascrizione
+``Autoful Boyfriend'': è \emph{Hatoful Boyfriend}, un \emph{dating sim} in
+cui i corteggiatori sono piccioni.} (un dating sim senza level design), lì
+si pone il problema. Ma sono casi limite.
+
+\subsection{Novanta per cento di ricerca}
+
+Federica precisa: per lei il rapporto non è stato 50 e 50, ma \textbf{90 di
+ricerca}, perché, pur avendo capito il concetto, non conoscendo le meccaniche
+non sapeva cosa scrivere; guardava il gameplay di un paio di episodi e
+annotava ciò che le sembrava interessante. Il docente risponde che conoscere
+\textbf{più giochi possibile}, anche non solo gli ultimi usciti, dà più
+spunti, non solo per fare giochi che piacciono o con cui si è confidenti,
+ma per diventare designer migliori ``a 360 gradi''. E ciò che ha fatto
+Federica è giusto.
+
+\paragraph{Il metodo dei dieci secondi.} Per i must do e i must not, dato
+una conoscenza di base del titolo, si può prendere il gioco a un certo
+punto, guardarne un pezzo e \textbf{segnare le meccaniche} e ciò che succede.
+Il docente lo fa in diretta su un video di \emph{Dread}: c'è
+\textbf{movimento} con un sistema di locomozione specifico; c'è
+\textbf{combattimento}, sia melee che ranged; c'è una \textbf{mappa} divisa
+(un tempo a quadri, adesso a stanze), quindi un level design a
+\textbf{stanze connesse} che compongono un bioma; un \textbf{sistema di
+energia}, i \textbf{missili}, attacco pesante e attacco leggero. ``E abbiamo
+visto veramente 10 secondi del gioco.''
+
+Poi c'è una questione più profonda: capire a grandi linee \textbf{che tipo
+di gioco} è. Molti, non conoscendolo, hanno faticato a dare il giusto peso
+agli EMMI, perché \emph{Dread} è spinto in direzione horror lato marketing
+(si chiama \emph{Dread}, dopotutto), ma \textbf{non è spiccatamente horror},
+se lo si guarda nella sua interezza: anche questo può aver fuorviato.
+
+\paragraph{Un consiglio pratico.} Per ottimizzare il tempo sui giochi che
+non si conoscono, \textbf{dividere la qualità} dell'attenzione: momenti
+dedicati, in cui la ricerca è profonda, e momenti in cui (``sarò brutale'')
+si è in bagno, si sta mangiando, si sta facendo altro e si mette il gameplay
+in sottofondo, annotando piccole cose sulle note del cellulare, su un foglio,
+``sulla tovaglia'', che poi confluiscono nella ricerca principale. Con il
+tempo si ottimizza anche questo.
+
+% ---------------------------------------------------------------------
+\section{Dividere i must per dipartimento, e la vestizione}
+\label{gd15:sec:dipartimenti}
+
+\subsection{La domanda di Francesca}
+
+Francesca chiede: se la vision dev'essere una \textbf{visione globale} del
+gioco, non è più intelligente fare must do e must not \textbf{divisi per
+dipartimento}, level design, game design e così via? ``Infatti'', risponde
+il docente: nel suo esempio la parte di design dei must è separata per
+\textbf{dipartimenti di design}, con must do e must not legati al
+\textbf{game design}, al \textbf{level design} e alla \textbf{narrativa};
+tutto ciò che è legato all'\textbf{arte} sta altrove (ed è proprio il blocco
+che è stato fuorviante). Non è l'unica soluzione, ma è quella che lui tende
+a usare. La parte artistica di solito si desume dall'\textbf{art bible}
+(che alcuni hanno citato) o dalle ricerche di direzione artistica, e confluisce
+in must do e must not spiccatamente artistici. A lui, da designer, interessa
+principalmente la parte di design.
+
+\subsection{Sci-fi è vestizione}
+
+Francesca precisa che nel suo task i must do non erano categorizzati
+esplicitamente, ma si capiva che il primo era una visione globale, il
+secondo di game design, il terzo di arte, il quarto di narrativa: è un
+errore? ``Non è un problema'', ma il docente li rilegge.
+\begin{itemize}
+  \item \textbf{Sci-fi} è \textbf{vestizione}. Prendiamo un Castlevania,
+        non i primi e nemmeno \emph{Symphony of the Night}, ma per esempio
+        \emph{Aria of Sorrow},\footnote{Nella trascrizione ``Ariel of
+        Sorrow''.} dove ci sono le armi ranged: togliamo il must do
+        ``sci-fi'', e alcuni Metroid e alcuni Castlevania hanno
+        \textbf{il 90\% del core in comune}. Certo, l'ambientazione si porta
+        dietro aspetti di design (apre la possibilità di abilità
+        futuristiche, la mimetizzazione tramite tecnologia, i tipi di raggio
+        del cannone al braccio di Samus), ma resta soprattutto vestizione.
+  \item \textbf{Dynamic combat} è chiaro: è un \textbf{sistema di
+        gameplay}, e va bene.
+  \item \textbf{Dark environment} è un discorso spiccatamente
+        \textbf{artistico}: ambienti e zone tetre, il \emph{mood}. Può
+        legarsi al level design (quanto grandi o piccoli sono i corridoi e
+        le stanze), ma ha più conseguenze sull'arte.
+  \item \textbf{Narrativa}: comprensibile.
+  \item \textbf{Texture} e \textbf{sound} sono lato arte: da una parte il
+        3D, dall'altra il sound design (che ha ``design'' nel nome, ma è una
+        disciplina più artistica).
+\end{itemize}
+Dunque solo il secondo punto è legato al game design. Gli altri non sono
+sbagliati: \textbf{restringono il campo} su che cosa dovrebbe essere
+\emph{Metroid Dread}. Ma servono \textbf{più elementi} per definire che cosa
+rende \emph{Dread} quel gioco lì \textbf{con il controller in mano}: una
+volta che il giocatore muove il personaggio, come lo vede, che camera ha.
+
+\subsection{Tre Zelda, tre camere}
+
+Per mostrare quanto conta la camera il docente mette a confronto tre
+\emph{Zelda} (tabella~\ref{gd15:tab:zelda}): \emph{A Link to the Past},
+\emph{A Link Between Worlds} e un Zelda moderno, \emph{Breath of the Wild}.
+I primi due hanno camere simili, eppure appartengono a epoche completamente
+diverse; il secondo e il terzo appartengono alla stessa epoca, ma con camere
+completamente diverse. \emph{Breath of the Wild} ha la classica terza
+persona, con un braccio della camera molto più lungo, cioè una camera che
+sta molto più lontana dal personaggio: perché è un \textbf{open world} e un
+gioco \textbf{emergente} (se ne parlerà). Il design lascia al giocatore
+un'enorme quantità di possibilità (manipolare mostri, far esplodere eventi a
+catena, incendiare alberi), e quindi quella camera ha senso.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}p{0.27\textwidth}p{0.3\textwidth}p{0.35\textwidth}@{}}
+    \toprule
+    \textbf{Gioco} & \textbf{Camera} & \textbf{Osservazione del docente} \\
+    \midrule
+    \emph{A Link to the Past} & Top-down / isometrica ``classica'' &
+      Simile alla successiva, ma di un'epoca completamente diversa. \\
+    \emph{A Link Between Worlds} & Top-down, con momenti a camera laterale
+      (si diventa bidimensionali, ``come in \emph{Mario Odyssey}'') &
+      Stessa epoca di \emph{Breath of the Wild}, camera completamente
+      diversa. \\
+    \emph{Breath of the Wild} & Terza persona con braccio lungo, molto
+      lontana dal personaggio & Open world ed emergente: la camera ampia
+      serve a un design che lascia fare moltissime cose. \\
+    \bottomrule
+  \end{tabular}
+  \caption{Le tre camere di Zelda usate per mostrare perché la camera va nei
+  must do. Le classificazioni sono quelle date a voce dal docente, che
+  stesso esita (``isometrica, no? Beh, oddio'').}
+  \label{gd15:tab:zelda}
+\end{table}
+
+Poi il \textbf{personaggio}: chi è, che cosa può permettersi di fare, quali
+\textbf{abilità} ha. Poi il \textbf{level design}: gli ambienti sono connessi
+o no? Esiste il \emph{fast travel} o no? Sono questi elementi a comporre
+l'anima del gioco a livello di design.
+
+\subsection{Il test: immaginate il gioco dalla vostra lista}
+
+Il test che il docente propone: \textbf{leggete la vostra lista} di must do
+\textbf{senza pensare al gioco}, e provate a creare nella vostra testa un
+gioco con i punti che avete descritto. \textbf{Quanto si avvicina a
+Metroid?} Se si allontana, o se \emph{può} allontanarsi notevolmente,
+allora c'è un problema. Nella vision bisogna avere una linea
+\textbf{estremamente netta} di che tipo di genere (``discorso strano,
+eh''), che tipo di estetiche e che tipo di meccaniche ha l'esperienza; più
+si va nello specifico, meglio è.
+
+\subsection{Il numero di abilità e i costi}
+
+Con \emph{Dread}, un gioco già uscito, gli studenti potevano analizzare
+tutto; in una vision vera la precisione assoluta, per esempio sul numero di
+abilità, non c'è. L'obiettivo però è arrivarci: in \emph{Breath of the Wild}
+hai il \textbf{magnete}, le \textbf{bombe}, l'\textbf{aliante}, l'\textbf{arco}
+e così via. Se si riesce a definire il \textbf{numero minimo di oggetti e di
+abilità} che serve, si ha già chiaro \textbf{quanto costerà la produzione}:
+non ci si può permettere 20 abilità con un anno di sviluppo o con un budget
+estremamente ridotto. Quindi: immaginare il gioco con gli elementi minimi,
+inserire nella vision la lista di ciò che rende quel gioco tale, e poi tutte
+le cose accessorie che, ``se ci sono, ben venga; se non ci sono, pace''.
+
+\subsection{Lo skill tree: must do o nice to have?}
+
+Lo stesso sistema può stare in categorie diverse a seconda del gioco. Lo
+\textbf{skill tree} è un nice to have in alcuni giochi e un must do in altri;
+il docente chiede esempi, e arrivano.
+\begin{itemize}
+  \item In \emph{Borderlands} lo skill tree è un \textbf{must do}.
+  \item In un gioco di \emph{Star Wars} mostrato a schermo è meno
+        rilevante.\footnote{Il titolo non è nominato; con ogni probabilità
+        uno dei \emph{Star Wars Jedi}, ma non è verificabile dalla fonte.}
+  \item In \emph{League of Legends} le \textbf{rune} sono lo skill tree del
+        gioco, un sistema cambiato tante volte. Serve a dare
+        \textbf{agency} al giocatore per modificare \textbf{a monte} lo stile
+        di gioco a parità di personaggio. L'esempio: il docente e Daniele
+        giocano lo stesso campione, Garen; il docente lo vuole più
+        \textbf{tank}, Daniele più \textbf{DPS}. Serve un modo per
+        personalizzare il personaggio prima di fare la build in partita (una
+        personalizzazione non estrema).
+  \item E \emph{Batman}?\footnote{Probabilmente uno degli \emph{Arkham};
+        la fonte non lo precisa.} Anche lì bisognerebbe andare a vedere.
+\end{itemize}
+La domanda da porsi è sempre: \textbf{il gioco sarebbe lo stesso con o
+senza quel sistema? Quanto si allontana?} ``Questa è la domanda da un milione
+di dollari a cui dovete rispondere nella vision.''
+
+% ---------------------------------------------------------------------
+\section{Gli esempi non sono la regola}
+\label{gd15:sec:esempi}
+
+Mentre gli studenti pensano ad altre domande, il docente porta una questione
+sul \textbf{compendium}: l'esempio che aveva mostrato non va seguito uno a
+uno (lo ha anche scritto nelle slide). Era un pezzo del compendium di una
+\textbf{produzione estremamente grossa}; uno studente potrebbe non avere un
+elemento ``generale'', potrebbe chiamarlo ``visione'' o in un altro modo,
+potrebbe spostare elementi da un blocco all'altro in base a come vuole
+organizzare la produzione. Nel progetto annuale, per esempio, il blocco
+\textbf{marketing} probabilmente non interesserà, almeno non subito, e
+finché non è utile si può ignorare. Se invece lo si inserisce per
+sperimentare, per curiosità su che cosa si trova in un dipartimento di level
+design o di che cosa si preoccupano gli artisti o i sound designer, è un
+altro discorso.
+
+L'invito è a \textbf{non restare ancorati agli esempi} dove c'è margine di
+manovra, e a \textbf{sperimentare} il più possibile (entro limiti ragionevoli).
+Gli studenti, ``più di me'', hanno una mente ancora aperta; col tempo c'è
+il rischio, ``e va bene'', di chiudersi sulle cose che funzionano. Più si
+prova adesso, più si impara, e magari si \textbf{innova}, usando un framework
+in modo nuovo: il docente racconta di aver visto, tra gli studenti,
+``cose che voi umani non potete immaginare'', cioè usi di framework a cui lui
+stesso non aveva pensato e che si sono rivelati estremamente utili. Nel
+dubbio (seguire nettamente o è una linea guida?), chiedere: ``alla peggio, se
+non vi rispondo, è perché c'è ancora più margine''.
+
+% ---------------------------------------------------------------------
+\section{Il task dei feedback: stesso mandate, risposte diverse}
+\label{gd15:sec:zoe}
+
+L'ultimo punto della revisione riguarda il task dei \textbf{feedback} sulle
+concept art dello zombie game (sezione~\ref{gd10:sec:task-zoe}). Era un task
+in cui designer diversi partivano dallo \textbf{stesso mandate}: lo zombie
+game, la segmentazione dell'utenza, le estetiche di gioco e le emozioni
+scaturite, la camera, il budget erano uguali per tutti. Eppure molti hanno
+dato feedback \textbf{molto lontani} sullo stesso concept (alcuni comuni, e
+ci sta). È la parte, ``quel 50\% di creatività del lavoro'', che il docente
+vuole che gli studenti guardino subito: \textbf{come gli altri hanno risposto
+in modo diverso allo stesso input}. Nel dare e nel ricevere feedback si
+possono ricevere cose molto diverse, e sta al designer domandarsi qual è la
+soluzione migliore a seconda del mandate, della visione e di ciò che vuole
+fare.
+
+L'esempio: magari un nemico non lo si vuole, perché il \textbf{braccio a
+frusta} è estremamente costoso. Chi lo pensa è un tipo più coscienzioso, che
+preferisce una soluzione \textbf{sicura} a una \textbf{innovativa e
+rischiosa}; non è un problema. Altri punteranno all'innovazione, nonostante
+i rischi. Nessuna delle due risposte è sbagliata: lo si vede solo in
+\textbf{produzione}, e qui i soldi veri non c'erano e il gioco nemmeno. Anche
+il docente non dice ``avete sbagliato'': è d'accordo con alcuni punti e in
+disaccordo con altri, ma chi ha ragione lo si vedrebbe solo facendo
+``questo incredibile zombie game, cosa che ahimè non possiamo fare''.
+L'invito è ad andare a leggere i commenti degli altri.
+
+% ---------------------------------------------------------------------
+\section{Un flowchart da fare insieme (rimandato)}
+\label{gd15:sec:flowchart}
+
+\subsection{Il gioco: Grotte}
+
+Nessun'altra domanda emerge (``non vi è bollito nulla dal cervello''), e il
+docente annuncia il programma per l'ultima mezz'ora: fare insieme il
+\textbf{flowchart che descrive l'intero sistema di gioco} di
+\textbf{Grotte}.\footnote{Il nome è riportato così nella trascrizione; non
+è stato possibile verificare con certezza di quale gioco si tratti. Dalla
+descrizione è un piccolo gioco di ruolo OSR, con regole riassunte nelle slide
+del docente e un manuale completo a pagamento (``7 euro''). Il docente
+chiede anche chi conosca ``Modborg'', quasi certamente \emph{Mörk Borg},
+un altro gioco di ruolo di stampo OSR; ma il gioco su cui fare il flowchart
+è ``Grotte''.} Chiede chi conosca \emph{Mörk Borg} e chi giochi a
+\textbf{giochi di ruolo} in generale (una domanda già fatta alla seconda
+lezione da Jack e Diego): è un buon modo per stringere il legame tra
+compagni, dedicando delle sessioni (``mi piacerebbe partecipare io stesso,
+ma ahimè ci separa il ruolo docente e studente''). Grotte è un punto di
+partenza interessante perché è un \textbf{OSR}\footnote{\emph{Old School
+Renaissance} (o \emph{Revival}): giochi di ruolo che recuperano lo spirito
+delle prime edizioni di \emph{Dungeons \& Dragons}, con regole leggere e
+molta improvvisazione del master.} con \textbf{regole estremamente
+semplificate}: si può mappare tutto, e si gioca con pochissimo, carta e
+qualche dado a sei facce. Le regole sono nelle slide; quelle complete si
+trovano online, oppure si possono comprare (``7 euro da dare a questo
+cristiano''). Ma l'obiettivo è \textbf{mappare l'intero sistema} con un
+flowchart.
+
+\subsection{I due errori più comuni}
+
+Il docente anticipa i due problemi principali visti nei task (riprendendo le
+regole della sezione~\ref{sec:flowchart-regole} e i blocchi della
+sezione~\ref{sec:flowchart-blocchi}), schematizzati nella
+figura~\ref{gd15:fig:errori-flowchart}:
+\begin{enumerate}
+  \item \textbf{blocchi slegati}: un blocco che non va da nessuna parte o
+        che non ritorna nel flusso;
+  \item \textbf{blocchi azione con uscite multiple}: usare il rettangolo
+        con più frecce in uscita è \textbf{sbagliato}; nelle regole base del
+        flowchart, se si vuole una ramificazione, c'è il blocco apposito, il
+        \textbf{rombo} della decisione.
+\end{enumerate}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[
+      gd15fc/.style={draw, thick, minimum height=0.75cm, align=center,
+        font=\footnotesize},
+      gd15az/.style={gd15fc, rectangle, minimum width=2.1cm},
+      gd15dec/.style={gd15fc, diamond, aspect=1.9, inner sep=1pt},
+      gd15ter/.style={gd15fc, rounded rectangle, minimum width=1.8cm},
+      gd15f/.style={-{Stealth[length=2mm]}, thick},
+      node distance=0.55cm and 0.6cm]
+    % Errore 1
+    \node[font=\footnotesize\bfseries] (t1) at (0,0) {Errore 1: blocco slegato};
+    \node[gd15ter, below=0.35cm of t1] (a1) {Inizio};
+    \node[gd15az, below=of a1] (b1) {Tira il dado};
+    \node[gd15az, below=of b1] (c1) {Fine turno};
+    \node[gd15az, draw=red!70!black, left=0.4cm of b1] (x1) {Cura};
+    \draw[gd15f] (a1) -- (b1);
+    \draw[gd15f] (b1) -- (c1);
+    \node[font=\scriptsize, text=red!70!black, below=0.1cm of x1,
+      align=center] {né entra\\né esce};
+    % Errore 2
+    \node[font=\footnotesize\bfseries] (t2) at (4.3,0) {Errore 2: due uscite};
+    \node[gd15az, below=0.35cm of t2] (b2) {Attacca};
+    \node[gd15az, below left=0.7cm and -0.4cm of b2] (c2) {Colpito};
+    \node[gd15az, below right=0.7cm and -0.4cm of b2] (d2) {Mancato};
+    \draw[gd15f, red!70!black] (b2) -- (c2);
+    \draw[gd15f, red!70!black] (b2) -- (d2);
+    % Corretto
+    \node[font=\footnotesize\bfseries] (t3) at (8.9,0) {Corretto: il rombo};
+    \node[gd15az, below=0.35cm of t3] (b3) {Attacca};
+    \node[gd15dec, below=of b3] (q3) {Colpito?};
+    \node[gd15az, below=0.6cm of q3] (s3) {Danno};
+    \node[gd15az, right=0.45cm of q3] (n3) {Nulla};
+    \draw[gd15f] (b3) -- (q3);
+    \draw[gd15f] (q3) -- node[left, font=\scriptsize] {sì} (s3);
+    \draw[gd15f] (q3) -- node[above, font=\scriptsize] {no} (n3);
+  \end{tikzpicture}
+  \caption{I due errori sui flowchart segnalati dal docente (a sinistra e al
+  centro) e la forma corretta della ramificazione (a destra), con uscite del
+  rombo etichettate e il ``sì'' in basso. Esempio inventato a scopo
+  illustrativo.}
+  \label{gd15:fig:errori-flowchart}
+\end{figure}
+
+Il flowchart vero e proprio, però, il docente lo vuole fare dopo aver
+``recuperato'' la lezione, cioè dopo la parte nuova: e, come si vedrà, il
+tempo non basterà (sezione~\ref{gd15:sec:prossima}).
+
+% ---------------------------------------------------------------------
+\section{Il calendario e il task di pitching}
+\label{gd15:sec:calendario}
+
+\subsection{Le date}
+
+Una comunicazione ``importantissima'', da girare anche agli assenti (le
+domande e le discussioni restano per venerdì):\footnote{Le date sono
+riportate come le dice il docente nella trascrizione (``venerdì prossimo,
+27'', poi ``il 14'', ``il 18'' e ``il 21''), senza mese esplicito. Il 27
+coincide con il venerdì 27 novembre citato anche per il Beer to Peer; il 14,
+il 18 e il 21 sono con ogni probabilità date di dicembre, ma la sequenza non
+è del tutto coerente nella trascrizione e va verificata sul calendario del
+corso.}
+\begin{itemize}
+  \item c'è lezione \textbf{venerdì prossimo, il 27};
+  \item poi \textbf{si salta il 14}: quel giorno gli studenti avranno
+        lezione con \textbf{Diego e Jack}, da remoto, e il docente non potrà
+        partecipare;
+  \item la lezione successiva del docente è quella del \textbf{18}.
+\end{itemize}
+
+\subsection{Un task di gruppo da presentare in aula}
+
+La lezione del 14 sarà dedicata a \textbf{come presentare}, cioè al
+\textbf{pitching}: come farlo, i tipi di pitch e così via. In quella lezione
+verrà dato un task (``che sorpresa''), e normalmente il docente direbbe di
+consegnarlo per il 21 e lo commenterebbe quando gli studenti vogliono; ma il
+21 non ci si vede, ci si vede il 18. Ha provato ``in mille modi'' a spostare
+le lezioni (lui potrebbe il 19 o il 23, ``ma probabilmente voi no''), e
+questo è il miglior caso possibile. Quindi:
+\begin{itemize}
+  \item il task va \textbf{consegnato per forza il 18};
+  \item sarà un \textbf{task a gruppi}: il 14 verrà data una
+        \textbf{presentazione da fare}, e il 18 la si farà \textbf{in
+        classe};
+  \item i \textbf{feedback} saranno \textbf{a voce}, sulla
+        \textbf{performance in aula}, non su un documento commentato.
+\end{itemize}
+Il docente chiede di tenersi liberi il 18, per venire in presenza e per
+lavorare in gruppo nei pochi giorni a disposizione (quattro, cinque contando
+il lunedì): è importante imparare a farlo nel più breve tempo possibile,
+prima della \textbf{pausa invernale}.\footnote{Nella trascrizione ``pausa
+internale''.} Lo dice con largo anticipo proprio perché il tempo sarà poco.
+
+Prima della pausa il docente chiude la condivisione (per non far vedere agli
+studenti l'anteprima della slide successiva, ``ed è un casino'') e concede
+sei minuti: ``ci vediamo alle 40'', ``freschi come delle belle rose''.
+
+\subsection{Il Beer to Peer}
+
+Al rientro, in attesa degli altri, un'altra comunicazione (forse Daniele
+l'aveva mandata solo sul Discord di narrativa): il \textbf{27 novembre} c'è
+il \textbf{Beer to Peer}\footnote{Nella trascrizione ``peer-to-peer'', poi
+``Beer to Peer di GDA'' e ``Virtual Pier GDA''. È un incontro informale tra
+sviluppatori a Milano; l'organizzazione indicata come ``GDA'' non è
+identificabile con certezza dalla fonte.} a Milano: un momento di incontro
+con sviluppatori, in un posto che cambia ogni volta, alle 19. Il docente non
+sa se riuscirà ad andare (``magari dopo cena''). È presto, è il primo anno,
+ma è già un buon modo per conoscere persone, chiacchierare con sviluppatori
+e fare \textbf{networking}.
+
+% ---------------------------------------------------------------------
+\section{Dopo la pausa: le tre porte}
+\label{gd15:sec:porte}
+
+\subsection{Scegliete una porta}
+
+La lezione nuova parte con ``l'incredibile domanda'': sullo schermo ci sono
+\textbf{tre porte}, una \textbf{gialla}, una \textbf{rossa} e una
+\textbf{blu} (figura~\ref{gd15:fig:porte}). Quale scegliete? Una studentessa
+sceglie la gialla (``preferisco il giallo rispetto al rosso e al blu''),
+nessuno la rossa, tutti gli altri la blu, ``per esclusione''. Federica,
+rientrata, conferma la blu (ha appena iniziato \emph{Blue Prince}:
+``da quel poco che ho visto, gran gioco'').\footnote{Nella trascrizione
+``ho appena giocato a Blueprints''; dal contesto (porte, scelta, ``gran
+gioco'') è quasi certamente \emph{Blue Prince}, un gioco di esplorazione in
+cui si scelgono stanze dietro le porte di una villa.}
+
+Il docente apre le porte. ``Non è il trucco'' (quello del presentatore che
+apre una porta vuota e chiede se volete cambiare scelta per aumentare le
+probabilità):\footnote{Il riferimento implicito è al problema di Monty Hall.}
+il grande sacco di soldi era dietro la \textbf{porta rossa}. Tutti gli altri
+si beccano le \textbf{tigri del Bengala}, affamate, ``che devoreranno le
+vostre carni''. È, scherza, l'unico caso in cui tutti si sono presi le tigri.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[
+      gd15porta/.style={draw, thick, minimum width=1.6cm, minimum height=2.6cm,
+        rounded corners=2pt}]
+    \node[gd15porta, fill=yellow!45] (g) at (0,0) {};
+    \node[gd15porta, fill=red!45] (r) at (2.6,0) {};
+    \node[gd15porta, fill=blue!35] (b) at (5.2,0) {};
+    \foreach \n in {g,r,b} {\fill (\n.east) ++(-0.3,0) circle (0.07);}
+    \node[below=0.15cm of g, font=\footnotesize, align=center] {gialla\\
+      \textbf{tigri}};
+    \node[below=0.15cm of r, font=\footnotesize, align=center] {rossa\\
+      \textbf{sacco di soldi}};
+    \node[below=0.15cm of b, font=\footnotesize, align=center] {blu\\
+      \textbf{tigri}};
+    \node[above=0.2cm of r, font=\footnotesize, align=center, text width=8cm]
+      {Prima di scegliere: nessuna informazione sulle porte,\\
+       nessuna informazione sulla ricompensa (o sulla punizione)};
+  \end{tikzpicture}
+  \caption{La scelta delle tre porte con cui si apre la lezione: tre opzioni,
+  come vuole la regola dell'agency (capitolo~\ref{gd9:cap:agency-visione}),
+  ma senza alcuna informazione né prima né sulla posta in gioco.}
+  \label{gd15:fig:porte}
+\end{figure}
+
+\subsection{Che cosa non va in questa scelta}
+
+La scelta rispetta i limiti visti nella lezione sull'agency
+(sezione~\ref{gd9:sec:troppe-scelte}): non un milione di porte, ma
+\textbf{tre}, esattamente come cioccolato, gelato e torta di mele (``buona
+la torta di mele''). ``Tuttavia c'è un ma.'' Siete soddisfatti della vostra
+scelta? Nessuno risponde (``beh, comunque è una buona morte, dai''): siete lì
+con la tigre che vi divora la giugulare mentre il presentatore apre la porta
+con un milione di dollari, ``gioco distopico al 100\%''. Al netto di
+``quanto exciting sia morire per zampa di una tigre del Bengala'', perché
+questa scelta, implementata in un videogioco, \textbf{non sarebbe l'ideale}?
+
+Una studentessa propone una lettura di simbologia: il \textbf{rosso}, anche
+nei cartelli stradali, è comunemente associato al \textbf{pericolo}; nello
+\emph{Star Wars} il blu ne è la controparte; il giallo magari è un bonus
+(``ma sto sparando a caso''). È una riflessione interessante legata
+all'\textbf{affordance}, che si affronterà in futuro, soprattutto con
+Stefano. Ma il docente la riporta al punto: la domanda è fatta \emph{a
+posteriori}, dopo aver aperto le porte. \textbf{Prima} di aprirle gli
+studenti non avevano informazioni:
+\begin{enumerate}
+  \item \textbf{nessun indicatore} su quale porta fosse quale, come invece
+        capita nei giochi (anche in \emph{The Stanley Parable}): quale porta
+        è accessibile e quale no, dove concentrare l'interesse, segnali di
+        pericolo chiaramente leggibili o fraintendibili. Nessun NPC aveva
+        detto ``state attenti alla porta rossa'', né c'era il grande tranello
+        del ``il rosso è il colore del pericolo, ma in questo caso no'';
+  \item \textbf{nessuna informazione sulla ricompensa}: né sulla sua
+        grandezza né sul suo contenuto (``qualcuno di voi magari è
+        milionario''), né su che cosa sarebbe arrivato dopo, ricompensa o
+        punizione.
+\end{enumerate}
+Una scelta limitata, come vuole l'agency, ma fatta \textbf{senza
+informazioni prima} e \textbf{senza sapere a che cosa si andava incontro
+dopo}. È il secondo passo del discorso: dopo la \textbf{libertà} di agency,
+\textbf{come si progetta una scelta che venga percepita come
+\emph{meaningful}}.
+
+% ---------------------------------------------------------------------
+\section{Che cos'è una decisione}
+\label{gd15:sec:cos-e}
+
+\subsection{Dalla colazione al finale}
+
+Per capire che cosa fa una decisione dentro un gioco, il docente mostra
+alcuni esempi.
+\begin{description}
+  \item[\emph{Life is Strange}, la colazione] Una scelta estremamente
+        minore, in una cutscene:\footnote{Nella trascrizione ``Cazzin'' e
+        ``Kazin'' per \emph{cutscene}, qui e oltre.} ti chiedono che cosa
+        vuoi per colazione, \textbf{pancake} o \textbf{uova e bacon}.
+        Qualsiasi scelta tu faccia cambia poco ai fini della
+        trama.\footnote{Dal racconto successivo (la protagonista che si
+        sveglia, va dall'amica, vanno a mangiare con la madre) la scena
+        sembra appartenere a \emph{Life is Strange: Before the Storm}
+        piuttosto che al primo capitolo; il docente la attribuisce a
+        \emph{Life is Strange} in generale.}
+  \item[\emph{BioShock}, le Sorelline] In netta contrapposizione. Le
+        \textbf{Little Sister} sono bambine orfane in cui è stata impiantata
+        una lumaca parassita che le trasforma in una sorta di abominio,
+        pur mantenendo la loro umanità; sono un mezzo estremamente efficiente
+        per produrre l'\textbf{ADAM}, il ``mana'' di \emph{BioShock}. Il
+        giocatore sceglie se \textbf{terminare le loro sofferenze} e
+        guadagnare di conseguenza, oppure \textbf{salvarle} togliendo la
+        lumaca. La scelta non solo è percepita come nettamente diversa da
+        ``uova e bacon'', ma porta a \textbf{finali diversi}: secondo il
+        docente, best ending se le hai salvate tutte, bad ending (con un
+        leggero twist) se ne hai salvate solo alcune, bad ending se le hai
+        uccise tutte, prosciugandole dell'ADAM.\footnote{Così nella
+        trascrizione. Nel gioco il finale ``buono'' richiede di non
+        prosciugarne nessuna, e i finali negativi hanno varianti a seconda
+        di quante se ne sono prosciugate.}
+  \item[\emph{Fallout 3}, Megaton] La scelta di cui si parla spesso (ne
+        aveva parlato anche Diego nella lezione condivisa): \textbf{non
+        bombardare} con un'atomica una città i cui abitanti ti hanno trattato
+        male, oppure \textbf{farla saltare} e ottenere un sacco di soldi. Il
+        ragionamento di Diego: ``una nucleare in più, una nucleare in meno,
+        nel mondo di \emph{Fallout} che male fa?''. Ma, considerando la
+        componente etica, stai sterminando una città.
+  \item[\emph{Life is Strange}, le grandi scelte] Quelle che ramificano un
+        finale possibile.
+\end{description}
+Tutte rientrano nello spettro delle \textbf{decisioni}.
+
+\subsection{Tutto è una decisione}
+
+``Vi dirò di più'': a conti fatti, \textbf{qualsiasi cosa il giocatore fa}
+in un gioco è una decisione. Andare a destra o a sinistra, cioè premere
+l'input a destra o a sinistra, è una decisione. Raggiungere una città in
+300 passi invece che in 301, in un gioco a tile come \emph{Pokémon}, è una
+decisione (che per semplicità si ignora).
+
+Lo è anche \textbf{con che cosa si gioca}: la tecnologia usata, cioè il
+controller, cambia l'approccio al gioco (più o meno efficiente nella mira con
+mouse e tastiera, più o meno efficiente nei combattimenti dei Souls,
+negli action o nei platform con il controller). Nei \textbf{picchiaduro} (``è
+Francesco il maestro di \emph{Smash Bros.}, ma oggi non c'è'') qual è la
+periferica ideale per la competizione ad alto livello? Il docente mostra un
+video di un torneo (``Evo, Tekken, 2025''): si usano gli \textbf{arcade
+stick}, con leva e bottoni, come nei cabinati. Per chi non è avvezzo può
+essere sorprendente, ma gran parte dei picchiaduro a livello professionistico
+si gioca così (e non costano poco): nell'apprendimento delle combo e
+nell'efficienza in gioco dà un vantaggio notevole, l'equivalente di mouse e
+tastiera negli sparatutto. (C'è anche il \textbf{Power Glove} di Nintendo,
+``per farsi una risata''.) Ci sono framework che considerano proprio i
+\textbf{limiti} che il giocatore si impone o che gli si danno; se ne
+riparlerà. Questa è una decisione che avviene \textbf{fuori} dal gioco, una
+\textbf{meta-decisione}, ma è parte dei tipi di decisione possibili.
+
+Sono decisioni, logicamente, anche la \textbf{classe} che si sceglie, lo
+\textbf{spread delle statistiche}, dove investire i punti, e \textbf{come
+affrontare i boss}.
+
+\subsection{Lo stealth come strategia}
+
+E qui il docente si riallaccia allo stealth
+(sezione~\ref{gd15:sec:pilastri}): lo stealth è una \textbf{strategia},
+perché è legato a \emph{come} affronto la sfida, cercando di non essere
+visto. In molte missioni di \emph{Metal Gear} c'è l'esito \emph{ghost} se
+non vieni visto da nessuno, e puoi giocarle completamente in stealth; ma
+puoi anche sterminare tutti. Lo si vede ancora meglio in \emph{Hitman}: la
+\textbf{prima missione} di \emph{Hitman World of Assassination}, ``se non
+erro'', è gratuita, e il docente consiglia di giocarla proprio per le
+decisioni. Le possibilità con cui eliminare il bersaglio, il prendere un
+oggetto e lanciarlo contro un altro, l'osservare le ronde delle persone o
+che cosa fanno dentro e fuori dal turno di lavoro: tutto dà un'enorme
+\textbf{agency}. Non a caso è un \textbf{sandbox}, ``un grosso parco giochi''
+in cui raggiungere l'obiettivo in una quantità di modi esagerata; ed è uno
+degli unique selling point di \emph{Hitman}.
+
+\paragraph{Che cosa ci interessa.} La prima cosa da considerare, dunque, è
+che \textbf{qualsiasi cosa il giocatore fa} in un gioco, \textbf{e il modo
+in cui vi si approccia}, è una decisione (a volte anche fuori dal gioco).
+In analisi e in design, però, interessano soprattutto le decisioni che si
+possono \textbf{controllare o manipolare}: come raggiunge una porta, quale
+porta sceglie, che classe usa rispetto al tipo di giocatore che è, come
+affronta un boss.
+
+\paragraph{Approfondimento: un gioco è una serie di decisioni.} È la stessa
+premessa di \emph{Challenges for Game Designers} di Brenda Brathwaite e Ian
+Schreiber: ``distillato alla sua essenza, il game design consiste nel creare
+per i giocatori opportunità di prendere \textbf{decisioni significative} che
+influenzano l'esito del gioco''. Gli esempi del libro spaziano dal
+posizionamento delle truppe negli strategici all'allocazione dei punti nei
+GDR, dal pezzo da muovere negli scacchi al mirare e sparare in un FPS, fino a
+premere il tasto giusto al momento giusto in \emph{Guitar Hero}: anche
+l'azione puramente fisica è una decisione. E quando non c'è scelta (il
+\emph{Monopoli} a proprietà tutte vendute, ``tira i dadi e paga''), il
+gioco si spegne.
+
+% ---------------------------------------------------------------------
+\section{I tipi di decisione}
+\label{gd15:sec:tipi}
+
+Per ora interessa \textbf{categorizzare} le decisioni. Il docente mette ``le
+mani avanti'': le categorie \textbf{non sono mutualmente esclusive}. Una
+decisione può appartenere a più tipi contemporaneamente: essere legata al
+tema e alle meccaniche allo stesso modo, oppure avere una risoluzione
+soprattutto meccanica con elementi di tema. Le categorie sono tre, con le
+loro sottocategorie (figura~\ref{gd15:fig:tipi}).
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[
+      gd15rad/.style={draw, thick, rounded corners, fill=gray!15,
+        font=\small\bfseries, minimum width=2.6cm, minimum height=0.8cm},
+      gd15cat/.style={draw, thick, rounded corners, fill=blue!8,
+        font=\footnotesize\bfseries, minimum width=2.8cm, minimum height=0.7cm},
+      gd15sub/.style={draw, rounded corners, font=\scriptsize, align=left,
+        text width=3.3cm, inner sep=3pt},
+      gd15l/.style={thick, -{Stealth[length=1.8mm]}}]
+    \node[gd15rad] (d) at (0,0) {Decisioni};
+    \node[gd15cat] (t) at (-4.6,-1.4) {Tema};
+    \node[gd15cat] (m) at (0,-1.4) {Meccaniche};
+    \node[gd15cat] (x) at (4.6,-1.4) {Meta};
+    \foreach \c in {t,m,x} \draw[gd15l] (d) -- (\c);
+    \node[gd15sub, below=0.35cm of t] (t1) {\textbf{Emotion driven}:
+      viscerali, d'istinto (Megaton)};
+    \node[gd15sub, below=0.2cm of t1] (t2) {\textbf{Narrative e sociali}:
+      finali, linee narrative, legami, romance (\emph{Hades})};
+    \node[gd15sub, below=0.2cm of t2] (t3) {\textbf{Estetiche}: dove esploro,
+      \emph{Fashion Souls}, le build di \emph{Monster Hunter}};
+    \node[gd15sub, below=0.35cm of m] (m1) {\textbf{Strategia}: combo, stile
+      di gameplay (offensivo o stealth), equipaggiamento; di solito
+      reversibili};
+    \node[gd15sub, below=0.2cm of m1] (m2) {\textbf{Risorse}: pozioni,
+      consumabili, punti statistica; spese permanenti o legate a spazi e
+      momenti di gioco};
+    \node[gd15sub, below=0.35cm of x] (x1) {\textbf{Tecnologia}: periferica,
+      controller, arcade stick};
+    \node[gd15sub, below=0.2cm of x1] (x2) {\textbf{Player behavior}: trolling,
+      spam di frasi, comportamento verso altri umani};
+    \node[gd15sub, below=0.2cm of x2] (x3) {\textbf{Community}: Reddit,
+      Discord, side market (CS, Dota, workshop di Steam)};
+  \end{tikzpicture}
+  \caption{La tassonomia dei tipi di decisione presentata a lezione. Le
+  categorie non sono mutualmente esclusive: la stessa decisione può stare
+  in più rami.}
+  \label{gd15:fig:tipi}
+\end{figure}
+
+\subsection{Le decisioni legate al tema}
+
+\begin{description}
+  \item[Emotion driven] Tutto ciò che è \textbf{illogico} e che scelgo
+        ``a pelle'': Megaton, che Diego fa saltare in aria perché ``tanto è
+        una nucleare in più''. Sono decisioni \textbf{viscerali}, guidate
+        dalle emozioni, e il risultato sono decisioni che \textbf{il
+        designer non può controllare}. Può spingere in alcune direzioni con
+        tecniche manipolative (che si vedranno in futuro), ma su queste ha
+        ancora meno controllo che sulle altre.
+  \item[Narrative (e sociali)] Tutto ciò che è legato al raggiungere o
+        meno un \textbf{finale} o una \textbf{linea narrativa} possibile.
+        Rientrano qui anche le decisioni legate alla \textbf{socialità}: se
+        voglio legare o no con altri personaggi, se voglio fare la
+        \emph{romance} con Megera in \emph{Hades}\footnote{Nella trascrizione
+        ``Medusa''. In \emph{Hades} c'è Dusa, una testa di gorgone con cui
+        si può stringere un legame, mentre le romance vere e proprie sono con
+        Megera e Thanatos; il docente intende in generale i rapporti
+        sociali del gioco.} o con qualcun
+        altro, e così via.
+  \item[Estetiche] Qui ``estetica'' nel senso dell'\textbf{arte}, del
+        \emph{dressing} (sezione~\ref{gd15:sec:target}). \textbf{Dove
+        esploro}, se per predilezione personale preferisco il bioma innevato
+        alla palude o al deserto; oppure una build \textbf{Fashion Souls}, la
+        build di \emph{Dark Souls} che non punta a massimizzare le
+        statistiche ma a essere \textbf{esteticamente appagante}.
+\end{description}
+
+\paragraph{Le build di Monster Hunter.} Nessuno degli studenti gioca a
+\emph{Monster Hunter}, ma il docente mostra due build ``e qui devo ammettere
+la mia'': una che per lui è ``terrificante'', bruttissima esteticamente,
+probabilmente ottimizzata e con ``pure i gioielli giusti'', ma che ``non si
+sposa bene''; e un'altra che lui sceglierebbe ``tutta la vita'': stesso
+tema, stesso mostro, stessa rarità, stessa palette di colori, anche qualora
+fosse meno ottimizzata. Non tutti i giocatori ragionano così; ma quando si
+parla di Fashion Souls (il nome viene da \emph{Dark Souls}), le decisioni
+legate alla moda, a come viene percepita l'armatura, ricadono qui, e sono
+diverse dalle decisioni meccaniche.
+
+\subsection{Le decisioni legate alle meccaniche}
+
+Se invece voglio \textbf{massimizzare} la build, o adottare una strategia
+specifica, o la \textbf{migliore strategia possibile}, siamo a cavallo tra
+le meccaniche e, ancora di più, le decisioni meta. Le meccaniche si
+dividono in due.
+\begin{description}
+  \item[Strategia] Che tipo di \textbf{combo} usare, il tipo di
+        \textbf{gameplay} (più offensivo o più stealth, se il gioco lo
+        permette), tutti gli \textbf{equipaggiamenti}: le strategie ad alto
+        livello. Generalmente \textbf{possono sempre cambiare}: da momento a
+        momento, da missione a missione, posso cambiare stile o
+        equipaggiamento.
+  \item[Risorse] Se spendo o no le risorse. Gran parte dei giocatori
+        \textbf{tiene le pozioni}, i revitalizzanti, non spende i
+        consumabili: è una decisione meccanica sulle risorse. Ci rientra
+        anche come investo i \textbf{punti statistica}, come faccio crescere
+        il personaggio. Qui la scelta, di solito, \textbf{non si annulla}:
+        una volta bevuta, la pozione è consumata; una volta investito, il
+        punto di norma non lo riottengo, a meno di tornare al falò o, come in
+        \emph{Salt and Sanctuary}, di \textbf{resettare l'albero delle
+        abilità}.
+\end{description}
+La differenza: una riguarda le \textbf{strategie} che il giocatore adotta,
+l'altra le \textbf{risorse} che spende. E la spesa può essere
+\textbf{permanente} oppure \textbf{temporanea}, ma di solito legata a spazi o
+momenti di gioco: non si può cambiare l'esito della scelta immediatamente,
+come invece si può fare con l'equipaggiamento.
+
+\subsection{Le meta-decisioni}
+
+L'ultimo tipo sono le \textbf{meta-decisioni}: tutto ciò che è legato alla
+\textbf{tecnologia} fuori dal gioco (il controller, visto prima) e al
+\textbf{comportamento del giocatore verso altri esseri umani} reali.
+\begin{itemize}
+  \item \textbf{Trollare} gli altri giocatori, cioè avere un obiettivo
+        diverso da quello stabilito dal gioco, mettere i bastoni fra le
+        ruote per interesse personale, umorismo, \emph{excitement}.
+  \item Lo \textbf{spam} di una frase per annoiare, infastidire, frustrare
+        gli altri: il meme di \emph{Overwatch}.\footnote{Nella trascrizione
+        ``knee-dealing è meme di Overwatch''; il riferimento è con ogni
+        probabilità alla ripetizione ossessiva di una linea vocale (per
+        esempio ``I need healing''), un meme noto del gioco.}
+  \item La \textbf{community}: tutto ciò che sta fuori dal gioco, Reddit,
+        Discord, e il \textbf{side market}, la compravendita di oggetti al
+        di fuori del gioco (\emph{Counter-Strike}, \emph{Dota}, gli oggetti
+        del workshop di Steam).
+\end{itemize}
+È la componente sociale, il \emph{player behavior}: decisioni meta. Si
+torna su tutte nel riepilogo finale (sezione~\ref{gd15:sec:leve}).
+
+% ---------------------------------------------------------------------
+\section{Le tre trappole: meaningless, obvious, blind}
+\label{gd15:sec:trappole}
+
+Torniamo alla slide delle porte: come si rende quella scelta una scelta che
+\textbf{abbia senso implementare}, cioè che valga i costi e il tempo che le
+si vogliono dedicare in produzione? Generalmente si seguono \textbf{tre
+linee guida}, che sono altrettanti \textbf{must not} generali
+(tabella~\ref{gd15:tab:trappole}).
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}p{0.16\textwidth}p{0.36\textwidth}p{0.4\textwidth}@{}}
+    \toprule
+    \textbf{Trappola} & \textbf{Che cosa succede} & \textbf{Esempi a lezione} \\
+    \midrule
+    \emph{Meaningless} & Una scelta va fatta, ma non ha un risultato
+      effettivo nel gameplay, o lo ha molto più piccolo di quanto viene
+      percepito. & Il ciondolo gabbia/uccello di \emph{BioShock Infinite};
+      la colazione di \emph{Life is Strange}. \\
+    \emph{Obvious} & Una delle opzioni è palesemente la migliore: la
+      decisione non è una decisione (strategia dominante). & Il
+      potenziamento della pistola in \emph{Control}; l'Anfora
+      dell'Avidità in \emph{Yu-Gi-Oh!}. \\
+    \emph{Blind} & Il giocatore sceglie senza informazioni sufficienti
+      sull'effetto della scelta. & Le tre porte; i doni iniziali del primo
+      \emph{Dark Souls}. \\
+    \bottomrule
+  \end{tabular}
+  \caption{Le tre trappole delle decisioni. Sono linee guida: si può
+  romperne una, non tutte, e solo dopo averne padroneggiato l'uso.}
+  \label{gd15:tab:trappole}
+\end{table}
+
+\subsection{Decisioni meaningless}
+
+La prima cosa da evitare (ed era il caso della porta) sono le decisioni
+\textbf{senza senso}: c'è una scelta da fare, ma \textbf{non ha un effettivo
+risultato nel gameplay}. Le porte, a dire il vero, un risultato ce l'hanno
+avuto: uno \textbf{educativo} (un esempio da non seguire da cui partire) e
+uno \textbf{umoristico}, ``che trova il tempo che trova''. Ma gli studenti non
+hanno guadagnato nulla di materiale: i soldi e le tigri non c'erano. Nei
+videogiochi vale lo stesso, ed è un discorso di \textbf{percezione}: se si
+implementa una scelta percepita come \textbf{estremamente impattante}, ma
+che nel gameplay non cambia nulla o pochissimo, probabilmente si sono
+\textbf{investite male le risorse di produzione}.
+
+\paragraph{Il ciondolo di BioShock Infinite.} Il docente chiede a Valerio se
+ricordi la scelta del ciondolo per Elizabeth, \textbf{gabbia} o
+\textbf{uccello}. Valerio la ricorda: ``mi pare che influiva sul finale''.
+``Bella guess'', ma in realtà \textbf{non influiva su niente}; anche il
+docente, la prima volta, l'aveva percepita così. È una scelta che la gente
+ricorda (o ricorda male) come estremamente importante, ma che nel gioco è
+\textbf{solo di \emph{flavor}}.
+
+Per chi non l'ha giocato, il docente la ricostruisce (e cerca il video, ``che
+ogni anno faccio fatica a beccare perché è sempre nascosto''): l'incipit di
+\emph{BioShock Infinite} è andare in una città che non è più sott'acqua ma
+\textbf{nel cielo}, per salvare una ragazza, Elizabeth, rinchiusa in una
+torre con un carceriere enorme a forma di uccello (``il Big Daddy
+volante'').\footnote{Il carceriere è Songbird.} C'è una simbologia molto
+forte: il carceriere ha la forma di un uccello, e c'è il concetto di
+\textbf{libertà}, perché lei ha vissuto tutta l'infanzia \textbf{in gabbia}.
+Il giocatore deve scegliere per lei uno tra due ciondoli: quello con la
+\textbf{gabbia} o quello con l'\textbf{uccello}. E la scelta viene presentata
+in maniera molto importante:
+\begin{itemize}
+  \item \textbf{blocca il gameplay}: crea un \emph{funnel}, il level design
+        si interrompe;
+  \item c'è una \textbf{cutscene}, con personaggi nuovi, mai mostrati prima
+        (che poi ritornano come nemici, ``se non sbaglio come boss'');
+  \item è proprio una \textbf{presentazione} che il giocatore percepisce
+        come importante.
+\end{itemize}
+Eppure da lì in avanti non serve più a nulla: cambia il ciondolo, ``che non
+vedi mai'', perché giochi in prima persona e lei, per metà del gameplay, è
+``lontana un chilometro''. È, molto probabilmente, un \textbf{refuso della
+produzione}. La regola: \textbf{se il giocatore si pone davanti a una
+scelta, rispetto a quanto importante viene percepita, deve avere un
+risultato altrettanto importante nel gameplay}.
+
+\subsection{Decisioni ovvie}
+
+Il secondo punto sono le \textbf{decisioni ovvie}. A volte si può
+suggerire al giocatore che una decisione è migliore di un'altra; ma avere
+una \textbf{catena} di decisioni ovvie è sbagliato. Se la scelta ideale è
+ovvia, il problema si pone; a maggior ragione se la scelta è
+\textbf{permanente} e il giocatore sbaglia (per non aver trovato le
+informazioni corrette o per qualsiasi altra ragione) e poi si rende conto che
+una decisione ovvia era stata sbagliata: fa \emph{double down} sul proprio
+senso di colpa. In \emph{Control}, per esempio, c'è un combattimento in cui un
+potenziamento specifico di una pistola è \textbf{estremamente ovvio}, e con
+quello si può ``cheesare'' lo scontro in maniera estrema.
+
+\paragraph{L'Anfora dell'Avidità.} Ma l'esempio che il docente vuole citare,
+``perché ha segnato la mia vita da grande amante di giochi di carte'', è
+l'\textbf{Anfora dell'Avidità} (\emph{Pot of Greed}) di \emph{Yu-Gi-Oh!}.
+Chi la conosce? (``Meno 10 punti a Grifondoro. Non è vero, sto
+scherzando.'') Nella \textbf{banlist} è lì, tra le carte proibite, da
+moltissimi anni (dopo un po' di ricerca a schermo, è Alberto a trovarla:
+``non so come mai sono completamente cieco, grazie mille''). Il suo effetto è
+semplicissimo: \textbf{peschi due carte}. Tu giochi l'Anfora e peschi due.
+Questo fa.
+
+Carte che fanno esattamente questo esistono anche in \emph{Magic} o nel GCC
+di \emph{Pokémon}, eppure non sono così forti come in \emph{Yu-Gi-Oh!}, per
+una serie di motivi:
+\begin{itemize}
+  \item il mazzo di \emph{Yu-Gi-Oh!} è \textbf{estremamente ridotto}
+        rispetto a quello di \emph{Magic}: 40 carte;\footnote{Il docente
+        dice ``40 rispetto a 80, minimo'', cioè ``la metà''. Il minimo per un
+        mazzo constructed di \emph{Magic} è in realtà di 60 carte; il punto
+        (un mazzo di \emph{Yu-Gi-Oh!} molto più piccolo, quindi più
+        consistente) resta valido.}
+  \item \emph{Yu-Gi-Oh!} è un gioco di \textbf{probabilità}, sempre più
+        spiccatamente.
+\end{itemize}
+Metà degli studenti aveva analizzato proprio questo gioco
+(``cosa sto dicendo? voi avete fatto l'analisi''), e il docente chiede: in
+che direzione è spinto il gameplay oggi, ``ancora più di ieri''? Qual è il
+problema di affrontare un avversario? Risponde Valerio: chi comincia
+\textbf{inizia a pescare attivando effetti a catena} e controlla la partita,
+con molte più possibilità di vincere. ``Assolutamente sì.'' I mazzi sono
+ottimizzati per fare \textbf{più combo possibili con meno pezzi possibili}, e
+per \textbf{non far giocare l'avversario}. Il docente scorre la banlist:
+\begin{itemize}
+  \item il \textbf{Maestro dello Shock}:\footnote{Nella trascrizione
+        ``Maestro Shock''; è \emph{Shock Master}.} dichiari un tipo di carta,
+        e quel tipo non può essere attivato; lo gioco nel mio turno, dichiaro
+        ``mostro'', e l'avversario non gioca;
+  \item \textbf{Bagooska}:\footnote{Nella trascrizione ``Bagusca'': è
+        \emph{Number 41: Bagooska the Terribly Tired Tapir}.} finché è in
+        posizione di difesa, gli effetti dei mostri non si possono attivare
+        (``recentemente messo qua dentro'');
+  \item \textbf{Rhongomyniad}:\footnote{Nella trascrizione ``Rongominion'' e
+        ``Rongomidian'': è \emph{Number 86: Heroic Champion -
+        Rhongomyniad}.} un mostro Xyz con cinque materiali; una volta per
+        turno distrugge tutte le carte dell'avversario, è immune agli effetti
+        delle carte, e quando ha quattro o più materiali (``e ce li ha'')
+        l'avversario non può evocare normalmente o specialmente. Chi non
+        gioca? L'avversario.
+\end{itemize}
+Gran parte delle carte proibite o creano combo o sono, da sole, carte che
+\textbf{bloccano le giocate dell'avversario} (i cosiddetti
+\emph{floodgate}).\footnote{Nella trascrizione ``floatgate''.} L'Anfora non
+lo fa. Il problema è che oggi \textbf{metà del mazzo} è formata da
+carte\footnote{Nella trascrizione ``Entrap''; dal contesto (carte che
+bloccano l'avversario o abilitano le proprie giocate) sono quasi certamente
+le \emph{hand trap}.} che servono a bloccare l'avversario o ad abilitare le
+proprie giocate senza farlo giocare; e l'altra metà, a maggior ragione, deve
+essere estremamente ottimizzata.
+
+In questo contesto, avere l'Anfora significa che \textbf{ogni mazzo ce l'ha},
+in \textbf{tre copie} (``manco in due''): è una carta così vantaggiosa (fa
+pescare due carte, quindi aumenta di uno il numero di carte in mano) e si
+gioca \textbf{senza costo}. Perché non dovrei giocarla? E perché non dovrei
+metterla nel mazzo, se nello stato attuale del gioco \textbf{ogni carta è una
+risorsa ovunque si trovi}: in mano, sul terreno, nel cimitero, a volte
+persino nella zona bandita, perché posso recuperarla con un'altra carta o
+attivarne l'effetto dal cimitero? In un gioco in cui la strategia è
+\textbf{costruire il mazzo}, l'Anfora rende la scelta di inserirla non solo
+ovvia, ma \textbf{necessaria}, in qualsiasi mazzo, aggro o control che sia.
+E questo è il problema.
+
+\subsection{Decisioni blind}
+
+Il terzo punto sono le decisioni \textbf{blind}, ed è di nuovo il caso della
+porta. Se il docente avesse detto ``la porta rossa ha il sacco di soldi'',
+la decisione sarebbe stata \emph{ovvia}; non avendo dato nessuna
+informazione, è il contrario: \textbf{scegliere senza sapere che effetto
+avrà la scelta}. Non bisogna sempre esplicitare la ricompensa o dare tutte le
+informazioni, ma bisogna \textbf{creare la condizione per cui il giocatore
+sente il peso della scelta}, lo sente correttamente, o sente che si sta
+impegnando per qualcosa per cui verrà premiato. È uno \textbf{spettro}: la
+quantità di informazioni \textbf{sufficienti} da dare al giocatore per
+metterlo in condizione di scegliere.
+
+\paragraph{I doni iniziali di Dark Souls.} Un caso al tempo stesso negativo e
+positivo, nel suo gioco: dopo la scelta della classe, il primo \emph{Dark
+Souls} chiede di scegliere un oggetto da una lista, i \textbf{doni
+iniziali}\footnote{Il docente dice che ``dovrebbero chiamarsi
+\emph{starting gifts}'' e cerca la lista a schermo, mostrando prima per
+errore quella di \emph{Dark Souls II}.} (tra cui la \textbf{Master Key} e
+l'\textbf{Anello della Vecchia Strega}). Il giocatore non sa che cosa
+facciano, o non ha informazioni sufficienti per capire se sia meglio la
+chiave o l'anello rispetto alla classe scelta e alla strategia che vuole
+adottare: \textbf{nel gioco non c'è ancora entrato}. La scelta diventa invece
+estremamente interessante quando il giocatore \textbf{ha} informazioni sul
+gioco, cioè alla seconda, terza, quarta run; e ha senso in un mondo come
+quello di \emph{Dark Souls}, estremamente punitivo, cupo e spietato, che si
+fregia di non dare tutte le soluzioni al giocatore: è parte della visione
+del gioco. Applicata a \emph{Metroid} o ad altri titoli, la stessa scelta
+sarebbe ``veramente problematica''. Dipende da dove la si fa.
+
+\paragraph{Le regole si rompono, una alla volta.} Queste sono \textbf{must
+not come linee guida generali}. Come sempre, se ne può \textbf{rompere una},
+non tutte, e solo dopo averne \textbf{padroneggiato l'implementazione}.
+
+\paragraph{Approfondimento: da dove vengono le tre trappole.} La terna
+\emph{obvious}/\emph{meaningless}/\emph{blind} è quella del capitolo sugli
+elementi di abilità strategica di \emph{Challenges for Game Designers}
+(Brathwaite e Schreiber), che aggiunge qualche strumento utile.
+\begin{itemize}
+  \item Per le decisioni \textbf{ovvie} l'esempio è lo ``Highest Number
+        Game'' (vince chi dice il numero più alto: il secondo giocatore non
+        ha davvero una scelta). Il rimedio suggerito è spesso
+        \textbf{rimuovere la scelta e automatizzarla} (i GDR moderni non
+        chiedono più di mangiare e riposare, molti FPS ricaricano da soli),
+        oppure aggiungere \textbf{pressione temporale}, trasformandola in una
+        prova di destrezza.
+  \item Per le decisioni \textbf{meaningless} il libro cita i vecchi GDR:
+        ``Vuoi vedere il re?'' Se rispondi no, ``Ma devi!'', e lo vedi
+        comunque. Con una precisazione che anticipa la discussione della
+        sezione successiva: la \textbf{percezione}. Molti giochi moderni
+        offrono scelte narrative che non cambiano l'esito, ma la prima
+        volta il giocatore percepisce che lo fanno, e \textbf{quella
+        percezione rende la scelta significativa}; ci si accorge del
+        contrario solo rigiocando.
+  \item Per le decisioni \textbf{blind} l'esempio è la roulette, che resta
+        avvincente solo perché c'è in palio denaro vero. Il rimedio è dare
+        \textbf{abbastanza} informazioni, non tutte: basta una voce
+        sentita prima su un NPC per trasformare una scelta alla cieca in una
+        scelta interessante.
+\end{itemize}
+Schell, in \emph{The Art of Game Design}, chiama \textbf{strategia
+dominante} il caso in cui un'opzione è chiaramente migliore delle altre
+(``una volta scoperta, il gioco non è più divertente, perché il puzzle è
+risolto''), e ne fa la domanda chiave della \textbf{Lente n.~39, delle
+scelte significative}: quali scelte chiedo di fare al giocatore? Sono
+significative, e come? Gliene do il numero giusto? Ci sono strategie
+dominanti? Sul numero, Schell riporta l'osservazione di Michael Mateas:
+se le scelte superano i desideri del giocatore, questi si sente
+\textbf{sopraffatto}; se sono meno, \textbf{frustrato}; se coincidono, prova
+\textbf{libertà e appagamento}, che è lo stesso equilibrio delle tre porte
+(e dei tre gusti) del capitolo~\ref{gd9:cap:agency-visione}.
+
+% ---------------------------------------------------------------------
+\section{La discussione: e la ricompensa emotiva?}
+\label{gd15:sec:discussione}
+
+\subsection{L'obiezione di Federica}
+
+``Dubbi? Chiaro?'' Una smorfia di Federica non convince il docente. Lei non
+conosce \emph{BioShock}, ma chiede: una scelta senza conseguenze reali non
+rischia comunque di influire sulla \textbf{filosofia} del gioco, come qui la
+gabbia? Se scegli la gabbia, magari lei fa una smorfia e poi si continua.
+
+In effetti, risponde il docente, c'è un \textbf{bark narrativo} di Elizabeth
+(gli studenti non l'hanno sentito, c'erano solo i sottotitoli): una frase che
+risponde alla scelta dell'uno o dell'altro pendente. Può essere più una
+\textbf{ricompensa emotiva} che concreta, e se ne è discusso anche in altri
+anni. Il docente sarebbe d'accordo, se non fosse per la \textbf{bilancia}:
+da una parte la \textbf{messa in scena} (tutto ciò che porta alla scelta e i
+costi che ci sono dietro: la cutscene, i personaggi nuovi, la nuova camera),
+dall'altra il \textbf{risultato}, cioè un bark su gabbia o uccello. La messa
+in scena è percepita come così importante rispetto al risultato che la
+decisione, a conti fatti, \textbf{viene percepita come meaningless}. È questa
+la discriminante.
+
+Federica insiste con un esempio inventato: un momento di festa, la ragazza
+appena liberata, un regalo a lei: la ricompensa emotiva potrebbe valere la
+messa in scena. Il docente è d'accordo, e propone una soluzione da designer:
+se si volesse mantenere quella scelta ma farla percepire come \textbf{meno
+importante}, la si potrebbe mettere in una \textbf{parte opzionale}. Non
+blocca il gameplay né il flusso; chi va dritto (o fa speedrun) la può
+perdere; chi guarda i dettagli (ed è il primo momento in cui si vede
+davvero la struttura sociale della città nel cielo, con la spiaggia
+simulata, le onde d'acqua finta, l'estetica dell'America degli anni
+Venti) viene premiato trovandola non sulla strada principale, ma in un
+angolo (non nascosto, né misterioso). Ciò che non convince il docente è la
+messa in scena finale. E, ripete, probabilmente non è nemmeno voluta: è un
+\textbf{evento tagliato}, finito nella build così perché non c'è stato tempo
+di produzione per espanderlo altrove; ``i costi sono andati in quella
+direzione, quello è stato''.
+
+Ci possono essere scelte meaningless più azzeccate come esempio (``mi sono
+dimenticato di aggiornare le slide; lo farò''): il docente propone di
+\textbf{trovarne una} e discuterne venerdì.
+
+\subsection{Il canto per la maestra: Silksong}
+
+Per mostrare che il risvolto emotivo può essere una soluzione, il docente
+chiede a Francesca, che ha finito \emph{Silksong}, se abbia visto la
+\textbf{morte della maestra di Shakra},\footnote{Nella trascrizione
+``chakra''; Shakra è la cartografa di \emph{Silksong}, ``quella che ti vende
+le mappe''.} cioè la sub-quest legata alla venditrice di mappe. È una
+sub-quest estremamente lunga: presuppone che il giocatore abbia ottenuto la
+mappa di tutte le zone, e quindi abbia trovato Shakra in tutte le zone. E
+alla fine la ricompensa (al netto di un'arma, ``se non erro'' gli anelli) è
+\textbf{una canzone}: sei tu, con Shakra, a fare l'ultimo canto alla maestra
+morta. La ricompensa è principalmente \textbf{emotiva}, non meccanica; eppure
+il docente, come giocatore, si è sentito appagato: era la fine di un percorso
+in cui un'amica (``immedesimandomi in Hornet'') cercava la sua maestra nel
+labirinto e poi la trovava morta. ``Estremamente struggente.'' Avere la
+certezza della sua morte e poterle dare l'ultimo saluto è stato
+sufficiente: una risoluzione \textbf{emotiva}, non meccanica.
+
+\subsection{Valerio: ``ho chiamato un amico''}
+
+Valerio rinforza il punto su \emph{BioShock}: quando ci stava giocando si è
+fermato per contattare l'amico che gli aveva consigliato la serie e
+chiedergli se quella scelta avesse una grande influenza. La messa in scena
+funzionava, quindi: era proprio un discorso di \textbf{percezione} del
+giocatore. Il docente è comunque dell'idea che esistano esempi ancora più
+costosi e ancora più meaningless, e rimanda a venerdì.
+
+\subsection{Francesca: e la colazione?}
+
+Francesca si collega al discorso emotivo: seguendo questa linea di pensiero,
+anche \textbf{pancake o uova e bacon} in \emph{Life is Strange} non è una
+decisione meaningless? ``Sono perfettamente d'accordo'': il docente l'aveva
+portata come esempio di \emph{decisione}, ma non ha mai detto che fosse
+meaningful. Francesca immagina che serva a dare al giocatore la percezione di
+essere libero di scegliere, cioè \textbf{agency}. Esatto, e c'è di più:
+\begin{itemize}
+  \item \emph{Life is Strange} è un gioco \textbf{estremamente
+        cinematografico}, in cui per gran parte dell'esperienza il giocatore
+        guarda cutscene; prima di quella scelta ci saranno stati almeno
+        \textbf{sette minuti} di cutscene (lei che si sveglia, va a svegliare
+        l'amica, vanno alla tavola calda con la madre, parlano). C'è
+        l'immedesimazione, e c'è la \textbf{rottura del pace}: dopo sette
+        minuti senza scelte il giocatore ``si addormenta'', per quanto
+        narrativo sia il gioco e per quanto adatta sia l'audience;
+  \item la variante è \textbf{minima a livello di produzione}: la cutscene
+        resta la stessa, le animazioni sono le stesse, cambia solo
+        \textbf{l'asset nel piatto};
+  \item il giocatore la vede come \textbf{estremamente minore} rispetto a
+        salvare una persona. In \emph{Life is Strange} ci sono momenti in
+        cui le scelte decidono la vita o la morte di altri NPC, e la
+        differenza si percepisce nettamente.
+\end{itemize}
+Il docente confessa di essere ``uno di quei malati di mente'' che nei giochi
+narrativi cerca di min-maxare, prendendo le decisioni eticamente più
+corrette, soprattutto al primo playthrough: faceva dieci minuti di gioco,
+vedeva che cosa succedeva e ricaricava; e il gioco ha pure la meccanica del
+\textbf{tornare indietro nel tempo} (``ci vado a nozze''). Come giocatore, gli
+era sempre chiaro quando stava facendo una scelta minore e quando una
+maggiore. Una scelta, insomma, dipende \textbf{dalla presentazione} ma anche
+da \textbf{quanto costa metterla a terra}.
+
+\subsection{Il caso limite: ``Clementine will remember that''}
+
+C'è un caso limite, ``che non vi dovrei nemmeno portare perché ho paura che
+vi confonda'', dello stile \textbf{Telltale}, maestra dei giochi narrativi a
+episodi: \emph{The Walking Dead}. Il docente mostra prima una scena di
+\emph{Life is Strange: Before the Storm} (``opinione impopolare: a me è
+piaciuto di più lo spin-off''), con la notifica a schermo che la scelta avrà
+\textbf{conseguenze}. In \emph{The Walking Dead} questa meccanica è ancora
+più spinta, al punto da essere diventata un meme: \textbf{``Clementine will
+remember that''}. E in abbastanza casi la scelta \textbf{non è davvero
+impattante} e non cambia niente nel gameplay.
+
+Perché funziona? Con \textbf{un elemento di UI} si fa percepire un'emozione
+estremamente potente. In mezzo all'apocalisse zombie il protagonista si porta
+dietro una bambina, e le sue scelte la \textbf{educano}: salvare o non
+salvare una persona, scegliere tra la vita e la morte, raccontarle bugie su
+chi è morto. Come designer, si vuole che il giocatore senta il \textbf{peso
+della responsabilità} nella relazione tra il protagonista e l'NPC di punta:
+deve sempre sentirsi osservato, sentire che le sue azioni hanno conseguenze
+su una minorenne. E lo si vuole \textbf{con meno costi possibili}: lo stesso
+gioco con tutte le scelte davvero meaningful si potrebbe fare, ma sarebbe
+estremamente difficile da produrre. È una \textbf{scelta furba}: con poco il
+giocatore ottiene tanto, ``anche troppo'', tanto che molti (il docente
+compreso) rifacevano lo stesso capitolo più volte per capire se cambiava
+qualcosa. Lo stesso vale in \emph{Life is Strange}: alcune scelte segnalate
+come ricordate non verranno ricordate affatto; quelle davvero impattanti
+hanno la notifica, ma la notifica non implica una scelta impattante.
+
+È un \textbf{caso limite di rottura} di queste linee guida, fatto da
+un'azienda che faceva \emph{solo} quello (episodi spiccatamente narrativi con
+quel sistema) ed era quindi estremamente verticale su
+quello.\footnote{Telltale Games ha chiuso nel 2018. Il docente aggiunge che
+chi ci lavorava ``è in Adobe Studio'': quasi certamente AdHoc Studio, fondato
+da ex membri di Telltale; il nome nella trascrizione non è affidabile.}
+
+A questo punto Daniele deve andare a prendere il treno e saluta (``buon
+weekend a tutti'').
+
+% ---------------------------------------------------------------------
+\section{Il contrario: decisioni ben costruite}
+\label{gd15:sec:buone}
+
+Il contrario delle tre trappole, ovviamente, è ciò che va fatto
+(tabella~\ref{gd15:tab:buone}).
+
+\subsection{Non meaningless}
+
+Scelte che modificano, anche di poco, l'\textbf{allineamento} di altri
+personaggi o portano a un finale diverso. L'esempio, già visto in passato,
+è \textbf{\emph{Oxenfree}}:\footnote{Nella trascrizione ``Aux Free''.}
+ogni scelta modifica leggermente l'allineamento dei personaggi e porta a uno
+o più finali. Se con tuo fratello\footnote{In \emph{Oxenfree} è il
+fratellastro, Jonas.} sei stato molto (o anche poco più che poco)
+maleducato, il legame si rompe; due NPC possono mettersi insieme o no a
+seconda di certe azioni, ma \textbf{mancarne una o due} e fare tutte le
+altre porta comunque a quel risultato. E ci sono finali specifici
+\emph{ad hoc}: far tornare il fratello morto\footnote{Michael, il fratello
+della protagonista Alex.} è possibile solo se si è rotto un certo tipo di
+\textbf{loop}, che è alla base di questo ``teen drama, teen horror,
+coming-of-age horror, come volete chiamarlo''. Lo stesso vale per
+\textbf{\emph{The Witcher}}: se tratti Ciri\footnote{Nella trascrizione
+``Searing''; dal contesto (``se le trattate in una certa maniera, poi
+compirà il sacrificio finale'') è quasi certamente Ciri in \emph{The Witcher
+3}, il cui destino dipende da come Geralt si è comportato con lei.} in una
+certa maniera, poi compirà il sacrificio finale, e così via. C'è una scelta,
+e ha un impatto \textbf{allineato con l'aspettativa del giocatore} e con come
+il designer la mette in scena.
+
+\subsection{Non ovvie}
+
+C'è una decisione da fare, ma \textbf{non c'è una strategia dominante}. Non
+a caso gli esempi sono spiccatamente strategici e lato build: la possibilità
+di modificare le strategie a seconda del proprio desiderio da giocatore.
+
+\paragraph{Fire Emblem.} Chi ha giocato un \emph{Fire Emblem}? Il docente
+consiglia di recuperarli (``non sarò certo io a dirvi di scaricare emulatori
+per GBA e far girare la ROM di \emph{Blazing Blade}'', ma se lo si facesse
+\ldots). Si ha un \textbf{party} che cresce con la trama; i personaggi si
+muovono su \textbf{griglia}; ci sono obiettivi di missione in missione;
+alcuni nemici si possono \textbf{reclutare}; i personaggi hanno un'anima da
+JRPG, con design e personalità spiccate; nei capitoli recenti si può fare
+\emph{romance}, o farla fare ai personaggi, in base a chi si porta in
+battaglia. I personaggi hanno statistiche e possono \textbf{cambiare classe}
+(a schermo c'è \emph{The Sacred Stones}): cambiando classe aumenta una
+statistica e cambia la crescita, come l'evoluzione dei Pokémon. E il
+giocatore \textbf{non porta necessariamente i più forti}, né li fa evolvere
+necessariamente nella classe più forte: magari vuole quel personaggio in
+squadra per la romance, o vuole vedere le relazioni sociali tra due
+personaggi, o (nei Fire Emblem più vecchi) solo tra un lord e il suo
+cavaliere di punta.
+
+\paragraph{Pokémon.} Snorlax ha statistiche che puntano chiaramente a un
+Pokémon \textbf{difensivo}, un muro fisico; eppure lo si può buildare per
+spingerlo in \textbf{velocità}, per renderlo imprevedibile, o dargli quattro
+mosse inattese dall'avversario, a seconda anche delle meccaniche della
+generazione (Megaevoluzione, Gigamax e così via). Una \textbf{via insolita}
+rispetto allo stile di gioco: questo significa decisioni non ovvie.
+
+\subsection{Non blind}
+
+Decisioni che hanno un effetto sul gioco, e il giocatore ha
+\textbf{sufficiente conoscenza} per capire quale. Di nuovo \emph{Life is
+Strange}: il \textbf{finale} è scegliere chi salvare. Anche se non viene
+detto esplicitamente, aver giocato fino a quel momento ha dato informazioni
+sufficienti su che cosa comporta la scelta, perché è stata
+\textbf{costruita in tutte le ore precedenti} (``assumo dieci ore di
+gameplay''). Questo la rende non blind.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}p{0.2\textwidth}p{0.36\textwidth}p{0.36\textwidth}@{}}
+    \toprule
+    \textbf{Obiettivo} & \textbf{Come} & \textbf{Esempi} \\
+    \midrule
+    Non meaningless & Impatto allineato con l'aspettativa e con la messa
+      in scena; anche piccoli spostamenti di allineamento contano. &
+      \emph{Oxenfree}, \emph{The Witcher 3} (Ciri). \\
+    Non ovvie & Nessuna strategia dominante; più vie valide a seconda del
+      desiderio del giocatore. & \emph{Fire Emblem} (classi, squadre,
+      relazioni), \emph{Pokémon} (build insolite). \\
+    Non blind & Informazioni sufficienti, anche implicite, costruite nel
+      tempo. & Il finale di \emph{Life is Strange}. \\
+    \bottomrule
+  \end{tabular}
+  \caption{Le decisioni ben costruite, contrario delle tre trappole.}
+  \label{gd15:tab:buone}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Il riepilogo: le leve di ogni tipo di decisione}
+\label{gd15:sec:leve}
+
+Il docente si prende ``giusto un minuto'' per scusarsi (il flowchart non ci
+starà) e ricapitola. Le categorie principali sono tre, non necessariamente
+mutualmente esclusive; per ognuna ci sono le \textbf{leve} su cui il
+designer può agire (tabella~\ref{gd15:tab:leve}).
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}p{0.15\textwidth}p{0.38\textwidth}p{0.39\textwidth}@{}}
+    \toprule
+    \textbf{Tipo} & \textbf{Leva} & \textbf{In pratica} \\
+    \midrule
+    Tema & \emph{Awareness} & Il giocatore sa che cosa sta scegliendo e
+      quanto pesa. \\
+         & Conseguenze & Tempo e risorse investiti (una romance, un
+      personaggio trattato male) devono avere una conseguenza. \\
+         & \emph{Reminder} & La notifica a scelta fatta (Clementine): più è
+      alto il reminder, più il giocatore deve percepirne il peso. \\
+         & Permanenza vs \emph{trade-off} & Uccidere una Sorellina (e il
+      finale) contro l'armatura che oggi indosso e domani posso cambiare. \\
+    \midrule
+    Meccaniche & Scelta delle azioni & Tante azioni possibili, una per
+      volta (la lotta Pokémon). \\
+         & Rischio vs ricompensa & Alto rischio, alta ricompensa; premiare
+      i prudenti e far sperare chi cerca adrenalina. \\
+         & Lungo vs breve termine & Spendere ora o risparmiare per dopo (i
+      soldi di \emph{Hollow Knight}). \\
+         & Scambio di risorse & Oro per una pozione: il ciclo economico. \\
+    \midrule
+    Meta & Bluff, \emph{dealmaking}, \emph{backstabbing} & Giocare onesti o
+      disonesti con altri umani (\emph{Among Us}, \emph{Sea of Thieves}). \\
+         & \emph{Min-maxing} & Conoscere il gioco oltre quanto il designer
+      si aspetta (i rendimenti decrescenti dei Souls). \\
+    \bottomrule
+  \end{tabular}
+  \caption{Il riepilogo finale della lezione: le leve delle decisioni per
+  tipo.}
+  \label{gd15:tab:leve}
+\end{table}
+
+\subsection{Tema}
+
+Il tema si porta dietro le decisioni \textbf{emozionali, viscerali e di
+istinto}, e le leve sono quattro.
+\begin{description}
+  \item[Awareness] Il giocatore deve sapere \textbf{che cosa sta
+        scegliendo} e \textbf{quanto peso ha} la scelta. Il ciondolo di
+        \emph{BioShock Infinite} si può categorizzare come decisione lato
+        tema, solo che la percezione è molto più alta del risultato
+        effettivo.
+  \item[Conseguenze] Le scelte devono avere \textbf{conseguenze}: se investo
+        tempo e risorse per una romance, mi aspetto una conseguenza di
+        qualche tipo; se prendo tutte le scelte giuste, o se tratto
+        terribilmente un personaggio in \emph{Fallout} e ho una statistica
+        di ``cattiveria'' altissima (``non mi ricordo come si
+        chiama''),\footnote{È il \emph{Karma} di \emph{Fallout 3}.} la
+        relazione con gli altri personaggi ne risente.
+  \item[Reminder] Il caso di Clementine: i pop-up a schermo. Più è alto il
+        reminder, più il giocatore deve percepire la pesantezza e l'effetto
+        della scelta. E il reminder va dato \textbf{quando la scelta è stata
+        fatta}: hai scelto, te lo ricordo, è importante.
+  \item[Permanenza vs trade-off] Una scelta \textbf{permanente} (uccidere una
+        Sorellina, che influenza il finale) contro un \textbf{trade-off}
+        (scelgo uno o l'altro). Di nuovo Fashion Souls: posso avere addosso
+        una sola armatura, ma oggi ho questa e domani posso cambiarla.
+\end{description}
+
+\subsection{Meccaniche}
+
+\begin{description}
+  \item[Scelta delle azioni] È alla base di ogni tipo di gameplay, più o
+        meno esteso: al giocatore si mettono in mano una serie di azioni, ma
+        \textbf{ne può fare una per volta}. In una lotta Pokémon ho quattro
+        mosse, oppure la borsa e la Poké Ball, oppure la fuga; non posso
+        farle tutte, e farne una esclude l'altra: se fuggo, quel Pokémon
+        l'ho perso; se sconfiggo lo \emph{shiny} che ho davanti, non lo posso
+        più catturare. Questo rende una scelta più importante, o percepita
+        come tale.
+  \item[Rischio vs ricompensa] Il classico: alto rischio e alta ricompensa,
+        basso rischio e bassa ricompensa. Si possono premiare i giocatori più
+        prudenti e al tempo stesso far sperare quelli in cerca di emozioni
+        adrenaliniche.
+  \item[Lungo vs breve termine] Investo adesso e perdo la risorsa in futuro?
+        Come con Federica: in \emph{Hollow Knight} non spendo i soldi adesso
+        perché punto a qualcosa di più costoso, oppure li spendo tutti per
+        non rischiare di bruciarmeli morendo contro un boss.
+  \item[Scambio di risorse] Pago oro per una pozione, spendo qualcosa per
+        ottenere qualcos'altro: il \textbf{ciclo economico} lato meccanico.
+        L'ultima lezione dell'anno sarà dedicata proprio
+        all'\textbf{economia}.
+\end{description}
+
+\paragraph{Approfondimento: la triangolarità.} Schell dedica al rischio
+contro ricompensa una lente intera, la \textbf{Lente n.~40, della
+triangolarità}: dare al giocatore la scelta tra giocare sul sicuro per una
+ricompensa bassa o rischiare per una alta. L'esempio è \emph{Space
+Invaders}, con il disco volante che vale molti punti ma costringe a esporsi.
+\emph{Challenges for Game Designers} osserva inoltre che chi è in svantaggio
+tende a rischiare di più per recuperare, e chi è in vantaggio a giocare sul
+sicuro per conservarlo: una dinamica che genera tensione da sola. Lo stesso
+libro distingue il \textbf{trade-off} (non ci sono risorse per tutti gli
+obiettivi: arma migliore o armatura migliore?) dal \textbf{dilemma}, in cui
+tutte le opzioni danneggiano il giocatore.
+
+\subsection{Meta}
+
+Tutto ciò che, ripete il docente, è legato alla \textbf{socialità} e alla
+relazione con altri individui reali (e sulla slide c'è apposta l'omino di
+\emph{Among Us}): \textbf{bluffing}, \textbf{dealmaking},
+\textbf{backstabbing}. Si può scegliere di adottarli, che il gioco sia di
+deduzione sociale o no: giocare onestamente o disonestamente, per esempio
+nel dividere il bottino; in \emph{Sea of Thieves} ci si può permettere di
+essere onesti o disonesti con gli altri giocatori.
+
+Qui rientra anche il \textbf{min-maxing}, l'estrema conseguenza della scelta
+delle azioni: conoscere le meccaniche al punto da \textbf{ottimizzare
+qualsiasi guadagno e minimizzare qualsiasi spesa}. Perché sta tra le meta e
+non tra le meccaniche? Perché presuppone una conoscenza del gioco
+\textbf{molto più profonda di quella che il designer si aspetta}. Il docente
+lascia la ricerca agli studenti: gli \emph{i-frame} in \emph{Monster Hunter}
+o in \emph{Dark Souls}, il min-max nei Souls, la spesa delle anime in
+\emph{Dark Souls}. Si scopre, con dei grafici, che da un certo punto in
+avanti diventa \textbf{sconveniente investire punti} in una statistica,
+perché l'aumento non è più vantaggioso come prima
+(figura~\ref{gd15:fig:softcap}); vale per quasi tutti i soulslike di
+FromSoftware (``non tutti i soulslike''). Ma è un calcolo che il designer non
+si aspetta che il giocatore faccia; e i giocatori di questo tipo stanno, sulla
+curva normale (sezione~\ref{gd10:sec:gaussiana}), in una parte molto spinta
+verso gli \textbf{evangelisti}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[x=0.11cm, y=0.042cm]
+    \draw[-{Stealth[length=2mm]}] (0,0) -- (62,0);
+    \node[font=\footnotesize] at (31,-17) {punti investiti nella statistica};
+    \draw[-{Stealth[length=2mm]}] (0,0) -- (0,110) node[above,
+      font=\footnotesize] {valore effettivo};
+    \draw[very thick, blue!60!black] (0,0) -- (20,70) -- (40,92) -- (58,98);
+    \draw[dashed, gray] (20,0) -- (20,70);
+    \draw[dashed, gray] (40,0) -- (40,92);
+    \node[below, font=\scriptsize] at (20,0) {soglia 1};
+    \node[below, font=\scriptsize] at (40,0) {soglia 2};
+    \node[font=\scriptsize, align=center] at (5,72) {molto\\conveniente};
+    \node[font=\scriptsize, align=center] at (30,100) {meno\\conveniente};
+    \node[font=\scriptsize, align=center] at (51,108) {quasi\\inutile};
+  \end{tikzpicture}
+  \caption{Lo schema dei rendimenti decrescenti (\emph{soft cap}) di cui
+  parla il docente: oltre certe soglie, ogni punto investito rende sempre
+  meno. Grafico illustrativo con valori inventati, non i dati di un gioco
+  specifico.}
+  \label{gd15:fig:softcap}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Per la prossima lezione}
+\label{gd15:sec:prossima}
+
+La lezione successiva riprenderà da qui, agganciandosi
+all'\textbf{audience}: si è già visto un primo strumento, se ne vedranno
+altri, e anche il principio \emph{data informed, non data driven} (già
+sfiorato parlando di feedback, sezione~\ref{gd10:sec:gaussiana}). Il
+\textbf{flowchart di Grotte} si farà la settimana successiva, se c'è tempo;
+altrimenti il docente si rimette alle domande degli studenti. ``Mi spiace non
+averlo fatto, colpa mia.'' Resta comunque un buon punto di partenza, meno
+sfidante di \emph{Pac-Man}, per testare le conoscenze sui flowchart; e se
+gli studenti vogliono giocarci in una serata, il docente lo consiglia.
+``Teniamola, per favore, la porta aperta'': per qualsiasi domanda sui
+flowchart, scrivergli.
+
+% ---------------------------------------------------------------------
+\section{Il task: le decisioni di un gioco ``truffa''}
+\label{gd15:sec:task}
+
+\subsection{Il consiglio: un gioco di venti minuti}
+
+``So che voi state bramando un task, e io vi do il miglior task che potrei
+mai darvi''. Prima, un consiglio: un gioco dello stesso designer di
+\emph{The Stanley Parable},\footnote{Il docente lo chiama ``The Emerald and
+the Tiger, qualcosa'': è quasi certamente \emph{Dr. Langeskov, The Tiger,
+and The Terribly Cursed Emerald: A Whirlwind Heist} (Crows Crows Crows,
+2015), gratuito su Steam e lungo circa un quarto d'ora, di William Pugh,
+coautore di \emph{The Stanley Parable}.} gratuito su Steam, che dura circa
+venti minuti: da giocare per il discorso sulla \textbf{percezione}, anche in
+vista del secondo anno. Ma non è quello il gioco del task.
+
+\subsection{La consegna}
+
+Il gioco del task è ``ancora migliore'', dello stesso autore:\footnote{Il
+titolo non compare nella trascrizione: il docente lo manda nella chat di
+Zoom. Dalla descrizione è un gioco comico fatto con RPG Maker, lungo una
+decina di minuti, in cui Keanu Reeves viene accusato di un crimine e deve
+scagionarsi; non è stato possibile identificarlo con certezza. Il docente
+avverte anche che all'apertura l'audio è assordante.} un gioco
+\textbf{comico}, fatto con \textbf{RPG Maker}, che dura una
+\textbf{decina di minuti}, in cui \textbf{Keanu Reeves} viene accusato
+(ingiustamente o giustamente, a seconda) di un crimine e deve scagionarsi.
+Attenzione all'apertura: l'audio è assordante. La consegna:
+\begin{enumerate}
+  \item giocare il gioco;
+  \item fare la \textbf{lista delle decisioni} presenti nel gioco,
+        \textbf{categorizzate per tipo} (tema, meccaniche, meta, con le
+        sottocategorie): a ogni decisione il suo tipo, o i suoi tipi;
+  \item \textbf{motivare}, da designer, perché ogni decisione \textbf{è o
+        non è} \emph{meaningless}, \emph{obvious} e \emph{blind}.
+\end{enumerate}
+
+\subsection{Le mani avanti}
+
+``È una truffa, questa. È un'estrema truffa.'' In questo gioco umoristico
+molte decisioni che normalmente ricadrebbero in questi tipi, e che
+normalmente sarebbero meaningful, sono \textbf{completamente sovvertite}:
+per esempio (``giusto per darvi questo indizio'') la \textbf{scelta del
+personaggio}. Bisogna quindi prestare attenzione: se lo si osserva con
+l'occhio giusto, si vede che molto di ciò che normalmente ricade in una
+categoria può essere \textbf{ribaltato}, a seconda del gioco e del designer.
+
+\subsection{La chiusura}
+
+``Vi lascio la scoperta di questa incredibile esperienza.'' Il docente
+ripete l'invito a vedersi in presenza venerdì, per chi può, e la sua
+disponibilità a parlare dentro e fuori dalla lezione; resta collegato per
+eventuali domande, altrimenti lascia gli studenti ``liberi come Keanu Reeves
+alla fine dell'esperienza''.
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Niente più membri esterni in aula, salvo richiesta dell'intera
+        classe; la registrazione è uno strumento per gli studenti; da remoto,
+        webcam accese. Venerdì prossimo è una lezione importante: meglio in
+        presenza.
+  \item Posizioni di nemici e oggetti: non documenti separati. Il level
+        design documenta a monte (level design document, mappa 2D, bubble
+        map), ma il dettaglio (percorsi, distanze) sta \textbf{in engine},
+        dopo il blockout, e c'è sempre una discrepanza tra 2D e 3D. Il
+        funzionamento di un oggetto (il vaulting) sta nel game design; le
+        quantità per zona stanno nel \textbf{Master Asset Document}, con
+        hero asset e dipartimenti coinvolti.
+  \item In \emph{Dread} lo \textbf{stealth non è un pilastro} (il Phantom
+        Cloak perde valore, e le zone EMMI chiedono di uscire, non di
+        nascondersi); \textbf{gli EMMI sì}: un predatore inattaccabile
+        confinato in zone che fanno da spina dorsale ai livelli. Lo stealth è
+        una \textbf{strategia}, non una meccanica; il combattimento è un
+        \textbf{sistema}. USP: gli EMMI, e l'accorpamento ``capitolo
+        conclusivo, 2D non Prime, su Switch''.
+  \item Il target audience era un extra: i tipi di giocatori arrivano
+        venerdì, e il gioco va mirato a uno o due archetipi. Non mescolare i
+        due sensi di ``estetiche'' (aspetto, come Schell, o emozioni).
+  \item Must do, must not e nice to have, lato design, sono l'elenco dei
+        \textbf{sistemi e delle meccaniche} necessari, esclusi o accessori:
+        camera, abilità, counter, EMMI e loro limiti, boss, mappa (must) e
+        puntine (nice), biomi $\pm 1$, hard mode, collezionabili; la valuta
+        spendibile è un must not di Metroid, l'\textbf{economy sink} un nice
+        to have di \emph{Hollow Knight}. Non ripetere nei must not il
+        contrario di un must do.
+  \item Non capire non è un problema; non chiedere sì. La ricerca su giochi
+        sconosciuti è voluta: guardare dieci secondi e annotare le
+        meccaniche; dividere la qualità dell'attenzione.
+  \item Si possono dividere i must per dipartimento; l'ambientazione
+        (sci-fi) è \textbf{vestizione}. Test: leggere la lista e immaginare
+        il gioco; quanto si avvicina all'originale? Camera (tre Zelda),
+        personaggio, abilità (il loro numero dice i costi), struttura del
+        mondo. Lo skill tree è must in \emph{Borderlands}, nice altrove.
+  \item Gli esempi non sono la regola: sperimentare. Stesso mandate,
+        feedback diversi: la risposta giusta la dice solo la produzione.
+  \item Flowchart: niente blocchi slegati, niente rettangoli con più uscite
+        (si usa il rombo). Il flowchart di Grotte è rimandato.
+  \item Calendario: lezione venerdì 27; il 14 pitching con Diego e Jack e un
+        task di gruppo da \textbf{presentare in aula il 18}, con feedback a
+        voce. Il 27 novembre c'è il Beer to Peer a Milano.
+  \item Le tre porte: tre scelte, ma nessuna informazione prima e nessuna
+        sulla ricompensa. \textbf{Tutto è una decisione}, anche il
+        controller (meta-decisione); in analisi interessano quelle che si
+        possono controllare.
+  \item Tipi di decisione, non esclusivi: \textbf{tema} (emotion driven,
+        narrative e sociali, estetiche), \textbf{meccaniche} (strategia,
+        reversibile; risorse, spesa permanente o temporanea),
+        \textbf{meta} (tecnologia, player behavior, community e side
+        market).
+  \item Le tre trappole: \textbf{meaningless} (il ciondolo di \emph{BioShock
+        Infinite}: messa in scena sproporzionata al risultato),
+        \textbf{obvious} (l'Anfora dell'Avidità, necessaria in ogni mazzo),
+        \textbf{blind} (le porte, i doni iniziali di \emph{Dark Souls}). Se ne
+        rompe una, non tutte, e solo con padronanza.
+  \item La ricompensa emotiva può bastare (la canzone di \emph{Silksong}), se
+        la bilancia tra messa in scena e risultato regge; la colazione di
+        \emph{Life is Strange} è meaningless ma economica e rompe il pace;
+        ``Clementine will remember that'' è un caso limite di rottura,
+        furbo e poco costoso.
+  \item Il contrario: non meaningless (\emph{Oxenfree}, \emph{The Witcher
+        3}), non ovvie (\emph{Fire Emblem}, Pokémon), non blind (il finale di
+        \emph{Life is Strange}).
+  \item Le leve: tema (awareness, conseguenze, reminder, permanenza vs
+        trade-off), meccaniche (scelta delle azioni, rischio vs ricompensa,
+        lungo vs breve termine, scambio di risorse), meta (bluff,
+        dealmaking, backstabbing, min-maxing).
+  \item Task: giocare il gioco comico con Keanu Reeves, elencare e
+        categorizzare le decisioni e motivare se sono meaningless, obvious,
+        blind; attenzione, è una ``truffa'' che sovverte le aspettative.
+\end{itemize}

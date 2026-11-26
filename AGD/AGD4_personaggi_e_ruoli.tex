@@ -1,0 +1,2042 @@
+% =====================================================================
+%  Analog Game Design, lezione 4 — Personaggi e ruoli: player,
+%  character e role, i quattro pilastri del personaggio giocabile, chi
+%  decide chi siamo, lo spazio dei personaggi e il primo task
+%  Fonte: trascrizione della quarta lezione (AGD4) del corso breve di
+%  Analog Game Design, seconda edizione: una lezione online su Zoom di
+%  circa tre ore, tenuta da un solo docente (Ruggero), con due pause,
+%  molte domande degli studenti, la consegna del primo task (una scheda
+%  personaggio per un LARP fittizio) e una lunga coda di domande.
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Analog Game Design", quarto capitolo
+%  (numerazione propria 2.4). Nel file principale del libro, subito dopo
+%  il capitolo 2.3:
+%
+%    \input{AGD/AGD1_introduzione_all_analog_game_design}
+%    \input{AGD/AGD2_casi_studio}
+%    \input{AGD/AGD3_i_framework_di_design}
+%    \input{AGD/AGD4_personaggi_e_ruoli}
+%
+%  Tutte le etichette di questo capitolo hanno il prefisso "a4:"
+%  (a4:cap:..., a4:sec:..., a4:fig:..., a4:tab:...). Il capitolo è
+%  autonomo: non contiene \ref verso altri capitoli.
+%  Le figure e le tabelle sono ricostruzioni schematiche di quanto il
+%  docente spiega a voce e con le slide, non copie delle slide. Le
+%  schede di Joey Doe sono riportate come le legge il docente, ripulite
+%  dagli errori del riconoscimento vocale.
+% =====================================================================
+
+\chapter[Personaggi e ruoli]{Personaggi e ruoli: progettare personaggi
+giocabili}
+\label{a4:cap:personaggi}
+
+Questa è la \textbf{quarta lezione} del corso di \textbf{Analog Game Design}, ed
+è dedicata a \textbf{personaggi e ruoli}: ``chiaramente, nell'ottica non di un
+romanzo narrativo, ma nell'ottica di game design, cioè di creare giochi''. Dopo i
+framework della lezione precedente, il docente avverte che anche questa è ``un po'
+intensa'', ma meno, e soprattutto \textbf{più interattiva}: buona parte della
+lezione è fatta di domande rivolte alla classe (``e voglio le vostre risposte''),
+di schede personaggio proiettate a schermo da commentare, di immagini di ambienti
+da ``leggere''. Ed è la lezione in cui arriva il \textbf{primo task} del corso:
+progettare una scheda personaggio per un LARP fittizio, intrecciandola con quelle
+di tutti i compagni.
+
+La lezione si svolge \textbf{online}, su Zoom, ed è tenuta ancora una volta da
+\textbf{Ruggero}\footnote{Anche questa volta il nome non viene mai detto dal
+docente stesso, ma lo pronunciano gli studenti (la trascrizione dice ``Ruggia'' e
+``Rugger'') e lo usa lui, parlando di sé in terza persona, durante le domande sul
+task: ``non dovete pensare a cosa piace a Ruggero''. È anche il docente che
+lavora per l'editore di giochi da tavolo di cui si parla nelle domande finali
+(sezione~\ref{a4:sec:domande}).}: ``adesso avete un po' di lezioni con me di fila,
+quindi vedrete solo la mia faccia''. La classe è di \textbf{nove persone}; quelle
+che intervengono, e che il capitolo nomina, sono \textbf{Gianmarco},
+\textbf{Tancredi}, \textbf{Tiziana}, \textbf{Rita}, \textbf{Angelo},
+\textbf{Lorenzo} e \textbf{Nicola}, che arriva a lezione iniziata. Rita deve
+andarsene prima della fine; ``nessun problema, la lezione è registrata''.
+
+Quanto alla data, la lezione si colloca con ogni probabilità \textbf{venerdì 18
+settembre 2026}\footnote{La data non è mai detta per intero, ma è ricostruibile
+con buona sicurezza: alla fine della lezione precedente il docente aveva
+annunciato che ``venerdì 18'' sarebbe stata la lezione sui personaggi; qui il
+task viene dato ``per il 21 settembre, tra tre giorni''; il docente scherza
+sull'``effetto venerdì pomeriggio'' e congeda la classe con ``buon weekend'' e
+``ci vediamo lunedì''.}, dalle 17 alle 20 come sempre, con una pausa poco dopo le
+18 e un'altra poco dopo le 19. La lezione successiva, quella sull'\emph{emotional
+design}, è annunciata per lunedì 21.
+
+Tre avvertenze di lettura, le stesse dei capitoli precedenti. La prima: la
+trascrizione è automatica e storpia moltissimi nomi, soprattutto quelli dei
+giochi e quelli stranieri. Il personaggio d'esempio della lezione, la detective
+\textbf{Joey Doe}, diventa di volta in volta ``Joy Do'', ``Gioido'', ``Zoidò'' e
+``Joey Doh''; \emph{Root} diventa ``Route'', \emph{Dungeons \& Dragons}
+``Dungeon Dragon'', \emph{world building} ``war building'', LARP spesso
+``l'ARP'', le metatecniche ``metotecniche''. Dove la ricostruzione è sicura, o
+molto probabile, il capitolo usa la forma corretta e lo segnala in nota la prima
+volta; dove non lo è, riporta la forma della trascrizione e lo dice. La seconda:
+durante le due pause la trascrizione registra per decine di righe frasi senza
+senso ripetute in loop (``qual è la risposta che ci può essere?'', ``la capacità
+di impostare la loro dottrina sul mercato del lavoro''), che il capitolo ignora.
+La terza: gli studenti intervengono spesso senza che la trascrizione segnali chi
+parla; il capitolo li nomina quando il contesto lo rende chiaro (il docente li
+chiama per nome) e resta generico altrimenti.
+
+\paragraph{Come leggere questo capitolo.} Come la precedente, questa è una lezione
+di \textbf{concetti}, ma costruita quasi tutta su \textbf{esempi}: la stessa
+detective presentata con sette schede diverse, le sue tre cerchie di relazioni, le
+sue spinte, gli ambienti in cui la si può mettere. Il capitolo segue gli esempi
+uno per uno, perché è lì che i concetti prendono forma, e riporta le risposte
+degli studenti insieme ai commenti del docente. Il filo conduttore è un'idea che
+il docente ripete in molte forme: \textbf{un personaggio non è giocabile solo
+perché qualcuno può interpretarlo}; è giocabile se chi lo riceve sa \emph{come}
+giocarlo, \emph{con chi} giocarlo, \emph{per che cosa} e \emph{facendo che cosa}.
+Qua e là, dei paragrafi di \textbf{approfondimento} collegano la lezione ai libri
+di game design di riferimento (soprattutto \emph{The Art of Game Design} di Jesse
+Schell, che dedica ai personaggi un capitolo intero); sono segnalati come tali e
+non fanno parte della lezione.
+
+Il percorso del capitolo segue quello della lezione:
+\begin{enumerate}
+  \item l'attesa prima dell'inizio: i componenti di \emph{Nemesis} e di
+        \emph{The Gallerist}, la coesione tra tema e meccaniche, i giochi
+        astratti (sezione~\ref{a4:sec:attesa});
+  \item i tre concetti di base: \textbf{player}, \textbf{character} e
+        \textbf{role} (sezione~\ref{a4:sec:pcr});
+  \item che cosa rende \textbf{giocabile} un personaggio, e i \textbf{quattro
+        pilastri} (sezione~\ref{a4:sec:giocabile});
+  \item la \textbf{chiarezza}, con le sette schede di Joey Doe
+        (sezione~\ref{a4:sec:chiarezza});
+  \item la \textbf{connettività} e le tre cerchie
+        (sezione~\ref{a4:sec:connettivita});
+  \item le \textbf{spinte} e le \textbf{attività}
+        (sezione~\ref{a4:sec:spinte});
+  \item chi decide chi siamo: i tre slider di \textbf{estetica},
+        \textbf{fiction} e \textbf{ruolo} (sezione~\ref{a4:sec:slider});
+  \item le altre figure di un gioco: \textbf{spettatori}, \textbf{componenti},
+        \textbf{NPC} e \textbf{arbitri} (sezione~\ref{a4:sec:altri});
+  \item lo \textbf{spazio} dei personaggi come area progettabile
+        (sezione~\ref{a4:sec:spazio});
+  \item il \textbf{primo task}: la scheda personaggio per il gala urban fantasy,
+        e le molte domande che ha sollevato (sezioni~\ref{a4:sec:task}
+        e~\ref{a4:sec:task-domande});
+  \item le \textbf{domande finali}: framework e playtest, il catalogo di un
+        editore, le ristampe (sezione~\ref{a4:sec:domande}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'attesa: componenti, tema e giochi astratti}
+\label{a4:sec:attesa}
+
+Come al solito, nei primi dieci minuti si aspettano le persone, e il docente apre
+la parola: ``se qualcuno ha domande, dubbi, o vuol dire qualcosa, questo è un buon
+momento''. Si comincia a segnare le presenze. Uno studente è collegato dalla
+macchina e non ha la telecamera (``tanto sono in macchina, c'era poco da dire'').
+
+\paragraph{Il metagioco, rinviato.} Tancredi vorrebbe riprendere il discorso sul
+\textbf{metagioco} della lezione precedente. Il docente gli chiede di aspettare: sulla
+questione delle \textbf{metatecniche}\footnote{La trascrizione dice
+``metotecniche'' e ``metratecniche''.} in particolare si tornerà nella lezione
+sul \textbf{progettare emozioni}, dove se ne vedranno altre e sarà chiaro ``che
+cosa fanno nello specifico da un punto di vista di game design, non solo
+teorico''. ``Non perché non voglio risponderti, ma perché lì vedremo altre cose
+sulla questione''.
+
+\paragraph{Il caldo di settembre.} Arriva Tiziana, e con lei qualche chiacchiera
+sul caldo (``ma come fa a essere ancora settembre? Sembra luglio''): c'è chi si
+collega da Torino, dove qualcuno ha vissuto sette anni e ricorda un primo inverno
+gelido, e si scherza sul ciclone delle Azzorre di questi giorni\footnote{Il
+passaggio della trascrizione è molto confuso e non permette di attribuire con
+certezza le battute.}.
+
+\subsection{Componenti e aspettative: \emph{Nemesis} e \emph{The Gallerist}}
+
+La parola passa a \textbf{Gianmarco}, che sta facendo un ragionamento su tre
+giochi con una componentistica ``abbastanza significativa e importante'':
+\emph{Nemesis}, \emph{Praga Caput Regni} e \emph{Lisboa}\footnote{\emph{Praga
+Caput Regni} è di Vladimír Suchý; \emph{Lisboa} e \emph{The Gallerist} sono di
+Vital Lacerda (``la cerda'' nella trascrizione, che storpia il secondo titolo
+in ``Galleris'', ``De Galles'', ``The Goddess'' e ``The Galadies'').
+\emph{Nemesis} e \emph{Nemesis: Retaliation} sono pubblicati da Awaken Realms.},
+e poi \emph{The Gallerist}. L'altro giorno ha giocato a \emph{Nemesis:
+Retaliation} con un amico che aveva preso il \emph{pledge} completo del
+crowdfunding, ``con tutti i materiali più belli del mondo'', ed era davvero
+coinvolgente: quel materiale gli dava la sensazione di \emph{vederla}, la nave, la
+stazione spaziale. Quando invece gioca a \emph{The Gallerist}, ``che è un German
+purissimo''\ldots{} e qui la connessione di Gianmarco salta, lasciando la frase
+in sospeso (``mi fa il cliffhanger''), finché non passa all'hotspot del telefono.
+
+Nell'attesa il docente si entusiasma: \emph{The Gallerist} è ``uno dei miei giochi
+preferiti in assoluto'', ``forse il mio preferito di quel designer''. È un gioco
+``sul come il capitalismo ha distrutto il mondo dell'arte'': si gestiscono delle
+gallerie d'arte, bilanciando la scoperta di nuovi talenti con lo sfruttamento del
+loro valore commerciale, per arricchirsi vendendo i loro quadri e acquisire nuove
+opere. ``Gioco devastante a livello tematico, però bellissimo da giocare''.
+
+Gianmarco riprende: in \emph{The Gallerist} trova che la componentistica non sia
+dissonante rispetto al gioco. Il docente spiega perché i due esempi funzionano
+entrambi: \emph{Nemesis} e \emph{The Gallerist} appartengono a due
+\textbf{macrocategorie}, i giochi \textbf{American} e gli \textbf{Eurogame}, che
+hanno alle spalle ``un carico storico di produzioni diverse''. Al punto che
+\emph{The Gallerist} è coeso con se stesso pur essendo fatto ``solo di cartone,
+carta e legno'', e \emph{Nemesis} è coeso con se stesso pur essendo ``plastica a
+manetta''. La ragione sono le \textbf{aspettative} di chi gioca:
+\begin{itemize}
+  \item \emph{Nemesis} promette un gioco di miniature con combattimenti contro gli
+        alieni, un clima oppressivo e adrenalinico su un'astronave, in cui la
+        strategia e la tattica esistono, ma sono secondarie all'\textbf{entropia}
+        della situazione;
+  \item \emph{The Gallerist} è un gioco molto più gestionale, ``con la visione
+        dall'alto'', e in quel genere di giochi il \textbf{caso} è trattato, e
+        vissuto, in modo completamente diverso.
+\end{itemize}
+
+\paragraph{Un gioco \emph{overdesigned}.} Gianmarco ha però un controesempio:
+\emph{Praga Caput Regni}, un gioco che trova ``molto carino, molto interessante'',
+ma, per usare un termine forte, \textbf{overdesigned}: ``tutto quel materiale io
+non sento che mi serva''. Il docente risponde prima con una battuta sul ``vaso di
+Pandora'' (``vuoi aprire i vasi di Pandora?''), e sul fatto che ``c'è un sacco di
+gente che vuole fare il Lacerda, ma non sa fare il Lacerda''. Poi spiega la
+differenza: \emph{The Gallerist} è un gioco intenso, pesante, pieno di componenti,
+ma \textbf{i componenti che ha vengono tutti usati tematicamente}: ``è difficile
+trovare una meccanica o un componente in \emph{The Gallerist} che sia fuori
+tema''. Molti Eurogame, invece, mettono dei \textbf{minigiochi nei minigiochi} per
+dare una sfida intellettuale, magari interessante, che però a livello tematico ha
+``molto poco aggancio''. Gianmarco riformula: il componente non è messo lì in sé,
+ma ha una funzione all'interno del gioco.
+
+\paragraph{Il tema intercambiabile.} Il docente aggiunge un'osservazione storica,
+che ricorda di aver già fatto con Tiziana la volta precedente: molti Eurogame hanno
+un tema che potrebbe essere Praga, ``ma potrebbe essere Dublino per un altro
+publisher'', e il gioco sarebbe identico. Molti German ``ragionavano le
+pubblicazioni in questo modo'': si prende un gioco con le sue meccaniche e ``ci
+sbattiamo sopra una città del Mediterraneo, che sia Ostia o che sia Genova, chi se
+ne frega''. Con gli anni questa abitudine si sta un po' perdendo; resta frequente
+soprattutto nei giochi che vengono dal centro Europa, ``però storicamente dobbiamo
+fare i conti con questo passato''.
+
+\paragraph{Approfondimento: la lente dell'unificazione.} È la stessa intuizione
+che Jesse Schell formalizza in \emph{The Art of Game Design} con la
+\emph{Lens of Unification}: qual è il mio tema, e sto usando ogni mezzo possibile
+per rafforzarlo? Per Schell il tema può passare da una riga di testo, da una
+scelta di colore, da un effetto sonoro, e ``una volta presa l'abitudine di far
+entrare nel tema più cose possibile, è difficile smettere''. La lente si usa
+insieme alla tetrade elementare (meccaniche, storia, estetica, tecnologia), che
+separa gli elementi del gioco per guardarli ciascuno alla luce del tema. Il
+componente di \emph{The Gallerist} che ``non è mai fuori tema'' e la città
+intercambiabile dell'Eurogame sono i due estremi di questa domanda.
+
+\subsection{Tabletop Simulator e un canale per la classe}
+
+Una domanda pratica, ``approfittando della presenza dei compagni di corso'': a che
+cosa state giocando su \textbf{Tabletop Simulator}, così mi scarico lo stesso
+gioco e magari giochiamo insieme? Uno studente ha appena fatto una partita a
+\emph{Le cronache di Avel}\footnote{La trascrizione dice ``le cronache di Havel'':
+è con ogni probabilità \emph{Le Cronache di Avel} (\emph{The Chronicles of
+Avel}), cooperativo per famiglie.}, già provato il giorno prima in associazione,
+perché dicevano che non si riusciva a vincere: ``ho capito forse un po' di cose''.
+
+Il docente racconta come si sono organizzate le classi precedenti: alcune aprivano
+un loro gruppo \textbf{Telegram}, altre usavano il \textbf{Discord} dell'ente per
+interagire tra loro. Il consiglio è di trovare un modo per parlarsi, in modo che
+sia facile organizzarsi per giocare una sera su Tabletop, in vista di una lezione o
+anche solo per giocare. Il Discord, nota, qualcuno lo sta già usando: Tancredi ci
+ha scritto per chiedere le \textbf{slide}, che il docente ha caricato proprio oggi.
+C'era stato un equivoco tra i docenti (``io pensavo che le mettessi tu, lui
+pensava che le mettessi io''): ``non succederà più. Ve le metto io le slide delle
+prossime lezioni''.
+
+\subsection{Meccaniche perfette, tema assente}
+
+L'ultima domanda prima di cominciare è ancora di Gianmarco, ``più nel
+ciarlare'': recuperando la registrazione della lezione precedente, lo aveva colpito
+che al docente capiti di \textbf{revisionare giochi} che funzionano molto bene
+meccanicamente, ma che, quando l'autore spiega l'intento, risultano completamente
+slegati dall'emozione o dal tema che aveva in mente.
+
+``Non è solo questo''. Per il docente rientra nell'idea che il game design ``può
+essere tante cose per tante persone''. Per lui uno degli aspetti più importanti è
+la \textbf{coesione tematico-meccanica}: le meccaniche devono lavorare in accordo
+con il tema che si vuole passare, con le emozioni che si vogliono far provare. Ma
+non tutte le persone che fanno design si approcciano al game design in questo
+modo, e ci sono generi in cui la coesione è molto difficile da sostenere:
+\begin{itemize}
+  \item la maggior parte dei \textbf{giochi astratti}, e dei designer moderni di
+        giochi astratti: sono giochi in cui è difficile partire da un lato
+        tematico;
+  \item all'estremo opposto, nel \textbf{gioco di ruolo} gli aspetti di
+        \emph{world building} sono spesso preponderanti, più ancora che in un
+        board game; lo stesso vale per gli \textbf{American Freeform}, ``un po'
+        board game, un po' role playing game'', o per i \textbf{LARP pervasivi},
+        che hanno un layer di personaggi e di world building che un gioco
+        pervasivo come \emph{Pac-Manhattan}\footnote{``Pac-Man Hatton'' nella
+        trascrizione.} non ha.
+\end{itemize}
+È una valutazione da fare in base al tipo di gioco che si vuole creare.
+
+\paragraph{Nikoli e lo Slitherlink.} Gianmarco precisa: gli capita di vedere un
+gioco meccanicamente perfetto che però ``non funziona''? Il docente risponde con
+un esempio personale. È un grande amante dei giochi di \textbf{Nikoli}, lo studio
+giapponese che da decenni crea puzzle logico-matematici e il cui gioco più famoso
+è il \textbf{Sudoku}. Alcuni sono tra i suoi preferiti, come lo
+\textbf{Slitherlink}\footnote{``Slider Link'' nella trascrizione.}, che gioca e
+adora da anni. Ma è un puzzle logico-matematico: ``non è che abbia chissà quale
+tema che vuole comunicare''. E si può apprezzare comunque: \textbf{non bisogna
+apprezzare solo giochi con un fortissimo tema}, un fortissimo setting.
+
+Bisogna vedere qual è l'\textbf{intento} del gioco:
+\begin{itemize}
+  \item se un gioco si presenta come \textbf{narrativo} e poi la parte di world
+        building, personaggi e storia è scadente, quello è per il docente un
+        esempio \textbf{fallimentare};
+  \item se un gioco si presenta come \textbf{astratto}, ma nonostante questo
+        riesce a comunicare un tema anche forte, è ``un grosso vantaggio''.
+\end{itemize}
+``Alla fine della lezione ci sarà sempre la mia mezz'ora di domande'', e lì si
+potrà approfondire. Il docente lascia aperto il registro delle presenze e chiede,
+come sempre, di avvisarlo se qualcuno entra mentre lui guarda le slide. Condivide
+lo schermo, e si comincia.
+
+% ---------------------------------------------------------------------
+\section{Player, character e role}
+\label{a4:sec:pcr}
+
+La lezione parte da \textbf{tre concetti} che ``ci serve sapere, ci serve capire
+soprattutto'': \textbf{player}, \textbf{character} e \textbf{role}. Il docente li
+sente spesso discutere ``quasi come se fossero la stessa cosa'', ma non lo sono,
+ed è importantissimo capirne la differenza in termini di game design, ``proprio di
+che cosa stiamo progettando''.
+
+\begin{description}
+  \item[Player.] È la \textbf{persona giocante}. Tranne in alcuni generi (giochi di
+        realtà alternata, giochi pervasivi), la persona giocante \textbf{non esiste
+        nel world building del gioco}, non fa parte della narrazione: è una
+        persona esterna che si interfaccia con il gioco come
+        \textbf{artefatto}.
+  \item[Character.] È il \textbf{personaggio}: l'identità specifica di chi è
+        questa persona dentro il gioco, con il suo background, il suo passato, la
+        sua storia, un nome, all'interno di un \textbf{universo narrativo}. Il
+        personaggio ci dice \emph{chi è}, e lo lega alla narrazione, al world
+        building, al plot, alla storia.
+  \item[Role.] È il \textbf{ruolo}: ``un insieme di doveri, autorità e possibilità
+        meccaniche''. Il ruolo ci dice \emph{che cosa può fare} questa persona, e
+        che cosa è \textbf{legittimata} a fare.
+\end{description}
+
+L'esempio è \textbf{Carlo Magno}. Carlo Magno era un re, ma aveva un suo
+background, un passato, una storia, un nome. \emph{Carlo Magno personaggio} e
+\emph{Carlo Magno re} sono due cose diverse, perché la parte di re è una parte di
+ruolo. Ruolo e personaggio vengono spesso sovrapposti, ``ma sono due cose che a
+noi game designer serve ed è utile separare''.
+
+\paragraph{Il ruolo c'è quasi sempre.} I giochi di ruolo storici mostrano bene la
+distinzione: in \emph{Dungeons \& Dragons}\footnote{``Dungeon Dragon'' nella
+trascrizione, qui e altrove.} abbiamo un personaggio, ma quel personaggio ha un
+ruolo specifico, che nel caso di D\&D è la \textbf{classe}, con tutta una serie di
+responsabilità e possibilità meccaniche. Ma vale anche per gli altri giochi, e
+gli esempi del docente scendono via via verso l'astratto:
+\begin{itemize}
+  \item in \emph{The Gallerist} non abbiamo un personaggio, ma abbiamo un ruolo:
+        siamo una persona che gestisce una galleria;
+  \item negli \textbf{scacchi} non abbiamo un personaggio, ma il ruolo ce
+        l'abbiamo: siamo una fazione in battaglia con un'altra;
+  \item in \emph{Pong} ``siamo una racchetta'': qualcuno che deve impedire che la
+        pallina arrivi dal suo lato del campo.
+\end{itemize}
+``In praticamente tutti i giochi abbiamo un ruolo''. Poi il ruolo può essere
+accompagnato da un personaggio, e spesso le due cose vanno molto bene insieme. Il
+peso relativo dipende dal genere: nei giochi pesantemente \textbf{narrativi} il
+personaggio è di solito più curato, si spende di più, sia in risorse sia in peso
+all'interno del gioco; nei giochi più \textbf{astratti} abbiamo praticamente solo
+un ruolo, ``sottilissimo''.
+
+All'estremo opposto ci sono giochi molto legati meccanicamente al ruolo. L'esempio
+è \emph{Root}\footnote{``Route'' nella trascrizione.}, un gioco da tavolo a
+\textbf{fazioni asimmetriche}: ogni fazione ha le sue meccaniche, e come ruoli
+sono molto diverse tra loro, al punto che ``giocare a \emph{Root} con quattro
+fazioni è come se quattro persone giocassero quattro giochi diversi''.
+
+\paragraph{L'agency passa dal ruolo.} Nei giochi, in generale, esprimiamo la nostra
+\textbf{agency} tramite il ruolo. Il ruolo deve esserci, in qualche modo: magari
+non è specificato, magari non lo si dichiara apertamente, ma sarà implicito che
+abbiamo un ruolo, e in particolare un ruolo con possibilità di agency
+all'interno del gioco: possiamo impattare il mondo di gioco, l'universo narrativo,
+possiamo decidere cose. E il ruolo porta con sé \textbf{responsabilità} e
+\textbf{possibilità meccaniche}. Non a caso, ``di solito per spiegare le
+meccaniche spieghiamo che ruolo abbiamo'': il ruolo giustifica chi siamo e che
+cosa facciamo.
+
+In \emph{Nemesis}, per esempio, siamo dei \textbf{sopravvissuti} su un'astronave
+dove ci sono degli alieni che vogliono ucciderci, e dobbiamo andarcene salvando la
+pelle. Ci sono anche personaggi asimmetrici con le loro caratteristiche, ``ma il
+nostro ruolo ci dice già l'obiettivo del gioco: dobbiamo sopravvivere a questa
+situazione''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    livello/.style={draw, thick, rounded corners=6pt, align=center},
+    nota/.style={font=\footnotesize, align=left, text width=5.2cm},
+    freccia/.style={-{Stealth[length=2.5mm]}, thick}
+  ]
+  % il gioco come artefatto
+  \node[livello, fill=gray!8, minimum width=7.6cm, minimum height=4.6cm]
+    (gioco) at (0,0) {};
+  \node[font=\footnotesize\itshape, anchor=north] at (gioco.north)
+    {il gioco (artefatto e universo narrativo)};
+  \node[livello, fill=gray!22, minimum width=5.4cm, minimum height=3.0cm]
+    (pers) at (0,-0.35) {};
+  \node[font=\footnotesize\bfseries, anchor=north] at (pers.north)
+    {Character: chi è};
+  \node[font=\footnotesize, anchor=north, align=center] at ([yshift=-0.45cm]pers.north)
+    {nome, background, storia, relazioni};
+  \node[livello, fill=white, minimum width=3.6cm, minimum height=1.1cm]
+    (ruolo) at (0,-0.95) {\textbf{Role: che cosa può fare}\\ \footnotesize doveri,
+    autorità, possibilità meccaniche};
+  \node[livello, fill=white, minimum width=2.4cm, minimum height=1.0cm]
+    (player) at (-6.1,-0.95) {\textbf{Player}\\ \footnotesize la persona\\
+    \footnotesize che gioca};
+  \draw[freccia] (player.east) -- node[above, font=\footnotesize]{agency}
+    (ruolo.west);
+  \node[nota, anchor=north, text width=11cm] at (-1.2,-2.65) {\textbf{Carlo Magno}: ``re'' è
+    il ruolo; il nome, il passato, la storia sono il personaggio.\\
+    \textbf{Scacchi, \emph{Pong}, \emph{The Gallerist}}: ruolo senza
+    personaggio.\\
+    \textbf{D\&D}: personaggio con un ruolo (la classe).\\
+    \textbf{\emph{Root}}: ruoli così diversi da sembrare giochi diversi.};
+\end{tikzpicture}
+\caption{Player, character e role nella lettura del docente. Chi gioca sta fuori
+dal gioco e agisce attraverso il ruolo; il personaggio, quando c'è, avvolge il
+ruolo e lo lega all'universo narrativo. Il ruolo c'è in quasi tutti i giochi, il
+personaggio no.}
+\label{a4:fig:pcr}
+\end{figure}
+
+\subsection{Il ruolo non basta}
+
+Detto questo, ``potrebbe passare l'idea sbagliata'': che i personaggi non
+servano, che siano quasi un appiglio, una \textbf{decorazione} del ruolo. ``Non è
+così''. Il ruolo, di per sé, è \textbf{molto freddo}. Se si vuole fare un gioco che
+susciti emozioni molto calde, molto specifiche, non basta un ruolo che dica che
+cosa si può fare meccanicamente: servono elementi che ci aggancino a una
+\textbf{narrazione}, a un \textbf{plot}, a un \textbf{world building}. È
+estremamente utile in un gioco di ruolo, in un gioco di ruolo dal vivo, ma serve
+anche in un gioco da tavolo e in altre tipologie di giochi. Semplicemente,
+storicamente, i giochi di ruolo sono quelli che hanno prodotto la maggior parte
+dei framework sulla questione dei personaggi; per questo, avverte il docente, gli
+esempi della lezione verranno soprattutto da lì, ``non perché non servano per gli
+altri giochi'', ma perché lì le sfumature sono più variegate e danno più strumenti
+per capirle.
+
+% ---------------------------------------------------------------------
+\section{Che cosa rende giocabile un personaggio}
+\label{a4:sec:giocabile}
+
+``Partiamo da una prima domanda che vi faccio, e voglio le vostre risposte'':
+\textbf{che cos'è che rende un personaggio giocabile?} ``Non abbiate paura''.
+
+\paragraph{Le risposte della classe.} Le risposte arrivano una dopo l'altra:
+\begin{itemize}
+  \item deve avere \textbf{possibilità di interazione} con il contesto: una pietra
+        non è un personaggio, perché non può interagire in alcun modo con il
+        gioco;
+  \item tutto quello che lo caratterizza deve potersi \textbf{tradurre in azioni}
+        nel gioco, in qualcosa che sia chiaro e realizzabile (``che è un po' quello
+        che ha detto lui''); qualsiasi caratteristica, anche quella che gli dà
+        solo spessore, e le sue abilità devono essere trasferibili in qualcosa che
+        ha a che fare col gioco stesso. Il docente riassume: ``un personaggio che
+        può fare azioni che hanno impatto nel gioco? Sì, fondamentalmente sì'';
+  \item è un personaggio che \textbf{posso controllare} direttamente;
+  \item deve essere \textbf{in linea con le regole} del gioco: chi crea il proprio
+        personaggio basandosi sul manuale del giocatore sa che cosa può fare e che
+        cosa no, ha una direzione.
+\end{itemize}
+Sull'ultima risposta il docente si ferma: è ``un esempio molto interessante'',
+perché presuppone un gioco in cui il personaggio lo si crea, un gioco di ruolo
+tradizionale come \emph{D\&D}. Ma allora, in un gioco da tavolo, si può avere un
+personaggio giocabile? Una studentessa cita \emph{I viaggi di Marco Polo}, con i
+suoi personaggi dalle caratteristiche e proprietà precise, ``incastrabili'' con il
+gioco: è chiaro che cosa possono fare e che cosa no. ``Anche questa è una cosa
+fondamentale''.
+
+\paragraph{Il cavaliere, il mercante, l'orco.} Il docente rilancia con un
+esperimento mentale. Un gioco fantasy, non importa se di ruolo o da tavolo. Il
+nostro personaggio è un \textbf{cavaliere}: è giocabile? ``Di base sì''. E un
+\textbf{mercante}? ``Potrebbe essere giocabile anche questo, dipende''. Vi vengono
+in mente esempi di personaggi \emph{non} giocabili? Qualcuno propone un marine,
+che con il fantasy non c'entra niente: ``però quello è un personaggio che non esiste
+nel gioco''. La domanda riguarda personaggi che \emph{esistono} nel gioco, ma non
+sono giocabili. Un \textbf{orco}? ``Perché no? Potrebbe esserlo''. Ma allora, il
+dubbio: \textbf{tutti i personaggi sono giocabili}? Sì, risponde qualcuno, se si ha
+un'idea di che cosa fa il personaggio.
+
+\paragraph{I PNG non sono ``non giocabili''.} Lorenzo porta l'esempio di
+\emph{D\&D}: dipende dal master e dai giocatori, perché i giocatori hanno il loro
+personaggio, mentre il master gioca anche i PNG. Il docente coglie l'occasione per
+il termine tecnico: gli \textbf{NPC}, \emph{non-playable characters} (i PNG,
+personaggi non giocanti), sono, nel gioco di ruolo da tavolo ma anche nel LARP,
+i personaggi non giocati da chi siede al tavolo, ma controllati da chi facilita o
+dal master. Sono identificati come ``non giocabili'', ``ma è una falsa
+definizione, in realtà: se ci pensate, qualcuno li sta giocando, quei
+personaggi''. Per mille motivi il termine si è solidificato e si usa così.
+
+Ma la questione qui è un'altra. Se devo progettare un personaggio \emph{per essere
+giocabile}, ``non mi basta fare un personaggio che una persona può giocare''.
+Altrimenti si torna all'esempio della lezione precedente: \textbf{Aragorn che
+aspetta in taverna}. Posso interpretare Aragorn per due ore, nella taverna, ad
+aspettare: ma è giocabile, quel personaggio? Non posso fare praticamente niente di
+quello che quel personaggio sa fare; anzi, il gioco mi dice che \emph{non devo}
+farlo.
+
+\subsection{I quattro pilastri}
+
+Si arriva così a \textbf{quattro pilastri} che il corso associa all'idea di
+personaggio giocabile, e che il docente chiede di tenere a mente ogni volta che si
+progettano personaggi ``con l'intento di darli in mano a una persona che deve
+giocare il vostro gioco'' (figura~\ref{a4:fig:pilastri}):
+\begin{enumerate}
+  \item \textbf{chiarezza}: il personaggio fornisce informazioni chiare su
+        \emph{come} deve essere giocato;
+  \item \textbf{connettività}: il personaggio fornisce informazioni sulle sue
+        \emph{connessioni} in rapporto ad altre entità;
+  \item \textbf{spinte}: il personaggio fornisce informazioni sulle sue
+        \emph{motivazioni} e sui suoi \emph{obiettivi} a breve e lungo termine;
+  \item \textbf{attività}: il personaggio fornisce informazioni su che cosa
+        \emph{può} e \emph{deve} fare.
+\end{enumerate}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    pilastro/.style={draw, thick, fill=gray!12, minimum width=2.9cm,
+                     minimum height=3.3cm, align=center, text width=2.6cm},
+    tetto/.style={draw, thick, fill=gray!30, minimum width=13.4cm,
+                  minimum height=0.9cm, align=center},
+    base/.style={draw, thick, fill=gray!30, minimum width=13.4cm,
+                 minimum height=0.6cm, align=center}
+  ]
+  \node[tetto] (t) at (0,2.35) {\textbf{personaggio giocabile}};
+  \node[pilastro] at (-5.025,0) {\textbf{Chiarezza}\\[3pt] \footnotesize so
+    \emph{come} giocarlo};
+  \node[pilastro] at (-1.675,0) {\textbf{Connettività}\\[3pt] \footnotesize so
+    \emph{con chi} giocarlo: le sue relazioni};
+  \node[pilastro] at (1.675,0) {\textbf{Spinte}\\[3pt] \footnotesize so
+    \emph{per che cosa}: motivazioni e obiettivi, a breve e lungo termine};
+  \node[pilastro] at (5.025,0) {\textbf{Attività}\\[3pt] \footnotesize so
+    \emph{facendo che cosa}: possibilità e responsabilità meccaniche};
+  \node[base] at (0,-2.0) {\footnotesize la base: un ruolo, uno spazio, altri
+    personaggi in gioco};
+\end{tikzpicture}
+\caption{I quattro pilastri del personaggio giocabile. Nessuno basta da solo:
+``il personaggio giocabile è l'insieme di questi quattro pilastri''. Spinte e
+attività sono strettamente connesse: le attività sono ciò che si può fare per
+inseguire le spinte.}
+\label{a4:fig:pilastri}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{La chiarezza: sette schede per Joey Doe}
+\label{a4:sec:chiarezza}
+
+Si parte dalla \textbf{chiarezza}: \textbf{il personaggio fornisce informazioni
+chiare sul come deve essere giocato}. Vedendo il personaggio, leggendo la sua
+scheda, guardando la sua carta, a seconda del tipo di gioco, devo avere chiaro
+\emph{come} giocarlo. Se leggo ``cavaliere'' avrò delle idee su che cosa posso fare
+e su che cosa finirò per fare, e lo stesso se leggo ``mercante''. Se invece leggo
+un'etichetta, una definizione poco chiara, che non mi dice che cosa devo fare,
+``il gioco non lo passerò giocando quel personaggio, lo passerò capendo che cosa
+diavolo devo fare''.
+
+\paragraph{L'esperimento.} Per mostrarlo, il docente proietta una serie di
+\textbf{proto-schede} (``alcune sono molto minimali, vi avviso''). Il contesto è
+sempre lo stesso: un \textbf{gioco di ruolo dal vivo} in cui, all'inizio, si
+riceve un foglio con il proprio personaggio. Dopo ogni scheda chiede: come
+giochereste questo personaggio? Che cosa avete capito? Che cosa vi aspettate di
+fare? Il \textbf{setting} è tolto ``dall'equazione'', perché ``già col personaggio
+abbiamo diversi problemi'' (del world building si parlerà con Daniele): si
+suppone che tutti abbiano presente il classico \textbf{film investigativo noir},
+americano, anni Trenta e Quaranta, in bianco e nero\footnote{La trascrizione
+aggiunge ``quelli da Ibs Lee'', un riferimento non ricostruibile.}. Il personaggio è
+sempre lo stesso: \textbf{Joey Doe}.
+
+\subsection{Scheda 1: solo il ruolo}
+
+Si riceve un foglietto con scritto soltanto:
+\begin{quote}
+\emph{Joey Doe, detective.}
+\end{quote}
+Chi siete? Che cosa potete fare? ``Molto poco''. Ma il gioco sta per iniziare, e
+questo è il vostro personaggio. Che cosa vi aspettate di giocare? ``Un detective''.
+E che cosa vuol dire giocare un detective? Le risposte: scoprire qualcosa, trovare
+informazioni (``però non sappiamo dove, con che strumenti, che cosa''); esplorare
+ambienti, interrogare persone; se c'è un omicidio, trovare l'assassino (Lorenzo);
+fare i monologhi interiori dei film noir, raccontando quello che si pensa e si
+vede (Angelo). ``Avrai i tuoi pensieri, certo''.
+
+\subsection{Scheda 2: un elenco di caratteristiche}
+
+Stesso setting, ma la scheda è:
+\begin{quote}
+\emph{Nome: Joey Doe. Professione: detective. Caratteristiche: ha un istinto
+acuto; ha un'alta determinazione; ha il rispetto dei colleghi.}
+\end{quote}
+Che cosa cambia? ``A me niente, sinceramente'', dice Tiziana: o molto poco. Perché?
+Perché la scheda le dice eventualmente \emph{come} fa le cose, ma non \emph{che
+cosa} fa: sono le stesse identiche cose di prima. Il docente le dà ragione, ma
+indica la differenza. ``Detective, nel mondo, ce ne sono mille'': può essere il
+tenente Colombo, Sherlock Holmes, l'interrogatore della polizia che va avanti a
+pugni e revolver, e tutte e tre queste identità rientrano nella definizione. Qui la
+scheda esplicita qualcosa in più del personaggio, che a chi aveva già in mente un
+certo tipo di detective sembra non servire; ``non è ancora sufficiente per molte
+persone'', ma è meglio di ricevere solo il nome.
+
+Che cos'altro fa questa scheda? Fornisce \textbf{caratteristiche personali} sul
+carattere, dice Rita: la personalità del detective, ``l'atteggiamento che bisogna
+avere durante il gioco''. ``Bravissima''. Aiuta a calarsi nel ruolo, aggiunge,
+pur non avendo mai giocato un gioco di ruolo (``non importa''). Il docente fissa il
+punto: la scheda precedente dava \textbf{solo il ruolo}; qui compaiono degli aspetti
+del \textbf{personaggio}. Istinto acuto, determinazione, rispetto dei colleghi
+``non sono meccaniche'': non dicono che cosa si può fare meccanicamente, dicono che
+il personaggio ha certi aspetti caratteriali o di background.
+
+\subsection{Scheda 3: una voce esterna}
+
+Stesso gioco, stesso setting, e questa scheda:
+\begin{quote}
+\emph{Sei Joey Doe, una detective esperta, nota per i tuoi istinti acuti e la tua
+determinazione incrollabile. Hai una mente acuta, sempre in grado di mettere
+insieme anche i più piccoli indizi per risolvere i casi complessi. I tuoi colleghi
+rispettano le tue capacità e hai la reputazione di arrivare sempre alla radice dei
+problemi.}
+\end{quote}
+Che cosa cambia? ``Conosciamo il genere'' (la detective è una donna); le
+caratteristiche di prima sono più dettagliate; e forse c'è un indizio su
+\emph{come} applicare l'essere detective: stare attenti ai piccoli indizi. ``Ti
+inizia a dare delle frasi non su come sei, ma su che cosa fai come personaggio'':
+non ancora come ruolo, non ancora come meccaniche.
+
+E poi, nota Gianmarco, la scheda ``sembra più raccontata'': quasi la storia del
+personaggio, invece che un elenco schematico. ``Bravissimo''. Ma \emph{chi} ce lo
+racconta, questo personaggio? Un narratore onnisciente, propone qualcuno. Il
+docente sposta l'attenzione sul confronto: la scheda precedente non la racconta
+nessuno, è un insieme di caratteristiche prese come \textbf{fatti}; qui invece ci
+arriva l'\textbf{opinione esterna} di qualcuno che conosce Joey Doe e ci dice, a
+grandi linee, chi siamo in questo gioco.
+
+\subsection{Scheda 4: la sua voce}
+
+\begin{quote}
+\emph{Sono Joey Doe, una detective che ha un po' di esperienza alle spalle. I miei
+forti istinti e la mia determinazione implacabile mi hanno aiutata a risolvere
+molti casi difficili. La mia mente acuta mi consente di collegare gli indizi anche
+quando non sembrano correlati. I miei colleghi rispettano le mie capacità e ho la
+reputazione di arrivare sempre alla radice dei problemi.}
+\end{quote}
+Che cosa cambia qui? È \textbf{il suo parere su se stessa}: è lei che si descrive.
+A che cosa serve? A calarsi meglio nei panni del personaggio: ``sentiamo la sua
+voce'', sentiamo come parla. Ma, dal punto di vista del game designer, ``dall'alto'',
+serve anche a un'altra cosa molto importante: con schede scritte così si può
+\textbf{giocare su incomprensioni e punti di vista diversi}. Posso dare a un
+collega di Joey Doe una scheda che dice ``Joey Doe non capisce niente, crede di
+essere la migliore del dipartimento, ma fa un sacco di disastri'', mentre Joey Doe
+ha questa scheda. Con una serie di schede di questo tipo si possono creare
+\textbf{punti di vista contrastanti}.
+
+Rita collega la scheda al \textbf{coinvolgimento narrativo} della lezione
+precedente: è lì che entra in gioco? ``Esattamente'': nella prima scheda il
+coinvolgimento narrativo ``non esiste. Zero''. Di scheda in scheda, anche se sono
+esempi da tre righe, lo si sta \textbf{centellinando}, mettendolo ``sotto pelle'',
+ma sempre al servizio del pilastro della chiarezza: leggere la scheda e sapere chi
+è Joey Doe e che cosa ci si può fare.
+
+\paragraph{La prova: il gioco inizia subito.} ``Il gioco inizia subito, questa è la
+sua scheda, prego. Che cosa farete?'' La risposta di una studentessa è ricca:
+risolvere casi difficilissimi in maniera impeccabile, stando attenta ai piccoli
+dettagli e alle indicazioni degli altri, contando sull'appoggio dei colleghi. E
+interagire con molti personaggi; come? Con convinzione, in modo spigliato,
+brillante, ``sempre sul pezzo'', senza insicurezze, perché dalla personalità
+raccontata ``esce fuori un'identità molto sicura e molto forte''. Ecco perché
+\textbf{questa scheda è più chiara delle altre}: ``so che sembra una banalità'', ma
+non è più chiara perché spiega di più con più parole: è più chiara perché dà
+\textbf{più informazioni su come giocare} Joey Doe.
+
+\subsection{Scheda 5: una fotografia}
+
+Ora, sempre lo stesso gioco, il docente consegna un'altra scheda: una
+\textbf{fotografia}, con scritto soltanto il nome, Joey Doe. Che cosa giocate? Chi
+siete? ``Un maschio, sicuramente''.
+
+È il momento in cui entra \textbf{Nicola}, che ha avuto difficoltà a collegarsi
+(``fatti miei'': ``non è un problema''). Il docente lo rassicura (la lezione sarà
+registrata e le slide condivise) e lo porta in pari: si stanno guardando delle
+schede fittizie di un gioco dal vivo investigativo noir anni Quaranta, e ci si
+chiede, d'istinto, chi si è e che cosa si può fare.
+
+Che cosa dice la foto? ``Potrebbe essere benissimo l'investigatore come il
+\emph{serial killer}''. Esatto: ``qui non ho scritto detective da nessuna parte''.
+Un'identità misteriosa, certo, ma la foto porta con sé anche altro. Come mi
+comporterò, in un gioco dal vivo dove altri personaggi girano per l'ambiente? ``Sembra
+un tipo sicuro di sé''; forse sprezzante del pericolo, anche se non
+necessariamente. Che cosa fa questa scheda? Dà \textbf{suggestioni} più che
+indicazioni: un tipo che sta nell'ombra, che non si capisce chi sia. E dà
+l'immagine visiva dell'ambiente, del \emph{mood} del gioco, quell'atmosfera
+nebbiosa.
+
+\paragraph{Che cosa fa meglio.} Il docente aggiunge una cosa che ``sembra una
+banalità'': con la foto si ha un'idea di \textbf{come si veste} Joey Doe. In un gioco
+di ruolo dal vivo, molti in costume, questo vuol dire sapere come vestirsi: un
+cappello, un cappotto. La foto dà indizi su come il personaggio si pone a livello
+visivo, cosa che le schede precedenti non facevano.
+
+\paragraph{Che cosa fa peggio.} Non \textbf{guida} il giocatore a capire che cosa
+deve fare. Per alcuni è un investigatore, per altri un serial killer, per altri un
+criminale: non è sbagliato, perché la parola detective non c'è.
+
+\subsection{Scheda 6: gli oggetti}
+
+Stesso gioco, stesso setting. ``Siete Joey Doe'', e il docente consegna
+fisicamente degli \textbf{oggetti}: sono vostri, potete usarli durante il gioco.
+Che cosa posso fare nei panni di Joey Doe? ``Figo''. Fare fotografie, ammanettare,
+sparare: perché vedo una macchina fotografica, delle manette, una pistola.
+
+Nei LARP questi oggetti si chiamano \textbf{prop}: strumenti con una funzione
+\textbf{più o meno meccanica}. Se ammanetto qualcuno, il gioco tendenzialmente mi
+dirà che cosa succede quando si ammanetta; se il gioco mi mette in mano una pistola,
+di solito mi dice che cosa succede quando si punta o si spara. Ma gli oggetti non
+sono solo e puramente meccaniche: sono \textbf{possibilità di agency}, modi che il
+personaggio ha per interagire con il mondo. Posso documentare, ammanettare,
+sparare.
+
+E che ruolo avrò? Sono un investigatore o un serial killer? C'è di nuovo
+ambiguità, ``ma non è un'ambiguità totale'': ``sicuramente non sono un panettiere''.
+Gli oggetti comunicano già qualcosa con chiarezza; ma sono, nello specifico, cose
+che Joey Doe \textbf{può fare}, più che cose che Joey Doe \textbf{è}. E un
+personaggio è l'insieme delle due: di quello che è e di quello che può fare, di
+personaggio e di ruolo, che spesso si intersecano.
+
+\subsection{Scheda 7: le istruzioni di comportamento}
+
+Ultima scheda, stesso setting:
+\begin{quote}
+\emph{Nome: Joey Doe. Devi guardare gli altri personaggi in modo severo, devi farli
+sentire sempre sotto interrogatorio, devi farli sentire come se leggessi la loro
+mente.}
+\end{quote}
+Uno studente chiede se debba tener conto delle slide precedenti: no, è una nuova
+scheda, ``le precedenti non esistono'', è l'unica cosa che si riceve per giocare
+Joey Doe. ``Allora potrebbe essere mia madre'', scherza qualcuno. ``Potrebbe essere
+tua madre. Ma come giocherai Joey Doe?'' Come verrà percepito il personaggio, in
+un gioco fatto spesso di interazioni sociali? Un rompiscatole, rispondono; qualcuno
+che invade lo spazio privato degli altri.
+
+Il setting è sempre il noir investigativo del 1940. Il docente non sta dicendo che
+si è un detective, e il personaggio potrebbe davvero essere ``la madre di qualcuno''.
+Ma il \textbf{comportamento} è quello di una persona che vuole tirare fuori qualcosa,
+mettere sotto pressione gli altri, estrarre informazioni: quindi \textbf{funge da}
+quello che ci serve che faccia il detective. E qui sta la domanda di design:
+\begin{quote}
+\textbf{che cosa serve nel nostro gioco? Un detective come personaggio, o un
+detective come ruolo?} Qualcuno che sia un detective come background, o qualcuno che
+agisca da detective e faccia cose da detective?
+\end{quote}
+E quanto di questo è chiaro? Magari al game designer serve un personaggio che sia
+\emph{meccanicamente} un detective, ma la scheda non lo rende chiaro; e allora chi
+lo gioca fa ``un poliziotto generico'' che cerca di capire chi ha commesso il
+crimine, ma non va a fare pressione, non mette sotto torchio gli altri personaggi.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.9cm}p{5.0cm}p{5.2cm}@{}}
+\toprule
+\textbf{Scheda} & \textbf{Che cosa dà} & \textbf{Che cosa manca o rischia} \\
+\midrule
+1. ``Joey Doe, detective'' & solo il ruolo, un'etichetta & che detective? Dove, come,
+con quali strumenti? \\
+2. Elenco di caratteristiche & aspetti del personaggio (istinto, determinazione,
+rispetto dei colleghi) presentati come fatti & cambia poco su \emph{che cosa} si fa \\
+3. Seconda persona & un'opinione esterna; il genere; i primi accenni a che cosa si
+fa (gli indizi) & la voce del personaggio \\
+4. Prima persona & la voce del personaggio, il suo modo di vedersi; permette punti
+di vista contrastanti tra schede & --- (la più chiara della serie per questo
+gioco) \\
+5. Fotografia & mood, atmosfera, come vestirsi e porsi & nessuna guida: detective,
+serial killer o criminale? \\
+6. Oggetti (prop) & possibilità di agency e meccaniche: documentare, ammanettare,
+sparare & che cosa il personaggio \emph{è}; resta ambiguità \\
+7. Istruzioni di comportamento & il comportamento: funge da detective & non dice
+chi è; detective come ruolo, non come personaggio \\
+\bottomrule
+\end{tabular}
+\caption{Le sette schede di Joey Doe, a parità di gioco e di setting (LARP
+investigativo noir, anni Quaranta). Nessuna è ``giusta'' in assoluto: la chiarezza
+si misura su ciò che serve al gioco che si sta progettando.}
+\label{a4:tab:joey}
+\end{table}
+
+\subsection{Chiarezza non vuol dire lunghezza}
+
+Il docente ci tiene a precisare che \textbf{questi esempi non sono qualitativi}
+rispetto al gioco che si vuole progettare: ``non è detto che una scheda più ricca di
+parole sia più chiara per quello che serve a noi''. I giochi del movimento
+\textbf{Dogma 99}, ispirato al Dogma 95 del cinema e citato nelle lezioni
+precedenti, hanno schede personaggio fatte così: ``sei Tizio Caio. Fine''.
+
+\paragraph{E se la chiarezza non ha un risvolto meccanico?} Una domanda ``velocissima'':
+la chiarezza deve avere necessariamente un risolto meccanico? Lo studente pensa a
+\emph{Le case della follia}\footnote{\emph{Mansions of Madness}, nell'edizione
+italiana.}, dove la scheda dice chi è il personaggio, ma quell'informazione, a
+livello pratico e meccanico, non servirà mai. ``Non necessariamente'', risponde il
+docente, ma \emph{Le case della follia} fa un'altra cosa: dice qual è il
+\textbf{ruolo} dei personaggi. Chi si gioca? Un gruppo di persone che in teoria
+dovrebbero essere investigatori; che cosa fanno di sicuro? \textbf{Indagano}: sono
+persone che entrano in una villa misteriosa per indagare. Quello è il loro ruolo, e
+quella parte deve essere chiara, e lì lo è. Poi il gioco aggiunge dei
+\textbf{layer di flavor}: i giochi da tavolo spesso relegano questa parte al
+\emph{flavor}, e se non si legge il background di un personaggio ``basta giocare per
+il ruolo''.
+
+In un gioco di ruolo, invece, è difficile che queste cose escano in bel gioco senza
+una scheda curata: sono, come già detto, tipi di giochi diversi, e il livello
+narrativo richiesto da un personaggio in un board game ``è difficile che sia
+equiparabile'' a quello richiesto in un gioco di ruolo. E comunque, \emph{Le case
+della follia} dà degli aspetti di giocabilità: dei personaggi stanno indagando in
+una magione misteriosa e qualcosa va storto, ed è quello che serve meccanicamente
+per giocare. In più è un gioco molto flessibile: i personaggi si adattano in corso
+d'opera, anche in base al \textbf{branching narrativo}, e può darsi che il mio
+personaggio non fosse semplicemente un sopravvissuto nella casa, ma ``in realtà il
+colpevole nascosto''\footnote{La trascrizione dice ``era in realtà il giallo
+nascosto''; il senso dell'``esempio stupido'' è comunque quello di un ruolo
+rivelato a partita in corso.}.
+
+% ---------------------------------------------------------------------
+\section{La connettività: le tre cerchie}
+\label{a4:sec:connettivita}
+
+Secondo pilastro: la \textbf{connettività}. \textbf{Il personaggio fornisce
+informazioni sulle sue connessioni in rapporto ad altre entità}. Perché ``le
+persone non esistono in un vacuum'': sono connesse tra loro. Un personaggio
+\textbf{lupo solitario}, che non conosce nessuno, senza background, senza genitori,
+figli, fratelli, sorelle, amici, compagni di classe, colleghi, ``non è giocabile''.
+``So che questa cosa ci metterà un po' a interiorizzarla'', ma la giocabilità di un
+personaggio è data anche dalle \textbf{relazioni sociali} in cui è espresso e
+messo in gioco.
+
+\paragraph{Tre gruppi.} Di solito, quando si presentano personaggi giocabili dal
+punto di vista della connettività, si fa riferimento a \textbf{tre gruppi}: tre
+gruppi \emph{separati} di persone che conoscono il personaggio e a cui il
+personaggio è legato. Quelli della slide sono di esempio: non devono per forza
+essere questi, anche perché dipendono dal gioco (in un mondo post-apocalittico,
+``il circolo del lavoro non è proprio la prima cosa che viene in mente''). Per
+Joey Doe (figura~\ref{a4:fig:cerchie}):
+\begin{description}
+  \item[Lavoro.] Joey Doe è un'ex poliziotta che ora fa la detective privata. Ha
+        quindi tutto il gruppo dei poliziotti: ex colleghi, altri detective, il capo
+        della polizia, il sovrintendente di zona, e così via.
+  \item[Amicizia.] La sera, per decomprimere, va al pub \emph{Il Barile}. Magari è
+        amica del barista, chiacchiera con due o tre clienti abituali. Non è
+        lavoro; magari si interseca con il lavoro (al pub c'è anche un ex poliziotto
+        suo amico), ma è una cerchia separata: non è detto che il barista conosca
+        il responsabile di zona della prefettura.
+  \item[Famiglia.] Magari Joey Doe è l'ultima rimasta della famiglia Doe. Che cosa è
+        successo alla famiglia? Suo fratello è scomparso. Dov'è finito? È ancora
+        vivo? Anche questa è una cerchia a sé: non è detto che il fratello conosca
+        il barista, né i colleghi.
+\end{description}
+
+\paragraph{Perché serve.} Si torni al LARP investigativo anni Quaranta. Joey Doe
+entra nella stanza e vede uno dei suoi amici del pub, un ex collega poliziotto e
+suo fratello, vivo. Ha già \textbf{tre direzioni di connessione che la tirano}, e
+queste direzioni ``sono molto giocabili'': danno possibilità di gioco. È diverso da
+un Joey Doe che si trova in un LARP da venti persone, c'è stato un omicidio, lei è
+l'investigatrice e non conosce nessuno. ``C'è un crimine e devo investigare'' è
+meno giocabile di: c'è un crimine, e nel frattempo mio fratello è ancora vivo, il
+barista ha un problema di soldi con la malavita, e il mio ex collega ha scoperto
+una verità sul sovrintendente che potrebbe ribaltare la città.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    pg/.style={draw, thick, circle, fill=gray!30, minimum size=2.0cm,
+               align=center},
+    cerchia/.style={draw, thick, dashed, rounded corners=10pt,
+                    align=center, inner sep=6pt},
+    persona/.style={draw, rounded corners=3pt, fill=white, font=\footnotesize,
+                    align=center, text width=2.3cm, inner sep=3pt},
+    legame/.style={thick, gray}
+  ]
+  \node[pg] (joey) at (0,0) {\textbf{Joey Doe}\\ \footnotesize detective};
+  % lavoro
+  \node[persona] (l1) at (-4.6,2.3) {ex collega\\ poliziotto};
+  \node[persona] (l2) at (-4.6,1.2) {il capo della polizia};
+  \node[persona] (l3) at (-4.6,0.1) {il sovrintendente di zona};
+  \node[cerchia, fit=(l1)(l3), label={[font=\small\bfseries]above:Lavoro}] (cl) {};
+  % amicizia
+  \node[persona] (a1) at (4.6,2.3) {il barista del pub \emph{Il Barile}};
+  \node[persona] (a2) at (4.6,1.2) {clienti abituali};
+  \node[persona] (a3) at (4.6,0.1) {l'ex poliziotto amico};
+  \node[cerchia, fit=(a1)(a3), label={[font=\small\bfseries]above:Amicizia}] (ca) {};
+  % famiglia
+  \node[persona] (f1) at (0,-2.9) {il fratello scomparso};
+  \node[cerchia, fit=(f1), label={[font=\small\bfseries]below:Famiglia}] (cf) {};
+  \draw[legame] (joey) -- (cl);
+  \draw[legame] (joey) -- (ca);
+  \draw[legame] (joey) -- (cf);
+\end{tikzpicture}
+\caption{Le tre cerchie di Joey Doe. Ogni cerchia è un gruppo separato: i suoi
+membri conoscono Joey Doe, ma non necessariamente gli altri gruppi. Le
+intersezioni sono possibili (l'ex poliziotto che frequenta il pub), ma le cerchie
+restano distinte. Ogni legame è una direzione di gioco, a patto che l'altro
+personaggio sia davvero in gioco.}
+\label{a4:fig:cerchie}
+\end{figure}
+
+\subsection{Le relazioni esistono solo se le giochi}
+
+Una slide fa da \emph{reminder}:
+\begin{quote}
+\textbf{le relazioni del tuo personaggio non esistono finché non ti comporti in
+modo da farle esistere.}
+\end{quote}
+Si può scrivere sulla scheda di Joey Doe: sei amica del barista del pub \emph{Il
+Barile}, cerchi da dieci anni tuo fratello scomparso, hai una faida con l'ex capo
+del dipartimento. Ma se questi personaggi sono in gioco e non ci si parla mai, non
+ci si interagisce, quelle relazioni \textbf{non esistono}, non sono giocabili. Allo
+stesso modo, se la scheda dice ``cerchi tuo fratello'' e il fratello in gioco non
+c'è, nessuno lo gioca e non ci sono informazioni su di lui, ``è un dato in più che
+non ti serve a niente''. Ha un impatto narrativo, ``ma a livello di giocabilità non
+esiste''.
+
+Per progettare personaggi fatti bene, cioè giocabili, si deve poter
+\textbf{interagire e agire sulle proprie relazioni}. Questo rende i personaggi
+più vivi e dà coinvolgimento narrativo, ma anche affettivo. Di nuovo, generi
+diversi hanno necessità diverse: la connettività in un gioco di ruolo richiede un
+certo livello di profondità e di cura; in \emph{Le case della follia} basta sapere
+che si è in cinque a esplorare una casa abbandonata.
+
+\paragraph{Approfondimento: la rete dei personaggi.} Schell propone uno strumento
+molto vicino alle cerchie, la \emph{Lens of the Character Web}: si fa la lista di
+tutti i personaggi e ci si chiede, per ciascuno, che cosa prova esattamente verso
+ciascuno degli altri; se ci sono connessioni non considerate, e come usarle; se
+ci sono troppe connessioni simili, e come differenziarle. Schell nota che il
+successo di serie televisive come \emph{Lost} viene da un'esplorazione profonda di
+questa rete, e che nei giochi è raro vederla esplorata bene, ``il che la rende
+un'opportunità da cogliere''. La regola del docente aggiunge la condizione propria
+del gioco: una connessione conta solo se tutti e due i capi del filo sono in
+gioco, e se qualcuno la tira.
+
+% ---------------------------------------------------------------------
+\section{Spinte e attività}
+\label{a4:sec:spinte}
+
+Gli ultimi due pilastri il docente li affronta insieme, ``perché sono connessi tra
+di loro''.
+\begin{description}
+  \item[Spinte.] Il personaggio fornisce informazioni sulle sue
+        \textbf{motivazioni} e sui suoi \textbf{obiettivi} a breve e a lungo
+        termine. Sapere che cosa il personaggio vuole lo rende giocabile: ``se non
+        sappiamo quale obiettivo il nostro personaggio vuole, che cosa facciamo?''
+  \item[Attività.] Sono connesse alle spinte: sono le informazioni su che cosa il
+        personaggio \textbf{può} e \textbf{deve} fare. Di solito sono un insieme
+        di \textbf{possibilità meccaniche} e di \textbf{responsabilità
+        meccaniche}, e le due cose vanno un po' insieme.
+\end{description}
+
+Gli esempi della slide, sempre su Joey Doe:
+\begin{description}
+  \item[Ottenere la promozione.] È una spinta: voglio essere promossa nel
+        dipartimento. Come? Che attività posso fare? Magari risolvere un caso
+        importante; magari smascherare la corruzione nel dipartimento, in modo che
+        il mio diretto superiore finisca in prigione e si liberi un posto.
+  \item[Ritrovare tuo fratello.] Un'altra spinta. Attività possibili: indagare
+        nell'ultimo posto in cui è stato visto; raccogliere informazioni su di lui,
+        magari parlando con qualcuno che l'ha visto per l'ultima volta.
+\end{description}
+Il consiglio: ragionate sempre su \textbf{che cosa vuole} il vostro personaggio
+giocabile, e su \textbf{che cosa, in gioco, gli si può far fare} per andare avanti
+con i suoi obiettivi.
+
+\paragraph{Spinte raggiungibili.} ``Le spinte e le attività rendetele
+giocabili''. Se il personaggio è un rivoluzionario che vuole assassinare il
+dittatore, e il dittatore non è in gioco, quella spinta \textbf{non esiste come
+spinta}: non ci sono attività da fare. Le spinte devono essere qualcosa di
+\textbf{raggiungibile}, cose che in gioco si sa di poter fare; altrimenti
+``diventano background, diventano pura narrazione'', e non sono meccanicamente
+giocabili. ``So che può sembrare molto astratta, questa roba''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    spinta/.style={draw, thick, rounded corners=4pt, fill=gray!25,
+                   text width=3.4cm, align=center, minimum height=1.0cm},
+    attivita/.style={draw, rounded corners=3pt, fill=white, text width=4.6cm,
+                     align=left, font=\footnotesize, inner sep=4pt},
+    no/.style={draw, thick, dashed, rounded corners=4pt, fill=gray!6,
+               text width=3.4cm, align=center, minimum height=1.0cm},
+    freccia/.style={-{Stealth[length=2.2mm]}, thick}
+  ]
+  \node[spinta] (s1) at (0,0) {\textbf{OTTENERE LA PROMOZIONE}};
+  \node[attivita, anchor=west] (a1) at (2.6,0.35) {risolvere un caso importante};
+  \node[attivita, anchor=west] (a2) at (2.6,-0.45) {smascherare la corruzione e far
+    liberare il posto del superiore};
+  \draw[freccia] (s1.east) -- (a1.west);
+  \draw[freccia] (s1.east) -- (a2.west);
+  \node[spinta] (s2) at (0,-2.2) {\textbf{RITROVARE TUO FRATELLO}};
+  \node[attivita, anchor=west] (b1) at (2.6,-1.85) {indagare nell'ultimo posto in cui
+    è stato visto};
+  \node[attivita, anchor=west] (b2) at (2.6,-2.65) {parlare con chi l'ha visto per
+    l'ultima volta};
+  \draw[freccia] (s2.east) -- (b1.west);
+  \draw[freccia] (s2.east) -- (b2.west);
+  \node[no, font=\footnotesize] (s3) at (0,-4.4) {\textbf{ASSASSINARE IL DITTATORE}\\
+    (il dittatore non è in gioco)};
+  \node[font=\footnotesize\itshape, text width=4.6cm, anchor=west] at (2.6,-4.4)
+    {nessuna attività possibile: la spinta diventa background};
+  \draw[freccia, dashed, gray] (s3.east) -- (2.55,-4.4);
+\end{tikzpicture}
+\caption{Spinte (in maiuscolo, come nella slide del docente) e attività (i punti
+elenco). Una spinta senza attività possibili in gioco non è una spinta: è
+narrazione.}
+\label{a4:fig:spinte}
+\end{figure}
+
+\paragraph{Il pilastro della chiarezza, violato.} Gianmarco fa una domanda ``veramente
+banalissima'': nella slide, ciò che è in maiuscolo sono le spinte e i punti elenco
+le attività? ``Esattamente''. ``Scusami, non ho rispettato il pilastro della
+chiarezza'', scherza il docente: ``fortunatamente questa non è una scheda
+personaggio''. Quelle in grassetto maiuscolo sono le spinte, quelle sotto le
+attività: le spinte sono motivazioni e obiettivi a breve e lungo termine, le
+attività sono che cosa posso e devo fare.
+
+\paragraph{Una spinta ingiocabile è almeno chiara?} Gianmarco rilancia: una spinta o
+un'attività non giocabile diventa quasi un elemento di chiarezza; se devo uccidere
+un personaggio che non c'è, comunque mi dice qualcosa su ciò che devo fare.
+``Certo, però ricordiamoci che il personaggio giocabile è \textbf{l'insieme di questi
+quattro pilastri}''. La chiarezza da sola non basta: posso avere chiarissimo come
+il mio personaggio deve essere giocato, ma se il gioco non mi dà possibilità
+meccaniche, cioè le attività, il personaggio non è giocabile.
+
+\paragraph{Il resto è permesso.} Nulla impedisce di mettere nella scheda
+informazioni di background che non sono spinte né attività: anzi, possono
+arricchire il personaggio, dare informazioni sulle \emph{vibes}, aiutare a creare
+\textbf{coinvolgimento affettivo}, ``per mille ragioni''. Magari il personaggio ha la
+camicia hawaiana, e chi lo legge pensa: ``mi stai simpatico''. È un collegamento
+affettivo, ma non dice niente delle sue meccaniche e non lo rende più giocabile.
+
+\subsection{Pilastri e coinvolgimento}
+
+Il docente precisa che il framework dei quattro pilastri \textbf{non è mutualmente
+esclusivo} con i ragionamenti sulle sei aree di coinvolgimento del Player
+Involvement Model visto nella lezione precedente. Una studentessa chiede di
+chiarire il parallelismo. La risposta: le necessità del creare un personaggio
+giocabile e quelle dell'avere un gioco che coinvolge nelle sei aree ``non è detto
+che siano le stesse''. Si può avere un gioco coinvolgente a livello narrativo e
+affettivo che non ha personaggi giocabili fatti bene. Sono due framework che a volte
+``si possono parlare'': non ci si deve limitare a dire ``lascio questa informazione
+come background, senza meccaniche, senza spinte né attività, tanto mi dà
+coinvolgimento narrativo''. È vero, ``ma magari possiamo fare qualcosa di meglio''.
+
+\paragraph{La prima pausa.} Prima di passare al prossimo argomento il docente
+insiste: ``se non mi sto spiegando, vi prego, ditemelo''. Poi manda la classe in
+pausa: sette minuti, ``così facciamo il numero tondo alle 18:10''; ma su richiesta
+diventano dieci. Al ritorno, priorità a chi ha domande o ragionamenti maturati nel
+frattempo.
+
+\paragraph{Approfondimento: tratti e funzioni.} Il pilastro della chiarezza ha un
+parente stretto in Schell, la \emph{Lens of Character Traits}: quali tratti
+definiscono il personaggio, e come si manifestano nelle sue parole, nelle sue azioni
+e nel suo aspetto? Schell consiglia di non fermarsi a una ``bibbia'' esaustiva del
+personaggio, ma di distillarne pochi tratti che lo accompagnino in molte situazioni,
+anche un po' contraddittori, ``perché le persone vere hanno tratti
+contraddittori''. È esattamente il passaggio dalla scheda~2 di Joey Doe (i tratti
+elencati come fatti) alla scheda~4 (i tratti che si sentono nella voce). Accanto,
+la \emph{Lens of Character Function} chiede di elencare le \emph{funzioni} che i
+personaggi devono svolgere nel gioco, separandole dall'immagine che si ha dei
+personaggi, e di vedere come combaciano: è un altro modo di dire che ruolo e
+personaggio vanno pensati separatamente, e poi fatti incontrare.
+
+% ---------------------------------------------------------------------
+\section{Chi decide chi siamo: estetica, fiction e ruolo}
+\label{a4:sec:slider}
+
+Si riparte dopo la pausa (``l'effetto venerdì pomeriggio'': qualcuno è rimasto
+indietro, e una studentessa non riusciva ad accendere il microfono per via della
+banda). Nessuna domanda nuova su quanto visto finora: chiarezza, connettività,
+spinte, attività.
+
+Quando si progettano personaggi, cioè quando si fa game design di un gioco che ha
+dei personaggi, c'è una domanda da porsi: \textbf{chi decide chi siamo in un gioco?}
+Ci sono tre aree da considerare:
+\begin{description}
+  \item[Estetica.] L'estetica del personaggio ``a tutto tondo'': non solo visiva,
+        ma anche in termini tematici; il \emph{look and feel} del personaggio.
+  \item[Fiction.] Come il personaggio è integrato nella narrazione e nel world
+        building: chi è all'interno dell'universo narrativo.
+  \item[Ruolo.] Quello di cui si è già parlato: le possibilità e gli obblighi
+        meccanici del personaggio.
+\end{description}
+Su ciascuna si ragiona con uno \textbf{slider}, come quelli del Mixing Desk della
+lezione precedente: sono ``slider ad hoc'' per i personaggi, con a un estremo il
+\textbf{designer} e all'altro il \textbf{player} (figura~\ref{a4:fig:slider}).
+``Sono slider come nel Mixing Desk, non sono pulsanti'': non è o l'uno o l'altro, e
+anzi la posizione è quasi sempre una via di mezzo.
+
+\subsection{Lo slider dell'estetica}
+
+Sul lato \textbf{player}, una qualunque scheda di \emph{D\&D} con il riquadro per
+disegnare il proprio personaggio: è chi gioca a decidere, ha l'autorità di
+disegnare che faccia ha il personaggio. Sul lato \textbf{designer}, giochi di ruolo
+con \textbf{personaggi prescritti e predisegnati}, come \emph{Witch: The Road to
+Lindisfarne}\footnote{``Witcher of the Lindisfarne'' nella trascrizione. È un gioco
+di ruolo narrativo di Kevin Weir, con personaggi predefiniti e illustrati. Il
+docente lo ambienta ``nella Londra sotto la peste'' e parla di portare la presunta
+strega ``all'inquisizione''; nel gioco il viaggio attraversa l'Inghilterra
+medievale colpita dalla peste, fino all'isola di Lindisfarne, dove la donna dovrà
+essere giudicata.}: lo si può giocare solo interpretando i personaggi che chi lo ha
+progettato ha deciso. Quello mostrato a schermo, con dei volatili in mano, è il
+personaggio che si occupa delle cene della carovana. Il gioco parla di accompagnare
+una donna che forse è una strega, forse no, a essere giudicata, in un'Inghilterra
+devastata dalla peste. I personaggi hanno un disegno preciso, e ``noi giochiamo
+questa faccia qua'': al massimo si decide come interpretarne il carattere, che cosa
+fargli dire, ma non la faccia, non gli abiti. L'estetica è in mano a chi ha fatto il
+gioco.
+
+Le vie di mezzo: in \emph{Non cedere al sonno}\footnote{L'edizione italiana di
+\emph{Don't Rest Your Head} di Fred Hicks, già citato nelle lezioni precedenti.}
+l'estetica la si decide in parte, ma è certo che i personaggi sono \textbf{umani},
+non mostri: persone che soffrono d'insonnia. Sono aspetti decisi dal designer. E
+anche le \textbf{classi} di \emph{D\&D} hanno, per certi versi, una loro estetica:
+``è difficile vedere un ranger in armatura a piastre''.
+
+\subsection{Lo slider della fiction}
+
+Chi decide chi è il personaggio nell'universo narrativo? Lato \textbf{player}: di
+nuovo \emph{Non cedere al sonno}, dove chi gioca scrive che cosa lo tiene sveglio,
+che cosa gli è appena successo, come gli altri lo vedono da fuori e che cosa c'è
+sotto la sua pelle. Lato \textbf{designer}: \emph{Lady Blackbird}\footnote{Di John
+Harper, distribuito gratuitamente.}, ``gioco bellissimo, tra l'altro anche
+gratuito'', i cui personaggi sono prescritti: background, nome e relazioni sono già
+decisi da chi ha fatto il design. Se ne giocano le azioni, ma il loro posto nel
+mondo narrativo è già stabilito.
+
+\paragraph{E la generazione casuale?} Gianmarco, che ha giocato di ruolo in passato
+ma poi ha smesso, chiede se esistano giochi in cui la fiction è generata
+casualmente, da carte o simili. ``Sì, ce ne sono parecchi'' (il docente promette
+esempi più precisi a fine lezione). Dove sta, allora, la decisione? È un mix, e la
+domanda è: in fase di creazione abbiamo \emph{solo} elementi generati a caso, o un
+\textbf{pool casuale da cui scegliere}? L'esempio: un gioco di ruolo con dieci
+classi possibili; a inizio partita se ne pescano tre e se ne sceglie una. Chi ha
+fatto design ha deciso l'insieme delle classi e il pool; chi gioca decide chi è
+dentro quella scelta. È una via di mezzo ``molto verso il designer''. E anche
+\emph{Non cedere al sonno} non è puro: si giocano personaggi insonni, e l'essere
+insonni è un aspetto di fiction deciso dal designer.
+
+\subsection{Lo slider del ruolo}
+
+Il ruolo meccanico: le possibilità di azione, le cose che si possono fare. Chi le
+decide? In \emph{D\&D}, una qualunque edizione, non si ha accesso a tutte le
+abilità, a tutte le potenzialità meccaniche di una classe: da quel pool si
+selezionano quelle che il personaggio possiede. Altri giochi fanno diversamente.
+
+\paragraph{\emph{Apocalypse World}.} È un gioco di ruolo da tavolo con master in cui i
+personaggi sono \textbf{meccanicamente diversi}. Si gioca un \textbf{libretto}
+(\emph{playbook}), che dice che classe di personaggio si ha, come il paladino o il
+guerriero, ``applicata al post-apocalittico''. Quello mostrato è l'\textbf{autista}
+(\emph{the Driver}): la sua classe è guidare un veicolo, e tutte le sue
+\textbf{mosse} (\emph{moves}), cioè i punti di agency, le cose meccaniche che può
+fare per impattare il mondo, sono legate ai veicoli. Il killer prezzolato avrà altre
+mosse, il recuperatore di rottami altre ancora. L'autista, per esempio, ha una mossa
+che gli permette di usare il proprio veicolo come un'arma; gli altri, quando
+guidano, non possono farlo, ``perché non è nelle loro meccaniche''.
+
+Uno studente collega l'esempio a \emph{Nemesis: Retaliation}: anche lì ogni scheda
+personaggio dice che cosa il personaggio può fare. ``Esattamente''. Nei giochi da
+tavolo questo succede tantissimo: il ruolo è spesso deciso dal designer. Magari si
+pescano tre personaggi e se ne sceglie uno, e allora un po' di agency c'è, ``ma è
+normalissimo il caso in cui i ruoli meccanici sono prescritti''.
+
+\paragraph{Un vaso di Pandora: l'agency emergente.} Il perché apre una questione che
+il docente rimanda (``un vaso di Pandora che non apriamo adesso''): quella
+dell'\textbf{agency emergente} e \textbf{discreta}. L'esempio lampante: in un gioco
+da tavolo le meccaniche sono tutte prescritte, il regolamento indica tutte le azioni
+meccaniche possibili. In un gioco di ruolo, invece, si può descrivere come il
+personaggio interagisce con qualcosa in un modo mai codificato dalle regole; per
+questo i giochi di ruolo hanno spesso un aspetto emergente dalla narrazione, nella
+gestione degli imprevisti e dei conflitti. ``Ne parliamo più avanti, quasi
+sicuramente, perché tornerà''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    x=1cm, y=1cm
+  ]
+  \foreach \nome/\y in {Estetica/0, Fiction/-1.6, Ruolo/-3.2} {
+    \node[anchor=east, font=\small\bfseries] at (-0.3,\y) {\nome};
+    \draw[line width=3pt, gray!35, line cap=round] (0,\y) -- (10,\y);
+    \node[font=\footnotesize, anchor=north] at (0,\y-0.25) {designer};
+    \node[font=\footnotesize, anchor=north] at (10,\y-0.25) {player};
+  }
+  % estetica
+  \fill (1.0,0) circle (3pt);
+  \node[font=\scriptsize, anchor=south, align=center] at (1.0,0.15)
+    {\emph{Witch: The Road}\\ \emph{to Lindisfarne}};
+  \fill (5.2,0) circle (3pt);
+  \node[font=\scriptsize, anchor=south, align=center] at (5.2,0.15)
+    {\emph{Non cedere al sonno};\\ classi di D\&D};
+  \fill (9.2,0) circle (3pt);
+  \node[font=\scriptsize, anchor=south, align=center] at (9.2,0.15)
+    {D\&D: il riquadro\\ per il ritratto};
+  % fiction
+  \fill (0.9,-1.6) circle (3pt);
+  \node[font=\scriptsize, anchor=south] at (0.9,-1.45) {\emph{Lady Blackbird}};
+  \fill (3.2,-1.6) circle (3pt);
+  \node[font=\scriptsize, anchor=south, align=center] at (3.4,-1.45)
+    {pescarne 3 su 10};
+  \fill (8.3,-1.6) circle (3pt);
+  \node[font=\scriptsize, anchor=south] at (8.3,-1.45) {\emph{Non cedere al sonno}};
+  % ruolo
+  \fill (1.0,-3.2) circle (3pt);
+  \node[font=\scriptsize, anchor=south, align=center] at (1.0,-3.05)
+    {libretti di \emph{Apocalypse World};\\ molti giochi da tavolo};
+  \fill (4.2,-3.2) circle (3pt);
+  \node[font=\scriptsize, anchor=south, align=center] at (4.2,-3.05) {pescarne 3,\\ sceglierne 1};
+  \fill (7.4,-3.2) circle (3pt);
+  \node[font=\scriptsize, anchor=south, align=center] at (7.9,-3.05)
+    {D\&D: abilità scelte\\ dal pool della classe};
+\end{tikzpicture}
+\caption{I tre slider ``chi decide chi siamo'', con gli esempi della lezione. Le
+posizioni sono qualitative e servono solo a ricordare che si tratta di cursori, non
+di interruttori: quasi ogni gioco sta in una via di mezzo.}
+\label{a4:fig:slider}
+\end{figure}
+
+\subsection{Pro e contro}
+
+``Non ci sono risposte giuste o sbagliate'': dipende dal gioco che si vuole fare e,
+soprattutto, da che cosa servono i personaggi. Pro e contro del lasciare la
+decisione al designer?
+\begin{itemize}
+  \item \textbf{Contro}: lascia meno libertà a chi gioca, ``ovviamente''.
+  \item \textbf{Pro}: tutto è più \textbf{prevedibile}, e quindi più gestibile. Se
+        il gioco dice ``giocate un cavaliere, un ranger e un ladro'', si sa già che
+        cosa aspettarsi da quel gruppo. Se invece c'è libertà, e uno fa
+        ``un alchimista tecnomante'', un altro ``un empate telecinetico'' e un
+        terzo ``un mutaforma che in realtà è una pianta'', è molto difficile
+        controllare il tema del gioco e l'esperienza che si vuole far arrivare al
+        tavolo. Prescrivendo i personaggi, chi fa design ha più controllo sugli
+        aspetti di world building e di narrazione, su chi è in scena e in gioco.
+  \item Anche la \textbf{coerenza}, aggiunge uno studente, è più facile da
+        garantire. ``Certamente''.
+\end{itemize}
+Ma non è sempre meglio: un gioco può avere punti tematici che non dipendono da quali
+personaggi si giocano, perché passano attraverso altre cose (anche qui, il docente
+promette un esempio concreto a fine lezione).
+
+\paragraph{Approfondimento: l'avatar ideale e la lavagna bianca.} Schell, parlando
+dell'avatar, descrive due tipi di personaggio in cui chi gioca si proietta bene:
+la \emph{forma ideale}, ciò che si è sempre voluto essere (il guerriero possente, la
+spia irresistibile), e la \emph{lavagna bianca}, il personaggio ``iconico'' alla Scott
+McCloud: meno dettagli ha, più spazio lascia alla proiezione di chi gioca. Le due
+cose spesso si mescolano (Spider-Man è una forma ideale, ma la maschera lo rende
+una lavagna bianca). È un altro modo di guardare lo slider dell'estetica: il
+riquadro vuoto della scheda di \emph{D\&D} è una lavagna bianca che chi gioca riempie,
+il ritratto di \emph{Witch} è un dettaglio che chi gioca deve accogliere. Schell
+nota anche che i sistemi che mettono la foto del giocatore sull'avatar non
+attecchiscono mai, perché ``le persone non giocano per essere se stesse, ma per
+essere le persone che vorrebbero essere''.
+
+% ---------------------------------------------------------------------
+\section{Spettatori, componenti, NPC e arbitri}
+\label{a4:sec:altri}
+
+``Che cos'altro possiamo essere?'' Un gioco non ha solo personaggi, ruoli e player.
+La slide ne elenca altre quattro figure (tabella~\ref{a4:tab:altri}).
+
+\paragraph{Spettatori.} Spesso non li si considera, perché è difficile che ci siano
+spettatori in un gioco di ruolo da tavolo o in un gioco da tavolo. Ma in un
+\textbf{gioco pervasivo urbano} ci sono tante persone in città che ci guardano, che
+non stanno giocando, che non sono personaggi, né giocanti né non giocanti: sono
+\textbf{spettatori esterni}. Se il gioco interagisce con queste persone, bisogna
+considerare \emph{come} lo fa. L'esempio: si prenda il LARP investigativo noir anni
+Quaranta, ma come \emph{pervasive urban LARP}, in città. C'è un omicidio, e quattro
+persone, nei panni degli investigatori, transennano un'area in piazza. ``Che cosa
+succede in quel momento, in quella piazza?'' Attenzione a che cosa si mette nel
+proprio gioco, ``perché può avere delle conseguenze, come tutto il resto''.
+
+\paragraph{Componenti.} ``A livello etico non è mai bene pensare alle persone come
+componenti, però è possibile'', e tutti ne hanno almeno un esempio: gli
+\textbf{scacchi viventi}. Non due persone che giocano a scacchi al parco, ma le
+partite in cui ogni persona è un pezzo. Quelle persone non hanno agency, non possono
+muoversi dove vogliono quando vogliono: in quel momento sono componenti di gioco.
+
+\paragraph{NPC.} In un LARP grosso, da quattrocento persone, servono figure che
+siano personaggi gestiti da chi facilita, per esempio per la \textbf{gestione
+attiva} dell'avventura: qualcuno deve fare un nobile particolare, un mercante. Quei
+personaggi non sono giocanti, non hanno agency: hanno uno \textbf{scopo di
+facilitazione}, ``l'unico scopo di far avanzare la gestione del gioco''. Per questo
+non richiedono lo stesso tipo di progettazione: un personaggio giocabile e un NPC
+rispondono a domande completamente diverse. L'NPC risponde alla domanda
+\textbf{``come faccio, diegeticamente, a far sì che alcune cose di trama succedano
+in gioco?''}. Può servire anche nei giochi pervasivi.
+
+Uno studente porta un esempio vissuto: una \textbf{caccia al tesoro a Venezia}, in
+cui a un certo punto si arrivava su una piattaforma dove c'era un pittore che
+fingeva di dipingere al cavalletto, con l'unico scopo di consegnare a chi arrivava
+un foglio necessario per proseguire. ``Esattamente, è un NPC''. Chi interpreta
+quel pittore non lo gioca come si gioca un personaggio: è ``estremamente poco
+giocabile''. L'NPC ha obiettivi molto precisi, ma sono obiettivi \textbf{meta}: non
+pensa a che cosa vuole il suo personaggio, quali spinte e attività ha, ma ``devo
+assicurarmi che chi parla con me riceva questa busta'', ``devo assicurarmi che, alle
+X, qualcuno provi ad assassinare il re''.
+
+\paragraph{Arbitri.} In un gioco pervasivo o in uno sport ci possono essere figure
+che non sono NPC né giocanti, ma sono lì per assicurarsi che tutto rientri nelle
+\textbf{regole}.
+
+\paragraph{E altri ancora.} Viste le mille ibridazioni, possono esistere ruoli non
+ancora codificati. ``Il game design è in evoluzione, non abbiamo la verità in
+tasca''. Non esiste una stele di Rosetta in cui sia scritto con precisione che cos'è
+il game design dalla A alla Z.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.3cm}p{2.0cm}p{4.1cm}p{4.6cm}@{}}
+\toprule
+\textbf{Figura} & \textbf{Agency} & \textbf{A che cosa serve} & \textbf{Esempi
+citati a lezione} \\
+\midrule
+Personaggio giocabile & piena & giocare: spinte, attività, relazioni & Joey Doe \\
+Spettatore & nessuna nel gioco & non serve al gioco, ma il gioco lo coinvolge & i
+passanti in piazza durante un LARP urbano \\
+Componente & nessuna & è un pezzo del sistema & gli scacchi viventi \\
+NPC & minima, meta & far succedere diegeticamente cose di trama; facilitare & il
+nobile o il mercante del LARP da 400 persone; il pittore della caccia al tesoro a
+Venezia \\
+Arbitro & sulle regole & far rispettare le regole & giochi pervasivi, sport \\
+\bottomrule
+\end{tabular}
+\caption{Le figure che possono abitare un gioco oltre ai personaggi giocabili. La
+lista non è chiusa: ``il game design è in evoluzione''.}
+\label{a4:tab:altri}
+\end{table}
+
+\paragraph{Approfondimento: la funzione prima del personaggio.} La domanda che il
+docente attribuisce all'NPC (``come faccio a far succedere questa cosa in gioco?'')
+è la stessa da cui parte la \emph{Lens of Character Function} di Schell: prima si
+elencano le funzioni di cui il gioco ha bisogno (chi spiega, chi consegna, chi fa
+da ostacolo, chi va salvato), poi si vede quali personaggi le possono coprire,
+eventualmente accorpandone più d'una in uno stesso personaggio. Un NPC ben
+progettato è, in questo senso, una funzione con un costume.
+
+% ---------------------------------------------------------------------
+\section{Lo spazio dei personaggi}
+\label{a4:sec:spazio}
+
+Riprendendo la connettività: i personaggi non hanno solo relazioni. ``Non esistono in
+un vacuum, non è che esistono solo in una scatola nera con niente attorno'': di
+solito \textbf{abitano uno spazio}. E lo spazio, ``vi sorprenderà sapere'', è
+un'\textbf{area progettabile}: in fase di game design lo si può progettare e
+pensare, e anche lo spazio informa su \textbf{che cosa può fare il personaggio}.
+Il docente lo mostra con una serie di immagini, senza dire di quali giochi siano,
+``perché se no vi do delle informazioni meccaniche''.
+
+\paragraph{Il dungeon.} Che cos'è? Una mappa di gioco, ``un dungeon''. Che cosa
+facciamo nei dungeon? Esploriamo; combattiamo, se ci sono mostri; facciamo scattare
+le trappole; cerchiamo soldi, cerchiamo \emph{loot}; interagiamo con tutto quello che
+c'è; ci nascondiamo. L'ambiente ci ha appena dato \textbf{chiarezza} sulle cose che
+il personaggio può fare: ``l'ambiente ci informa su che cosa facciamo''.
+
+\paragraph{Il deserto.} E qui? Camminare, certo. E cercare l'\textbf{acqua}. Perché
+l'acqua qui, e non nel dungeon, dove pure si potrebbe avere sete? Perché il deserto
+comunica la necessità di \textbf{sopravvivere}: si è esposti al calore. Anche nel
+dungeon si è in pericolo, ma i pericoli sono diversi: là trappole e combattimento,
+qui bere e mangiare.
+
+\paragraph{Il villaggio.} Qui viene da rilassarsi, dice una studentessa: è un ambiente
+sereno, bucolico. Che cosa facciamo? ``Viviamo''. Che cosa vuol dire? Con chi
+parliamo? Magari abbiamo una famiglia; perché nelle case vivono le persone. Questo
+tipo di clima e di ambiente dà informazioni su che cosa fa il personaggio. Joey
+Doe in una via buia, di notte, con un cadavere per terra, farà certe cose; Joey Doe
+al pub \emph{Il Barile} a fine giornata ne farà altre. ``È sempre Joey Doe'':
+sappiamo già che cosa \emph{vogliamo} fare con lei, ma ciò che \emph{possiamo} fare
+cambia. Nessuno, qui, dirà ``evito trappole e combatto orchi sottoterra'', così come
+nel villaggio nessuno dirà ``cerco acqua, cerco cibo''. L'ambiente è una fonte di
+\textbf{interazione}, di \textbf{conflitto}, spesso di \textbf{ostacoli}.
+
+\paragraph{Il Titanic.} Cerchiamo una via di fuga; ``siamo sul Titanic''. Che
+priorità avrà il personaggio? Sopravvivere. Ma anche nel deserto si sopravvive:
+che cosa cambia? Qui c'è un \textbf{limite di tempo}: in un'immagine l'acqua sta
+salendo, nell'altra la nave affonda. ``Io però non vi ho detto niente
+meccanicamente'': siete voi a vedere l'acqua. Perché? Perché, come nella lettura dei
+personaggi, anche nella lettura degli ambienti agisce il nostro
+\textbf{costruttivismo personale}: valutiamo ciò che vediamo attraverso le nostre
+esperienze passate. Non perché si sia vissuto il Titanic, ovviamente, ma perché si
+sono già esperiti tonnellate di media, racconti, storie, mondi, giochi e universi
+su certi concetti. Se vediamo un deserto sappiamo più o meno che cosa ci si può fare;
+se vediamo una nave così, sappiamo che c'è il tempo, l'acqua che sale, la
+pressione, la necessità di fuggire. E questo dà \textbf{informazioni meccaniche}.
+
+E se Joey Doe fosse su quella nave, e la nave stesse affondando, ma ci fosse anche
+stato un omicidio? ``Stiamo già avendo tanta roba per rendere giocabile il nostro
+personaggio''. A che cosa dare priorità? È anche ciò che succede spesso nei giochi di
+ruolo: lo stesso personaggio, in due partite diverse, può essere giocato in modo
+molto diverso. In una partita Joey Doe dà priorità all'omicidio, a rischio di restare
+sul Titanic finché non affonda; in un'altra dice ``dell'omicidio non mi importa
+niente, io torno a casa: scialuppa e via''.
+
+\paragraph{La metropoli.} A sinistra, ``farei shopping''. E poi, dice Lorenzo,
+interagiamo con le persone: potrebbero darci informazioni, o potremmo comprare
+qualcosa che serve al personaggio. Che cosa cambia rispetto al villaggio? Nel
+villaggio si è in un ambiente familiare, dove si conoscono almeno alcune persone,
+``ci dà l'idea di essere a casa''; qui l'ambiente è conosciuto lo stesso, ma si
+interagisce con tantissime persone che non si conoscono. Nessuno dei due fa pensare
+a pericoli, ad acqua e cibo o a dover picchiare qualcuno per il loot, ma sono
+\textbf{ambienti di interazione sociale molto diversi}: le metropoli sono
+``esplosive'' in termini di quantità di persone, il piccolo villaggio dà un senso
+bucolico, di relax, ``vibes completamente diverse''. Anche l'\textbf{approccio}
+cambia: un omicidio in un paese di dieci persone o nel centro di Tokyo vuol dire una
+\textbf{scala} dell'indagine completamente diversa.
+
+\paragraph{La guerra.} Ultimo esempio: che cosa farà il personaggio? ``Combatte''.
+O magari, guardando la prima immagine, salva dei civili e li protegge. E qui nasce
+un'altra domanda: \textbf{chi è il nostro personaggio?} Lo stesso ambiente può avere
+\textbf{affordance} estremamente diverse in base a chi siamo. Essere lì come un
+soldato americano, o come una persona che vive in quel paese da quando è nata: che
+cosa ci dice l'ambiente, e che tipo di agency ci fa esprimere?
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.3cm}p{5.4cm}p{5.4cm}@{}}
+\toprule
+\textbf{Ambiente} & \textbf{Che cosa suggerisce di fare} & \textbf{Che cosa
+comunica} \\
+\midrule
+Dungeon & esplorare, combattere, evitare trappole, cercare loot, nascondersi &
+pericolo: trappole e mostri \\
+Deserto & camminare, cercare acqua e cibo & pericolo: la sopravvivenza \\
+Villaggio & vivere, rilassarsi, parlare con la famiglia e i vicini & casa,
+relazioni note, vibes bucoliche \\
+Titanic & cercare una via di fuga, sopravvivere; e, se c'è un omicidio, scegliere
+le priorità & urgenza: il tempo, l'acqua che sale \\
+Metropoli & fare shopping, interagire con molte persone, raccogliere informazioni
+& interazione sociale con sconosciuti; scala enorme \\
+Guerra & combattere, oppure salvare e proteggere civili & dipende da chi siamo:
+soldato straniero o abitante \\
+\bottomrule
+\end{tabular}
+\caption{Gli ambienti mostrati a lezione e le letture della classe. Lo spazio dà
+chiarezza su che cosa il personaggio può fare, prima ancora di qualsiasi regola.}
+\label{a4:tab:spazi}
+\end{table}
+
+\subsection{Personaggi non umani}
+
+\paragraph{\emph{Vast}: si può giocare la caverna.} Pensate alle \textbf{fonti di
+asimmetria meccanica} che un ambiente può dare. Il docente cita \emph{Vast}, gioco
+da tavolo asimmetrico\footnote{\emph{Vast: The Crystal Caverns} (2016), di Leder
+Games, l'editore che in seguito pubblicherà \emph{Root}.}: una persona gioca una
+specie di ladro, un cavaliere, che deve entrare nella caverna per rubare; un'altra
+gioca il gruppo di \textbf{goblin} che ci vive e che vuole eliminarlo; un'altra
+ancora un grosso \textbf{drago} che vive nella caverna, che mangia anche i goblin e
+che non vuole che gli si rubi niente. E una quarta persona \textbf{gioca la caverna},
+e la caverna può vincere.
+
+\paragraph{\emph{Salvage Crew}.} ``Il vostro personaggio non deve necessariamente
+essere un essere umano''. Uno dei romanzi più interessanti letti di recente dal
+docente è \emph{Salvage Crew}, di uno scrittore dello Sri Lanka\footnote{Yudhanjaya
+Wijeratne (2020). Il riassunto è quello che il docente fa a lezione, ``senza
+spoiler''.}. Fantascienza, futuro prossimo: mega-corporazioni mandano squadre sui
+pianeti a recuperare e riciclare materiali per guadagnarci. L'azienda è gestita da
+macchine, e gli esseri umani non possono fare i manager a meno di rinunciare al
+proprio corpo: il protagonista è un ex essere umano che vive ormai solo come
+coscienza, mandato sul pianeta con una squadra di umani da coordinare. E il
+protagonista \emph{è} la capsula sparata sul pianeta con gli umani dentro: il
+romanzo si vive dal punto di vista dell'edificio che li contiene. Tutta la
+narrazione è ciò che lui vede e sente attraverso i sensori: ``se le telecamere si
+rompono, lui non vede più''. È comunque un personaggio estremamente interessante,
+``e vorrei un gioco su questa roba, adesso, se potessi''.
+
+\paragraph{Animali.} Non limitatevi a pensare i personaggi solo come esseri umani,
+anche perché, storicamente, i giochi con protagonisti animali sono tantissimi:
+giochi di ruolo in cui si giocano cani, giochi da tavolo in cui si giocano animali,
+``ce ne sono a tonnellate''.
+
+% ---------------------------------------------------------------------
+\section{Il primo task: una scheda personaggio}
+\label{a4:sec:task}
+
+È il momento del task per la prossima lezione, e il docente lo introduce mettendo le
+mani avanti: lo guarderete e vi spaventerete; poi io vi rassicurerò, vi dirò che non
+è così complesso; ne parleremo, perché ``sarà scritto in modo barocco e poco chiaro
+per colpa mia''; e alla fine sarà chiaro, e ``mi consegnerete delle figate
+atomiche'' che si vedranno ed elaboreranno insieme la volta dopo. ``Il task è
+scritto comunque più chiaro di \emph{Joey Doe, detective}. Questo ve lo posso
+assicurare''.
+
+\paragraph{La consegna.} Il task è per il \textbf{21 settembre}, tra tre giorni. Le
+slide, ``questa volta davvero'', saranno caricate nella cartella subito dopo la
+lezione. La richiesta:
+\begin{itemize}
+  \item creare una \textbf{scheda personaggio} in un \textbf{documento a testa},
+        con il proprio nome, nelle cartelle su Drive;
+  \item \textbf{massimo una pagina}: ``non voglio cose più lunghe di una pagina'';
+        più corte, quanto si vuole;
+  \item la scheda è pensata per un \textbf{LARP fittizio}, ambientato in una
+        \textbf{serata di gala nella Milano contemporanea}, con elementi
+        \textbf{urban fantasy}. ``Non vado oltre nel taglio, volutamente'';
+  \item l'obiettivo: una scheda \textbf{chiara}, \textbf{connessa}, con
+        \textbf{spinta} e con \textbf{attività};
+  \item \emph{come} scriverla lo decide ciascuno, da solo: ``non voglio che vi
+        parliate a vicenda per dire qual è il modo migliore di scriverla''. Si sono
+        visti gli esempi di Joey Doe, se ne possono pensare mille altri, mischiarli,
+        ibridarli.
+\end{itemize}
+
+\paragraph{La connettività, invece, è strutturata.} La classe è di \textbf{nove
+persone}. Ciascuno deve avere \textbf{tre cerchie} (\textbf{amici},
+\textbf{famiglia}, \textbf{lavoro}), ognuna formata dal proprio personaggio e da
+\textbf{altri due} personaggi dei compagni: gruppi da tre. Nella scheda, al
+personaggio a cui si è dato un nome e ``magari due informazioni su chi è'', vanno
+elencate queste connessioni, con i \textbf{nomi dei personaggi} dei compagni.
+Quindi il personaggio conosce \textbf{sei} altri personaggi; e, su nove, ce ne sono
+\textbf{due} che non ha mai visto né sentito (figura~\ref{a4:fig:task}).
+
+\paragraph{Un esempio passo per passo.} Uno studente ammette di essersi perso, e il
+docente fa un esempio. Si scrivono due righe su chi si è (nome, cognome eccetera) e
+ci si organizza. Mettiamo che Gianmarco voglia fare il barista del pub \emph{Il
+Barile}: scrive nel gruppo della classe chi vuole essere connesso a lui per lavoro.
+Magari un personaggio è chi porta la fornitura di birre con il camion, un altro chi
+pulisce il locale dopo la nottata: il gruppo del lavoro lo fa, per esempio, con
+Lorenzo e Tancredi. Poi gli serve un gruppo di amici: chi sono gli amici del
+barista? Magari quello con cui gioca a bocce e l'arbitro delle partite di bocce: il
+personaggio di Angelo è l'amico, quello di Tiziana l'arbitro (che magari arbitra nel
+tempo libero, e di lavoro fa altro). Infine un terzo gruppo, la famiglia, con altre
+due persone ancora, magari Rita e Nicola: il personaggio di Rita è sua zia, quello
+di Nicola sua figlia. Alla fine, nella scheda ci sono sei personaggi dei compagni.
+
+``Però non li conosciamo'', obietta qualcuno. ``Ci dovete parlare, anzi: come fate
+a sapere chi sono se non ci parlate?'' Basta sapere il nome o bisogna conoscerne le
+caratteristiche? Sono gruppi di connettività: se si hanno due colleghi si saprà
+chi sono, ``magari non sai tutto'', non si conoscono i loro gruppi di amicizia o di
+famiglia, le loro spinte e attività, ``ma sai sicuramente che è tuo figlio o tuo
+collega''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\footnotesize,
+    io/.style={draw, thick, circle, fill=gray!35, minimum size=1.5cm,
+               align=center},
+    altro/.style={draw, circle, fill=white, minimum size=1.05cm, align=center},
+    ignoto/.style={draw, dashed, circle, fill=gray!6, minimum size=1.05cm,
+                   align=center, text=gray},
+    gruppo/.style={draw, thick, rounded corners=8pt, dashed, inner sep=5pt}
+  ]
+  \node[io] (io) at (0,0) {\textbf{A}\\ \footnotesize il mio\\ \footnotesize personaggio};
+  \node[altro] (l1) at (-4.0,1.9) {B};
+  \node[altro] (l2) at (-2.6,2.6) {C};
+  \node[gruppo, fit=(l1)(l2), label={[font=\small\bfseries]above:lavoro}] (gl) {};
+  \node[altro] (a1) at (2.6,2.6) {D};
+  \node[altro] (a2) at (4.0,1.9) {E};
+  \node[gruppo, fit=(a1)(a2), label={[font=\small\bfseries]above:amici}] (ga) {};
+  \node[altro] (f1) at (-0.7,-2.6) {F};
+  \node[altro] (f2) at (0.7,-2.6) {G};
+  \node[gruppo, fit=(f1)(f2), label={[font=\small\bfseries]below:famiglia}] (gf) {};
+  \node[ignoto] (x1) at (4.3,-1.6) {H};
+  \node[ignoto] (x2) at (5.6,-1.6) {I};
+  \node[font=\footnotesize\itshape, text=gray, align=center] at (4.95,-2.6)
+    {mai visti\\ né sentiti};
+  \draw[thick, gray] (io) -- (gl);
+  \draw[thick, gray] (io) -- (ga);
+  \draw[thick, gray] (io) -- (gf);
+\end{tikzpicture}
+\caption{La struttura di connettività chiesta dal task, vista da uno dei nove
+studenti (A). Tre cerchie mutuamente esclusive da tre persone ciascuna: il proprio
+personaggio più due compagni. Sei personaggi noti, due sconosciuti. In un LARP da
+duecento persone, avverte il docente, ci sarebbero più gruppi, con sottogruppi.}
+\label{a4:fig:task}
+\end{figure}
+
+\paragraph{Le schede dell'anno scorso.} Il docente mostra alcune schede delle
+edizioni precedenti, ``con il trucco'' che, se le si guardano, non si può fare niente
+di identico. Una è di una pagina, con alcune parole in grassetto per renderle più
+chiare e immediate e per lasciar intuire che cosa fossero meccanicamente; elenca
+spinte e attività, e nelle cerchie di famiglia, amici e lavoro nomina altri
+personaggi (Jessica Crepuscolo, Giacomo d'Avanzo, Chris Betty\ldots). Un'altra,
+quella di Chris Colombo, uno degli amici di Innocenzo d'Avanzo, è pensata come una
+\textbf{brochure fronte e retro}, con famiglia, amicizia, lavoro e le proprie
+spinte. Un'altra ancora, Cristiano Colombo, ha caratteristiche, \emph{tag}, una
+sezione ``tu chi sei'', i gruppi e una serie di obiettivi\footnote{I nomi dei
+personaggi sono riportati come nella trascrizione.}. ``Io non voglio che voi
+copiate questi personaggi'': i vostri personaggi sono frutto vostro, ma anche
+\textbf{della vostra interazione con le altre persone della classe}. Spinte,
+attività e chi siete lo decidete completamente voi, ma verrà naturale costruire i
+gruppi anche in base alle persone che ne fanno parte.
+
+\paragraph{La consegna, letteralmente.} La scadenza è \textbf{la mattina della
+lezione}, anzi il giorno stesso, ``anche cinque minuti prima'': le schede si
+guarderanno insieme all'inizio della lezione del 21. Il docente ha appena creato,
+dentro la cartella dei task del Drive di Analog, una cartella \textbf{``Personaggi
+giocabili''}: lì ciascuno carica \textbf{un singolo documento}, non una cartella.
+
+\paragraph{Gruppi mutuamente esclusivi.} Angelo chiede se qualcuno possa appartenere
+a più gruppi. No: se Gianmarco ha il personaggio di Angelo tra gli amici, il
+personaggio di Angelo non può essere anche tra i colleghi o in famiglia. ``I gruppi
+sono, in questo caso, mutuamente esclusivi'', perché la classe è di nove persone. In
+un LARP da duecento persone ci sarebbero gruppi con sottogruppi: in quelli più
+grossi può esserci un dipartimento di trenta persone, con un ufficio A e un ufficio
+B da dieci persone ciascuno.
+
+\paragraph{A che cosa servono i gruppi?} Qualcuno non ne capisce il senso. Servono a
+sapere chi sono gli altri personaggi della propria scheda: non si vogliono nominare
+persone a caso, ma i personaggi giocabili che altri hanno creato. Ma, insiste lo
+studente, i gruppi sono ``relativi'': è tutto un intreccio, non si fanno fisicamente
+tre gruppi; ciascuno sa di doversi rapportare con due personaggi di un tipo, due di
+un altro e due di un altro. Il docente spiega perché bisogna comunque parlarsi: per
+avere \textbf{relazioni coerenti}. Se Tiziana dice ``il personaggio di Gianmarco è
+mio fratello'' e i due non si parlano, Gianmarco potrebbe scrivere ``il personaggio
+di Tiziana è mia figlia''. Su come organizzarsi a livello logistico, i docenti non
+dicono niente, ``per mille motivi, e ne parleremo il 21'': dicono che cosa vogliono
+ottenere. Call su Discord in nove? ``Top''. Ci si sente separatamente, in modo
+asincrono? ``Benissimo''. Una sola regola: \textbf{non si organizzano i gruppi
+durante la lezione, né prima delle 20 di stasera}.
+
+\paragraph{Strumenti e forma.} Si può usare qualsiasi strumento, Word, Canva,
+``purché ci sia un documento nella cartella Drive''. La struttura della scheda è
+libera: font, colori, grassetto, corsivo, tabelle o no, elenchi. ``Libertà totale''.
+Ma \textbf{queste cose ci devono essere}, e saranno quelle valutate: il personaggio
+sarà letto attraverso il filtro dei quattro pilastri. Leggendolo è chiaro come deve
+essere giocato; fornisce informazioni chiare sulle sue connessioni; ha motivazioni e
+obiettivi a breve e lungo termine; ha cose che può e deve fare. E attenzione allo
+\textbf{spazio}: non si gioca in astratto, ma a una serata di gala a Milano con
+elementi urban fantasy.
+
+\paragraph{Il bonus: un potere sovrannaturale.} Chi vuole può dare al personaggio un
+\textbf{potere}, ``anzi, bonus''. Non bonus di voto: ``io sono anti voto proprio''; su
+questo task non ci sarà un voto. Chi ``si sente particolarmente frizzante'' può
+ragionare su una \textbf{meccanica} legata a un potere sovrannaturale; ma deve dire
+\emph{meccanicamente} che cosa fa, ricordando che è un LARP: volare, per esempio, è
+difficile fisicamente. L'esempio, che ovviamente non si potrà usare: un personaggio
+\textbf{telepate} può avere una metatecnica come il \emph{ping the glass} della
+lezione precedente, o una variante: \textbf{la mano sulla spalla}. Se il mio
+personaggio ti mette una mano sulla spalla, tu mi devi dire che cosa stai pensando.
+
+È il momento in cui Rita deve lasciare la lezione: ``nessun problema, la lezione è
+registrata''. Per le domande, ricorda il docente, si può scrivere anche via email o
+Telegram.
+
+\paragraph{Fin dove spingere un potere.} Uno studente, che gioca di ruolo da tavolo
+ma non ha mai giocato un LARP, chiede quali siano i limiti effettivi: nei giochi da
+tavolo ci sono regole a cui chiunque può attingere, mentre qui non c'è un arbitro
+definito dal manuale. Se definisse un potere come ``se ottengo il tuo nome e
+cognome, posso chiederti un favore non dannoso per te'', quanto andrebbe a intaccare
+l'agency di un altro giocatore? Per questo task si può fare, risponde il docente,
+perché qui \textbf{il setting è un MacGuffin}: due righe per dare contesto, ``il LARP
+non esiste nella pratica''. Va bene tutto ciò che non crea problemi diegetici (come
+il volo). ``Però ricordiamolo: \textbf{sono meccaniche, non sono \emph{wishful
+thinking}}''. Si deve poter comunicare all'altra persona che si sta facendo quella
+cosa: il \emph{ping the glass} funziona perché crea un'\textbf{interazione specifica e
+regolata}. Se ne parlerà più nel dettaglio nella lezione sul progettare emozioni.
+
+\paragraph{La seconda pausa.} Il docente carica subito le slide nella cartella, ``così
+le avete, non come la volta scorsa'', e propone una pausa: sono le 19:08, si torna
+alle 19:15.
+
+% ---------------------------------------------------------------------
+\section{Le domande sul task}
+\label{a4:sec:task-domande}
+
+Al ritorno, si riparte dal task. Nessuna domanda? Allora il docente apre la fine
+della lezione alle domande aggiuntive, compresi i casi studio dell'inizio; Gianmarco
+non ha altro da aggiungere. ``Siamo ammutoliti dal task? Vi ho fatto paura col
+task?'' Una studentessa ammette di essere un po' preoccupata per l'organizzazione:
+bisogna trovare un canale. Il docente la rassicura: è il primo task che si dà ogni
+anno, proprio perché la classe si conosca un po', e l'organizzazione ``è l'ostacolo
+più grosso''. Scrivere la scheda, in sé, è un lavoro da un quarto d'ora.
+
+\paragraph{Niente AI.} L'estetica della scheda non è troppo importante: ``vi lascio
+agency totale, apposta'', e negli anni si sono viste cose molto interessanti. Ma una
+cosa, già detta da Daniele nella lezione introduttiva: \textbf{non consegnate cose
+fatte con l'AI}. ``Se vedo anche solo un personaggio disegnato con l'AI, vomito
+sulla vostra scheda''. Chi vuole disegnarlo lo faccia a matita, anche male (``io
+disegno malissimo''): non è un task che valuta le capacità di disegno. Il task è
+esattamente quello che c'è scritto; il resto è un di più, che può anche diventare
+parte del progetto. Ma la \textbf{cura}, nel game design, non è solo fare esattamente
+quello che viene chiesto: è anche metterci il proprio tempo, capire che cosa si vuole
+fare.
+
+\paragraph{Un personaggio che vorreste giocare.} ``Una cosa che vi chiedo, però, vi
+giuro'': fate \textbf{un personaggio che vorreste giocare}. Non un personaggio
+``solo per fare il task''. Anche senza aver mai giocato un LARP, la scheda deve far
+dire, a chi la legge: questa cosa da giocare dev'essere estremamente interessante.
+``Perché se voi create cose che nemmeno voi volete giocare, la possibilità che
+vogliano giocarle altre persone è molto bassa''. E le domande nascoste vanno tirate
+fuori, ``perché poi diventano mostri giganti che vi rodono dall'interno'', e il task
+sembra una cosa titanica; invece è ``un piccolo micetto spaventato''.
+
+\paragraph{I poteri degli altri.} Se ognuno crea un'abilità per il proprio
+personaggio, come si fa a saperlo? Ci si può organizzare anche su quello, oltre che
+sulla connettività. La vera domanda è: \textbf{il vostro personaggio sa che cosa può
+fare l'altro personaggio?} Magari il gruppo di lavoro è ``siamo cacciatori di
+vampiri'', e allora ci si conosce le abilità; magari è ``siamo colleghi in
+ufficio'', e uno dei colleghi è un vampiro e gli altri non lo sanno. La scheda
+\textbf{non è onnisciente}: la legge e la gioca chi interpreterà quel personaggio, e
+la domanda è se abbia senso che sappia certe cose. Si è visto con Joey Doe: alcune
+schede nascondono informazioni, altre danno fatti, altre hanno un punto di vista
+che può anche \textbf{mentire}. Va benissimo che Tancredi scriva ``il personaggio di
+Gianmarco è il mio migliore amico per sempre'' e che sulla scheda di Gianmarco ci
+sia ``Tancredi è uno scocciatore che mi segue sempre'': la \textbf{collisione} e
+l'\textbf{asimmetria di informazioni} fanno parte di come si costruiscono i
+personaggi. Basta mettere ciò che ha senso: se il personaggio di Tancredi non ha
+motivo di sapere che quello di Gianmarco legge nel pensiero, lo scriverà solo la
+scheda di Gianmarco.
+
+\paragraph{Non tutti hanno la magia.} Il docente potrebbe fare altri esempi di poteri,
+``però poi vi impedisco di usarli, quindi a vostro rischio e pericolo''. ``No, è
+meglio non saperlo''. Del resto il potere è davvero un di più: il setting è urban
+fantasy, ma ``non è che in un setting urban fantasy tutti hanno la magia''. Ci sarà
+chi serve il caffè, chi fa le fotocopie in ufficio, chi fa il tassista.
+
+\paragraph{Fate cose che vi interessano.} Vale per questo task, ``ma è ancora più vero
+per quelli dopo'': ``questi non sono compiti a casa'' per mettere una spunta su un
+Excel. Il punto è imparare pipeline e framework. ``Non dovete pensare a cosa piace a
+Ruggero, a che cosa fare per prendere un voto alto: buttate questo pensiero dalla
+finestra''. Le persone possono voler giocare cose diverse, come si è visto con
+\emph{Fat Man Down} e altri giochi intensi: il personaggio non deve per forza essere
+felice da giocare, e se c'è varietà tra i personaggi, tanto meglio.
+
+\paragraph{Animaleschi, orchi, normali.} Una domanda ``velocissima'': i personaggi
+possono essere di categorie diverse, uno più animalesco, uno più da orco, uno più
+normale? Sì, ma è un LARP: bisogna dire a chi gioca \textbf{che cosa fa} con questa
+cosa. Si può indicare come vestirsi (abiti A, B, C), o ``metti due orecchie da
+gatto''. I LARP hanno le loro particolarità: alcune schede indicano un'età, e non è
+detto che chi gioca abbia l'età del personaggio (``hai 50 anni'', e magari se ne
+hanno 36); lo stesso vale per il genere del personaggio, e per l'estetica. Ma una
+cosa che di solito non si fa nelle schede di LARP è descrivere l'\textbf{aspetto
+morfologico del corpo}. Sui vestiti si ha molta agency: si possono cambiare, si
+possono mettere occhiali da sole, un cappello, un accappatoio, una camicia, andare a
+petto nudo; non si può cambiare il numero di braccia o la faccia. Con un asterisco,
+perché ci sono generi in cui si può fare: ma in un LARP ci sono requisiti fisici
+dati dal fatto che si fa un \textbf{embodiment} del personaggio, e il corpo del
+personaggio e quello di chi gioca condividono lo stesso spazio fisico. E di nuovo:
+non dimenticate il \textbf{luogo}, perché spinte e attività sono legate anche a quello.
+
+\paragraph{Niente spettatori.} Un'altra domanda nascosta: il personaggio esiste in
+una situazione pervasiva, con persone non giocanti? ``No'': per semplicità, è un
+\textbf{LARP ad alto budget} che ha noleggiato un ambiente di alta classe, e così si
+toglie l'anomalia. Sarebbe interessantissimo un gioco così, ``ma nel primo task non
+voglio darvi anche il come interfacciarvi con le persone non giocanti'', che è un
+layer di complessità in più. E restano i limiti fisici: niente personaggio che vola,
+niente mezzo pipistrello. ``Voi qui siete le persone che fanno design'': il
+personaggio non lo giocherete voi, andrà a un'altra persona che deve capire come
+giocarlo.
+
+\paragraph{Fuori contesto, ma con un alibi.} Si può costruire un personaggio
+volutamente fuori contesto? Lo studente ne ha in mente uno ``che è una rovina per
+chiunque lo voglia giocare'': un personaggio in accappatoio a un gala. Si può fare
+\textbf{se ha senso che ci sia}: l'importante è che sia giocabile. La questione è che
+cosa ha senso che rimanga in gioco per la durata della serata. Se il personaggio è
+il nemico numero uno dell'Interpol, che tutti arresterebbero a vista, non ha senso
+in questo scenario: verrebbe preso e ingabbiato al minuto due. Servono
+\textbf{motivazioni per cui si è lì e non si viene arrestati subito}. Non bisogna
+per forza essere un nobile aristocratico: si può essere l'addetto alle pulizie,
+chi è stato chiamato a servire al bar, o un ladro che sta svaligiando una cassaforte
+nella stanza accanto, travestito da ospite a un ballo in maschera. È un'abilità
+implicita nel ruolo di game designer: \textbf{dare giustificazioni, alibi,
+motivazioni}. ``Ricordati che il tuo personaggio è comunque nelle sue cerchie''.
+
+\paragraph{Il personaggio nudo, e il pazzo.} L'estremo che lo studente vuole esplorare
+è un personaggio nudo che, con un potere, convince tutti con la parola di non
+esserlo. ``Se vuoi, sì, però cerchiamo di fare personaggi giocabili''. Il docente
+lo collega a un vecchio vizio dei giochi di ruolo anni Novanta, tipo
+\emph{Vampire}: il personaggio che è ``il pazzo''. A parte che è un tropo
+``perniciosissimo'', in termini di giocabilità dopo quindici minuti ci si è già
+stancati di giocarlo, perché un personaggio fuori di testa non ha spinte che gli
+permettano di pianificare e agire a breve e lungo termine: non ha un rigore logico.
+Lo stesso vale per il \textbf{personaggio misterioso} che sta in un angolo del gala e
+non deve parlare con nessuno: ``terribile da progettare per questo gioco''. ``La cosa
+forse più importante di questo personaggio sono le sue \textbf{tre cerchie}'': sono
+ciò che lo rende giocabile in termini di relazioni, ``perché i LARP non sono giochi
+single player'', sono giochi in cui la propria agency è condivisa con tutte le altre
+persone che giocano (``un pantano gigantesco, che non apriamo adesso''). Lo studente
+precisa che il suo personaggio non sarebbe fuori di testa: voleva solo capire fin
+dove spingersi. Si possono fare anche personaggi un po' \emph{cringe}, un po' buffi:
+``non deve avere la serietà di un film di Nolan''. Ci sono persone e mood diversi:
+Joey Doe, super seria e investigativa, e il barista completamente scanzonato che fa
+battute ogni tre secondi. E il setting non va progettato: ``è uno spunto per i vostri
+personaggi''.
+
+\paragraph{La spinta può riguardare un altro personaggio?} Angelo chiede se
+l'obiettivo del personaggio possa essere un altro personaggio: un sicario, per
+esempio, che deve uccidere qualcuno. ``Sì''. L'esempio del docente: il mio personaggio
+deve trovare un modo per restituire dei soldi al personaggio di Gianmarco, che
+magari è un criminale e gli ha detto ``entro stasera voglio i soldi''. È una bella
+spinta, che spinge a fare molte cose che magari non si volevano fare: derubare
+qualcuno, ricattare qualcun altro, riscuotere un favore. Anzi, parte della giocabilità
+sta in come si leggono queste cose insieme: se devo dei soldi a Gianmarco, ma grazie
+alle mie cerchie un altro personaggio mi deve un favore, ``di giocabilità ne ho già
+tantissima, stasera''.
+
+\paragraph{Il test del ``che cosa faccio adesso?''.} Il criterio pratico: mettetevi
+nei panni del personaggio nella scena in cui è appena entrato al gala, e chiedetevi
+\textbf{che cosa faccio adesso?}. Se a questa domanda si hanno almeno \textbf{due o
+tre risposte possibili, in direzioni diverse}, il personaggio ``per me è già
+bombissimo''. Nell'esempio dei soldi:
+\begin{itemize}
+  \item vado dal personaggio di Gianmarco a chiedere una proroga: stasera non ce la
+        faccio, ma la settimana prossima sì, e provo a convincerlo;
+  \item vado dall'amico che mi deve un favore: devo dei soldi a qualcuno di
+        pericoloso entro stasera, dammi una mano, voglio quel favore adesso;
+  \item vado dal sergente di polizia e gli chiedo di arrestare il personaggio di
+        Gianmarco, che è un criminale: così il mio problema sparisce.
+\end{itemize}
+
+\paragraph{Una spinta vaga.} Angelo prova a generalizzare: allora la spinta può essere
+molto vaga, tipo ``voglio evitare che mi spezzino le rotule'', e poi sta a me trovare
+il modo. Sì, ma in un gioco ben progettato, perché quella spinta funzioni, deve
+esistere un altro personaggio con la spinta opposta: \emph{devo spezzare le rotule al
+personaggio di Angelo}. Se la spinta è ``devo evitare l'arresto'' e nessuno deve
+arrestarti, quella spinta non esiste. È di nuovo la slide: \textbf{le relazioni del
+vostro personaggio non esistono finché non vi comportate in modo da farle esistere}.
+
+\paragraph{Quindici minuti di lavoro.} Tiziana non ha altre domande: ascoltando le
+altre, è tutto abbastanza chiaro. Il docente sa che la lunghezza della slide del task
+ha intimorito, e che la parte centrale è logisticamente complessa. Ma il task in sé,
+anche per l'esperienza dei gruppi precedenti, prende \textbf{15-20 minuti al
+massimo} di lavoro sul documento. La logistica sta agli studenti, e serve anche ai
+docenti per capire con chi formare i gruppi. Le domande sul task si chiudono ``per
+ora, non per sempre'': se ne vengono in mente altre tra due ore, email o Telegram,
+``io vi rispondo lo stesso''.
+
+\paragraph{Approfondimento: un compito che si gioca solo insieme.} Il task applica
+alla lettera un'idea che la lezione aveva messo in una slide: la connettività non si
+scrive, si negozia. Nessuna scheda è completa da sola, perché metà delle sue
+informazioni (chi sono i sei personaggi nominati, che cosa vogliono, che cosa
+sanno) sta nelle schede degli altri. È lo stesso principio della \emph{Lens of the
+Character Web} di Schell, ma con una differenza importante: la rete non la disegna un
+solo autore, la tessono nove persone che si devono parlare. Ed è anche, dichiaratamente,
+uno strumento di osservazione: come gli studenti si organizzano dice ai docenti
+qualcosa su come lavoreranno in gruppo.
+
+% ---------------------------------------------------------------------
+\section{Le domande finali}
+\label{a4:sec:domande}
+
+Restano una ventina di minuti per le domande sul resto: la lezione precedente, i casi
+studio, il metagioco di Tancredi. ``Abituatevi, perché le lezioni con me hanno sempre
+la parte di domande in fondo, e io divento super \emph{cringe} se non ci sono
+domande''. ``Adesso sono curioso di vedere quanto puoi diventare cringe'', ribatte
+uno studente.
+
+\subsection{Framework, dinamiche e playtest}
+
+Gianmarco condivide una considerazione sui framework visti finora, MDA, Mixing Desk e
+Player Involvement Model. L'MDA gli sembra ``fondamentale, come fondamenta''. La
+parte di \textbf{esperienza} la si coprirà con l'emotional design, che diventa
+``l'innesco di tutto quello che c'è prima''; la parte di \textbf{meccaniche}, in
+qualche modo, con gli elementi di gioco. Gli sembra un po' scoperta la parte di
+\textbf{dinamiche}, che però è importante.
+
+Per il docente la parte delle dinamiche è ``la parte principale della questione dei
+\textbf{playtest}''. Le dinamiche sono l'impatto in tempo reale tra chi gioca e le
+meccaniche progettate, e quello è l'ambito del playtest. Un gioco può esistere anche
+se nessuno lo gioca o lo testa: si può scrivere un bellissimo regolamento, fare la
+scatola, i componenti, e il gioco esiste lo stesso; ma \textbf{le dinamiche non
+esistono}, perché nessuno lo sta giocando. Il playtest avrà una lezione dedicata,
+``ve lo assicuro''.
+
+Gianmarco aggiunge che gli è utile ragionare per \textbf{ipotesi}: quando testa,
+cerca di validare o no un'ipotesi fatta \emph{ex ante}; gli mancava l'elemento di
+\emph{che cosa} valutare nel playtest. E gli sembra che diversi \textbf{slider} del
+Mixing Desk siano elementi di dinamiche. Alcuni lo sono, concorda il docente: la
+gestione attiva o passiva, le meccaniche intrusive. Ma ci sono anche aspetti
+produttivi: ci sarà una lezione con \textbf{Beatrice} sulla progettualità e sulla
+gestione del progetto, che può aprire altri slider, legati per esempio a quanto tempo
+dedicare a certe parti della progettazione. Il docente si scusa di rimandare
+(``la risposta c'è, ma abbiamo una lezione apposta'').
+
+\paragraph{Il Mixing Desk per leggere un catalogo.} Gianmarco vede il Mixing Desk come
+un ottimo strumento per modellare le dinamiche (pur avendo, confessa, ``un problema
+di memoria con i nomi''). Il docente ricorda che è uno strumento molto flessibile:
+di progettazione, ma anche di \textbf{ricerca e sviluppo}. Si possono passare al
+filtro giochi già pubblicati, per esempio l'\textbf{intero catalogo di un editore},
+per capire che cosa hanno in comune i suoi giochi secondo il Mixing Desk: se il
+proprio gioco ci rientra, o per avere le basi per dire ``questo editore fa queste
+cose; se progetto un gioco di questo tipo ho più possibilità che lo pubblichi''.
+
+L'esempio è di prima mano: ``noi'', cioè \textbf{MS Edizioni}\footnote{La casa editrice
+per cui il docente lavora, come dice lui stesso rispondendo alla domanda ``chi
+sono?''.}, non pubblichiamo giochi per due persone: tutti i giochi in catalogo
+arrivano ad almeno tre. Chi propone un gioco per due va già contro la linea
+editoriale. ``Non è che i giochi da due siano più brutti'': semplicemente il
+dipartimento commerciale gestisce altre cose, e in catalogo non c'è una nicchia per
+i giochi da due. Il settore, poi, è fatto di persone tendenzialmente amichevoli:
+quando arriva un prototipo valido, ma non adatto, il docente di solito consiglia a
+quali editori proporlo, e più volte i prototipi sono stati passati ad altri.
+
+Gianmarco trova la cosa interessante: al di là dei casi noti (Leder Games fa giochi
+asimmetrici, ``e lo sai'') e delle macrocategorie, queste linee editoriali non sono
+palesi\footnote{Qui la trascrizione riporta anche un esempio incomprensibile (``non
+mi aspetto da Minecraft che faccia Tommy Carter''), che non è stato possibile
+ricostruire.}. Arriverà una lezione ``scivolosa'', una delle preferite del docente:
+quella sul \textbf{paragame}, con informazioni importantissime proprio su questo
+ragionamento lato editori. Il docente controlla il calendario: la prossima lezione è
+\textbf{emotional design}, il 21; il paragame è previsto per il \textbf{9 ottobre}.
+``Per ora'': alcune lezioni potrebbero spostarsi in base ai task.
+
+\paragraph{Il corso non è un filtro.} I task informano su ciò che gli studenti sanno
+fare in questo momento, ``ma questo non è un filtro'': il docente non vuole un corso
+da cui si esce bocciati o promossi, ``non è il mio stile''. Vuole che si esca con gli
+strumenti per fare i giochi che si vogliono fare, anche se nel corso, per ragioni
+di tempo e di logistica, non si potrà fare ``un trading card game con 5.000 carte'',
+anche se fosse il proprio sogno. Va interiorizzata l'idea che lo stesso strumento
+può non servire a due persone diverse, o servire in modo diverso. I primi task sono
+abbastanza uniformi come struttura, ma nel progetto lungo di gruppo i docenti si
+aspettano, come negli anni scorsi, progetti molto diversi: l'anno scorso, per
+esempio, sono arrivati un gioco di ruolo da tavolo e un card game. ``Non vogliamo
+una cosa fatta con lo stampino'': si lavori su qualcosa che piace, usandolo come campo
+di prova per le pipeline, i framework, il Mixing Desk, le aree progettabili, i
+personaggi giocabili.
+
+\subsection{\emph{Vast}, Leder Games e le ristampe}
+
+Uno studente torna sul gioco in cui si gioca la caverna: gli interessa molto. È
+\emph{Vast: The Crystal Caverns}, un gioco del 2016, ormai fuori produzione, ``e vorrei
+che lo ripubblicassero'': è dell'editore originale di \emph{Root}, ``il gioco
+asimmetrico prima di \emph{Root}''. Esiste anche una reimplementazione in cui, al
+posto della caverna, c'è una magione infestata (\emph{Vast: The Mysterious Manor},
+del 2019), e una persona gioca la magione. Il docente spera vivamente che lo
+ristampino, e ``se decidono di pubblicarlo, io sono già lì per chiedergli di
+localizzarlo''.
+
+\paragraph{Le ristampe centralizzate.} Qualcuno chiede se all'epoca lo avesse
+localizzato MS Edizioni: forse sì, ma non loro. Il problema è che \textbf{Leder Games}
+ha una \textbf{gestione centralizzata delle ristampe}: chi vuole localizzare i suoi
+giochi in altre lingue non può farlo liberamente, ma solo quando Leder ristampa. È
+Leder ad avvisare: stiamo per ristampare \emph{Root}, volete ristamparlo, quante
+copie? ``Se perdi il treno, ciao''. MS Edizioni ha localizzato con loro un gioco
+(``Aoi'', nella trascrizione\footnote{Il titolo non è ricostruibile con certezza
+dalla trascrizione; si tratta comunque di un gioco Leder Games.}) che è andato
+molto bene, esaurito subito; ma Leder non ha riaperto le ristampe per \textbf{otto
+mesi}, e per otto mesi le persone chiedevano dove trovarlo, e l'editore italiano,
+che voleva ristamparlo, non poteva. Lo fanno per creare scarsità? No: per
+\textbf{assicurarsi che i componenti siano identici in tutte le copie}. Altri editori
+se ne disinteressano, con altre conseguenze: a volte le edizioni locali sono
+migliori delle originali, come certe edizioni coreane \emph{deluxe} dei giochi di
+Reiner Knizia, ``incredibili''. ``È un mondo anche quello'', e se ne parlerà in parte
+nella lezione sul paragame.
+
+\paragraph{Come funziona la caverna.} Un'ultima curiosità su \emph{Vast}: come si
+gioca la caverna? Tendenzialmente la caverna gestisce le \textbf{tessere}: può creare e
+chiudere passaggi in cui si muovono i goblin, il cavaliere, il drago. Il suo obiettivo
+è fare in modo che nessuno degli altri vinca: se qualcuno sta vincendo, gioca per
+mettergli i bastoni tra le ruote. ``Però la caverna può vincere''. ``Bellissimo''. Su
+Vinted si trova qualche copia, ma essendo fuori produzione da anni le copie usate
+hanno ``un costo che non ha senso''. ``Pazienza, ragazzi''.
+
+\subsection{La chiusura}
+
+Mancano otto minuti, che il docente mette ``nello schermo centrale''. Si possono usare
+per cominciare a organizzarsi per il task? ``Assolutamente no'': ``io sono molto
+permissivo, anche se non sembra, ma questo no''. Rispetto alle regole, è rigoroso:
+``in questa casa non si giocano \emph{home rules}, mai''. Per lavorarci anche nel
+tempo libero, poi: se c'è da sistemare un gioco, ``pagatemi e lo sistemiamo''.
+
+Nessun'altra domanda. ``Non è possibile, sono un essere umano, anch'io avrò sbagliato
+qualcosa''. Uno studente osserva che la lezione è molto pratica, e che certe cose
+diventano davvero visualizzabili solo quando si mettono le mani in pasta. Il docente
+è d'accordo: è lì che si capisce, e a quel punto ci sono le email sue, di Daniele e
+di Beatrice. Si scusa per il weekend di mezzo (``peggio per noi, ma peggio anche per
+voi''): sarà impegnato a una manifestazione\footnote{La trascrizione dice ``c'è il to
+play questo weekend'': probabilmente un evento o una fiera di giochi, non
+identificabile con certezza.}, ma risponderà entro 24 ore. ``Fate domande, vi
+prego, prima che sia troppo tardi''. ``Io ho il cervello in pappa'', confessa
+qualcuno.
+
+L'anticipazione: la prossima lezione è l'\textbf{emotional design}, ``per me una
+lezione importantissima, veramente'', con concetti molto forti che chiariranno molte
+cose dette finora, e con parti interattive che apriranno conversazioni. Ma prima,
+all'inizio, \textbf{20-30 minuti} per guardare insieme i task, con commenti e
+feedback. ``Siete persone libere con agency'', e il docente lascia andare la classe
+``in pace o in guerra, a seconda di come vi sentite''. ``Buon lavoro, ci vediamo
+lunedì''. ``Buon weekend e buon task''.
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item La \textbf{coesione tematico-meccanica} è un valore per il docente, ma non
+        l'unico: i giochi astratti (Nikoli, lo Slitherlink) si apprezzano anche
+        senza tema. Fallisce il gioco che si presenta come narrativo e non lo è;
+        vince l'astratto che riesce comunque a comunicare un tema. I componenti
+        vanno giudicati rispetto alle aspettative del genere (\emph{Nemesis} contro
+        \emph{The Gallerist}) e al loro uso tematico.
+  \item \textbf{Player} è la persona che gioca, fuori dal gioco; \textbf{character}
+        è chi si è nell'universo narrativo (nome, background, storia);
+        \textbf{role} è l'insieme di doveri, autorità e possibilità meccaniche.
+        Il ruolo c'è quasi sempre (scacchi, \emph{Pong}, \emph{The Gallerist}),
+        il personaggio no. L'agency passa dal ruolo; ma il ruolo da solo è freddo.
+  \item Un personaggio non è giocabile solo perché qualcuno può interpretarlo
+        (Aragorn che aspetta in taverna; i PNG ``non giocabili'' che qualcuno
+        gioca). I \textbf{quattro pilastri} del personaggio giocabile sono
+        \textbf{chiarezza}, \textbf{connettività}, \textbf{spinte} e
+        \textbf{attività}, e valgono solo insieme.
+  \item \textbf{Chiarezza}: il personaggio dice come va giocato. Le sette schede di
+        Joey Doe (etichetta, caratteristiche, seconda persona, prima persona, foto,
+        oggetti, istruzioni di comportamento) danno informazioni diverse: la voce in
+        prima persona permette punti di vista contrastanti; la foto dà mood e
+        costume; i prop danno agency. Detective come personaggio o come ruolo? Più
+        parole non vuol dire più chiarezza (Dogma 99).
+  \item \textbf{Connettività}: niente lupi solitari. Di solito tre cerchie separate
+        (lavoro, amicizia, famiglia), ognuna una direzione di gioco. Le relazioni
+        \textbf{esistono solo se le giochi}, e solo se l'altro capo del filo è in
+        gioco.
+  \item \textbf{Spinte}: motivazioni e obiettivi a breve e lungo termine.
+        \textbf{Attività}: ciò che si può e si deve fare per inseguirle. Una spinta
+        irraggiungibile in gioco (il dittatore assente) è solo background. Il
+        background extra è lecito (la camicia hawaiana), ma non rende più
+        giocabili. I pilastri dialogano con il Player Involvement Model senza
+        coincidere.
+  \item \textbf{Chi decide chi siamo}: tre slider designer--player per
+        \textbf{estetica} (\emph{Witch} contro il riquadro di D\&D),
+        \textbf{fiction} (\emph{Lady Blackbird} contro \emph{Non cedere al sonno})
+        e \textbf{ruolo} (i libretti di \emph{Apocalypse World} contro le abilità
+        scelte in D\&D). Prescrivere toglie libertà ma dà prevedibilità, controllo
+        sul tema e coerenza.
+  \item Oltre ai personaggi giocabili ci sono \textbf{spettatori} (i passanti di un
+        LARP urbano), \textbf{componenti} (gli scacchi viventi), \textbf{NPC}
+        (funzioni di facilitazione con obiettivi meta) e \textbf{arbitri}; e altri
+        ruoli non ancora codificati.
+  \item Lo \textbf{spazio} è un'area progettabile: dungeon, deserto, villaggio,
+        Titanic, metropoli e guerra suggeriscono attività, pericoli, priorità e
+        scale diverse, attraverso il costruttivismo personale. Le affordance
+        dipendono da chi si è. I personaggi possono non essere umani (la caverna
+        di \emph{Vast}, \emph{Salvage Crew}, gli animali).
+  \item Il \textbf{task} (per il 21 settembre): una scheda di massimo una pagina per
+        un LARP a una serata di gala nella Milano contemporanea urban fantasy;
+        chiara, connessa, con spinta e attività; tre cerchie mutuamente esclusive
+        con due compagni ciascuna (sei noti, due ignoti su nove); forma libera,
+        niente AI; potere sovrannaturale facoltativo, ma come meccanica, non come
+        \emph{wishful thinking}.
+  \item Il test pratico: appena entrati al gala, \textbf{``che cosa faccio
+        adesso?''}. Due o tre risposte in direzioni diverse vogliono dire un
+        personaggio giocabile. Il pazzo senza obiettivi e il misterioso nell'angolo
+        non lo sono; serve sempre un alibi per essere lì.
+  \item Il Mixing Desk serve anche alla \textbf{ricerca}: per esempio per leggere il
+        catalogo di un editore. Le dinamiche esistono solo quando qualcuno gioca: sono
+        il territorio del \textbf{playtest}. Il corso non è un filtro: fate
+        personaggi, e giochi, che vorreste giocare.
+\end{itemize}

@@ -1,0 +1,52 @@
+\section{Il generatore di casse}
+
+Premendo \textbf{F} (o il tasto sinistro del pad) compare una cassa davanti all'eroe. Le cariche sono tre; quando finiscono si aspettano 5\,s e tornano tutte. Le casse si impilano, così si sale su muri che col salto non si passano (il muro di 4,6\,m del livello 1). Nel C++: \texttt{UPlatformerCrateSpawnerComponent} e \texttt{ASpawnedCrate}.
+
+\begin{ricetta}
+  \item Blueprint \var{BP\_Cassa} (Actor): un cubo 80\,cm (scala 0,8) con collisione \emph{BlockAll}, tag \var{NoSafeSpot}, \emph{Initial Life Span} = 25.
+  \item In \var{BP\_Eroe} (o in un componente \var{AC\_Casse}): \var{Cariche} (Integer, 3), \var{CaricheMax} (3), \var{InRicarica} (Bool), \var{CasseVive} (Array di \var{BP\_Cassa}).
+  \item \var{IA\_GeneraCassa} (Digital) mappata su F e \emph{Gamepad Face Button Left}.
+\end{ricetta}
+
+\subsection{Dove mettere la cassa}
+
+Il punto davanti all'eroe è a 130\,cm. Da lì un raggio scende fino a 3\,m: se colpisce qualcosa (pavimento o un'altra cassa) la cassa si appoggia sopra; altrimenti compare in aria e cade (ha la fisica spenta, quindi resta lì: è voluto, si può usare come gradino a mezz'aria).
+
+\begin{bpgraph}
+\bpnode{ia}{(0,0)}{bpev}{EnhancedInputAction IA\_GeneraCassa}{-}{exec/Triggered,exec/Started,exec/Completed}
+\bpnode{c}{\sotto{ia}{0}{-0.4}}{bppure}{Cariche $>$ 0 AND HaAbilita(GeneratoreCasse)}{-}{bool/}
+\maxx{m1}{ia,c}
+\bpnode[2.4]{br}{\dxy{m1}{ia}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{p}{\sotto{br}{0}{-0.8}}{bppure}{Loc + Forward $\cdot$ 130 + (0 0 150)}{-}{vec/Alto}
+\bpnode{lt}{\dxy{p}{br}{0.6}{0}}{bpfn}{Line Trace By Channel}{exec/,vec/Start: Alto,vec/End: Alto $-$ (0 0 300),enum/Visibility}{exec/,struct/Out Hit,bool/Return Value}
+\bpexec{ia-out2}{br-in1}\bpwire{bool}{c-out1}{br-in2}\bpexec{br-out1}{lt-in1}\bpwire{vec}{p-out1}{lt-in2}
+\end{bpgraph}
+
+\begin{bpgraph}
+\bpnode{bh}{(0,0)}{bpstruct}{Break Hit Result}{struct/Out Hit}{bool/Blocking Hit,vec/Impact Point}
+\bpnode{sel}{\dx{bh}{0.6}{0}}{bppure}{Select Vector}{vec/A: Impact Point + (0 0 40),vec/B: Alto,bool/Pick A: Blocking Hit}{vec/}
+\bpnode{mt}{\dx{sel}{0.6}{0}}{bppure}{Make Transform}{vec/Location,rot/Rotation: Yaw dell'eroe,vec/Scale (1 1 1)}{struct/}
+\bpnode{sp}{\dx{mt}{0.6}{0.4}}{bpfn}{SpawnActor BP\_Cassa}{exec/,class/Class,struct/Spawn Transform,enum/Collision: Adjust If Possible}{exec/,obj/Return Value}
+\bpwire{vec}{bh-out2}{sel-in1}\bpwire{bool}{bh-out1}{sel-in3}\bpwire{vec}{sel-out1}{mt-in1}\bpwire{struct}{mt-out1}{sp-in3}
+\end{bpgraph}
+
+Il \emph{Collision Handling Override} su \emph{Try To Adjust Location, But Always Spawn} è importante: se la cassa tocca appena l'eroe, viene spostata invece di non comparire.
+
+\subsection{Contare le cariche e ricaricare}
+
+\begin{bpgraph}
+\bpnode{x}{(0,0)}{bpflow}{(dopo lo Spawn)}{-}{exec/,obj/Cassa}
+\bpnode{add}{\dx{x}{0.6}{0}}{bpfn}{ADD (Array)}{exec/,wild/CasseVive,obj/Cassa}{exec/}
+\bpnode{dec}{\dx{add}{0.6}{0}}{bpfn}{Decrement Int}{exec/,int/Cariche}{exec/,int/}
+\bpnode{c}{\sotto{dec}{0}{-0.4}}{bppure}{Cariche == 0 AND NOT InRicarica}{int/}{bool/}
+\maxx{m1}{dec,c}
+\bpnode[2.4]{br}{\dxy{m1}{x}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{s}{\dx{br}{0.6}{0}}{bpvarh}{Set InRicarica}{exec/,bool/true}{exec/}
+\bpnode{tm}{\dx{s}{0.6}{0}}{bpfn}{Set Timer by Function Name}{exec/,str/Function Name: Ricarica,float/Time 5.0,bool/Looping false}{exec/}
+\bpexec{x-out1}{add-in1}\bpwire{obj}{x-out2}{add-in3}\bpexec{add-out1}{dec-in1}\bpwire{int}{dec-out2}{c-in1}
+\bpexec{dec-out1}{br-in1}\bpwire{bool}{c-out1}{br-in2}\bpexec{br-out1}{s-in1}\bpexec{s-out1}{tm-in1}
+\end{bpgraph}
+
+La funzione \var{Ricarica} rimette \var{Cariche} = \var{CaricheMax} e \var{InRicarica} = false. Per non riempire il livello, se \var{CasseVive} ha più di 6 elementi distruggete la più vecchia (\nodo{GET} indice 0 $\rightarrow$ \nodo{Destroy Actor} $\rightarrow$ \nodo{Remove Index} 0). Le casse che muoiono da sole dopo 25\,s lasciano un riferimento non valido nell'array: ripulitelo con \nodo{Is Valid} prima di usarlo.
+
+\ninja{Il timer si avvia solo quando le cariche arrivano a zero, non a ogni cassa. È la regola del brief (``3 volte, poi 5 secondi''), ed è più leggibile per il giocatore: l'HUD mostra ``Ricarica\dots'' e un numero che scende (\nodo{Get Timer Remaining Time by Function Name}).}

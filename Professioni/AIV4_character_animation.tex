@@ -1,0 +1,1002 @@
+% =====================================================================
+%  Professioni 4 — Il rigger, l'animatore e il technical animator
+%  Fonte: trascrizione della presentazione del corso di character
+%  animation ai Dev Days (AIV4): un incontro online di circa un'ora,
+%  in tarda mattinata, tenuto da Yuri Perrini, coordinatore del corso di
+%  Character Animation di AIV. Circa 22 partecipanti, in parte del primo
+%  anno e in parte di anni successivi; slide e siti condivisi a schermo;
+%  ampia parte finale di domande, a voce e in chat.
+%  Pacchetti richiesti nel preambolo del libro:
+%    \usepackage[utf8]{inputenc}, \usepackage{booktabs},
+%    \usepackage{tikz} con
+%    \usetikzlibrary{arrows.meta,positioning,calc,fit}
+%
+%  Collocazione nel libro: parte "Alcune Professioni nel Mondo
+%  Videoludico", dopo AIV3_narrative_design (3.5).
+%  Tutte le etichette di questo capitolo hanno il prefisso "p4:".
+% =====================================================================
+
+\chapter[Rigger, animatore e technical animator]{Il rigger, l'animatore e
+il technical animator: la character animation per i videogiochi}
+\label{p4:cap:animation}
+
+Fra le presentazioni di corso dei Dev Days (capitolo~\ref{p1:cap:devdays})
+c'è quella di \textbf{Character Animation}, tenuta dal coordinatore del corso,
+\textbf{Yuri Perrini}. Come le altre, non serve tanto a spiegare il corso ai
+suoi iscritti quanto a far capire a tutti \textbf{come collaborare con
+animatori e rigger} durante i progetti interdisciplinari (i Dev Projects,
+sezione~\ref{p1:sec:devprojects}), quali figure professionali possono uscire
+dal corso e ``qual è l'anima'' di ciascuna specialità.
+
+L'incontro si tiene online. All'inizio il relatore conta ``una ventina'' di
+partecipanti, poi ``intorno ai 20, intorno a 22, compreso me''. Non sono
+tutti del primo anno: alcuni vengono da una vecchia scuola chiamata ``Event
+Horizon''\footnote{Così nella trascrizione; il nome non è verificabile. Dal
+contesto, una scuola confluita in AIV o i cui studenti sono stati
+ricollocati in AIV ad anni successivi al primo.} e sono al secondo anno,
+alcuni programmatori addirittura al terzo. La trascrizione non riporta né la
+data né l'ora; il relatore chiude dicendo che i ragazzi ``hanno fame e
+vogliono andare a pranzo'', quindi l'incontro si tiene in tarda mattinata,
+con ogni probabilità in uno dei giorni della settimana dei Dev Days, fra il
+5 e il 9 ottobre 2026\footnote{Per la deduzione delle date della settimana si
+veda il capitolo~\ref{p1:cap:devdays}. Anche il relatore conferma l'anno: dice
+di lavorare nell'animazione ``dal 2009 circa, quindi sono 17 anni''.}.
+
+Il relatore avverte subito che vorrebbe una lezione ``molto, molto
+interattiva'': visto che il pubblico non è fatto di studenti di character
+animation, invece di un \emph{deep dive} sull'animazione e sul rigging,
+``che magari a voi interessano parzialmente'', preferisce che gli si chieda
+come quelle figure possano essere utili: ``se devo progettare questo
+videogioco, cosa mi serve? Quanto può produrre un animatore, per sapere
+quanti animatori mi servono per il mio progetto?''. E infatti la seconda
+metà dell'incontro è dedicata all'ingresso nell'industria (portfolio,
+curriculum, stipendi, test) e alle domande.
+
+Avvertenza di lettura: la trascrizione è automatica. Si apre con una frase
+allucinata dal software (``Signora Presidente, onorevoli colleghi'') e
+contiene almeno due blocchi di testo senza senso ripetuti più volte (uno a
+metà del discorso sulle figure professionali, ``Quindi, personalmente,
+questa è la prima cosa che succede'', e uno verso la fine, ``la capacità di
+impostare la loro dottrina sul mercato del lavoro''), che qui sono stati
+ignorati. Storpia inoltre molti nomi: AIV diventa ``Ive'', ``Dive'',
+``Hive''; ArtStation ``RStation''; \emph{The Last of Us} ``delasto vase'';
+Unreal Engine ``Arial Engine''; il technical animator ``Technicolimator''.
+Dove la ricostruzione è sicura si usa la forma corretta; dove non lo è lo si
+dice in nota. Durante la parte sull'industria il relatore mostra a schermo
+alcuni siti (un foglio Google con le offerte di lavoro, un foglio con gli
+stipendi, Numbeo) e i profili LinkedIn di alcuni conoscenti: le cifre
+riportate sono quelle lette a voce in quel momento.
+
+Il percorso del capitolo:
+\begin{enumerate}
+  \item il corso e il relatore (sezione~\ref{p4:sec:corso});
+  \item lo \textbf{spettro} delle figure, dall'artistico al tecnico, e il
+        technical animator (sezione~\ref{p4:sec:spettro});
+  \item dove si colloca il rigging e l'animazione nella \textbf{pipeline}
+        degli asset, e il lavoro in parallelo
+        (sezione~\ref{p4:sec:pipeline});
+  \item cambiare specializzazione si può (sezione~\ref{p4:sec:cambiare});
+  \item dal rig all'animazione: gameplay e cinematiche
+        (sezione~\ref{p4:sec:animazioni});
+  \item il \textbf{programma} dei due anni (sezione~\ref{p4:sec:programma});
+  \item entrare nell'industria: portfolio, network, curriculum, cover
+        letter (sezione~\ref{p4:sec:industria});
+  \item le offerte di lavoro, gli stipendi, il costo della vita
+        (sezione~\ref{p4:sec:stipendi});
+  \item l'età, la provenienza, gli pseudonimi, il portfolio
+        (sezione~\ref{p4:sec:eta});
+  \item genere e negoziazione (sezione~\ref{p4:sec:genere});
+  \item i \textbf{test} di ammissione (sezione~\ref{p4:sec:test});
+  \item le domande finali (sezione~\ref{p4:sec:domande}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{Il corso e il relatore}
+\label{p4:sec:corso}
+
+\subsection{Un corso verticale}
+
+Character Animation è ``uno dei corsi un po' più giovani'' di AIV, creato più
+di recente per rispondere a un'esigenza precisa: formare figure
+\textbf{specializzate in maniera verticale sul rigging e sull'animazione per
+i videogiochi}. Per due anni gli studenti si concentrano principalmente su
+rigging e animazione, con l'eccezione di qualche modulo propedeutico, pensato
+per capire il workflow e la pipeline intera dello sviluppo:
+\begin{itemize}
+  \item un modulo iniziale di \textbf{modellazione}, ``solo un po' per
+        prendere dimestichezza col software'';
+  \item un modulo di \textbf{Unity} e uno di \textbf{Unreal}, ``senza
+        ovviamente avere pretese di rubare il lavoro ai programmatori, ai
+        level designer, ai game designer'', ma per capire come integrare le
+        proprie animazioni e i propri rig nel motore.
+\end{itemize}
+
+\subsection{Chi è il relatore}
+
+Perrini lavora nell'animazione \textbf{dal 2009 circa}, ``quindi sono 17
+anni''. Ha vissuto in \textbf{Islanda e in Canada}, lavorando a produzioni
+come \emph{Stranger Things}, \emph{Il gatto con gli stivali} e \emph{Rebel
+Moon}\footnote{Così nella trascrizione; il relatore non specifica a quale
+titolo della serie del Gatto con gli stivali, né quale sia stato il suo
+ruolo nelle singole produzioni.}: principalmente televisione e cinema. Ha
+fatto anche varie esperienze nel videogioco:
+\begin{itemize}
+  \item con \textbf{Stan Lee}, che prima di morire\footnote{Stan Lee è morto
+        il 12 novembre 2018.} ha creato \textbf{Stan Lee's Kids Universe},
+        ``una sorta di app con vari videogiochi dentro per ragazzi'' sulle
+        sue proprietà intellettuali, ``non solo Marvel'';
+  \item con i ragazzi di un piccolo studio\footnote{Nella trascrizione
+        ``Ravig Studio'': il nome non è verificabile, come quello del gioco
+        (``Fade Out'').} che stanno per lanciare su Steam \emph{Fade Out},
+        un horror cooperativo multigiocatore indie\footnote{Nella
+        trascrizione ``un doppia indie horror co-op multiplayer'': forse
+        ``un double-A indie'', oppure ``un horror indie co-op''. Il
+        relatore ne mostra il trailer e mette il link in chat.};
+  \item con \textbf{One-O-One Games}\footnote{Nella trascrizione ``101
+        Games''. È lo studio milanese di \emph{Il suicidio di Rachel
+        Foster} (2020), citato più avanti.}.
+\end{itemize}
+Online si presenta soprattutto con la parte TV e cinema (``se mi cercate
+online, probabilmente trovate anche dove ho fatto le scuole elementari''),
+quindi le esperienze nel game non si trovano facilmente. Ha fondato uno
+studio\footnote{Nella trascrizione ``Mostry for You''; la grafia esatta non è
+verificabile.} con cui sviluppa prodotti \emph{real time}, non solo
+videogiochi ma anche AR e VR, e offre servizi di assistenza alle produzioni
+di serie TV, cortometraggi, pubblicità.
+
+Insegna anch'egli dal 2009: ha cominciato a lavorare e a insegnare
+contemporaneamente, ``in una miriade di posti''. Da 12 anni è
+all'\textbf{IED di Roma}\footnote{Nella trascrizione ``all'OIED di Roma'':
+l'Istituto Europeo di Design.}, dove è anche coordinatore; ha insegnato
+all'\textbf{American University of Rome}; in una scuola online ``paragonabile
+o simile ad AIV'', ma ``di base australiana''\footnote{Il nome della scuola
+cade nella trascrizione. Una scuola online australiana di computer grafica
+molto nota è CG Spectrum, ma l'identificazione è solo un'ipotesi.}; e ad
+\textbf{Animation Mentor}, scuola online di animazione che ``forse qualcuno
+di voi conoscerà''. Insegnare è una cosa che fa ``molto volentieri per
+passione'', come piccola parte della settimana lavorativa: di solito non più
+di \textbf{15 ore alla settimana}.
+
+\subsection{Le due anime del corso}
+
+Lo studio l'ha fondato con il socio \textbf{Daniele Dolci}, che è anche
+co-ideatore del corso di Character Animation insieme ad Andrea
+Morini\footnote{Andrea Morini è uno dei due relatori dell'incontro di
+apertura dei Dev Days (capitolo~\ref{p1:cap:devdays}).}: gli iscritti al
+corso trovano entrambi. Il relatore lo racconta perché le due persone
+rappresentano bene \textbf{le due anime del corso}:
+\begin{itemize}
+  \item Perrini, nonostante uno spiccato senso tecnico (``probabilmente sono
+        un programmatore mancato'': da giovanissimo faceva il web developer),
+        ha sempre avuto un'anima più \textbf{creativa e artistica}. Si è
+        avvicinato al 3D pensando di fare scultura e modellazione di
+        character e creature; poi ha scoperto l'amore per l'animazione; ma
+        sia lo sculpting sia l'animazione erano, nella sua testa, ``servi''
+        dell'idea di fare la \textbf{regia} di un prodotto. Negli ultimi anni
+        è diventato regista: sta per uscire una serie animata che ha
+        interamente diretto, \emph{Melody e Momon}\footnote{Così nella
+        trascrizione; il titolo non è verificabile.}, 52 episodi da 7
+        minuti, sulla Rai;
+  \item Dolci è un \textbf{rigger}, figura più tecnica: ingegnere informatico
+        e programmatore, con una laurea triennale in ingegneria informatica e
+        una magistrale\footnote{Nella trascrizione ``una laurea magistrale in
+        matematica astratta, ingegneria avanzata, AI'': l'elenco è confuso e
+        non permette di ricostruire con certezza il titolo del corso di
+        laurea.} con tesi su machine learning e intelligenza artificiale
+        applicati alla computer grafica.
+\end{itemize}
+Due persone, dunque: una con un'anima \textbf{tecnico-scientifica}, una con
+un'anima \textbf{creativo-artistica}.
+
+% ---------------------------------------------------------------------
+\section{Dall'artistico al tecnico: lo spettro delle figure}
+\label{p4:sec:spettro}
+
+Le figure della produzione di un videogioco si possono disporre lungo uno
+\textbf{spettro} (figura~\ref{p4:fig:spettro}):
+\begin{itemize}
+  \item a un estremo, le figure più artistiche: \textbf{modellatori,
+        texture artist, concept designer}, persone che vengono magari dal
+        disegno o dalla scultura;
+  \item poi gli \textbf{animatori}, che oggi, soprattutto nel videogioco,
+        sono persone appassionate alla parte creativa e artistica ma che
+        devono comunque conoscere una parte tecnica;
+  \item poi il \textbf{technical animator}, figura che esce dal corso;
+  \item all'altro estremo, le figure tecniche ``vere e proprie'': il
+        \textbf{rigger}, il programmatore, il level designer, chi fa
+        Blueprint, chi imposta le \emph{state machine}.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=Stealth, font=\small,
+  box/.style={draw, rounded corners, align=center, minimum height=1cm,
+              text width=2.2cm, font=\scriptsize}]
+  \draw[<->, thick] (0,0) -- (12,0);
+  \node[below, font=\scriptsize] at (0.6,-0.1) {creativo-artistico};
+  \node[below, font=\scriptsize] at (11.4,-0.1) {tecnico};
+  \node[box, anchor=south] (a) at (1.3,0.55) {concept designer,\\modellatori,\\texture artist};
+  \node[box, anchor=south] (b) at (4.4,0.55) {animatori\\(creativi, ma con\\base tecnica)};
+  \node[box, fill=gray!15, anchor=south] (c) at (7.5,0.55) {technical\\animator\\(ibrido)};
+  \node[box, anchor=south] (d) at (10.6,0.55) {rigger, programmatori,\\level designer,\\Blueprint, state machine};
+  \foreach \n/\x in {a/1.3,b/4.4,c/7.5,d/10.6} \draw (\x,0.55) -- (\x,0);
+\end{tikzpicture}
+\caption{Lo spettro delle figure descritto dal relatore, dall'anima
+creativo-artistica a quella tecnica; il technical animator sta nel mezzo.
+Ricostruzione schematica.}
+\label{p4:fig:spettro}
+\end{figure}
+
+\subsection{Il technical animator}
+
+Il relatore chiede chi sa che cos'è un \textbf{technical animator}, o chi non
+ne ha mai sentito parlare. È una figura che esiste \textbf{principalmente
+nel videogioco}: qualcuno che conosce un po' la parte tecnica (in Unreal
+Engine, in Unity), un po' quella artistica, e anche la parte di
+\emph{effects} e simulazioni. In una produzione il technical animator è la
+persona che:
+\begin{itemize}
+  \item \textbf{aggiusta le cose} e si assicura che tutto venga esportato in
+        maniera corretta;
+  \item fa le \textbf{simulazioni}: per esempio, in \emph{The Witcher}, i
+        capelli lunghi, i vestiti, le code, ``cose che non sono animate a
+        mano'';
+  \item si occupa di \textbf{retargeting}, cioè di trasferire il
+        \emph{motion capture} su personaggi \emph{custom}.
+\end{itemize}
+È una figura ibrida fra rig, animazione, pipeline e un po' di simulazione:
+un mix di creativo, artistico e tecnico.
+
+% ---------------------------------------------------------------------
+\section{Dove si collocano rigging e animazione nella pipeline}
+\label{p4:sec:pipeline}
+
+Il relatore mostra una schermata con i corsi di AIV disposti come una
+pipeline. Le \textbf{animazioni e i rig vanno pensati come asset}, al pari
+dei modelli. Il percorso di un asset è (figura~\ref{p4:fig:pipeline}):
+\begin{enumerate}
+  \item si parte dal \textbf{concept art} (che è anche un corso): il design
+        illustrato dei modelli;
+  \item si passa per \textbf{videogame 3D art}, cioè modellatori, texture
+        artist, shading artist, lighting ecc., che rendono tridimensionale e
+        utilizzabile un concept che di solito è solo 2D (si veda il
+        capitolo~\ref{p6:cap:3d});
+  \item già da qui \textbf{comincia una discussione con il rigger},
+        principalmente, ma anche un po' con l'animatore, sull'anatomia del
+        personaggio, su dove devono stare le ossa, su come il rigger vuole la
+        topologia;
+  \item infine si passa a \textbf{character animation}.
+\end{enumerate}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=Stealth, font=\small, node distance=0.6cm,
+  box/.style={draw, rounded corners, align=center, minimum height=0.9cm,
+              text width=2.4cm, font=\scriptsize}]
+  \node[box] (c) {concept art\\(design 2D)};
+  \node[box, right=of c] (m) {videogame 3D art\\(modello, texture,\\shading, luci)};
+  \node[box, right=of m] (r) {rigging\\(ossa, controlli,\\blend shape)};
+  \node[box, right=of r] (a) {animazione\\(gameplay e\\cinematiche)};
+  \draw[->] (c) -- (m); \draw[->] (m) -- (r); \draw[->] (r) -- (a);
+  \draw[<->, dashed] (m.south) .. controls +(0,-0.8) and +(0,-0.8) ..
+    node[below, font=\scriptsize]{discussione su anatomia, ossa, topologia} (r.south);
+  \node[box, text width=10.6cm, above=1.1cm of $(m)!0.5!(r)$] (p)
+    {in parallelo: storytelling/narrative design (dal concept), game design e
+     programmazione (con asset \emph{proxy}, poi sostituiti con quelli
+     definitivi)};
+  \draw[->, dotted] (p.south -| c.north) -- (c.north);
+  \draw[->, dotted] (p.south -| a.north) -- (a.north);
+\end{tikzpicture}
+\caption{La pipeline degli asset come la descrive il relatore: le animazioni e
+i rig sono asset come gli altri. Ricostruzione schematica della schermata
+mostrata.}
+\label{p4:fig:pipeline}
+\end{figure}
+
+\subsection{La topologia e le preferenze del rigger}
+
+Il relatore chiede chi è di videogame 3D art: rispondono Giulia, Stefano,
+Alessandro; e chi ha già un'idea della specializzazione che preferisce.
+Giulia dice \emph{character and environment}. A lei, e a tutti i futuri
+modellatori, il relatore dà un avvertimento: nel corso verranno insegnate
+delle \textbf{best practice sulla topologia}; ``preparati: verranno
+completamente ribaltate da ogni rigger che incontrerai nella tua carriera''.
+Ogni rigger ha le sue preferenze: ``no, non voglio quell'edge loop a 5 punte
+là, ma ne voglio una a 3 più qua''\footnote{Il riferimento è ai
+\emph{poli} della topologia, cioè ai vertici in cui convergono tre o cinque
+spigoli invece dei quattro di una griglia regolare; la loro posizione
+influisce su come la mesh si deforma.}. Bisogna imparare a capire
+\textbf{che cosa} si sta chiedendo e \textbf{perché}: la topologia di un
+modello definisce come il modello si deforma, e a seconda di come il rigger
+imposta il setup ha bisogno di cose diverse per evitare che si deformi troppo
+o troppo poco.
+
+\subsection{Il lavoro in parallelo}
+
+Il passaggio da 3D art a character animation è uno dei principali momenti in
+cui \textbf{si comincia a lavorare in parallelo su più fronti}:
+\begin{itemize}
+  \item la scrittura\footnote{Nella trascrizione ``strategic writing'', e
+        poco dopo ``Narrative Design fa parte, nell'ambito videogioco, di
+        Strategic Writing''. Con ogni probabilità è la storpiatura del nome
+        di un'area o di un corso di scrittura (\emph{storytelling and
+        writing}?), di cui il narrative design sarebbe la declinazione per i
+        videogiochi; non è verificabile.} sarà già partita insieme al
+        concept; il narrative design ne è la declinazione per il videogioco;
+  \item game programming e game design saranno partiti più o meno in
+        contemporanea allo sviluppo degli asset. Di solito si comincia a
+        sviluppare game design e programmazione con degli \textbf{asset
+        proxy}: non il personaggio definitivo, non il rig definitivo, non
+        l'animazione definitiva, che vengono poi sostituiti (\emph{swap}) con
+        quelli giusti.
+\end{itemize}
+Da un certo punto in poi è come se tutti i corsi lavorassero in
+contemporanea. Immaginando di essere in Ubisoft, ognuno dei corsi rappresenta
+uno step produttivo, \textbf{un dipartimento} dello studio.
+
+% ---------------------------------------------------------------------
+\section{Cambiare specializzazione si può}
+\label{p4:sec:cambiare}
+
+Nel mondo del lavoro, sviluppando competenze oltre ciò che si è studiato, ci
+si può occupare di più cose, soprattutto negli studi di dimensioni medie e
+medio-piccole (``dalle 150 persone in giù''). Anzi, \textbf{sapersi occupare
+di più cose rende più difficilmente sostituibili}.
+
+Due esempi:
+\begin{itemize}
+  \item Andrea Priore, un buon amico conosciuto quando lavorava in
+        \textbf{Reply}, dove è stato 13 anni, occupandosi principalmente di
+        modellazione e di arte 2D e 3D; si è poi dato alla character
+        animation ed è diventato animatore ``all'interno della stessa
+        azienda''; ora è in Ubisoft\footnote{La trascrizione è contraddittoria
+        (``adesso sta Ubisoft'', poi ``adesso è diventato animatore in
+        Ubisoft all'interno della stessa azienda''): non è chiaro se il
+        passaggio da modellatore ad animatore sia avvenuto in Reply o in
+        Ubisoft. Il relatore mostra il profilo LinkedIn.};
+  \item un suo insegnante, David Weatherly\footnote{Grafia del cognome
+        incerta.}, è stato in \textbf{DreamWorks} ``per una vita'': faceva
+        inizialmente i rig, poi è diventato animatore attraverso una sorta di
+        test, di concorso interno.
+\end{itemize}
+
+Da studenti si è portati a fare una scelta, ma anche se ora si è scelta una
+strada \textbf{non è impossibile cambiarla}. Per ragioni esterne (``arriva
+l'AI, la modellazione cala tantissimo, e allora io che mi sono dato alla
+modellazione decido di darmi all'animazione, che invece vedo che cala di
+meno'': ``ipotesi del tutto campata in aria'') o perché ci si annoia, come è
+successo al relatore. Lui si è annoiato della modellazione: ``una volta che
+ho modellato un umano, un bambino, un cane, un gatto, sembra che sto rifacendo
+versioni diverse della stessa cosa''. Come animatore, invece, ha
+l'impressione di essere un \textbf{attore}, di recitare ogni volta una parte
+diversa, soprattutto nell'animazione per le cinematiche, dove il personaggio
+deve parlare e mostrare emozioni (``immaginatevi un \emph{The Last of
+Us}''): si fa comunque una performance, soprattutto quando il personaggio è
+cartoon, e quindi \textbf{senza motion capture}.
+
+% ---------------------------------------------------------------------
+\section{Dal rig all'animazione: gameplay e cinematiche}
+\label{p4:sec:animazioni}
+
+Arrivati al personaggio modellato, nel corso si comincia a \textbf{riggarlo}:
+prima si mettono le \textbf{ossa}, poi i \textbf{controlli}, si fanno le
+\textbf{blend shape}, fino ad arrivare a un personaggio funzionante. Quando
+il personaggio è riggato\footnote{Nella trascrizione ``quando il personaggio
+è arricchito'': con ogni probabilità ``riggato''.}, entra in gioco
+l'\textbf{animatore}, che si occupa di due tipi di animazione:
+\begin{itemize}
+  \item le \textbf{animazioni gameplay} (\emph{in-game animation});
+  \item le \textbf{animazioni cinematiche}.
+\end{itemize}
+Il corso fa anche un po' di gameplay animation, soprattutto al primo anno, ma
+si concentra sulle \textbf{cinematiche}, perché sono più complesse: ``se sai
+fare animazioni cinematiche, quasi al 100\% sai fare animazioni gameplay''.
+
+\subsection{Le animazioni gameplay: i loop}
+
+Le animazioni gameplay sono tendenzialmente dei \textbf{loop}. C'è tutta la
+\textbf{locomozione}: idle, camminata, giro a destra, giro a sinistra, corsa,
+le transizioni da idle a camminata, da idle a corsa, da camminata a corsa, lo
+stop da corsa a fermo, da corsa a camminata. Più il videogioco è complesso,
+maggiore è il numero di animazioni richieste anche solo per la locomozione,
+per gli attacchi e così via.
+
+L'esempio è \emph{The Last of Us}, gioco tripla A con motion capture: lo
+stesso personaggio ha \textbf{decine di idle} diverse. Sono tutti loop,
+programmati in modo che, magari in maniera casuale o a rotazione, dopo otto
+secondi di personaggio fermo parta un idle, poi un altro. In alcuni casi due
+animazioni sono \textbf{sovrapposte}: un idle di base e, sopra, una variante
+(si aggiusta i capelli, gioca con un oggetto che ha in mano).
+
+Anche gli idle sono \textbf{specifici del personaggio}. C'è una ragazza
+(``se avete giocato, no spoiler'')\footnote{Con ogni probabilità Abby, in
+\emph{The Last of Us Part II} (2020).}, un personaggio tosto, che ha degli
+idle più forti, mascolini: si scrocchia le mani, si aggiusta la spalla, si
+pulisce il naso, ``così come farebbe un pugile''. Anche solo con un idle o una
+camminata si racconta il personaggio.
+
+% ---------------------------------------------------------------------
+\section{Il programma dei due anni}
+\label{p4:sec:programma}
+
+Il relatore descrive il programma per far capire che cosa gli studenti di
+character animation possono offrire agli altri (tabella~\ref{p4:tab:programma}).
+
+\subsection{Il primo anno}
+
+Oltre alle basi di modellazione, il primo anno ha due filoni.
+
+\paragraph{Animazione.} Si parte dalla \textbf{pallina che rimbalza}, e se ne
+fanno vari tipi: palle con pesi diversi, la palla che fa una corsa a ostacoli,
+la palla con la coda, la palla con personalità. Poi i \textbf{cicli di
+camminata}: prima solo una palla con i piedi, poi tutto il corpo senza le
+braccia, poi il corpo intero, poi la camminata con personalità, la corsa. Poi
+idle, salto, attacco singolo, attacco doppio (combo, melee), ``dead
+cycle''\footnote{Così nella trascrizione: forse l'animazione di morte
+(\emph{death}), forse un altro ciclo.}. Tutte queste animazioni si mettono
+insieme nell'ultimo modulo del primo anno, quello di \textbf{Unreal Engine}:
+con una \emph{state machine} si impara a muovere il proprio personaggio in
+Unreal con le proprie animazioni. Per questo gli studenti sono incentivati a
+fare tutte le animazioni con lo stesso personaggio. Si comincia anche un po'
+di \textbf{meccanica del corpo}, un po' di combattimento.
+
+\paragraph{Rigging.} Si parte da esercizi semplici, come riggare uno
+spazzolino o una ruota panoramica, e si arriva a riggare il corpo, prima in
+maniera semplice, poi complessa, con l'aggiunta di \textbf{blend shape
+correttive} (per quando si piega il gomito, per quando si alza il braccio).
+
+\subsection{Il secondo anno}
+
+\paragraph{Animazione.} Ci si concentra sulla parte \textbf{cinematica}:
+animazione di recitazione (\emph{acting}), meccanica del corpo e combattimenti
+con più personaggi, animazione di \textbf{creature} (quadrupedi, draghi
+ecc.), e \textbf{motion capture e retargeting}, con un workshop fatto anche
+dal vivo.
+
+\paragraph{Rigging.} Si passa al rigging \textbf{facciale} e delle
+\textbf{creature}, e alla programmazione in \textbf{Python} per
+l'automazione, sempre di rig, e per i \emph{pipeline tools}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}lp{5.2cm}p{5.2cm}@{}}
+\toprule
+ & \textbf{Animazione} & \textbf{Rigging} \\
+\midrule
+\textbf{1° anno} & pallina che rimbalza (pesi, ostacoli, coda,
+personalità); cicli di camminata e corsa; idle, salto, attacchi, combo;
+meccanica del corpo; tutto in Unreal con una state machine &
+spazzolino, ruota panoramica; corpo semplice, poi complesso con blend shape
+correttive \\
+\addlinespace
+\textbf{2° anno} & acting; meccanica del corpo e combattimenti a più
+personaggi; creature; motion capture e retargeting (workshop dal vivo) &
+facciale; creature; Python per l'automazione dei rig e i pipeline tools \\
+\bottomrule
+\end{tabular}
+\caption{Il programma del corso di Character Animation come lo riassume il
+relatore. Si aggiungono i moduli propedeutici di modellazione, Unity e
+Unreal.}
+\label{p4:tab:programma}
+\end{table}
+
+\subsection{Quando si collabora}
+
+La collaborazione fra gli altri corsi e Character Animation avviene di solito
+al \textbf{secondo anno di Character Animation}: a volte sono ragazzi di
+secondo con ragazzi di secondo, altre volte ragazzi del secondo anno di
+character con ragazzi del terzo di game design e del secondo di 3D art, ``un
+po' mischiati''.
+
+% ---------------------------------------------------------------------
+\section{Entrare nell'industria}
+\label{p4:sec:industria}
+
+Nel corso ci sono delle slide che si discutono in classe su come entrare
+nell'industria da animatore o da rigger. Il relatore ne mostra alcune, senza
+entrare troppo nel dettaglio, perché ``ci stanno delle cose che si applicano
+un po' a tutti'' (e promette di condividerle). Le linee guida riguardano:
+muovere i primi passi, creare un portfolio, scrivere una \emph{cover letter}
+e un \emph{resume} (il curriculum), affrontare un \textbf{test} se viene
+richiesto (sezione~\ref{p4:sec:test}), creare il proprio \textbf{network}.
+Valgono per tutte le discipline.
+
+\subsection{Il portfolio online}
+
+È importante creare e \textbf{mantenere aggiornato} il proprio portfolio
+online. Chi farà 3D userà probabilmente \textbf{ArtStation}; chi fa cose che
+devono essere viste in video, \textbf{YouTube}; chi fa programmazione magari
+mette delle cose su \textbf{GitHub}, pubblico o privato.
+
+\subsection{Il network}
+
+Il network di contatti non è solo la quantità di persone che si conoscono dal
+vivo, con cui si è studiato. Essendo un'industria che \textbf{si muove molto
+in remoto}, è importante anche:
+\begin{itemize}
+  \item aggiungere tanti contatti su Instagram, Facebook, LinkedIn;
+  \item non vergognarsi di \textbf{chiedere pareri} sul proprio lavoro;
+  \item \textbf{dare feedback} agli altri sul loro lavoro, nella maniera più
+        educata, proattiva e costruttiva possibile.
+\end{itemize}
+Tutte queste persone, potenzialmente più facilmente di un recruiter o di un
+supervisore, stanno lavorando (o un domani lavoreranno) a qualcosa: potranno
+fare il vostro nome, raccomandarvi o darvi delle dritte.
+
+Oltre alla cura online, bisogna partecipare alle \textbf{fiere di settore},
+alle game jam, agli eventi di game dev, conoscere più realtà possibili,
+soprattutto le piccole (``che ne so, la fiera dello sviluppo del videogioco
+di Padova: non esiste, però\dots''): aiutano a entrare in contatto con altre
+persone e a essere ascoltati, in una dimensione umana. Per questo è utile,
+anche per chi è contrario ai social nella vita privata, avere dei
+\textbf{profili social professionali} (Facebook, Instagram ecc.; ``per ora
+TikTok non ha preso, da questo punto di vista; LinkedIn sì''), per fare un po'
+di self-promotion, seguire le persone, restare aggiornati sull'industria.
+
+\subsection{Il curriculum}
+
+Avere sempre un curriculum \textbf{sia in inglese sia in italiano}, ben
+aggiornato. Per un principiante il curriculum deve stare in \textbf{una
+pagina}, e da quella pagina si devono capire le esperienze formative e quelle
+professionali. Per un principiante sono esperienze professionali anche
+\textbf{progetti come quelli di gruppo} che si faranno in AIV, in cui si crea
+un videogioco senza che nessuno paghi, ``in maniera speculativa'', e tutte le
+esperienze assimilabili al settore.
+
+Non è indispensabile né utile mettere altre esperienze. Se il curriculum di
+uno studente dice ``ho fatto per tre anni l'agente immobiliare, per due anni
+ho lavorato all'Eurospin come cassiere''\footnote{Nell'esempio il relatore usa
+il nome di uno dei partecipanti; l'esperienza è inventata.}, non serve: meglio
+un solo paragrafetto, ``esperienze precedenti al di fuori dell'industria'',
+con ``ho fatto questo, questo e questo per $x$ anni'', giusto per far capire
+che si è persone serie, che hanno già fatto altri lavori.
+
+\subsection{La cover letter}
+
+Soprattutto quando ci si candida a studi che interessano, una \textbf{cover
+letter} personalizzata, mandata per mail, può aiutare. È una lettera di
+intenti, di interesse: ``Caro recruiter di One-O-One Games o di Milestone, da
+quando sono piccolo gioco ai giochi MotoGP che sviluppate in Milestone'', o
+``gioco al \emph{Suicidio di Rachel Foster}''; ``vi seguo da molto, ho
+iniziato in questo settore anche sperando di collaborare con realtà come la
+vostra; in particolare credo di essere un buon candidato perché le mie
+competenze XYZ possono tornare utili al dipartimento XYZ''. Bisogna far capire
+di aver \textbf{fatto i compiti a casa}.
+
+% ---------------------------------------------------------------------
+\section{Offerte di lavoro, stipendi, costo della vita}
+\label{p4:sec:stipendi}
+
+\subsection{Il foglio delle offerte}
+
+Ci sono moltissimi siti su cui si postano offerte di lavoro, e c'è un
+\textbf{Google Sheet} tenuto dalla community che ``non tanti conoscono, ma
+secondo me è oro''\footnote{Il relatore ne dà il link in chat, ma la
+trascrizione non riporta il nome del foglio.}. Contiene:
+\begin{itemize}
+  \item una pagina di \textbf{openings}: animatore, modellatore, surfacing,
+        software engineer, producer, CFX (\emph{creature effects artist}),
+        con l'indicazione se il lavoro è sul posto, remoto o ibrido e di
+        quando è stato postato. Da agosto a quel momento le offerte sono
+        \textbf{più di 3.000};
+  \item una pagina \textbf{Studios}, con la lista degli studi di
+        videogiochi, serie TV, cinema: più di 6.000 (6.600 in quel momento);
+  \item una pagina \textbf{Internship}, con gli studi che cercano stagisti:
+        140;
+  \item le posizioni \textbf{entry level} e \emph{postgrad}, per chi si è
+        appena diplomato; ma il relatore manderebbe sempre la candidatura
+        anche se la posizione è per un \emph{mid}, ``perché comunque fai
+        vedere la tua reel, magari piace'';
+  \item una pagina \textbf{Education}: se si vuole fare un corso di FX, si
+        cerca FX e si trova per esempio ArtFX\footnote{Scuola francese di
+        effetti visivi, animazione e videogiochi.}, ``per l'FX una delle più
+        fighe''; ci sono molte scuole e siti online dove fare workshop e
+        proseguire la formazione dopo AIV, circa 150 voci;
+  \item moltissimi siti di interesse: risorse, articoli, materiale di studio,
+        texture, altre job board.
+\end{itemize}
+
+\subsection{Il foglio degli stipendi}
+
+Insieme a questo c'è un secondo foglio, sugli stipendi\footnote{Nella
+trascrizione ``Solti, Salary, Animator'': il nome non è ricostruibile con
+sicurezza. È comunque un foglio compilato in forma anonima dalla community.}:
+``un po' una manna dal cielo'', perché uno aiuta a trovare lavoro e l'altro a
+farsi un'idea dei lavori che si trovano. Lì le persone inseriscono
+\textbf{anonimamente} quanto guadagnano, per quale ruolo, con quale livello di
+seniority, in che città; alcuni dicono anche l'azienda, il genere, se fanno
+parte di un sindacato (\emph{union}).
+
+Gli esempi letti a schermo, per offerte di Ubisoft:
+\begin{itemize}
+  \item un concept artist a \textbf{Bucarest}, tre anni d'esperienza,
+        \emph{regular} (junior-mid): 29.000 lordi, che risultano in 17.000
+        netti;
+  \item un cinematic animator \textbf{junior in Italia}: circa 2.000 al
+        mese;
+  \item un gameplay animator junior in Italia: 28.000; e altri junior a
+        24.000;
+  \item un \emph{mid} con quattro anni d'esperienza: 27.500; un altro mid:
+        27.000. In sintesi, Ubisoft Italia paga gli animatori fra i 24 e i
+        28 mila;
+  \item in \textbf{Svezia}, sempre Ubisoft: 38.000 corone svedesi, che il
+        relatore traduce in 3.375 euro al mese, con cinque anni
+        d'esperienza\footnote{Il relatore dice che le corone svedesi ``se non
+        ricordo male sono abbastanza simili agli euro'': non è così, un euro
+        vale circa 11 corone. La cifra di 3.375 euro al mese che legge è però
+        coerente con 38.000 corone \emph{mensili} al cambio reale.}. Lì poi
+        bisogna fare il conto del costo della vita.
+\end{itemize}
+
+Fra i junior italiani si vede una differenza di genere: nel caso specifico,
+dice il relatore, probabilmente non ha pesato tanto il genere quanto la
+\textbf{negoziazione} del contratto (sezione~\ref{p4:sec:genere}). Un sito del
+genere fa capire che c'è chi prende 24 e chi 28. Quindi, se arriva un'offerta
+da 24, invece di dire ``sì, sì, sono contentissimo'', si può rispondere:
+``Grazie dell'offerta, la sto valutando molto seriamente. Mi piacerebbe
+lavorare con voi. Al momento le mie aspettative salariali sarebbero più
+vicine ai 30.000, ma possiamo sicuramente trovare un accordo. Qual è il limite
+che vi siete imposti per questa posizione? Si può fare qualcosa di meglio?''.
+Se rispondono ``no, assolutamente solo 24'', potrebbe voler dire che ci sono
+persone con una reel un po' migliore disposte a lavorare per quella cifra: si
+accetta, ``allora dopo ci provate''.
+
+\subsection{Il costo della vita: Numbeo}
+
+Il terzo sito è \textbf{Numbeo}, per confrontare il costo della vita, anche
+fra due città. Esempio: si vive a Roma e si riceve un'offerta da Ubisoft in
+Svezia, a \textbf{Malmö}. Il confronto letto a schermo\footnote{Le cifre di
+Numbeo variano nel tempo e sono riportate come il relatore le legge; la
+trascrizione le scrive in modo confuso (``17,35'', ``20,678'', ``7,80'').}:
+\begin{itemize}
+  \item a Malmö la vita costa in generale il 7,5\% in più di Roma, ma
+        includendo l'affitto il costo diventa più basso: a Roma l'affitto
+        pesa molto di più;
+  \item la spesa costa di più a Malmö; il potere d'acquisto, però, a Malmö è
+        il \textbf{56\% più alto};
+  \item stipendio medio netto: circa 1.735 euro a Roma, 2.068 a Malmö;
+  \item affitto di un monolocale fuori dal centro: 780 a Roma, 720 a Malmö;
+  \item per mantenere a Malmö lo stile di vita che a Roma si ha con 4.800
+        euro, ne servono 4.735: più o meno il costo della vita si pareggia.
+\end{itemize}
+La cosa interessante è che alcune voci sono marginali e ci si può
+organizzare: il cappuccino a Malmö costa molto di più, ``porto la macchinetta
+dall'Italia e lì mi risparmio''; in un ristorante non troppo costoso si paga
+persino meno, quindi ``magari mi concedo una roba in più''\footnote{Poco
+prima, però, il relatore aveva detto che ``i ristoranti costano molto di
+più'': dalla trascrizione non si capisce se a Roma o a Malmö.}; il cellulare
+costa di più, quindi si valuta un servizio di eSIM\footnote{Nella trascrizione
+``Iralo, Sali'': con ogni probabilità Airalo e Saily.}; se si hanno bambini
+conviene, perché costa molto meno.
+
+Usando questi tre siti insieme ``esce fuori qualcosa di molto interessante'':
+vanno consultati regolarmente. E sull'azienda in questione ci si informa
+anche su \textbf{Indeed} e \textbf{Glassdoor}, dove ci sono recensioni su
+quanto paga, quanto è seria e così via.
+
+% ---------------------------------------------------------------------
+\section{Età, provenienza, pseudonimi e portfolio}
+\label{p4:sec:eta}
+
+Il relatore mostra le indicazioni di portfolio, più legate ad animazione e
+rig, ma alcune valgono per tutti: per esempio, il link deve essere
+\textbf{aperto a tutti, senza password}.
+
+\subsection{Quanto conta l'età? Nella sua esperienza, zero}
+
+Federico chiede in chat quanto valore si dia all'età. ``Nella mia esperienza,
+zero''. Per spiegare perché, il relatore racconta la propria biografia.
+
+Ha iniziato a lavorare molto presto: viene da una famiglia non benestante, la
+madre era ragazza madre con due figli, e lui ha cominciato a lavorare
+\textbf{a 14 anni}. Studiava grafica pubblicitaria e faceva già loghi,
+locandine, piccoli manifesti locali; poi è passato al web design.
+``Ho anticipato tanto le tappe'': al quinto anno delle superiori si è
+ritirato da scuola, ma ha comunque fatto il diploma nella stessa scuola, con
+i suoi compagni di classe, come candidato privatista esterno, e si è iscritto
+subito a un corso di 3D ``tipo AIV'' all'\textbf{Istituto Quasar} di Roma
+(``era il 2008, credo''), proprio per anticipare ancora di più. Si è trovato
+così molto giovane nell'industria.
+
+Dopo il Quasar si è iscritto ad \textbf{Animation Mentor}. Nessuna delle due
+scuole se la poteva permettere: ha preso un prestito di cinque anni con
+Findomestic e uno di altri tre con Agos, ``pagando tipo il 13\% di
+interessi, tassi quasi da strozzinaggio''. Nel frattempo lavorava: un anno da
+\textbf{Mondo Convenienza} come venditore, usando però le competenze 3D per
+il design degli ambienti; un anno come \textbf{3D generalist} e grafico
+pubblicitario in uno studio fotografico, con clienti che chiedevano piccoli
+lavori 3D (modellazione di lampade da esterno, modelli per manuali di
+istruzione ``tipo quelli di IKEA''). Con quello che guadagnava pagava i
+prestiti e campava. Ha anche avuto figli molto presto: una figlia di 16 anni,
+avuta a 19, e un figlio di 13.
+
+Ad Animation Mentor si è scontrato con una cosa. Era abituato a essere il
+primo della classe, sempre in anticipo; lì c'erano persone di tutte le età,
+anche di 32 anni quando lui ne aveva 19-20, con già 7, 8, 10 anni di
+esperienza di animazione, che facevano cose meglio di lui. Il relatore mostra
+il profilo LinkedIn di uno di loro, ``uno degli animatori più bravi che io ho
+conosciuto nella mia carriera'' (``io LinkedIn lo uso sia per stalkerare le
+persone, sia per farmi un'idea''): aveva fatto Animation Mentor con lui, o
+poco prima, intorno al 2011, ed era già abbondantemente sopra i 30 (oggi è
+``intorno ai 50''). Aveva cominciato come 3D animator nel \textbf{1998}, negli
+Emirati Arabi, a Dubai, da dove proveniva: arrivato ad Animation Mentor aveva
+già circa 12 anni d'esperienza. Oltre ad Animation Mentor ha seguito corsi ad
+AnimSquad, ``una scuola che non esiste più''. Nel \textbf{2015} viene assunto
+alla \textbf{Walt Disney}: per il suo \emph{big break} ci ha messo 17 anni,
+dal 1998 al 2015, ed è arrivato in Disney che aveva forse 40 anni.
+
+``La cosa bella del nostro settore'' è proprio questa: si manda una
+\textbf{showreel}, e dalla showreel di solito non si sa di che genere sei,
+quanti anni hai, se hai esperienze pregresse (o meglio, lo si può capire da
+quello che c'è dentro). Si vedono solo le competenze. Quindi all'età non si
+dà valore. Dipende magari dalle leggi dei singoli paesi: in Italia, per
+esempio, una persona \textbf{under 35} dà diritto a degli sconti sul
+contratto\footnote{Il relatore si riferisce agli incentivi all'assunzione di
+giovani previsti dalla normativa italiana, la cui soglia d'età e la cui forma
+sono cambiate più volte negli anni; il dettaglio non è verificabile dalla
+trascrizione.}. Ma vale solo ``se non sei bravissimo'' o non hai un gran
+portfolio: se allo studio servi, trovano il modo, al massimo si negozia sul
+contratto.
+
+\subsection{La provenienza e gli incentivi}
+
+Altre cose, a volte, contano di più, come la \textbf{provenienza}. Un amico
+del relatore, che ha cominciato da grande ad Animation Mentor, nel
+\textbf{2013} aveva ottenuto una \textbf{internship in Pixar}: l'avevano
+selezionato e gliel'avevano offerta, ma poteva farla solo trovando da sé il
+modo di ottenere un visto americano, perché Pixar non sponsorizzava i visti
+per gli stage. Non l'ha potuta fare.
+
+Oggi questa cosa è molto comune soprattutto nei film e nelle serie, che
+reggono molto sugli \textbf{incentivi statali, governativi, regionali}. Al
+relatore è capitato anche fra regioni italiane: ``abbiamo preso un bando
+della Regione Campania, quindi possiamo assumere solo persone con la
+residenza in Campania''; o ti sposti, o non ti possono prendere, perché i
+soldi con cui ti pagano vengono dalla Regione. Oppure uno studio di
+Milano\footnote{Nella trascrizione ``202 Dogs Studio'': il nome non è
+verificabile.} che assume chiedendo di andare a lavorare nel suo studio di
+Fuerteventura, alle Canarie, perché ha preso un \emph{tax credit} delle
+Canarie. (``Questo è: eravamo quattro amici al bar''.)
+
+\subsection{Niente pseudonimi}
+
+Per il portfolio online, il consiglio è \textbf{non usare pseudonimi o
+alias}. L'unica eccezione è se si è già molto conosciuti online con lo
+pseudonimo. Esempi:
+\begin{itemize}
+  \item l'amico islandese si chiama Sigurdur, ma tutti lo conoscono come
+        ``Sighi'', perché il nome è difficile da pronunciare e scrivere;
+  \item Daniele Angelozzi, scultore e istruttore ZBrush italiano, è da tutti
+        conosciuto come ``Danko'': prima online si chiamava solo così, ora ha
+        inserito il nome vero con Danko in mezzo;
+  \item Francesco Lupo per tanto tempo online si chiamava ``Franchino'', e
+        cercandolo lo si trova ancora con il vecchio nome.
+\end{itemize}
+Ma se si sta costruendo un'immagine pulita, meglio \textbf{nome e cognome}.
+Immaginate che una studentessa raccomandi un amico al suo studio: ``c'è un mio
+amico molto bravo, Matteo G.''. Prima ancora che lei condivida i contatti, il
+supervisore cerca il nome online; non trova niente; ``basta, ce lo siamo
+scordato, non esiste più''. Magari su Instagram lui si chiama
+``Matteo\_Fragolino\_2009'': ``e basta, fine, non abbiamo più possibilità di
+lavorare''. Bisogna anche tenere sempre aggiornate le informazioni su dove si
+lavora, su cosa si fa, sulle cose imparate, sui nuovi corsi seguiti.
+
+\subsection{Qualità, non quantità}
+
+Nel portfolio puntare alla \textbf{qualità e non alla quantità}. Per
+l'animazione, anche solo \textbf{tre scene animate} di solito bastano a
+capire se una persona può fare bene questo lavoro; per il rigging, anche
+\textbf{uno o due rig}. Mettere lavori che mostrino esattamente i propri
+\textbf{punti di forza}; i punti di debolezza, in uno slancio di onestà,
+menzionarli solo durante il colloquio. Se chiedono quali sono, si può dire:
+``Sento di dover crescere ancora in questa cosa; la so fare, sono
+indipendente, però è una cosa che voglio migliorare. Infatti sto studiando
+quello in questo momento''. Questo perché la reel \textbf{non la si può
+discutere} con chi la guarda: ``la guardano in muto, in due secondi, e ciao,
+è finita''. E usare una \textbf{risoluzione adeguata}.
+
+% ---------------------------------------------------------------------
+\section{Genere e negoziazione}
+\label{p4:sec:genere}
+
+Una studentessa fa una ``domanda scomoda'': si fa molta differenza fra uomini
+e donne? Lei su Instagram ha rimosso il nome e tenuto solo il cognome, per
+vedere come cambiava la percezione, e forse per caso ha cominciato a trovare
+molto più facilmente lavoro in un settore che le interessava,
+l'horror\footnote{Ricostruzione della domanda, che nella trascrizione è
+confusa (``ho cominciato a trovare un settore che mi interessava orrore molto
+più facilmente'').}.
+
+Nella sua ``personalissima esperienza'', risponde il relatore, no. Nel suo
+studio numericamente ci sono sempre state più donne. Ma, essendo la misoginia
+``una sorta di malattia sistemica'', non è impossibile che la differenza
+esista: l'industria è internazionale, ci si confronta con studi di culture
+diverse (gli Emirati Arabi, alcuni paesi balcanici) dove la differenza può
+essere maggiore; e anche in Italia, assumendo per una produzione di tre o sei
+mesi, ``magari ci può stare il datore di lavoro che fa un ragionamento più
+misogino: quella magari ha i figli''. Nella sua esperienza non è così.
+
+In animazione le donne sono tante, ``forse tante quante gli uomini, se non di
+più''. Nell'industria si sono avvicinate molto negli ultimi dieci anni: per un
+periodo era una cosa ``super nerd e super da smanettoni'', i software erano più
+difficili e meno interessanti, e anche giocare ai videogiochi era visto
+culturalmente in modo diverso per le donne. Ora crede che siano pari; nel
+\textbf{rigging}, invece, ``è difficilissimo trovare una donna''. Quindi
+nella sua esperienza non c'è stata discriminazione diretta; ma se tenere solo
+il cognome funziona, perché no. Fermo restando che, se avesse contezza di una
+discriminazione effettiva, la combatterebbe e cercherebbe di non lavorare in
+quel posto: mettere solo il cognome può far arrivare un'offerta che altrimenti
+non sarebbe arrivata, ma se la ragione per cui non era arrivata era l'essere
+donna, ``probabilmente non ci vorresti lavorare, con quelle persone''. Diventa
+un modo di filtrare ``senso comune e decenza''. La studentessa conferma che
+lei si è trovata meglio così.
+
+\subsection{Il tipo di progetti}
+
+Può darsi, aggiunge il relatore, che sia più facile che alle donne facciano
+fare cose per bambini, ma crede che dipenda molto dal \textbf{portfolio}: se è
+già tendente all'horror, difficilmente propongono cose per bambini, ``perché
+hanno paura che le fai un po' macabre, alla Tim Burton''; se invece il
+portfolio è ``puccioso'', è più difficile che arrivino cose horror.
+
+\subsection{La differenza salariale}
+
+Differenze salariali fra uomini e donne il relatore ne ha viste spesso. Le
+riconduce alla \textbf{negoziazione}, ``sempre un po' un male culturale,
+potenzialmente riconducibile al patriarcato'': soprattutto dopo i primissimi
+anni d'esperienza, all'uomo offrono 10 e lui chiede 12, a prescindere, anche
+se 10 è più di quanto si aspettava (aspettativa di 8, offerta di 10, ``proviamo
+con 12'', magari ne dà 11); le donne lo fanno un po' meno, forse perché
+ricevono meno proposte. Alla fine può nascere una differenza.
+
+Non è solo una questione di genere ma anche di \textbf{provenienza}. In
+Canada gli europei occidentali venivano pagati più dei sudamericani e degli
+indiani, perché questi volevano, tra virgolette, scappare dal loro paese e
+andare a vivere altrove in maniera stabile; gli europei invece ragionavano
+``ho degli studi fighi pure qua, campo bene pure qua; se mi fanno sorridere
+vado in Canada, se no non è che sto sotto ai ponti''. Agli europei, racconta,
+davano un soprannome volgare (``le puttane europee''), perché se tre mesi
+dopo un altro studio offriva il 20\% in più ``facevi il ciaone'' e andavi
+nell'altro studio. I canadesi, che magari stavano crescendo una famiglia là,
+avevano bisogno di stabilità; indiani, sudamericani e altri davano almeno due
+o tre anni di \emph{loyalty}, di fedeltà allo studio.
+
+% ---------------------------------------------------------------------
+\section{I test}
+\label{p4:sec:test}
+
+Delle slide resta da parlare del \textbf{test}, ``qualcosa che capita anche a
+chi fa altro'' (le slide contengono anche una lista di eventi di animazione e
+di videogiochi, e consigli per le review che il relatore salta). Il sentimento
+dell'industria sui test è ``un po' ibrido'', perché è molto facile che
+diventino una sorta di \textbf{scam}. Se uno studio chiede un test, è una
+richiesta lecita, ma bisogna mettere in chiaro alcune cose \textbf{fin da
+subito}:
+\begin{itemize}
+  \item lo studio deve dire se il test verrà \textbf{usato in produzione}. Se
+        sì, va \textbf{pagato}, a prescindere dall'assunzione. Un accordo
+        possibile: se passo il test sono assunto, e il test viene usato in
+        produzione; se non lo passo, ma vi sembra abbastanza buono da
+        chiedermi il file sorgente, me lo pagate, perché potreste usarlo in
+        produzione senza neanche menzionarmi.
+\end{itemize}
+Come affrontarlo:
+\begin{itemize}
+  \item restare \textbf{aderenti alle specifiche} fornite;
+  \item \textbf{stare nei tempi}: spesso il test non misura solo se si sa fare
+        una cosa di una certa qualità, ma se la si sa fare \textbf{in tempi di
+        produzione};
+  \item fare \textbf{tante domande}, prima e durante: come vuoi che lo
+        presenti, in che formato, dove te lo invio; per sembrare sempre sul
+        pezzo;
+  \item \textbf{lavorare subito in modo pulito}: niente nomi di file con
+        bestemmie ``pensando che tanto non lo dovranno vedere'', perché magari
+        poi chiedono il file e ci si dimentica di cambiarli; niente lavoro
+        disordinato; una struttura di cartelle professionale.
+\end{itemize}
+Il resto delle slide ripete consigli già dati sul network.
+
+% ---------------------------------------------------------------------
+\section{Le domande finali}
+\label{p4:sec:domande}
+
+``Tutto ciò che io volevo dirvi in maniera orale ve l'ho detto'': il resto
+dipende dalle domande, e la lezione ``può finire prima se voi non avete niente
+da chiedere, o può durare a oltranza''.
+
+\subsection{Che cosa si chiedono un narrative designer e un animatore?}
+
+Edoardo, che fa narrative design (capitolo~\ref{p3:cap:narrative}), chiede che
+richieste può ricevere da chi fa character animation e che richieste può
+fargli. Il relatore fa l'esempio dello sceneggiatore televisivo con gli
+animatori, il lead animator e il supervisor: c'è una \textbf{relazione
+bidirezionale}.
+\begin{itemize}
+  \item L'animatore può dire quali sono i \textbf{limiti tecnici} del
+        personaggio: ``il mio personaggio ha un rig che non gli permette di
+        fare cose troppo movimentate''. Allora si evita di scrivere un
+        personaggio grasso troppo movimentato e si punta sulla sua lentezza,
+        sulla sua goffaggine.
+  \item O viceversa: il personaggio, nonostante sia grosso, deve mostrare
+        tanto dinamismo; allora il narrative designer chiede al rigger e
+        all'animatore che il modello sia grosso, ma in modo da potersi
+        permettere le capriole, perché è importante.
+\end{itemize}
+Il relatore immagina questa interazione soprattutto nello studio del
+personaggio e degli ambienti. Esempio paradossale: un gioco inclusivo con un
+personaggio in sedia a rotelle, e il narrative designer che scrive un
+ambiente tipo la Terra di Mezzo, tutto montagne senza strade. Ma escono anche
+cose più piccole. Il narrative designer scrive un livello in cui il
+personaggio deve fare tante cose, fra cui una piccola ma indispensabile:
+cogliere una mela da un albero. Mesi dopo arriva l'animatore; nel frattempo
+sono state prese tante scelte, e il personaggio è troppo piccolo, non arriva
+alla mela neanche saltando. Bisogna trovare una soluzione, per esempio una
+roccia su cui salire, che però causa più lavoro al team degli asset e alla
+programmazione. È l'interazione più comune, anche se i due dipartimenti
+lavorano a una certa \textbf{distanza cronologica} e non sempre hanno una
+collaborazione troppo stretta.
+
+\subsection{Quanto conta il talento?}
+
+Sara chiede quanto sia necessario essere talentuosi e quanto invece si
+impari. Secondo il relatore:
+\begin{itemize}
+  \item per \textbf{lavorare}: 99\% fatica, 1\% talento;
+  \item per lavorare ad \textbf{altissimi livelli}: 75 e 25;
+  \item per lavorare ad altissimi livelli ed essere considerati ``un drago'',
+        una leggenda nello studio e intorno: probabilmente 50 e 50.
+\end{itemize}
+``Se io voglio solo fare i videogiochi, non c'ho neanche bisogno di talento'':
+tutto ciò che viene visto come talento si impara e si sviluppa, il gusto, la
+capacità artistica, la capacità tecnica. Per lavorare ai giochi di Naughty
+Dog probabilmente bisogna essere molto forti: o una buona quota di talento, o
+tanti anni di esperienza cercando di migliorare sempre la produzione a cui si
+lavora.
+
+\subsection{Bisogna saper disegnare, modellare, programmare?}
+
+Giulia chiede quanto sia fondamentale, per animazione e rigging, saper
+disegnare e modellare. Il relatore aggiunge anche la programmazione:
+\begin{itemize}
+  \item \textbf{programmare} è solo un plus per l'animazione, mentre per il
+        rigging oggi è \textbf{quasi indispensabile};
+  \item \textbf{disegnare e modellare} non sono indispensabili per nessuna
+        delle due, ma entrambe aiutano: disegnare aiuta di più l'animazione,
+        modellare aiuta di più il rigging.
+\end{itemize}
+Chi volesse specializzarsi nel rigging dovrebbe modellare un pochino e
+programmare un pochino; chi fa animazione, puntare più sul disegno. Però
+l'animazione ``non è una tecnica, è una disciplina'', come il disegno: se già
+si sa disegnare aiuta, ma se non si sa, i primi anni sono meglio spesi
+imparando l'animazione. È pieno di animatori che, già al lavoro, seguono corsi
+di disegno dal vivo ``per sciogliere un po' la mano'', perché poi servono
+solo degli schizzi.
+
+\subsection{3D art e character animation vanno a braccetto?}
+
+Alessandro chiede se i corsi di 3D art e character animation vadano a
+braccetto. Non sempre, ma a volte si parlano, soprattutto nei progetti
+interdisciplinari\footnote{Nella trascrizione ``the biggest ones, big ones'',
+e all'inizio ``gli ex biggest ones, ovvero questi progetti tesi in cui vi
+mettete insieme con vari dipartimenti per tirare fuori il vostro gioco da
+lanciare su Steam'': con ogni probabilità sono i Dev Projects
+(sezione~\ref{p1:sec:devprojects}).}: spesso il character modellato in 3D art
+viene riggato e animato dai ragazzi del secondo anno di character animation.
+
+\subsection{Gli studenti di 3D possono imparare un po' di rigging e animazione?}
+
+Infine Giulia chiede se gli studenti di 3D potranno imparare anche un po' di
+rigging e animazione. Va chiesto ad \textbf{Andrea Morini}: potenzialmente
+potrebbe mettere a disposizione le registrazioni degli anni passati, o far
+partecipare ad alcune lezioni del corso, ma il relatore non può dare una
+risposta concreta perché servirebbe un'organizzazione che ricade sulla
+scuola. Lui sarebbe aperto ad avere studenti di altre classi; in alternativa
+si può chiedere se è possibile fare un piccolo modulo. Per i corsi esterni,
+gli si può chiedere in qualsiasi momento.
+
+\subsection{I saluti}
+
+``Mi sembra di capire che avete fame e volete andare a pranzo''. Il relatore
+resta a disposizione, anche online e durante i corsi, e augura a tutti un buon
+inizio d'anno: ``in bocca al lupo e buon proseguimento''.

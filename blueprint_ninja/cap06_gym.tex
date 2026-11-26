@@ -1,0 +1,59 @@
+\section{Gli actor della palestra}
+
+Tre actor semplici, ognuno con un'idea da imparare: leggere la distanza dal giocatore, usare un timer che si ripete, decidere a caso all'inizio. Nel C++ sono in \texttt{PlatformerGym.h}.
+
+\subsection{L'actor che cresce con la distanza}
+
+Il faro del livello 1 è piccolo quando ci si è vicino e diventa grande da lontano: si vede sempre, e indica la meta. Variabili: \var{DistMin} (300), \var{DistMax} (3000), \var{ScalaMin} (1), \var{ScalaMax} (4).
+
+\begin{bpgraph}
+\bpnode{t}{(0,0)}{bpev}{Event Tick}{-}{exec/,float/Delta Seconds}
+\bpnode{pc}{\sotto{t}{0}{-0.4}}{bppure}{Get Player Character}{int/0}{obj/}
+\bpnode{d}{\dxy{pc}{pc}{0.6}{0}}{bppure}{Get Distance To}{obj/Target: self,obj/Other Actor}{float/}
+\bpnode{mr}{\dx{d}{0.6}{0}}{bppure}{Map Range Clamped}{float/Value,float/In Range A: DistMin,float/In Range B: DistMax,float/Out Range A: ScalaMin,float/Out Range B: ScalaMax}{float/}
+\bpnode{fi}{\dx{mr}{0.6}{0}}{bppure}{FInterp To}{float/Current: Scala,float/Target,float/Delta Time,float/Interp Speed 4}{float/}
+\bpnode{set}{\dxy{fi}{t}{0.6}{0}}{bpfn}{Set Actor Scale 3D}{exec/,obj/Target: self,vec/New Scale (Scala Scala Scala)}{exec/}
+\bpexec{t-out1}{set-in1}\bpwire{obj}{pc-out1}{d-in2}\bpwire{float}{d-out1}{mr-in1}\bpwire{float}{mr-out1}{fi-in2}\bpwire{float}{fi-out1}{set-in3}
+\end{bpgraph}
+
+\nodo{Map Range Clamped} è il nodo chiave di tutta la guida: trasforma un intervallo in un altro (300--3000\,cm diventa 1--4) e non esce mai dai limiti. Il \nodo{FInterp To} evita gli scatti quando il giocatore si teletrasporta.
+
+\subsection{L'actor che cambia modello ogni secondo}
+
+Il totem e la piattaforma ``mutante'' passano da cubo a cilindro a sfera a cono. Variabili: \var{Modelli} (Array di Static Mesh), \var{Materiali} (Array di Material), \var{Indice} (Integer).
+
+\begin{bpgraph}
+\bpnode{bp}{(0,0)}{bpev}{Event BeginPlay}{-}{exec/}
+\bpnode{tm}{\dx{bp}{0.6}{0}}{bpfn}{Set Timer by Event}{exec/,del/Event,float/Time 1.0,bool/Looping true}{exec/}
+\bpnode{ev}{\sotto{bp}{0}{-1.7}}{bpcustom}{Custom Event: Cambia}{-}{exec/,del/}
+\bpnode{idx}{\sotto{ev}{0}{-0.4}}{bppure}{(Indice + 1) \% LENGTH(Modelli)}{-}{int/}
+\maxx{m1}{ev,idx}
+\bpnode{s}{\dxy{m1}{ev}{0.6}{0}}{bpvarh}{Set Indice}{exec/,int/}{exec/,int/}
+\bpnode{g1}{\sotto{s}{0}{-0.4}}{bppure}{GET (Modelli)}{int/Indice}{obj/}
+\maxx{m2}{s,g1}
+\bpnode{sm}{\dxy{m2}{ev}{0.6}{0}}{bpfn}{Set Static Mesh}{exec/,obj/Target: Mesh,obj/New Mesh}{exec/}
+\bpnode{mat}{\dx{sm}{0.6}{0}}{bpfn}{Set Material}{exec/,obj/Target: Mesh,int/Index 0,obj/GET (Materiali; Indice)}{exec/}
+\bpexec{bp-out1}{tm-in1}\bpdraw[bpdataw, draw=bpc-del] (ev-out2) .. controls +(1,0) and +(-1,0) .. (tm-in2);
+\bpexec{ev-out1}{s-in1}\bpwire{int}{idx-out1}{s-in2}\bpwire{int}{s-out2}{g1-in1}\bpexec{s-out1}{sm-in1}\bpwire{obj}{g1-out1}{sm-in3}\bpexec{sm-out1}{mat-in1}
+\end{bpgraph}
+
+Il \% (modulo) fa tornare l'indice a 0 dopo l'ultimo modello. Se l'actor è una piattaforma, cambiate anche la collisione: con \nodo{Set Static Mesh} la collisione segue la nuova mesh, quindi sulla sfera si scivola giù e sul cono si sta solo in punta. È lì il divertimento.
+
+\subsection{L'actor che c'è solo nel 35\% delle partite}
+
+Il ponte del livello 1 a volte c'è e a volte no: se non c'è, si passa dai sassi sotto. Si decide una volta sola, all'inizio.
+
+\begin{bpgraph}
+\bpnode{bp}{(0,0)}{bpev}{Event BeginPlay}{-}{exec/}
+\bpnode{rb}{\sotto{bp}{0}{-0.4}}{bppure}{Random Bool with Weight}{float/Weight 0.35}{bool/}
+\maxx{m1}{bp,rb}
+\bpnode[2.4]{br}{\dxy{m1}{bp}{0.6}{0}}{bpflow}{Branch}{exec/,bool/Condition}{exec/True,exec/False}
+\bpnode{msg}{\dx{br}{0.6}{0}}{bpfn}{Print String / mostra cartello}{exec/,str/"Il ponte c'è!"}{exec/}
+\bpnode{hd}{\sotto{msg}{0}{-0.4}}{bpfn}{Set Actor Hidden In Game}{exec/,bool/true}{exec/}
+\bpnode{col}{\dx{hd}{0.6}{0}}{bpfn}{Set Actor Enable Collision}{exec/,bool/false}{exec/}
+\bpexec{bp-out1}{br-in1}\bpwire{bool}{rb-out1}{br-in2}\bpexec{br-out1}{msg-in1}\bpexec{br-out2}{hd-in1}\bpexec{hd-out1}{col-in1}
+\end{bpgraph}
+
+Si poteva anche usare \nodo{Destroy Actor}, ma nascondere e togliere la collisione permette di mostrare il ponte più tardi (per esempio con una leva). Nel C++ il messaggio arriva con un piccolo ritardo, quando l'HUD è già pronto: in Blueprint basta un \nodo{Delay} di 0,5\,s prima del messaggio.
+
+\ninja{\nodo{Random Bool with Weight} con 0,35 dà \emph{True} il 35\% delle volte. Per provare tutti e due i casi senza riavviare cento volte, aggiungete una variabile \var{Forza} (enum: Caso, SempreSì, SempreNo) modificabile nell'editor.}

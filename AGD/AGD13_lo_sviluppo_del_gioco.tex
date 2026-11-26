@@ -1,0 +1,2218 @@
+% =====================================================================
+%  Analog Game Design, lezione 13 — Lo sviluppo (development) del gioco
+%  analogico, prima parte.
+%  La prima delle due lezioni di Marta, docente ospite, sviluppatrice di
+%  giochi da tavolo da una decina d'anni. In apertura, con Daniele, una
+%  coda di domande: quanto può cambiare un gioco dopo il pitch
+%  (divergere e convergere, il tagliare), il calendario delle lezioni,
+%  le difficoltà dei playtest e la narrativa combinatoria di Reigns per
+%  il gruppo del roguelike in solitario. Poi il giro di presentazioni di
+%  Marta (un gioco che ci piace con un difetto, uno che non ci piace con
+%  un pregio) e le slide: che cos'è lo sviluppo (una mediazione tra
+%  stakeholder) e che cosa non è; i tre principi (personale, armonico,
+%  collaborativo) con la recensione di Space-Biff!; gli stakeholder;
+%  design contro sviluppo; lo sviluppo come mestiere d'esperienza; il
+%  rapporto tra designer e sviluppatrice (collaborazione attiva e
+%  passiva, aspettative, fiducia); la storia del ruolo (SPI, Fantasy
+%  Flight, alea, Hans im Glück; developer ed editor). Dopo la pausa: il
+%  conflitto di interessi, le otto fasi dello sviluppo (selezione,
+%  ricerca, concettualizzazione con il Game Concept Document,
+%  presentazione con il caso The Faceless, testing, implementazione con
+%  il bilanciamento e il sovrabilanciamento, preparazione degli asset;
+%  le revisioni e il regolamento sono rimandati alla lezione
+%  successiva), il caso Magical Athlete, Stonemaier, Oath, il target con
+%  premi, Bartle e LeBlanc.
+%  Fonte: trascrizione della tredicesima lezione (AGD13) del corso breve
+%  di Analog Game Design, seconda edizione: una lezione online di circa
+%  tre ore, con ogni probabilità lunedì 16 novembre 2026, tenuta da
+%  Marta, con Daniele presente solo all'inizio.
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Analog Game Design", tredicesimo
+%  capitolo (numerazione propria 2.13). Nel file principale del libro,
+%  subito dopo il capitolo 2.12:
+%
+%    \input{AGD/AGD12_prototipi_regolamenti_e_playtest}
+%    \input{AGD/AGD13_lo_sviluppo_del_gioco}
+%
+%  Tutte le etichette di questo capitolo hanno il prefisso "a13:"
+%  (a13:cap:..., a13:sec:..., a13:fig:..., a13:tab:...). Il capitolo è
+%  autonomo: non contiene \ref verso altri capitoli.
+%  Le figure e le tabelle sono ricostruzioni schematiche di quanto
+%  detto a voce e mostrato nelle slide (che non sono nella
+%  trascrizione), non copie delle slide. Dove la trascrizione è troppo
+%  rovinata per ricostruire un dettaglio (un nome, un titolo, chi sta
+%  parlando), il capitolo lo dice invece di inventarlo.
+% =====================================================================
+
+\chapter[Lo sviluppo del gioco analogico]{Lo sviluppo del gioco analogico: dal
+prototipo allo scaffale, tra chi progetta, chi pubblica e chi gioca}
+\label{a13:cap:sviluppo}
+
+Questa è la \textbf{tredicesima lezione} del corso di \textbf{Analog Game Design}, e la
+prima delle due lezioni dedicate allo \textbf{sviluppo} (in inglese \emph{development}),
+tenute da \textbf{Marta}, docente ospite, che di mestiere fa proprio questo: da una
+decina d'anni lavora come sviluppatrice di giochi da tavolo per case editrici italiane.
+Già nella prima lezione del corso i docenti avevano annunciato che ``quest'anno abbiamo
+deciso di fare doppietta'': una lezione sola, l'anno precedente, non bastava ad andare a
+fondo su un argomento che, nell'analogico, ha un significato molto specifico e ``non
+c'entra niente con la programmazione''. Lo sviluppo è il lavoro che porta un gioco
+\emph{dal prototipo allo scaffale}: chi lo fa riceve l'idea di un'altra persona (chi ha
+fatto il \emph{design}) e la accompagna, insieme alla casa editrice e pensando a chi
+comprerà e giocherà il gioco, fino a un prodotto finito.
+
+Marta lo dice chiaramente in apertura: oggi fa ``un'infarinatura un po' più generale'',
+una \textbf{panoramica} su che cosa significa fare sviluppo, su come il ruolo è nato e su
+quali sono le \textbf{fasi} del lavoro; la lezione successiva, venerdì, sarà ``un po'
+più pratica'', con esempi e tecniche. È un lavoro ``molto vario'' e che ``richiede
+tantissima pratica, tantissima esperienza'': per questo chiede una partecipazione attiva
+e risponde volentieri alle domande, che infatti sono numerose e diventano parte
+integrante della lezione. La regola che tiene insieme tutto, detta in molte forme, è che
+lo sviluppo è una \textbf{mediazione}: far convivere la visione di chi ha progettato il
+gioco, le esigenze di chi lo pubblica e quelle di chi lo giocherà, senza tradire la
+prima e senza dimenticare le altre due.
+
+\paragraph{Data, formato, persone.} La lezione è \textbf{online}, su Zoom, comincia alle
+\textbf{17:30} invece che alle 17 (``avevo detto che partivamo alle 5 e mezza per
+agevolare la docente'') e dura circa tre ore, con \textbf{due pause} di una decina di
+minuti. Si tiene con ogni probabilità \textbf{lunedì 16 novembre
+2026}\footnote{La data non è mai detta. La si deduce da più indizi: Daniele dice ``noi
+ci vediamo lunedì prossimo, il 23, con la lezione su \emph{roleplay} [e]
+\emph{fiction}''; il 23 novembre 2026 è un lunedì, e la lezione si tiene di sera (``buona
+sera'') la settimana precedente. Le lezioni del corso cadono di solito il lunedì e il
+venerdì, e Marta saluta con ``ci vediamo venerdì'', cioè il 20 novembre, per la sua
+seconda lezione. Lunedì 16 novembre è quindi la data più probabile.}. All'inizio è
+presente \textbf{Daniele}, che apre la sessione, risponde ad alcune domande, presenta
+Marta e poi lascia la lezione (``io rimarrò solo per la prima parte''). La docente è
+\textbf{Marta}\footnote{Nella trascrizione Marta si presenta come ``Marta Ciaccasassi'';
+nella prima lezione del corso il cognome era stato trascritto ``Cercasassi''. La grafia
+corretta non è verificabile, e il capitolo usa solo il nome.}, al secondo anno di
+insegnamento nel corso; si scusa per la voce, perché si è ``appena ripresa da
+un'influenza''. Degli studenti intervengono per nome \textbf{Gianmarco} e
+\textbf{Tancredi} (anche in chat), e \textbf{Lorenzo} scrive in chat; dal contesto
+intervengono anche uno studente del gruppo del \emph{roguelike} in solitario, uno del
+gruppo di \emph{Murder Memory} e uno studente che ha lavorato a lungo nell'industria
+automobilistica, che non vengono mai chiamati per nome. \textbf{Tiziana} è assente
+(``so che Tiziana oggi non ci può essere''); per il gruppo di \emph{Murder Memory} si
+aspetta un Lorenzo, ``non ne abbiamo ancora la certezza al 100\%''.
+
+\paragraph{Avvertenze di lettura.} Le stesse dei capitoli precedenti. La trascrizione è
+automatica e storpia molti nomi propri: \emph{Space-Biff!} è ``Space Beef'', Dan Thurot
+``Dantourot'', Uwe Rosenberg ``Rosenberg'', \emph{Hegemony} ``Egemoni'', Stonemaier
+``Stonehanger'' e ``Sommeyer'', \emph{Oath} ``OTH'', Cole Wehrle ``Cole Verle'' e
+``Kohl'', \emph{Mage Knight} ``Mage Night'', \emph{Reigns} ``Rains'' e ``Reyns'', la UX
+``la Wix''. Dove la ricostruzione è sicura, o molto probabile, il capitolo usa la forma
+corretta e lo segnala in nota la prima volta; dove non lo è, riporta la forma della
+trascrizione e lo dice. Come nella lezione precedente, la trascrizione contiene lunghi
+tratti di \textbf{frasi senza senso ripetute in ciclo} (``qual è la risposta che ci può
+essere?'', ``un \emph{preprint} per l'\emph{open source}'', ``è falsata da un
+pubblico'', ``cosa ci vuole, cosa ci vuole'', ``la migliore dal 2005''): durante le due
+pause, ma anche, purtroppo, in tre punti della lezione, dove coprono qualche frase di
+Marta (sulla storia del ruolo, sul \emph{testing} e sulla preparazione degli
+\emph{asset}). Il capitolo le ignora e, dove è andato perso un contenuto, lo segnala.
+Durante la prima pausa, inoltre, il microfono di qualcuno registra per qualche secondo
+un commento su un videogioco (``la \emph{blue map} [\ldots] mi permetterebbe di vedere
+subito dove sono le \emph{secret room}''), che non ha niente a che fare con la lezione.
+
+\paragraph{Come leggere questo capitolo.} Il capitolo segue l'ordine della lezione. Le
+figure ricostruiscono gli schemi che emergono dal discorso (gli \emph{stakeholder}, la
+storia del ruolo, le otto fasi, il \emph{Game Concept Document}, il ciclo di
+implementazione, il sovrabilanciamento, gli assi di Bartle, il calendario); le tabelle
+riassumono i giochi del giro di presentazioni, il confronto tra \emph{design} e sviluppo,
+i tipi di \emph{test} e i compromessi sugli \emph{asset}. Qua e là, dei paragrafi di
+\textbf{approfondimento} collegano la lezione ai libri di game design di riferimento
+(soprattutto \emph{The Art of Game Design} di Jesse Schell e \emph{21st Century Game
+Design} di Chris Bateman e Richard Boon); sono segnalati come tali e non fanno parte
+della lezione.
+
+Il percorso del capitolo:
+\begin{enumerate}
+  \item l'attesa con Daniele: quanto può cambiare un gioco, il calendario, la
+        narrativa combinatoria (sezioni \ref{a13:sec:attesa} e~\ref{a13:sec:reigns});
+  \item la presentazione di Marta e il giro dei giochi (sezione~\ref{a13:sec:giro});
+  \item che cos'è lo sviluppo e che cosa non è, i suoi tre principi e i suoi
+        \emph{stakeholder} (sezioni \ref{a13:sec:cose}--\ref{a13:sec:stakeholder});
+  \item \emph{design} contro sviluppo, l'esperienza, il rapporto con chi progetta
+        (sezioni \ref{a13:sec:designvs}--\ref{a13:sec:rapporto});
+  \item la storia del ruolo: \emph{developer} ed \emph{editor}
+        (sezione~\ref{a13:sec:storia});
+  \item le domande dopo la pausa: il conflitto di interessi
+        (sezione~\ref{a13:sec:conflitto});
+  \item le otto fasi dello sviluppo, una per una, con le domande che le
+        accompagnano (sezioni \ref{a13:sec:fasi}--\ref{a13:sec:asset});
+  \item la chiusura e i compiti per venerdì (sezione~\ref{a13:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'attesa: quanto può cambiare un gioco, e il calendario}
+\label{a13:sec:attesa}
+
+La sessione si apre con Daniele, mentre si aspetta Marta: ``tra qualche minuto arriverà
+anche la vostra docente. Io rimarrò solo per la prima parte della lezione''. Le manda
+il link di accesso e intanto chiede se ci sono domande.
+
+\paragraph{Il ``vaso di Pandora'' del cambiamento.} Uno studente vorrebbe riprendere un
+discorso rimasto aperto: \textbf{quanto si può cambiare un gioco dopo il
+\emph{pitch}}, durante l'iterazione. Daniele lo chiama ``un vaso di Pandora importante''
+e dice che vorrebbe tornarci più avanti; per ora risponde in generale: \textbf{dipende dal
+tipo di progetto e dal tipo di \emph{pivot}}. Un \emph{pivot} ``di colore'', cioè un
+cambiamento di superficie, ``si può fare'' e ``succede molto spesso''. Quando si ha una
+visione e si vuole andare in una certa direzione, un minimo di cambiamento c'è sempre;
+ma nei progetti grandi (``nel tripla A, nei videogame'') si usano degli strumenti, che
+nel corso non si vedono, per \textbf{mantenere la direzione e la visione del progetto}:
+``giusto per evitare di dire: parto con l'idea di fare \emph{Miami Vice} e arrivo che il
+gioco è \emph{Baldur's Gate 3}''. Nell'iterazione capita sicuramente che, facendo
+\emph{playtest}, ci si accorga che alcune regole non vanno e che si debba ``deviare un
+attimino'' il gioco. Ma \textbf{più si va avanti nel tempo, più uno stravolgimento
+completo è controproducente}: vicino a una consegna, a una \emph{deadline}, ``è logico che
+si fa fatica'' a riconfigurare un progetto da capo; ``si può fare, ma magari è più
+difficile riuscire a concludere''.
+
+\paragraph{Divergere e poi convergere.} Lo studente aggiunge che all'inizio bisogna
+provare tanto, e poi convergere. Daniele conferma: prima si \textbf{diverge}, poi si
+\textbf{converge}, e la convergenza ``richiede molto'': un lavoro di capire \textbf{che
+cosa tagliare} e che cosa riconfigurare. Lo facciamo ``istintivamente'', anche senza
+rendercene conto. Il suo esempio è un corso di intaglio di statuine di legno, a cui ha
+assistito perché il fratello ne è appassionato (lui, invece, ``odio le spine''; ha
+provato a lavorare con i guanti, ``però non è la stessa cosa''): quando si fa un oggetto
+si parte da un'idea generale (``potrebbe diventare così, così''), poi a un certo punto
+si dice ``no, questo lo devo togliere, questo lo devo togliere'', e ci si focalizza verso
+un unico prodotto. \textbf{Le iterazioni aiutano}, soprattutto se si prendono appunti e
+si cercano i problemi, rispondendo non rigirando completamente il prodotto ma cambiando
+``quei piccoli ingranaggi'' che permettono di ``portare in barca la situazione''. E poi
+``molta convergenza e taglio'': ``è brutto da dire, ma molti progetti, molti contenuti
+vengono poi tagliati''. Daniele aggiunge che probabilmente una parte di questo discorso
+la vedranno proprio con Marta, oggi o venerdì (``non sono sicuro'').
+
+\paragraph{Il calendario.} Daniele ricorda che ci si rivede \textbf{lunedì 23}, con la
+lezione su \textbf{gioco di ruolo e \emph{fiction}}, e che ci sarà anche la lezione con
+\textbf{Flavio}. Uno studente, che dice di essersi già organizzato con Tancredi e Lorenzo
+(quindi, con ogni probabilità, \textbf{Gianmarco}), avverte che il 23 forse non ci sarà,
+per una riunione di condominio a cui non può mancare (``abbiamo avuto dei problemi in
+casa'') e che il \textbf{27} parte, per tornare il \textbf{6} dicembre: nel cambio di
+calendario non aveva previsto che alcune lezioni potessero slittare, ma le recupererà
+tutte con le registrazioni, e se riesce si collegherà anche dal cellulare, ``ascolto
+soltanto''. Daniele lo rassicura: ``non c'è problema alcuno, recupera poi la
+registrazione''. Tiziana, si diceva, oggi non c'è.
+
+\paragraph{I \emph{playtest} sono difficili.} Uno studente, con ogni probabilità del
+gruppo di \emph{Murder Memory}, dice a Daniele che sono ``bloccati'' sul \emph{test}:
+tra lavoro e impegni non riescono a organizzarsi, e il giorno prima un \emph{playtest}
+previsto durante una giornata aperta è saltato per una serie di contrattempi (``sono
+arrivate tardi''). ``È proprio complicato fare questi \emph{playtest}.'' Daniele dice di
+capire perfettamente: anche per lui è ``un periodo veramente campo minato'', in cui ogni
+due per tre deve spostare qualcosa, anche nelle attività accademiche.
+
+% ---------------------------------------------------------------------
+\section{La narrativa combinatoria: \emph{Reigns} e il caso pilotato}
+\label{a13:sec:reigns}
+
+Daniele chiede come va al gruppo del \emph{roguelike} in solitario (``Nicola, Giordano
+\ldots{} tutto bene?''). Risponde uno studente del gruppo\footnote{La trascrizione non
+dice chi parla: lo studente dice ``Giordano e Rita siamo in gruppo'', per cui è con
+ogni probabilità Nicola.}: stanno cercando di creare ``qualcosa, mettiamola così''. Per i
+\emph{test} pensano di essere avvantaggiati, perché il gioco è in solitario: Daniele
+conferma che ``basta mandarlo a qualcuno che sapete che gioca in solitaria''.
+
+\paragraph{Una RNG ``imboccata''.} Sul lato narrativo, lo studente ricorda che si era
+parlato di una narrativa ``dettata dal caso, dalla RNG''. L'approccio a cui sono arrivati,
+ispirato a un gioco che nella trascrizione si chiama ``Apotecaria''\footnote{Così nella
+trascrizione; il titolo non è verificabile. Potrebbe trattarsi di uno dei giochi di
+\emph{journaling} in solitario citati nelle lezioni precedenti dal gruppo.}, è lasciare
+il caso, ma ``imboccato'': per esempio una possibilità su 12, dove però le 12
+possibilità sono \textbf{scritte a mano}. Lo studente non trova il termine giusto, e
+Daniele nemmeno, finché non gli viene: si chiama \textbf{narrativa combinatoria}. Daniele
+dice di averla usata, e che la si trova per esempio in \textbf{\emph{Reigns}}, anche
+nella versione da tavolo. Nell'app, spiega, è ``un sistema sacchetto'': nel sacchetto ci
+sono le carte dei \emph{petitioner} (i personaggi che vengono a chiedere qualcosa al
+sovrano), e a seconda di quante carte di un certo tipo ci sono nel sacchetto cambia la
+probabilità di estrarle, ``1 su 20, 5 su 15''.
+
+\paragraph{\emph{Reigns} e \emph{Lapse}.} Lo studente chiede ancora: ha giocato anni fa
+a un'app simile, ``chiamiamola copia, però narra tutt'altro'', più \emph{streamlined}
+come storia\footnote{Nella trascrizione ``l'apps'' e ``Laps'': con ogni probabilità
+\emph{Lapse: A Forgotten Future}, un gioco per dispositivi mobili che riprende il sistema
+di \emph{Reigns} con un'ambientazione diversa.}. Daniele non sa come sia strutturata
+quell'app, ma segnala una \textbf{\emph{talk} della GDC dell'autore di \emph{Reigns}},
+``bellissima'', che si trova facilmente e in cui l'autore spiega esattamente come ha
+fatto il gioco e mostra perfino \textbf{gli \emph{spreadsheet} con cui ha scritto i
+contenuti}; dell'altra app non esiste un \emph{post mortem}, ma ``probabilmente molte
+cose sono simili''. Lo studente nota una differenza: \emph{Reigns} gli sembra
+completamente casuale e combinatorio, mentre nell'altra ci sono degli \emph{eventi},
+innescati per esempio da un certo numero di carte giocate o girate, che forzano una
+situazione e diventano una specie di gioco a scelte. ``È così anche \emph{Reigns}'',
+risponde Daniele: non è completamente casuale, perché \textbf{a seconda delle carte che
+scegli cambiano le probabilità delle altre carte}, e certe carte fanno partire una
+sequenza (``un \emph{dungeon}'') che è praticamente una \emph{storyline}: ``tipo otto
+carte in fila'', sempre le stesse. ``Allora è simile'', conclude lo studente. Se ne
+riparlerà nella lezione di \emph{fiction} della settimana successiva.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a13box/.style={draw, thick, rounded corners=3pt, align=center, minimum height=0.9cm,
+                 fill=white},
+  a13card/.style={draw, thick, minimum width=0.55cm, minimum height=0.8cm, fill=gray!12,
+                  font=\scriptsize},
+  a13arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  % il sacchetto
+  \draw[thick, fill=gray!6] (-0.2,0) .. controls (-0.6,1.8) and (0.2,2.4) .. (1.4,2.4)
+       .. controls (2.6,2.4) and (3.4,1.8) .. (3.0,0) -- cycle;
+  \node[font=\footnotesize\bfseries] at (1.4,2.75) {il ``sacchetto''};
+  \foreach \x/\y/\l in {0.3/0.4/A, 0.9/0.4/A, 1.5/0.4/A, 2.1/0.4/B, 0.6/1.3/B, 1.2/1.3/C,
+                        1.8/1.3/A, 2.4/1.0/C}{
+    \node[a13card] at (\x,\y) {\l};
+  }
+  \node[font=\footnotesize, align=center, text width=3.6cm] at (1.4,-0.75) {più carte di
+    un tipo, più probabilità\\di estrarlo (es.\ A: 4 su 8)};
+  % estrazione e scelta
+  \node[a13box, text width=2.5cm] (est) at (5.6,1.3) {si estrae una carta\\(un
+    \emph{petitioner})};
+  \node[a13box, text width=2.5cm] (sce) at (8.9,1.3) {chi gioca sceglie\\(sinistra o
+    destra)};
+  \draw[a13arr] (3.1,1.3) -- (est);
+  \draw[a13arr] (est) -- (sce);
+  \draw[a13arr] (sce.south) |- node[pos=0.75, below, font=\footnotesize, align=center]
+       {la scelta aggiunge o toglie carte:\\cambiano le probabilità} (1.4,-1.6) -- (1.4,-1.25);
+  % storyline
+  \node[a13box, text width=3.3cm, fill=gray!12] (sto) at (8.9,3.4) {alcune carte avviano
+    una \emph{storyline}: una sequenza fissa\\(``otto carte in fila'')};
+  \draw[a13arr, dashed] (sce) -- (sto);
+\end{tikzpicture}
+\caption{La narrativa combinatoria come la descrive Daniele a proposito di \emph{Reigns}:
+il caso non è ``puro'', perché il contenuto è scritto a mano carta per carta e le scelte
+cambiano la composizione del sacchetto. Le lettere e i numeri sono illustrativi.}
+\label{a13:fig:reigns}
+\end{figure}
+
+\paragraph{La presentazione di Marta.} In quel momento entra Marta. Daniele le dà il
+benvenuto e la presenta alla classe: è il \textbf{secondo anno} che insegna nel corso;
+Daniele ha lavorato con lei e ne ha ``un bellissimo ricordo'', ``professionista
+favolosa''; parlerà del \emph{game development}, ``che vi spiegherà direttamente di cosa
+si parla''. Le presenze le ha già prese lui, quindi lei deve ``semplicemente partire e
+fare la lezione''; le ricorda di fare una pausa (``ne possiamo fare anche un paio'',
+risponde Marta, per via dell'influenza). Daniele si mette in muto, ascolta qualche minuto
+e poi lascia la lezione.
+
+% ---------------------------------------------------------------------
+\section[Rompere il ghiaccio]{Rompere il ghiaccio: un difetto in un gioco che ami, un pregio in uno che no}
+\label{a13:sec:giro}
+
+Mentre cerca le slide (``è un po' che non faccio queste cose''), Marta propone un giro
+di presentazioni con un piccolo gioco: ognuno dice \textbf{un gioco che gli piace, ma di
+cui indica un difetto}, e \textbf{un gioco che non gli piace, ma di cui indica una cosa
+bella}. ``La domanda non era a caso'', spiegherà più avanti: avere ``un atteggiamento un
+po' distaccato'' dai giochi, anche da quelli che amiamo, è esattamente ciò che serve
+nello sviluppo (sezione~\ref{a13:sec:ripresa}). Le risposte sono riassunte nella
+tabella~\ref{a13:tab:giro}.
+
+\begin{itemize}
+  \item \textbf{Marta} comincia: le piace \textbf{\emph{Race for the Galaxy}}, ma è
+        ``molto inaccessibile, soprattutto alle prime partite'', perché ha
+        un'\textbf{iconografia molto complessa}. Il gioco che non le piace è un
+        gioco di carte il cui nome nella trascrizione si perde\footnote{La trascrizione
+        dice solo ``il gioco di carte''.}: però è ``un ottimo gioco che tira fuori
+        tantissime emozioni mentre si gioca'', cosa che ``spesso giochi molto complessi
+        non riescono a fare''.
+  \item \textbf{Lorenzo} scrive in chat: gli piace il gioco da tavolo di \textbf{\emph{Game
+        of Thrones}}, ``bellissimo, ma le strategie tendono a rendere le partite
+        lunghissime, specie per i \emph{bluff}''; non gli piace \textbf{\emph{Hearthstone}}
+        (``odio puro''), ma adora le \textbf{meccaniche del mana}.
+  \item \textbf{Gianmarco}: gli piace \textbf{\emph{Mage Knight}}\footnote{Nella
+        trascrizione ``Mage Night''.}, ma dopo un po' di partite il gioco ``diventa
+        assolutamente astratto'', si ``stacca completamente'' dal tema. Quello che ``non
+        mi vado a cercare'' è \textbf{\emph{Nemesis}}, che descrive come ``praticamente lo
+        stesso gioco, al contrario''; però gli piace che \textbf{crea il clima al tavolo
+        che vuole}: sospetto, \emph{trash talking}, ``che comunque può essere
+        divertente''.
+  \item \textbf{Tancredi} (entrato a giro iniziato): il gioco che gli piace, il cui nome
+        nella trascrizione si perde, ``prende un po' tanto spazio sul tavolo'' per un
+        gioco che non dovrebbe durare troppo. Fatica a trovarne uno che non gli piaccia,
+        perché sono più i generi a non entusiasmarlo; ma ha giocato di recente
+        \textbf{\emph{Magical Athlete}}\footnote{Nella trascrizione ``Magico Atleta'',
+        come nella lezione precedente.} e gli è sembrato ``un po' complicato capire''
+        alcune interazioni: ``è un gioco che giocherei con il designer a cui chiedere: ma
+        in questo caso qui cosa succede?''. ``Forse è un po' una bestemmia da dire'',
+        aggiunge; ``no, no, interessante'', risponde Marta (e il gioco tornerà, molto,
+        nel corso della lezione).
+  \item Un'altra persona, di cui la trascrizione non dice il nome, cita
+        \textbf{\emph{Daggerhart}}, che le piace: il difetto sono le
+        \textbf{meta-valute nelle mani del narratore}\footnote{Nella trascrizione ``meta
+        correnti'': si tratta delle \emph{meta-currency}, le risorse che il sistema dà a
+        chi conduce il gioco per far accadere delle cose.}, perché ``se il narratore vuole
+        far accadere qualcosa, lo fa accadere e basta''. \emph{Daggerhart} è in realtà un
+        gioco di ruolo, anche se nella trascrizione viene chiamato ``gioco da tavolo''.
+\end{itemize}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.1cm}p{3.3cm}p{3.2cm}p{4.6cm}@{}}
+\toprule
+\textbf{Chi} & \textbf{Gioco} & \textbf{Gli piace?} & \textbf{Il difetto / il pregio} \\
+\midrule
+Marta & \emph{Race for the Galaxy} & sì & inaccessibile, iconografia complessa \\
+      & un gioco di carte (nome perso) & no & tira fuori tantissime emozioni \\
+\addlinespace
+Lorenzo & \emph{Game of Thrones} (da tavolo) & sì & partite lunghissime, per i \emph{bluff} \\
+        & \emph{Hearthstone} & no & le meccaniche del mana \\
+\addlinespace
+Gianmarco & \emph{Mage Knight} & sì & a lungo andare diventa astratto \\
+          & \emph{Nemesis} & no & crea il clima che vuole: sospetto, \emph{trash talking} \\
+\addlinespace
+Tancredi & (nome perso) & sì & occupa troppo spazio per la sua durata \\
+         & \emph{Magical Athlete} & ``un po' complicato'' & (non detto: alcune
+         interazioni poco chiare) \\
+\addlinespace
+un'altra persona & \emph{Daggerhart} & sì & meta-valute nelle mani del narratore \\
+\bottomrule
+\end{tabular}
+\caption{Il giro di presentazioni proposto da Marta. L'esercizio serve ad allenare uno
+sguardo distaccato: riconoscere i punti di forza e di debolezza di un gioco
+indipendentemente dal fatto che ci piaccia.}
+\label{a13:tab:giro}
+\end{table}
+
+\paragraph{Chi è Marta.} Poi le slide sono a schermo (dopo qualche problema con il
+portatile: ``ci ho messo un pochino'', ``ci abbiamo messo pure noi un po' a risponderti,
+siamo pari''). Marta si occupa di \textbf{sviluppo da una decina di anni}. Ha fatto anche
+alcuni giochi \textbf{come designer}, quelli al centro della slide, con una casa editrice
+che nella trascrizione è ``Tabula Games''\footnote{Così nella trascrizione; il nome non
+è verificabile.}; gli altri sono giochi su cui ha lavorato \textbf{come sviluppatrice},
+tra cui \textbf{\emph{Bang!}} e \textbf{\emph{Lupus in Tabula}}. Attualmente lavora per
+\textbf{dV Giochi}\footnote{Nella trascrizione ``DVGames'', ``DV Games'' e ``DV'': quasi
+certamente dV Giochi, l'editore italiano di \emph{Bang!} e di \emph{Lupus in Tabula}. Il
+secondo nome che Marta associa alla casa editrice, ``Genos Games'', non è
+ricostruibile.} e in passato ha lavorato per altre case editrici. Chiede se la figura
+dello sviluppatore, o della sviluppatrice, nel gioco analogico sia nota alla classe:
+``immagino l'avete sentito tutti''.
+
+% ---------------------------------------------------------------------
+\section{Che cos'è lo sviluppo (e che cosa non è)}
+\label{a13:sec:cose}
+
+Lo sviluppo, nel gioco da tavolo, è un ruolo che ``c'è da molti anni'', ma che \textbf{si
+è professionalizzato solo di recente}: prima era legato soprattutto ai \emph{wargame}
+(sezione~\ref{a13:sec:storia}); negli ultimi anni è una figura \textbf{centrale in
+praticamente tutti i \emph{publisher}} di giochi da tavolo. Marta parla soprattutto di
+giochi da tavolo perché viene da lì, ma la figura esiste anche nel gioco di ruolo e si
+è estesa anche fuori dal lato commerciale: la si trova in progetti che non finiscono
+sullo scaffale di un negozio, ma, per esempio, su \textbf{itch.io}\footnote{Nella
+trascrizione ``Itch.io'', ``H.I.O.'', ``ICIO'', ``Iccia io'' e ``Switch.io'': si tratta
+sempre di itch.io, la piattaforma per la distribuzione di giochi indipendenti.}.
+
+\paragraph{Una definizione.} Marta definisce lo sviluppo come
+\begin{quote}
+\textbf{un rapporto di mediazione tra uno o più \emph{stakeholder} per far convergere
+diverse visioni in un prodotto che soddisfi tutte le parti.}
+\end{quote}
+``Una frase un po' altisonante'', ma è quella che secondo lei funziona meglio. La parte
+essenziale è la \textbf{mediazione}: il ruolo richiede di far coesistere le visioni e le
+aspettative di più parti, soprattutto degli \textbf{autori e delle autrici} e del
+\textbf{\emph{publisher}}, la casa editrice; ma non sono le uniche parti che hanno un
+legame con il gioco (sezione~\ref{a13:sec:stakeholder}). L'obiettivo è arrivare a
+\textbf{qualcosa di soddisfacente}. Gli strumenti sono la \textbf{ricerca}, la
+\textbf{redazione di documenti}, la \textbf{presentazione} di una modifica o di una
+visione, la \textbf{modifica delle regole}, la \textbf{comunicazione} e il mettere in
+comunicazione i diversi reparti di un'azienda.
+
+\paragraph{Dove sta, chi è.} Lo sviluppo si colloca il più delle volte \textbf{all'interno
+di una casa editrice}, ed è l'esperienza che Marta riporta; ``ma non è l'unica
+possibilità''. È spesso la persona che ha \textbf{più competenze tecnico-pratiche} di un
+progetto. Questo non la mette ``più in alto delle altre persone'': semplicemente è stata
+a contatto con i giochi così tanto, e per così tanto tempo, che spesso ha un po' di
+esperienza in più rispetto ad altri reparti e a volte anche rispetto agli autori. Un
+autore anche bravo può arrivare a toccare una decina di giochi; Marta, in dieci anni, ha
+già lavorato su \textbf{più di 40 giochi}, perché lo sviluppo dà la possibilità di
+``mettere le mani in pasta in tanti progetti''. Proprio per questo il ruolo tende a
+essere \textbf{olistico} e a \textbf{sovrapporsi ad altri ruoli}: per esempio, chi ha
+mandato a dV Giochi una domanda sulle regole di un gioco sappia che ``dall'altra parte
+spesso ci sono io'', o i suoi colleghi, perché sono le persone più formate su quell'aspetto.
+
+\paragraph{Che cosa \emph{non} è.} Qui Marta è, per sua ammissione, ``sempre un po'
+provocatoria''. Lo sviluppo:
+\begin{itemize}
+  \item \textbf{non è ``bilanciare i numerini''}, come si sente dire spesso; anzi, il
+        bilanciamento, secondo lei, \textbf{non è un aspetto essenziale} del fare
+        sviluppo (sezione~\ref{a13:sec:bilanciamento});
+  \item \textbf{non è un altro designer};
+  \item non fa \textbf{solo} ricerca, \textbf{solo} selezione, non redige \textbf{solo}
+        regolamenti, non lavora \textbf{solo} sulle meccaniche.
+\end{itemize}
+È un ruolo che riguarda più cose, e che richiede ``tanta versatilità, tanta curiosità'':
+``io dico sempre che una persona brava allo sviluppo è una persona che prima di tutto è
+\textbf{curiosa}'', che vuole indagare, scoprire, farsi domande e fare domande su un
+progetto.
+
+\paragraph{Dal prototipo allo scaffale.} Si parte, in genere, da un \textbf{prototipo}, e
+si arriva al \textbf{prodotto finito}, ``quello che c'è sullo scaffale''. In mezzo, si
+prende l'idea di base, quella esplorata nel prototipo, e la si \textbf{affina e centra}
+finché non raggiunge \textbf{le migliori possibilità di successo nel contesto di
+riferimento}: se il gioco deve finire nei negozi, come mi assicuro che venga comprato? Se
+deve uscire su itch.io, come mi assicuro che venga notato? Alcune di queste cose si
+sovrappongono con il lavoro dell'autore, ``e non è un caso'': i due ruoli ``vanno molto a
+braccetto''. Ma mentre l'autore può permettersi un rapporto più libero con il
+\emph{design} e con la propria idea, lo sviluppo \textbf{sottostà a tante piccole
+realtà}, di cui l'autore è una, ma non l'unica.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a13box/.style={draw, thick, rounded corners=3pt, align=center, minimum height=1.0cm,
+                 fill=white},
+  a13arr/.style={-{Stealth[length=3mm]}, thick}
+]
+  \node[a13box, text width=2.6cm] (pro) at (0,0) {\textbf{prototipo}\\(l'idea di base,
+    esplorata)};
+  \node[a13box, text width=4.6cm, fill=gray!12, minimum height=1.6cm] (svi) at (5.0,0)
+    {\textbf{sviluppo}\\affinare e centrare l'idea: ricerca, documenti, presentazioni,
+    modifiche alle regole, comunicazione tra reparti};
+  \node[a13box, text width=2.6cm] (sca) at (10.0,0) {\textbf{prodotto finito}\\(scaffale,
+    itch.io\ldots)};
+  \draw[a13arr] (pro) -- (svi);
+  \draw[a13arr] (svi) -- (sca);
+  \node[font=\footnotesize, align=center, text width=9cm] at (5.0,-1.55) {obiettivo: le
+    \textbf{migliori possibilità di successo} nel contesto di riferimento, facendo
+    convergere le visioni di tutte le parti};
+\end{tikzpicture}
+\caption{Lo sviluppo come lo definisce Marta: una mediazione che porta l'idea di un
+prototipo fino a un prodotto finito.}
+\label{a13:fig:percorso}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{I tre principi: personale, armonico, collaborativo}
+\label{a13:sec:principi}
+
+\paragraph{Una recensione.} Per introdurre il primo principio Marta legge un passaggio
+di una recensione scritta da \textbf{\emph{Space-Biff!}}\footnote{Nella trascrizione
+``Space Beef''; l'autore, che Marta chiama ``Dantourot'', è con ogni probabilità Dan
+Thurot, autore del sito di critica \emph{Space-Biff!}.}, che per lei è ``uno dei critici
+di giochi da tavolo più bravi in assoluto che abbiamo in questo momento'' (lo consiglia a
+chi legge l'inglese). Sulla slide c'è anche il titolo del gioco recensito, ``messo
+volontariamente'', ma Marta non lo legge per non far deconcentrare la classe (``poi
+magari a fine lezione ve lo dico''; alla fine della lezione, però, non lo dirà). Il
+gioco è un \emph{eurogame} recente e autopubblicato, e il critico scrive, più o meno,
+che \textbf{sembra un regalo da un universo parallelo in cui gli \emph{eurogame} non sono
+mai stati inariditi dai test di mercato e dallo sviluppo impersonale}. La frase l'ha
+``colpita profondamente'', perché centra qualcosa che Marta pensa da anni.
+
+\paragraph{1. Lo sviluppo è personale.} Lo sviluppo \textbf{cambia da persona a persona}.
+Quando un gioco arriva a una casa editrice e viene fatto sviluppare, sottostà alla
+\textbf{visione della casa editrice} (``è inutile che mandate un giocone pesantone alla
+Mattel: non ve lo pubblica, vi pubblicherà i \emph{party game}, perché la Mattel quello
+fa''); ma è soggetto anche a \textbf{chi lo sta sviluppando}, alla persona che dentro
+quella casa editrice fa sviluppo, che avrà un suo modo di condurlo. L'esempio che Marta
+fa spesso: \textbf{se un gioco passa per le mani di due persone diverse che fanno
+sviluppo, il gioco che ne esce è radicalmente diverso}, o almeno può esserlo, a seconda di
+come ciascuna affronta il lavoro. C'è una parte di esperienza propria, e questa
+\textbf{autenticità}, il portare una visione propria, nel mercato di oggi è ``molto, molto
+importante''. Il mercato è sempre più \textbf{standardizzato}, escono tantissimi giochi, e
+all'orizzonte c'è anche lo \textbf{spettro dell'intelligenza artificiale}, ``che tende ad
+appiattire ancora di più tutto quello che c'è sul mercato''. Come ci si distingue? I
+designer possono presentare idee originali, ``però poi, se la casa editrice te lo
+appiattisce'', si torna al problema iniziale. Per questo avere una \textbf{visione
+soggettiva} su come un gioco debba essere condotto fa la differenza.
+
+\paragraph{2. Lo sviluppo è armonico.} Lo sviluppo \textbf{non può andare in opposizione
+alla visione del designer}. C'è una parte personale che viene calata nel progetto, ma
+questo \textbf{non deve tradire l'idea originale}: il designer presenta un'idea, ed è
+importante che venga mantenuta al massimo, e anzi \textbf{esaltata}, da ciò che fa chi
+sviluppa. L'immagine di Marta è culinaria: lo sviluppo è come \textbf{mettere delle spezie
+su un piatto per esaltarne i sapori}, non come fare un altro piatto da mettergli accanto,
+che rischia di rubargli la scena. E se si mettono troppe spezie, i sapori del piatto
+originale si perdono del tutto. Bisogna quindi \textbf{saper dosare} lo sviluppo: capire
+quanto è necessario, e \emph{se} è necessario, perché ci sono casi (ci si tornerà) in cui
+non serve fare sviluppo, o serve il minimo indispensabile.
+
+\paragraph{3. Lo sviluppo è collaborazione.} L'armonia di cui si parla è
+\textbf{comunicazione}: tra chi ha progettato e chi sviluppa, e tra chi sviluppa e
+l'azienda per cui lavora (o la persona committente). Lavorare così porta a una
+collaborazione in cui chi sviluppa ha una \textbf{visione distaccata} sul progetto: ``non
+è un gioco mio, non è un gioco che ho fatto''. Ci si lega comunque al progetto, ma non è
+nato da sé, e questo fa la differenza: chi sviluppa \textbf{si può permettere cambiamenti
+e modifiche} che chi ha costruito il progetto ``non ha la forza'' di fare, perché ci
+tiene e fa fatica a staccarsi dall'idea originale. Ci sono anche casi, ``molto, molto
+particolari'', in cui chi fa \emph{design} fa anche lo sviluppo, ``con tutti i rischi del
+caso'': se lo sviluppo è collaborazione e distacco, la natura duplice ``non è semplice''.
+È però vero che a volte è importante che un gioco venga sviluppato \textbf{senza alterare
+minimamente l'idea di partenza}.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a13pr/.style={draw, thick, rounded corners=4pt, text width=3.6cm, align=center,
+                minimum height=2.6cm, fill=white},
+]
+  \node[a13pr] (p1) at (0,0) {\textbf{personale}\\[2pt]cambia con chi sviluppa: due
+    sviluppatori, due giochi diversi. È ciò che distingue in un mercato
+    standardizzato};
+  \node[a13pr] (p2) at (4.3,0) {\textbf{armonico}\\[2pt]esalta l'idea del designer senza
+    tradirla: le spezie sul piatto, non un altro piatto. Va dosato};
+  \node[a13pr] (p3) at (8.6,0) {\textbf{collaborativo}\\[2pt]comunicazione con designer
+    e azienda; uno sguardo distaccato che permette cambiamenti};
+  \draw[thick, gray] (p1) -- (p2) -- (p3);
+\end{tikzpicture}
+\caption{I tre principi dello sviluppo secondo Marta.}
+\label{a13:fig:principi}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Gli \emph{stakeholder}: chi ha voce sul gioco}
+\label{a13:sec:stakeholder}
+
+Chi sono, più nel dettaglio, gli \emph{stakeholder} tra cui lo sviluppo media? I primi
+due sono già emersi: \textbf{il designer} (o la designer) e \textbf{la casa editrice}. Ma
+una parte che ``molto spesso viene trascurata e tralasciata'' è \textbf{chi poi gioca il
+gioco}: i clienti, le clienti. Quando si fa un gioco è importante ricordarsi \textbf{per
+chi lo si sta facendo}, e quella è proprio la voce che non si sente: in una riunione
+sul gioco c'è la casa editrice, nella veste del direttore editoriale, c'è l'autore o
+l'autrice, ma \textbf{non c'è chi poi lo compra e lo gioca}, ``perché non si può''. Al
+massimo si prendono dei \emph{playtester}, ma è una visione parziale; oppure, con un po'
+di esperienza del mercato e delle persone a cui il gioco arriva, si può \textbf{fare le
+veci di quella parte}. Marta lo fa spesso: ``sì, ma questa modifica va nell'interesse di
+chi compra il gioco? Magari è una cosa che piace a noi qua dentro, ma a chi lo compra non
+interessa''.
+
+Non è detto che le tre parti ci siano sempre: quando c'è una casa editrice è probabile
+che ci sia anche un cliente, ma possono mancare altre parti, o essercene altre ancora.
+Se il gioco è \textbf{su licenza}, uno \emph{stakeholder} è \textbf{chi ha fornito la
+licenza}, che ha i suoi vincoli e i suoi paletti. Può esserci una persona che ha
+\textbf{scritto il \emph{world building}} del gioco e vuole che venga mantenuto in un
+certo modo. ``Anche qua potrebbero esserci molte più variabili di quelle che viene da
+pensare in prima battuta.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a13st/.style={draw, thick, rounded corners=4pt, text width=2.7cm, align=center,
+                minimum height=1.1cm, fill=white},
+  a13opt/.style={draw, thick, dashed, rounded corners=4pt, text width=2.7cm, align=center,
+                 minimum height=1.1cm, fill=white},
+  a13arr/.style={{Stealth[length=2.5mm]}-{Stealth[length=2.5mm]}, thick}
+]
+  \node[draw, very thick, circle, fill=gray!15, minimum size=2.4cm, align=center] (sv)
+    at (0,0) {\textbf{sviluppo}\\(mediazione)};
+  \node[a13st] (des) at (-4.2,1.6) {\textbf{designer}\\la visione originale};
+  \node[a13st] (pub) at (4.2,1.6) {\textbf{casa editrice}\\catalogo, mercato,
+    reparti};
+  \node[a13st, fill=gray!8] (cli) at (0,-2.9) {\textbf{chi gioca}\\(la voce che non c'è
+    alle riunioni)};
+  \node[a13opt] (lic) at (-4.2,-1.6) {chi ha dato la \textbf{licenza}};
+  \node[a13opt] (wb) at (4.2,-1.6) {chi ha scritto il \textbf{\emph{world building}}};
+  \foreach \n in {des,pub,cli}{\draw[a13arr] (sv) -- (\n);}
+  \foreach \n in {lic,wb}{\draw[a13arr, dashed] (sv) -- (\n);}
+\end{tikzpicture}
+\caption{Gli \emph{stakeholder} di un gioco secondo la lezione. In tratteggio quelli che
+ci sono solo in alcuni progetti. La voce di chi gioca arriva solo attraverso i
+\emph{playtest} o attraverso chi sviluppa, che con l'esperienza ne fa le veci.}
+\label{a13:fig:stakeholder}
+\end{figure}
+
+\paragraph{Approfondimento: partecipanti e ``avvocati''.} Bateman e Boon, in \emph{21st
+Century Game Design}, aprono il libro con un principio che chiamano \emph{Zen Game
+Design}: ``il game design deve essere privo di ego, bilanciando i desideri e i bisogni di
+tutti i partecipanti''. I \emph{partecipanti} sono chiunque abbia un interesse nel
+progetto (il pubblico, l'editore, lo studio, i programmatori, gli artisti, il marketing,
+e, ``sempre più spesso'', il \emph{detentore della licenza}); poiché non tutti possono
+partecipare al \emph{design}, alcune figure fanno da \emph{advocate}, da portavoce, per
+gli altri. Gli autori notano proprio ciò che nota Marta: per il pubblico, di solito,
+\emph{non c'è} un portavoce formale, e il compito ricade su chi progetta; e a proposito
+della licenza consigliano di tenere aperto il dialogo durante tutto lo sviluppo, invece di
+mostrare il gioco finito al licenziatario ed essere costretti a cambiarlo quando i
+cambiamenti costano di più. Il libro parla di videogiochi, e di \emph{designer} più che
+di sviluppatori, ma la figura che Marta descrive (chi si fa carico delle voci assenti)
+corrisponde quasi esattamente al loro \emph{advocate}.
+
+% ---------------------------------------------------------------------
+\section{\emph{Design} contro sviluppo}
+\label{a13:sec:designvs}
+
+Qui arriva, dice Marta, ``la differenza più sostanziale'' tra \emph{design} e sviluppo.
+Avverte subito che è una visione ``un po' stereotipica'': non è detto che chi fa
+\emph{design} abbia tutte queste caratteristiche, né chi fa sviluppo tutte le altre; ma
+è ``una buona cartina di tornasole'' per distinguere le due figure. Il confronto è
+riassunto nella tabella~\ref{a13:tab:designvs}.
+
+\paragraph{Chi fa \emph{design}.}
+\begin{itemize}
+  \item \textbf{Non è \emph{time driven}}: normalmente non ha una scadenza vera e propria.
+        Può pensare a una scadenza nel senso di ``questo \emph{design} tra cinque anni non
+        è più interessante'', ma di base non ha ristrettezze temporali. Diverso è il caso di
+        un \emph{design} su commissione.
+  \item Ha \textbf{piena libertà creativa}: può muoversi liberamente, presentare qualsiasi
+        idea e cercare il canale giusto per pubblicarla, senza vincoli.
+  \item Ha di solito un \textbf{attaccamento emotivo}: il gioco l'ha creato, c'è qualcosa
+        di suo. È positivo, perché permette di mettere nel gioco caratteristiche che una
+        persona senza quell'amore per il progetto non metterebbe; ed è negativo, perché
+        rende difficile fare modifiche, e a volte stravolgimenti, ``perché magari ci si è
+        affezionati''.
+  \item Ha l'\textbf{originalità}: si può prendere qualsiasi cosa e metterla dentro.
+        ``Vado a prendere dei cubetti d'oro, di oro vero, e li metto nel gioco'':
+        chi fa \emph{design} potrebbe volerlo fare, e il \emph{design} non lo impedisce; il
+        problema, semmai, sarà della casa editrice. Ed è proprio lì che vengono fuori le
+        cose ``un po' rivoluzionarie'' che a volte servono per smuovere i mercati, per
+        alzare l'asticella.
+  \item Ha \textbf{un'idea}: l'idea di partenza è ciò che caratterizza il \emph{design}.
+        Non deve essere ``fatta e finita'', né completamente bilanciata, né
+        completamente finalizzata: deve far capire le intenzioni. Negli anni c'è stata una
+        \textbf{professionalizzazione del \emph{design}}, e oggi i designer portano in
+        genere il progetto molto più avanti che in passato; ma resta la possibilità di
+        dichiarare chiusa un'idea in qualsiasi momento (``questo è sufficiente per far
+        capire che cosa dovrebbe essere sviluppato'') e consegnarla a una casa editrice.
+\end{itemize}
+
+\paragraph{Chi fa sviluppo.}
+\begin{itemize}
+  \item Ha \textbf{scadenze}: il \textbf{\emph{time to market}}, cioè quando il gioco deve
+        uscire per prendere la spinta giusta del mercato, e il \textbf{vincolo del
+        contratto} firmato tra casa editrice (o chi sviluppa) e designer. A un certo punto
+        il gioco deve uscire, essere finalizzato, completato.
+  \item Ha \textbf{restrizioni produttive}: tornando ai cubetti d'oro, ``io poi devo fare i
+        conti con la realtà di mettere dei cubetti d'oro su mille scatole''. Come si fa?
+        Sono veramente necessari? Sono veramente la cosa che serve?
+  \item Esercita il \textbf{distacco}: non avendo un legame emotivo con il progetto,
+        soprattutto all'inizio, può analizzarlo in modo più freddo e riconoscere quali
+        caratteristiche servono all'idea per funzionare sul mercato, per certi clienti.
+  \item Porta la \textbf{standardizzazione}, che ha due facce. È positiva perché un'idea
+        troppo originale può spaventare alcune fette di mercato: un gioco molto originale
+        viene recepito ``in modo misto, se va bene'', spesso male, perché il mercato ``non
+        è pronto'', non aveva in mente quel gioco. La standardizzazione \textbf{smussa gli
+        angoli}, rende il gioco più digeribile, più simile ad altre cose. Ma smussare gli
+        angoli rischia anche di \textbf{portare via le caratteristiche importanti} del
+        gioco.
+  \item Ha l'\textbf{esperienza}\footnote{In questo punto la trascrizione è coperta da
+        alcune righe di frasi ripetute senza senso (``è falsata da un pubblico''); la
+        quinta voce della slide si ricostruisce dal discorso che segue e dalla sezione
+        successiva, dedicata proprio all'esperienza.}: un designer che ha fatto un solo
+        gioco ha ``pochissima'' esperienza, mentre chi fa sviluppo ha in genere lavorato a
+        più titoli, perché si muove più rapidamente tra più progetti. Sa già dire ``questa
+        cosa su itch.io non funziona, perché se lo pubblichi così le persone non capiscono
+        neanche che tipo di gioco è: perché non evidenziamo questi aspetti?''. Un prodotto
+        sullo scaffale, o caricato su itch.io, funziona?
+\end{itemize}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.0cm}p{5.0cm}p{5.4cm}@{}}
+\toprule
+ & \textbf{Chi fa \emph{design}} & \textbf{Chi fa sviluppo} \\
+\midrule
+Tempo & non \emph{time driven} (salvo commissione) & scadenze: \emph{time to market},
+  contratto \\
+Libertà & piena libertà creativa & restrizioni produttive (i ``cubetti d'oro'' su mille
+  scatole) \\
+Rapporto col gioco & attaccamento emotivo (pro e contro) & distacco, analisi ``fredda'' \\
+Direzione & originalità, anche rivoluzionaria & standardizzazione: smussa gli angoli
+  (pro e contro) \\
+Che cosa porta & un'idea, anche non finita & esperienza su molti titoli e generi \\
+\bottomrule
+\end{tabular}
+\caption{\emph{Design} contro sviluppo secondo la slide di Marta: una visione volutamente
+``stereotipica'', utile come cartina di tornasole. Nella realtà i confini sono sfumati.}
+\label{a13:tab:designvs}
+\end{table}
+
+\paragraph{Confini sfumati.} Che cosa succede se un'idea è \textbf{troppo embrionale}? O se
+un'implementazione che si va a fare \textbf{cambia l'esperienza di gioco}? ``Queste sono
+domande importantissime, dove le cose si sfumano.'' A volte si ricevono idee così
+embrionali che quasi non converrebbe prenderle, perché c'è così tanto sviluppo da fare
+che non si sa più quanto è sviluppo e quanto è \emph{design}. Dall'altra parte c'è il
+rischio che fare sviluppo \textbf{comprometta l'esperienza originale}. Questi ruoli vanno
+immaginati come ``qualcosa di molto permeabile'', e non è mai facile mettere l'asticella
+nel punto giusto: ``io molto spesso me lo chiedo: ma per questo gioco ho fatto
+effettivamente sviluppo? Sono arrivata addirittura a fare \emph{design}?''. Con
+l'esperienza diventa più facile tracciare la linea: capire se l'idea è davvero troppo
+embrionale, e quindi non conviene svilupparla, o se c'è stato un eccesso (``ho fatto
+troppo sviluppo, ho cambiato l'idea di partenza'') e bisogna tornare sui propri passi e
+far emergere di più l'idea originale del designer.
+
+% ---------------------------------------------------------------------
+\section{Lo sviluppo è esperienziale}
+\label{a13:sec:esperienza}
+
+Marta lo ha detto più volte: lo sviluppo \textbf{si fonda sull'esperienza}. Da qualche
+parte si parte, ``ci si improvvisa un po', come in tutte le cose'', ma poi l'esperienza si
+accumula e fa la differenza. Non c'è un modo esatto di accumularla, ma c'è una differenza
+di fondo tra le due figure.
+
+\paragraph{Il designer focalizzato.} Chi fa \emph{design} può fare continuamente lo stesso
+\emph{design}, senza esplorare tanti giochi e tante idee diverse. L'esempio è \textbf{Uwe
+Rosenberg}\footnote{Nella trascrizione solo ``Rosenberg''; dal contesto (piazzamento
+lavoratori, piazzamento tessere) è quasi certamente Uwe Rosenberg, l'autore di
+\emph{Agricola}, citato più avanti nella lezione.}, che ha ``tre o quattro temi'' e tende
+a fare giochi su quelli: il piazzamento lavoratori, il piazzamento tessere, e poi qualche
+esperimento su altri generi. Una visione non ristretta in senso negativo, precisa Marta:
+``\textbf{focalizzata} è il termine giusto''. Una visione che, nella sua iteratività, lo ha
+portato a raggiungere \textbf{l'apice dei generi} in cui ha lavorato, perché li ha
+``talmente tanto sviscerati'' da conoscerne forze e debolezze.
+
+\paragraph{Lo sviluppatore che tocca tutto.} Chi sviluppa, al contrario, entra in contatto
+con \textbf{tantissimi generi diversi}, perché le idee non vengono sempre dalla stessa
+persona. Marta ha sviluppato giochi che durano più di due ore, giochi leggeri,
+\emph{party game}, giochi di destrezza astratti: ``si tocca un po' tutto quello che
+esiste''. Vale anche per il gioco di ruolo, dove chi sviluppa può muoversi più facilmente
+tra sistemi diversi, dal gioco di una pagina (\emph{one page}) al manuale di 50 pagine con
+campagna.
+
+% ---------------------------------------------------------------------
+\section{Il rapporto tra chi progetta e chi sviluppa}
+\label{a13:sec:rapporto}
+
+L'esperienza passa anche attraverso il \textbf{rapporto tra designer e \emph{developer}},
+che ``deve essere saputo gestire'': per le differenze appena viste, per i livelli diversi
+di esperienza, per i ruoli diversi, che a volte sembrano perfino contrapposti. Ma è, come
+detto all'inizio, un rapporto di mediazione, e la cosa importante è \textbf{trovare i
+compromessi}. Ogni rapporto è diverso: non si lavora con tutti i designer nello stesso
+modo.
+
+\paragraph{Collaborazione attiva e passiva.} A Marta sono capitate entrambe.
+\begin{itemize}
+  \item Una \textbf{collaborazione attiva} è uno \textbf{scambio ricorrente} tra le due
+        parti: ci si aggiorna a vicenda, si fanno cambiamenti, ``ci si rimbalzano molto le
+        idee e il progetto''.
+  \item Una \textbf{collaborazione passiva} è quando una delle due parti prende in carico
+        la maggior parte del lavoro e \textbf{riceve dei \emph{feedback}} dall'altra, e il
+        rapporto si limita a questo. Può capitare, per esempio, che un gioco venga
+        valutato, firmato con la casa editrice, e che poi chi l'ha progettato
+        ``praticamente sparisca''. \textbf{È legittimo}: l'idea è stata fornita, i dubbi, se
+        c'erano, si spera siano stati risolti, e magari il designer non ha interesse a
+        vedere come si sviluppa il gioco da lì in poi, e vuole vederlo solo a cose fatte.
+\end{itemize}
+
+\paragraph{Le aspettative.} È importante anche \textbf{gestire le aspettative}: ricordarsi
+che quando un gioco passa per altre persone \textbf{viene inevitabilmente modificato}.
+``Un gioco è un processo di collaborazione'': non c'è una sola persona che lo fa. La
+figura del designer è stata più volte messa in primo piano, ma il processo è
+\textbf{collettivo}: il gioco non arriverebbe sullo scaffale senza chi lo produce, chi fa
+la grafica e le illustrazioni, e chi lo sviluppa. Affidando un gioco a una casa editrice
+o a chi sviluppa, il gioco \textbf{cambierà}, anche in modi che non sempre troveranno
+d'accordo. L'importante è trovare i compromessi giusti.
+
+\paragraph{La fiducia.} E qui viene l'ultimo punto: la \textbf{fiducia}. ``Come se si
+vogliono avere delle relazioni nella vita'', bisogna avere una fiducia reciproca. Il
+consiglio di Marta, anche ai designer: \textbf{cercatevi case editrici, sviluppatori o
+sviluppatrici con cui pensate che possa esserci un buon rapporto di fiducia}, perché i
+rapporti vanno male soprattutto quando questa fiducia viene a mancare, quando una delle
+due parti pensa che l'altra ``non stia facendo gli interessi del gioco''.
+
+% ---------------------------------------------------------------------
+\section{Da dove viene il ruolo: \emph{developer} ed \emph{editor}}
+\label{a13:sec:storia}
+
+``Vi siete chiesti chi è l'\emph{editor}, in questo calderone?'' Per rispondere Marta
+racconta da dove nasce la figura dello sviluppo.
+
+\paragraph{Gli anni Settanta e i \emph{wargame}.} Siamo negli anni '70, e la
+\textbf{SPI}, \emph{Simulations Publications, Inc.}\footnote{Marta dice ``Simulation
+Publishing Inc., credo''; il nome corretto della casa editrice americana di
+\emph{wargame} è \emph{Simulations Publications, Inc.}}, una casa editrice americana di
+\emph{wargame}, ha bisogno di pubblicare \textbf{più \emph{wargame}}: chi fa \emph{design}
+``non ce la fa a fare tutti questi''. A questo punto la trascrizione si interrompe per
+alcune frasi ripetute senza senso, e una parte del racconto va perduta\footnote{Coprono
+la spiegazione di come la SPI risolse il problema. Il capitolo non la ricostruisce; si
+sa, in generale, che nella SPI il \emph{developer} era la figura che riceveva il
+\emph{design} e lo portava a un gioco pubblicabile, ma la trascrizione non permette di
+dire che cosa abbia detto Marta.}. Quando il discorso riprende, Marta sta elencando le
+case editrici che, dopo, hanno deciso di \textbf{inserire degli sviluppatori}:
+\textbf{Fantasy Flight}, la linea \textbf{\emph{alea}} di Ravensburger e \textbf{Hans im
+Glück}\footnote{Nella trascrizione ``la linea Alia di Ravensburger'' e ``Huntington
+Gluck'', poi ``Hansingluck''.}. Gli sviluppatori sono ``fondamentalmente delle figure che
+fanno le veci dei designer all'interno delle aziende'', ma \textbf{non sono designer in
+senso stretto}: avranno idee e visioni diverse, ed è qui che nasce il rapporto
+collaborativo come lo conosciamo oggi.
+
+\paragraph{L'\emph{editor} tedesco.} Contemporaneamente c'era un'altra figura,
+l'\textbf{\emph{editor}}, molto diffusa in \textbf{Germania}: era la persona che si
+occupava di \textbf{portare il gioco a compimento}. Le altre case editrici tedesche avevano
+un \emph{editor}, e lo avevano anche \emph{alea} e Hans im Glück; ma l'\emph{editor}
+\textbf{non si occupava del gioco nell'aspetto meccanico e regolistico}: si occupava di
+tutti gli altri aspetti.
+
+\paragraph{L'inversione.} Andando avanti le due figure \textbf{si sono ibridate}, e oggi si
+sono ``un po' invertite'': lo \textbf{sviluppo}, che prima si occupava solo della parte
+meccanica, oggi prende in carico \textbf{tutti gli aspetti}, compresa la parte meccanica;
+l'\textbf{\emph{editor}} ha un ruolo più piccolo, legato soprattutto \textbf{alle parole}:
+rivede i testi, controlla che siano in italiano corretto, si accerta che tutto sia
+presentato al meglio. Questa è, oggi, la figura che di solito si chiama \emph{editor} nel
+gioco da tavolo. Ma non è definito in modo assoluto: ci sono case editrici che chiamano
+``sviluppatore'' chi fa \emph{editing}, e case che fanno \emph{editing} e non hanno
+sviluppatori. È una figura nata negli ultimi anni e \textbf{non c'è ancora una
+standardizzazione}; questa, confrontandosi con colleghi e colleghe di altre aziende, è la
+tendenza che Marta vede.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a13ev/.style={draw, thick, rounded corners=3pt, text width=3.5cm, align=center,
+                minimum height=1.4cm, fill=white},
+  a13arr/.style={-{Stealth[length=3mm]}, thick}
+]
+  \draw[a13arr] (0,0) -- (13.4,0);
+  \foreach \x/\lab in {1.6/anni '70, 6.4/poi, 11.4/oggi}{
+    \fill (\x,0) circle (2.5pt);
+    \node[below=4pt, font=\footnotesize] at (\x,0) {\lab};
+  }
+  % sopra: developer
+  \node[a13ev, above=0.5cm] at (1.6,0) {SPI (\emph{wargame}): servono più giochi di quanti
+    i designer riescano a farne};
+  \node[a13ev, above=0.5cm] at (6.4,0) {Fantasy Flight, \emph{alea} (Ravensburger), Hans
+    im Glück inseriscono gli \textbf{sviluppatori}: parte meccanica};
+  \node[a13ev, above=0.5cm, fill=gray!12] at (11.4,0) {\textbf{sviluppo}: tutti gli
+    aspetti, meccanica compresa};
+  % sotto: editor
+  \node[a13ev, below=0.7cm] at (6.4,0) {l'\textbf{\emph{editor}} (soprattutto in Germania)
+    porta il gioco a compimento, \emph{tranne} meccanica e regole};
+  \node[a13ev, below=0.7cm, fill=gray!12] at (11.4,0) {\textbf{\emph{editor}}: le parole,
+    i testi, la presentazione};
+  \node[font=\footnotesize\itshape, rotate=90] at (-0.4,1.4) {\emph{developer}};
+  \node[font=\footnotesize\itshape, rotate=90] at (-0.4,-1.5) {\emph{editor}};
+\end{tikzpicture}
+\caption{Come Marta racconta la nascita delle due figure e la loro ``inversione''. Le
+date intermedie non sono dette, e una parte del racconto è persa nella trascrizione. Oggi
+le definizioni non sono ancora standardizzate.}
+\label{a13:fig:storia}
+\end{figure}
+
+\paragraph{Prima pausa.} ``Siamo alla seconda parte'': Marta propone una pausa di una
+decina di minuti e invita a portare domande al ritorno. Durante la pausa la trascrizione
+registra il commento su un videogioco di cui si è detto nelle avvertenze, e poi diversi
+minuti di frasi ripetute in ciclo. Quando si riprende, uno studente avverte che sta
+ancora mangiando, ``ma ci sono, nessun problema''. Marta chiede se ci sono domande o
+curiosità (``non so se vi posso rispondere in pieno, perché c'è una parte di segreto
+professionale, ma possiamo ingegnarci'').
+
+% ---------------------------------------------------------------------
+\section{Il conflitto di interessi}
+\label{a13:sec:conflitto}
+
+La prima domanda è di \textbf{Gianmarco}\footnote{Più avanti Marta si riferisce a questa
+domanda come ``quella domanda che ha fatto Gianmarco''.}, ``fra la curiosità e la
+provocazione'': lo sviluppatore, di solito, è \textbf{assunto dalla casa editrice}, mentre
+il designer non lo è necessariamente. \textbf{Non c'è un conflitto di interessi} nel fare
+da mediatore tra due parti, quando si è assunti da una delle due? ``È un'ottima domanda,
+onestamente'', risponde Marta, ``non so neanche se riuscirò a soddisfarti''.
+
+\paragraph{Com'era prima.} All'inizio la figura non c'era, e il rapporto era diverso: i
+designer avevano un gioco e la casa editrice si limitava a \textbf{metterlo sul mercato
+così com'era stato pensato}; rivedeva i testi, curava la produzione fisica. ``Addirittura
+i designer brevettavano i tabelloni'': erano tempi diversi. Funzionava quando \textbf{il
+mercato era piccolo}, le idee erano poche e c'era tantissimo spazio per presentarle.
+
+\paragraph{Com'è oggi.} Oggi a \textbf{Essen}, la più grande fiera al mondo di giochi da
+tavolo, secondo le ultime stime che Marta ricorda si parla di qualcosa come \textbf{2500
+nuovi giochi presentati in un solo anno}, e solo tra quelli pubblicati in qualche forma,
+senza contare tutta la realtà indipendente che pubblica su itch.io e simili. ``Il volume
+di giochi presentati ogni anno è spaventoso.'' Le case editrici, molto spesso,
+\textbf{non possono permettersi di sbagliare un titolo} (``cannare'', dice Marta): dipende
+dalle dimensioni, ma una piccola casa editrice che sbaglia anche solo un paio di titoli
+può chiudere, perché \textbf{l'investimento nel gioco analogico è importante}. Per questo la
+cosa fondamentale è che il gioco \textbf{rispetti le aspettative di mercato}. E chi fa
+\emph{design} non è tenuto a conoscerle, e probabilmente non ha i mezzi per farlo: Marta
+non conosce ``tantissime designer'' che abbiano la possibilità di andare a Essen e
+interfacciarsi con più editori, anche internazionali. È un limite, e oggi \textbf{avere
+dentro l'azienda una figura che fa le tue veci} per tutte queste questioni è generalmente
+visto come positivo, anche se non vale per tutte le persone.
+
+\paragraph{Che cosa fa Marta.} Marta sconsiglia spesso di fare giochi \textbf{solo con
+l'obiettivo di pubblicare con una casa editrice}: capisce che i soldi facciano gola, ma
+bisogna saper riconoscere \textbf{quali giochi sono adatti al mercato}, trovare la casa
+editrice che fa per noi e vedere se con le persone con cui si collabora ci si trova bene.
+Lei, da parte sua, cerca di \textbf{rispettare le volontà del designer}, proprio perché sa
+di essere assunta dalla casa editrice, ma anche di essere, in quel momento,
+\textbf{l'unica persona che sta parlando per il designer}, che magari non c'è a tutte le
+riunioni: diventa importante difendere le sue idee. Si rende conto che non è sempre
+facile, e che non è facile nemmeno accettare la dinamica. ``In un mondo ideale'' chi fa
+\emph{design} potrebbe partecipare attivamente alle quaranta ore lavorative in azienda in
+cui si fanno le cose; nella realtà le dinamiche sono complesse. Gianmarco si dice
+soddisfatto: ``mi è abbastanza chiara la risposta''.
+
+\paragraph{Approfondimento: il portavoce assunto.} La domanda di Gianmarco è la stessa che
+Bateman e Boon si pongono a proposito del produttore esterno, il portavoce dell'editore
+nei progetti di videogiochi: secondo loro molti sviluppatori ne risentono
+l'``interferenza'', ma il problema nasce di solito quando il portavoce cerca di
+\emph{prendersi il controllo} del \emph{design}, invece di rappresentare i bisogni di chi
+rappresenta. La risposta di Marta sposta il problema nello stesso punto: il ruolo regge
+finché chi sviluppa si comporta da mediatore, e dà voce anche a chi, in quella stanza, non
+c'è.
+
+% ---------------------------------------------------------------------
+\section{Le otto fasi dello sviluppo}
+\label{a13:sec:fasi}
+
+Oggi, ripete Marta, si fa un'infarinatura generale; la prossima volta qualche esempio più
+pratico e qualche tecnica. ``La realtà della faccenda è che \textbf{non c'è un modo esatto
+di procedere}'': ogni gioco fa storia a sé, e non si sviluppa un gioco totalmente
+narrativo come si sviluppa un gioco di destrezza. Raccomanda di \textbf{pensare in modo
+elastico}, perché è facile farsi ingannare e pensare che le cose siano lineari: ``non è mai
+così''. Ed è anche l'aspetto bello del lavoro: c'è sempre una sfida nuova. ``Io mi sono
+improvvisamente scoperta appassionata di bonsai soltanto perché ho lavorato a un gioco che
+parlava di bonsai'': se si è persone curiose, ``è un bel lavoro''.
+
+Marta ha riassunto il lavoro in \textbf{otto fasi} (figura~\ref{a13:fig:fasi}):
+\textbf{selezione}, \textbf{ricerca}, \textbf{concettualizzazione},
+\textbf{presentazione}, \textbf{\emph{testing}}, \textbf{implementazione},
+\textbf{preparazione degli \emph{asset}}, \textbf{revisioni}. È, grosso modo, la
+\emph{pipeline} di un gioco dal primo momento in cui viene accettato nel ramo di sviluppo
+di un'azienda a quando lascia l'azienda per essere stampato e finire sullo scaffale. Le
+fasi \textbf{non si svolgono necessariamente in quest'ordine}: a volte si torna indietro, a
+volte mancano dei pezzi; c'è tanto scambio e tanto dialogo con tutti i reparti per
+arrivare alla fine ``nel modo più celere possibile'', ma ``molto spesso arrivano i
+disastri e bisogna tornare indietro''. In questa lezione Marta arriva fino alla
+preparazione degli \emph{asset}; le \textbf{revisioni} e il \textbf{come scrivere un
+regolamento} restano per venerdì (sezione~\ref{a13:sec:chiusura}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a13ph/.style={draw, thick, rounded corners=3pt, text width=2.3cm, align=center,
+                minimum height=1.0cm, fill=white},
+  a13arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  \node[a13ph] (f1) at (0,1.6) {1.\ selezione};
+  \node[a13ph] (f2) at (3.1,1.6) {2.\ ricerca};
+  \node[a13ph] (f3) at (6.2,1.6) {3.\ concettua-\\lizzazione};
+  \node[a13ph] (f4) at (9.3,1.6) {4.\ presentazione};
+  \node[a13ph] (f5) at (9.3,-0.6) {5.\ \emph{testing}};
+  \node[a13ph] (f6) at (6.2,-0.6) {6.\ implementa-\\zione};
+  \node[a13ph] (f7) at (3.1,-0.6) {7.\ preparazione\\degli \emph{asset}};
+  \node[a13ph, fill=gray!12] (f8) at (0,-0.6) {8.\ revisioni\\(venerdì)};
+  \draw[a13arr] (f1) -- (f2);
+  \draw[a13arr] (f2) -- (f3);
+  \draw[a13arr] (f3) -- (f4);
+  \draw[a13arr] (f4) -- (f5);
+  \draw[a13arr] (f5) -- (f6);
+  \draw[a13arr] (f6) -- (f7);
+  \draw[a13arr] (f7) -- (f8);
+  \draw[a13arr, dashed] (f2.north) to[bend right=35] node[above, font=\footnotesize]
+    {si torna indietro} (f1.north);
+  \draw[a13arr, dashed] (f6.south) to[bend right=40] node[below, font=\footnotesize]
+    {ogni ciclo di \emph{test}} (f5.south);
+  \draw[a13arr, dashed] (f5.south west) to[bend left=25] (f6.south east);
+  \node[font=\footnotesize, text width=4.2cm, align=left, anchor=west] at (-1.2,-2.9)
+    {\emph{ingresso}: un prototipo accettato};
+  \node[font=\footnotesize, text width=4.2cm, align=right, anchor=east] at (10.5,-2.9)
+    {\emph{uscita}: il gioco va in stampa};
+\end{tikzpicture}
+\caption{Le otto fasi dello sviluppo secondo Marta. L'ordine è indicativo: le frecce
+tratteggiate ricordano che si torna spesso indietro (per esempio la ricerca informa la
+selezione, e implementazione e \emph{testing} si alternano in ciclo).}
+\label{a13:fig:fasi}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{La selezione}
+\label{a13:sec:selezione}
+
+La selezione comincia quando si riceve un \textbf{prototipo}, e se ne ricevono
+\textbf{tantissimi}. Marta non sa fare una stima precisa, perché cambia molto da periodo a
+periodo e da casa editrice a casa editrice; ma nell'ultimo mese, se non sbaglia, a dV
+Giochi ne sono arrivati \textbf{una sessantina}. dV è una casa editrice grande, e altre ne
+ricevono meno; ma si immagini di dover valutare 60 prototipi al mese: ci deve essere
+\textbf{una cernita}, e avviene in vari modi.
+
+\begin{itemize}
+  \item \textbf{Catalogo e mercato di riferimento.} C'è una scrematura iniziale legata al
+        catalogo. dV Giochi non pubblica giochi che superano i \textbf{45 minuti, un'ora}:
+        se arriva un gioco che dura due ore e mezza, probabilmente viene scartato a
+        priori, perché è molto improbabile che faccia al caso loro. Un'occhiata si dà
+        sempre, però: magari c'è un'idea buona, magari le due ore e mezza sono una stima
+        sbagliata dell'autore.
+  \item \textbf{La complessità.} Un buon gioco può risultare \textbf{eccessivamente
+        complesso}, nel senso che è difficile da spiegare e da far capire, e allora non ci
+        sono i margini per provarlo e testarlo adeguatamente: ``magari devo studiarmi un
+        regolamento per quattro giorni, e io quattro giorni da passare a provare un gioco
+        non ce li ho''. Va valutato: è un gioco che si può testare con il designer? Fa
+        davvero al caso nostro?
+  \item \textbf{La sensibilità del \emph{team} editoriale.} Lo sviluppo è personale, e
+        questo si riflette in tutto: ``se non ci piacciono i giochi in tempo reale, è
+        inutile che pensiamo che quel gioco in tempo reale funzioni benissimo'', perché se
+        poi non riusciamo a metterci a svilupparlo stiamo solo perdendo tempo. In ambito
+        professionale non contano solo le preferenze (``altrimenti io svilupperei solamente
+        due tipi di giochi''), ma ci sono giochi che si sa che non funzioneranno con quel
+        \emph{team}. Marta, per esempio, ``non è ferratissima'' sui \textbf{giochi di
+        destrezza}: tende a evitarli o a passarli a un collega (``tu che hai più la
+        sensibilità per questa cosa, ci vedi qualcosa in questo gioco?''), perché anche
+        fisicamente fa fatica a valutarli. Una casa editrice brava riesce a riflettere
+        queste sensibilità nel suo catalogo. E bisogna tenerle a mente perché i giochi
+        selezionati vanno poi testati, provati, discussi con i designer: ``quello che inizia
+        come un processo di un'ora, un'ora e mezzo potrebbe diventare tranquillamente di
+        giorni''.
+  \item \textbf{La coerenza sull'asse tema--meccaniche.} Negli ultimi anni ci sono
+        tantissimi giochi che si assomigliano. Una volta si tendeva a privilegiare uno dei
+        due aspetti, di solito le meccaniche, e poi c'era il cosiddetto \textbf{\emph{window
+        dressing}}: si ``appiccicava'' sopra un tema che giustificasse un po' le
+        meccaniche. Negli anni questo ha portato a una \textbf{stagnazione}, e oggi c'è
+        anche ``un po' di pesantezza'' da questo punto di vista. Oggi è molto importante che
+        \textbf{meccaniche e tema si parlino in modo molto stretto}. Questo significa che il
+        gioco si può modificare di meno, e che c'è più rischio che non venga accettato:
+        ``lato designer è un incubo'', perché si lavora a un gioco per tantissimo tempo e
+        poi non viene accettato perché non piace il tema, e se il legame è forte non si
+        può più dire ``cambia il tema, qual è il problema?''. Ma è anche ciò che oggi fa
+        scegliere un gioco sopra gli altri. L'esempio è \textbf{\emph{Hegemony}}\footnote{Nella
+        trascrizione ``Egemoni''; si tratta con ogni probabilità di \emph{Hegemony: Lead
+        Your Class to Victory}, un gioco gestionale sulle classi sociali e sulla politica
+        economica di uno Stato.}, un gioco gestionale (``vedo un sì'', dice Marta quando
+        chiede se la classe lo conosce) che ricrea le dinamiche della politica di uno Stato
+        ``in modo molto viscerale'': è una simulazione astratta, ma i designer hanno legato
+        le meccaniche al tema ``in modo indissolubile''. Non si può prendere \emph{Hegemony}
+        e farne un gioco sugli esploratori di \emph{dungeon}, ``perché non regge''; mentre su
+        un gioco di carte con solo numeri si può mettere il \emph{dungeon}, o un tema
+        diverso, perfino politico.
+\end{itemize}
+Sono criteri generici, ``che ci aiutano a selezionare i giochi più promettenti'', a capire
+quali meritano una possibilità di sviluppo.
+
+% ---------------------------------------------------------------------
+\section{La ricerca}
+\label{a13:sec:ricerca}
+
+Dopo la selezione c'è la \textbf{ricerca}. Lo strumento principale, nel mondo del gioco da
+tavolo, è \textbf{BoardGameGeek} (BGG): è ``il sito di riferimento'' perché è un
+\textbf{\emph{database}}, ed è lo strumento più usato nell'industria, ``con tutti i limiti
+che ha'': è una visione \textbf{americano-centrica}, perché la sua utenza è prevalentemente
+quella. Ma resta indispensabile, perché vi si trovano tantissime informazioni.
+
+\paragraph{Le domande della ricerca.} Si immagini di aver appena visto, e accettato, il
+prototipo di \emph{Hegemony}: un gioco sulla politica e sugli Stati. Prima di tutto
+bisogna capire:
+\begin{itemize}
+  \item ce ne sono altri sul mercato che fanno già la stessa cosa?
+  \item se sì, che cosa fanno di diverso?
+  \item quali caratteristiche li esaltano, o li affossano?
+  \item come sono percepiti dalle persone?
+  \item che cosa si può fare di diverso? Magari l'idea è valida, ma approfondendo si scopre
+        che ci sono tanti giochi sulla politica di uno Stato: che cosa fa di diverso
+        questo?
+\end{itemize}
+Si conoscono così i temi comuni: andando su BGG e guardando la classifica
+\textbf{\emph{hotness}} del periodo, o leggendo le recensioni, emerge per esempio come
+negli ultimi anni l'\textbf{asimmetria}\footnote{Nella trascrizione ``la simmetria'', qui e
+più avanti (``\emph{Root} con la simmetria''); dal contesto, e dall'esempio di
+\emph{Root}, che è il gioco asimmetrico per eccellenza, si tratta quasi certamente di un
+errore di trascrizione per ``asimmetria''.} sia diventata una caratteristica molto
+importante dei giochi di una certa complessità. Ci si crea anche delle
+\textbf{metriche}: ``oggi vanno di più i giochi di dadi''. E qui si torna alla selezione:
+``se abbiamo un gioco di dadi, magari è il momento di valutarlo''. È un processo ``che si
+informa a sua volta''.
+
+\subsection{Si può prevedere il mercato?}
+\label{a13:sec:prevedere}
+
+Uno studente alza la mano con una domanda ``molto complicata'', nata dalla sua esperienza:
+ha lavorato molti anni nell'\textbf{\emph{automotive}}. Quando si progetta un'automobile si
+prende a riferimento l'esistente: devo fare un nuovo SUV, identifico il cliente, faccio il
+posizionamento di prodotto, studio chi c'è in quello spazio e rispetto a quello definisco
+le caratteristiche. Ma per fare un'automobile, da foglio bianco, ci vogliono \textbf{dai
+quattro ai sei anni}: quattro anni prima dell'uscita si studiano dei concorrenti pensati
+sei anni prima. Come si fa, nel gioco, a capire che cosa sarà di tendenza quando il gioco
+uscirà, probabilmente due o tre anni dopo la selezione?
+
+\paragraph{``La risposta non piacerà mai a nessuno''.} \textbf{Non c'è un modo di prevedere
+il mercato}, ma si può \textbf{affinare la sensibilità}. Su cicli di quattro--sei anni c'è
+poco da fare: in sei anni il gioco da tavolo ``subirà degli scossoni importanti''. Prendendo
+il 2026 come riferimento: sei anni fa, nel 2020, c'erano giochi che avevano iniziato a
+stabilire la propria dimensione, come \textbf{\emph{Root}}, \textbf{\emph{Wingspan}},
+\textbf{\emph{Terraforming Mars}}\footnote{Nella trascrizione ``Terraform in Mars''.}; e
+questi giochi hanno fatto leva moltissimo su un \textbf{mazzo formato da tutte carte
+diverse}, che fa cambiare l'esperienza da una partita all'altra per l'alta variabilità, o,
+nel caso di \emph{Root}, sull'asimmetria. Ma sei anni prima ancora ``non c'era neanche
+l'antipasto di queste cose'': con il senno di poi si riconosce qualche lieve segno dell'onda
+che stava emergendo, ma era ``davvero troppo tempo''. Per questo i \textbf{cicli di
+sviluppo} cercano di essere \textbf{il più brevi possibile}, anche se realisticamente è
+difficile stare sotto i \textbf{due anni}: Marta ha fatto un conto, e per sviluppare un
+gioco servono in media \textbf{nove mesi}; tra produzione e tutto il resto, quando il
+gioco finisce sul mercato sono passati due anni.
+
+\paragraph{Curiosità, sempre.} Quello che si può fare è \textbf{curare molto la propria
+ricerca}: informarsi, avere curiosità, cercare di capire i giochi quando escono e le loro
+peculiarità. Per esempio: \textbf{perché \emph{Magical Athlete} è diventato
+improvvisamente così forte}, così centrale nella comunicazione? Che cosa ha fatto bene?
+Si possono dare centinaia di risposte diverse; ma facendo questo lavoro la sensibilità si
+affina e si riesce a ``vedere un po' in avanti''. È in parte una visione personale, che
+viene dalle proprie esperienze, e in parte emerge dal conoscere il settore. Per fare
+sviluppo, ``ma a me viene da dire anche per fare \emph{design}'', bisogna avere questa
+tendenza a immaginare come sarà il mercato, ``che non significa prenderci in pieno'', ma
+avere la sensibilità per capire dove si sta andando.
+
+\paragraph{Il caso \emph{Magical Athlete}.} Quest'anno Marta non è andata a Essen con i
+colleghi; al loro ritorno le hanno detto: ``Marta, non ci crederai mai, ma a Essen abbiamo
+visto un sacco di prototipi con i dadi''. ``E certo'', ha risposto lei: \emph{Magical
+Athlete} ``è uscito l'altro ieri''. Tra i designer è diventato ``una bomba''. Perché? Marta
+lo paragona, ``parafrasando'', alla \emph{Fontana} di \textbf{Duchamp}, l'orinatoio esposto
+come opera d'arte: un gesto rivoluzionario. \emph{Magical Athlete} è stato un po' quella
+cosa lì: ha detto ``e se facessimo il gioco dell'oca, ma ancora più folle?'', e ha
+centrato l'obiettivo. La nuova edizione è curata da \textbf{Richard Garfield}, ``che non è
+l'ultimo degli arrivati'': è il creatore di \emph{Magic: The Gathering}, e ha fatto molti
+altri \emph{design} di spessore. Il gioco, nei circoli di appassionati, era già conosciuto;
+ma ha avuto questo ``volano incredibile'' per una ragione precisa.
+\begin{itemize}
+  \item Analizzando il percorso dei giochi da tavolo, negli ultimi anni la maggior parte
+        dei giochi \textbf{davano tantissimo controllo}. Da \textbf{\emph{Agricola}}, uscito
+        nel \textbf{2007}, fino al 2026, i giochi hanno esplorato a fondo la meccanica
+        dell'avere tutto sotto il proprio controllo, tanto che \emph{Agricola} ha in un
+        certo senso inaugurato i giochi \textbf{``multi-solitari''}, come li chiamiamo oggi:
+        giochi in cui l'interazione è per lo più passiva, indiretta, in cui ognuno ``si fa
+        le sue cose'' e poi si vede chi ha fatto più punti.
+  \item La tendenza si è esasperata al punto che serviva una \textbf{risposta forte nella
+        direzione opposta}: \emph{Magical Athlete} mette \textbf{tutto il caos possibile},
+        fa emergere tutto da una grande interazione tra le persone, ed è un gioco
+        \textbf{fortemente esperienziale ed emozionale}. Dice: ``alla fine non ti serve
+        davvero tutto questo controllo per stare al tavolo e avere una serata piacevole
+        con le persone con cui ti trovi bene''. ``È stato fondamentalmente un messaggio.''
+  \item Garfield non ha ``la visione del futuro'', ma ha l'esperienza: ci ha cominciato a
+        lavorare, se Marta ricorda bene, nel \textbf{2022}; ha capito che quello era il
+        \emph{trend} e che poteva intercettarlo, e ha avuto anche fortuna, perché l'ha
+        intercettato probabilmente nel momento di massimo picco, quando le persone
+        volevano davvero qualcosa di diverso.
+\end{itemize}
+Una visione del futuro, quindi, ``un po' ce la si può creare'': si arriva a intravedere le
+tendenze, a capire su che cosa si spinge di più. E stare dentro una casa editrice è un
+\textbf{punto di vista privilegiato}: Marta conosce ``un sacco di giochi'' che usciranno
+prossimamente ma non sono ancora stati annunciati, un po' per i \emph{partner}, un po'
+perché nel settore ci si parla.
+
+\paragraph{``Vedi già il prossimo \emph{trend}?''} Lo stesso studente (``non voglio
+monopolizzare il discorso, ma ne avrei mille'') chiede ancora: provando i prototipi di
+oggi, Marta riesce a intravedere un \emph{trend} che, fra due anni, sarà la reazione a
+quello attuale, per esempio a tutti questi giochi di dadi? Marta vuole ``essere molto
+onesta'' e non ``vendere false promesse'': secondo lei non è davvero possibile prevederlo,
+ma \textbf{si può migliorare}. Nella sua stima, \textbf{su tre giochi che sviluppa, uno lo
+sbaglia}, nel senso che non capisce benissimo dove va il mercato; gli altri due reagiscono
+bene, e in azienda c'è soddisfazione perché i \emph{partner} li accettano, ``sentono che è
+il momento giusto''. Non è una decisione solo sua: è di un intero \emph{team}. C'è un
+\textbf{\emph{editor in chief}} che stabilisce la \textbf{linea editoriale}, c'è una
+\textbf{parte commerciale} che dice ``ci servono giochi di questo tipo''. Ma quando vede un
+prototipo deve sempre \textbf{immaginarsi come sarà sullo scaffale}: tutto il lavoro serve
+a ottenere un gioco di cui si ha già contezza di come sarà, anche se l'idea iniziale potrà
+non essere precisissima; ``l'importante è stare più o meno lì''. Lo studente conclude che
+``per fare \emph{Magical Athlete} non basta solo la bravura, ci vuole anche un po' di
+fortuna''.
+
+\paragraph{\emph{Magical Athlete} e la fortuna del momento.} ``Ottimo esempio di tante
+cose'', risponde Marta: \emph{Magical Athlete} è uscito nel \textbf{2003} ed è stato
+abbastanza ignorato, senza il successo che ha oggi. Alcuni designer lo segnalavano come un
+gioco di spessore, che veniva dal \textbf{Giappone} quando quello non era ancora un mercato
+conosciuto e non si conoscevano i designer giapponesi. La \textbf{Z-Man}, casa americana
+``molto sperimentale'', perché \textbf{Zev}, il suo \emph{editor}\footnote{Zev
+Shlasinger, fondatore di Z-Man Games.}, prendeva sempre \emph{design} strani, aveva portato
+\emph{Magical Athlete} in America, ma in modo modesto, ``e poi era sparito''. La casa che
+l'ha rifatto\footnote{Nella trascrizione ``MYK'': con ogni probabilità CMYK, l'editore
+americano della nuova edizione.} ha capito che ora era il momento molto più opportuno per
+un gioco del genere: ha \textbf{cambiato completamente l'estetica e la presentazione}, lo
+ha addirittura \textbf{semplificato}, e ha funzionato alla grande. ``A volte serve anche un
+po' la fortuna, e capire qual è il momento giusto.'' La ricerca, quindi, è importante, e
+serve anche ai designer; ma chi sviluppa, lavorando su tanti giochi, deve conoscere tutto
+quello che esce: più si è carenti su questo aspetto, più si rischia di mettere sul mercato
+qualcosa che esiste già. ``È difficile, però si fa. Ci si arrangia in qualche modo.''
+
+% ---------------------------------------------------------------------
+\section{La concettualizzazione: il \emph{Game Concept Document}}
+\label{a13:sec:gcd}
+
+Una cosa che aiuta molto, in tutto questo, è la \textbf{concettualizzazione}: quando la
+ricerca è fatta e il gioco è selezionato, è il momento di capire \textbf{come dovrà essere
+questo gioco}. Marta presenta uno strumento che usa e che trova ``utilissimo''.
+
+\paragraph{Dal GDD al GCD.} Quando ha cominciato non esisteva niente del genere, ma serviva
+qualcosa che informasse il \emph{team} di dove si è, che cosa si sta facendo e dove sta
+andando il gioco, perché dal solo prototipo non è facile capirlo. All'inizio ha usato i
+\textbf{GDD}, i \emph{Game Design Document}, noti a chi ``mastica un po' lo sviluppo
+videoludico'': documenti lunghissimi, anche di 80--90 pagine, che delineano il videogioco
+per intero prima di svilupparlo. Le erano utili per ricordarsi le cose, ma li trovava
+``davvero tanto pesanti''. Da lì, lavorando, è venuto fuori un altro concetto, che poi ha
+scoperto non essere solo suo, perché anche nel mondo videoludico cominciava a essere
+applicato: il \textbf{GCD}, \textbf{\emph{Game Concept Document}}.
+
+\paragraph{Che cos'è.} È un documento \textbf{molto agile}: \textbf{al massimo 8 pagine}
+``nei casi veramente più estremi'', di solito anche meno. È \textbf{una fotografia della
+visione del progetto}: si raccoglie la volontà del designer, ciò che chiede l'azienda, si
+mettono insieme le due cose e si dice ``ok, adesso devo dare forma a questa cosa''. E qui
+emerge un aspetto ``importantissimo'' di tutto il lavoro: \textbf{comunicare la visione}.
+In \emph{team} più strutturati questa parte potrebbe farla una persona che si occupa di
+\textbf{direzione creativa}; ``nella realtà dei fatti non ci sono i soldi per avere un
+\emph{creative director}'', e qualcuno deve farlo: serve una persona esperta del mondo del
+gioco, e molto spesso la più qualificata è chi fa sviluppo.
+
+\paragraph{Chiaro più che esaustivo, e statico.} Marta cerca di far stare la prima parte
+\textbf{in una pagina}. Come sa chi ha fatto UX e UI, è importante mettere le informazioni
+\textbf{in modo chiaro, più che necessariamente esaustivo}: ``piuttosto che fare una
+sciorinata di cinque o sei righe, è meglio scriverne due, ma puntuali''. Ne riparlerà a
+proposito dei regolamenti. E soprattutto il GCD è \textbf{statico}: mentre il GDD veniva
+modificato nel corso della produzione, il GCD, una volta scritto, ``quello è, non si deve
+più toccare'', perché altrimenti \textbf{la visione viene continuamente manipolata} e non si
+arriva mai da nessuna parte.
+
+\paragraph{La struttura.} Il GCD ha quattro blocchi (figura~\ref{a13:fig:gcd}).
+\begin{enumerate}
+  \item \textbf{La parte generale.}
+    \begin{itemize}
+      \item Il \textbf{nome del progetto}.
+      \item L'\textbf{\emph{high concept}}\footnote{Nella trascrizione ``l'hyconcept''.}:
+            in due righe, qual è il cuore del gioco, che cosa propone, qual è l'aspetto
+            centrale vincente, ``quello che mi ha fatto dire: questo lo selezioniamo, questo
+            merita una possibilità di essere pubblicato''.
+      \item I \textbf{pilastri}: le condizioni che \textbf{devono essere mantenute} nel
+            progetto. Per un gioco basato su un'avventura grafica, Marta aveva messo tra i
+            pilastri che il gioco \textbf{dovesse rispettare la logica degli enigmi delle
+            avventure grafiche}: dare soddisfazione nel trovare gli oggetti e nell'usarli
+            con altre cose, la dinamica tipica del genere, che il gioco doveva ridare.
+      \item I \textbf{materiali}: le parti che compongono il gioco, gli stessi materiali che
+            ci si immagina, sapendo che potrebbero cambiare, o già con l'ottica di come li
+            si vuole: ``belle queste carte che hai fatto sul prototipo, piccoline, però io
+            le voglio più grandi, perché sono la cosa più importante del gioco''.
+      \item I \textbf{ruoli} e la \textbf{\emph{timeline}}: informazioni più operative, ma
+            ``è bene ribadirle''. I ruoli, perché è sottovalutato che \textbf{cambino da
+            progetto a progetto}: in azienda sono in tre, e Marta non è \emph{lead} su tutti
+            i progetti che segue; su altri ha ruoli diversi. Ricordarsi di non essere
+            \emph{lead} è importante, perché è facile scavalcare e cominciare a pensare
+            ``adesso questo progetto può andare così'', quando il proprio ruolo in quel
+            momento è più di consulenza che di decisione. La \emph{timeline} dà la misura
+            dei tempi attesi, di produzione e di uscita, e permette di chiedersi: ``tra due
+            anni, se lo presento così, funzionerà?''; e questo informa tutti gli altri
+            aspetti.
+    \end{itemize}
+  \item \textbf{La parte commerciale.} Il \textbf{\emph{target}} e le \textbf{\emph{personas}}
+        (``un elemento che ci tornerà utile quando vedremo le tecniche'', venerdì); gli
+        \textbf{USP}, \emph{Unique Selling Point}, o \emph{key selling point}, gli aspetti
+        che rendono il gioco vendibile ``nel senso più vero del termine''; i
+        \textbf{\emph{competitor}}, e anche qui conoscere il mercato è importante.
+  \item \textbf{La parte tecnica.} Il \textbf{\emph{gameplay}}, per trasmettere l'idea di
+        come ce lo si aspetta; il \textbf{\emph{game feel}}, le sensazioni che si provano
+        giocando, o che si vuole emergano di più, perché si è intuito che ci sono ma vanno
+        esaltate (sezione~\ref{a13:sec:gamefeel}); l'\textbf{\emph{art direction}}, che Marta
+        definisce insieme all'\emph{art director} dell'azienda, ma che con designer esperti
+        si può anche condividere (``guarda, questo gioco l'avevo pensato con questo stile,
+        si può fare?'' --- ``assolutamente, ora parlo con il reparto grafico''); la
+        \textbf{produzione}: gli aspetti produttivi più importanti, i possibili ostacoli.
+        La parte tecnica si fa, ``anzi molto spesso si fa'', in collaborazione con tanti
+        altri reparti, e anche con il designer.
+  \item \textbf{\emph{Post mortem}, appunti di lavorazione, varie ed eventuali.} È la parte
+        ``meno statica'', e Marta la lascia sempre: aiuta a ricordarsi, quando si chiude un
+        progetto, che cosa è andato bene, che cosa è andato male, che cosa si può
+        migliorare. ``Vi consiglio di metterla, perché è come mettere una firma a fine
+        progetto'': questa era la visione, questo è come è uscito, che cosa miglioreremo
+        nel prossimo ciclo. ``Non succede mai che finisci un progetto e non ci sono
+        situazioni critiche''; tenerne traccia è importante.
+\end{enumerate}
+
+\paragraph{Pilastri o USP?} \textbf{Tancredi} chiede in chat se i pilastri siano gli USP.
+``Sì e no.'' Lo USP, cioè ciò che distingue il gioco dagli altri prodotti quando lo si
+mette sul mercato, probabilmente in qualche forma c'è e figura in uno dei pilastri; ma i
+pilastri non sono solo gli USP: sono una visione \textbf{più olistica}, gli aspetti a cui
+\textbf{non si può rinunciare}: ``se rinuncio a quegli aspetti, il progetto cade. Per
+questo si chiamano pilastri''. Lo USP ha un'altra funzione, ``più terra terra'': ``va bene,
+il gioco regge, funziona tutto quello che ti pare, ma a chi lo vendiamo?''. I pilastri,
+quindi, può averli anche un gioco che non viene selezionato, e si possono usare
+\textbf{anche lato \emph{design}}. Marta propone un esercizio: \textbf{provate a immaginare
+un GCD di un vostro progetto, o di un gioco esistente}: ``vi fa ragionare sul progetto in
+un modo diverso''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a13sec/.style={draw, thick, rounded corners=3pt, text width=5.6cm, align=left,
+                 inner sep=5pt, fill=white},
+]
+  \node[a13sec, fill=gray!10] (g) at (0,0) {\textbf{generale} (idealmente in una
+    pagina)\\ nome del progetto\\ \emph{high concept} (due righe)\\ pilastri (ciò a cui
+    non si rinuncia)\\ materiali\\ ruoli e \emph{timeline}};
+  \node[a13sec] (c) at (6.4,0.55) {\textbf{commerciale}\\ \emph{target} e
+    \emph{personas}\\ USP / \emph{key selling point}\\ \emph{competitor}};
+  \node[a13sec] (t) at (0,-3.0) {\textbf{tecnica}\\ \emph{gameplay}\\ \emph{game
+    feel}\\ \emph{art direction}\\ produzione};
+  \node[a13sec, dashed] (p) at (6.4,-2.55) {\textbf{\emph{post mortem}}, appunti di
+    lavorazione, varie ed eventuali\\ (l'unica parte non statica)};
+  \node[draw, very thick, rounded corners=6pt, fit=(g)(c)(t)(p), inner sep=8pt,
+    label={[font=\small\bfseries]above:\emph{Game Concept Document}: al massimo 8 pagine,
+    statico}] {};
+\end{tikzpicture}
+\caption{La struttura del \emph{Game Concept Document} come la descrive Marta. È una
+fotografia della visione: chiara più che esaustiva, e da non modificare una volta
+scritta, perché la visione non venga continuamente manipolata.}
+\label{a13:fig:gcd}
+\end{figure}
+
+\paragraph{Approfondimento: i pilastri e la ``lente dell'esperienza essenziale''.} L'idea
+dei pilastri come ``ciò a cui non si può rinunciare'' ha un parente stretto in una delle prime
+lenti di Schell, la lente dell'\emph{esperienza essenziale}: decidere quale esperienza si
+vuole che il giocatore abbia, e quali ne siano gli elementi essenziali, prima di decidere
+come catturarli nel gioco. Nel GCD di Marta, però, i pilastri hanno anche una funzione
+\emph{difensiva}, che nel libro è meno evidente: sono scritti in un documento statico
+proprio perché, quando il gioco passa per molte mani e molti reparti, nessuno possa
+smontare per strada quello che regge l'idea.
+
+% ---------------------------------------------------------------------
+\section{La presentazione}
+\label{a13:sec:presentazione}
+
+A un certo punto tutto questo ``pappone di roba'' va \textbf{presentato a qualcuno}: alla
+casa editrice, in particolare all'\textbf{\emph{editor in chief}}, o comunque alla persona
+che dirà sì o no. Marta, da sviluppatrice, \textbf{non stabilisce se un gioco verrà
+prodotto}: si occupa di presentarlo, di far vedere la visione, ciò che secondo lei il gioco
+sarà una volta elaborato. E qui serve ``quella sensibilità verso il futuro''.
+
+\paragraph{A chi si presenta.} Si presenta a persone che sono \textbf{abituate a vedere
+giochi finiti}. ``In un'azienda non vi aspettate che tutti tocchino i prototipi
+continuamente'': è un compito delle parti più tecniche. I reparti commerciale e marketing,
+o quelli più esecutivi, che prendono le decisioni ma non partecipano alla creazione,
+spesso \textbf{non hanno idea di che cosa sia un prototipo e di come possa diventare}.
+Partendo dal GCD, bisogna far capire quali sono gli aspetti focali. E, prima di tutto,
+\textbf{si sta facendo un \emph{pitch}}: si sta vendendo un'idea. Qui Marta torna alla
+domanda di Gianmarco: è vero che chi sviluppa è assunto, ma in quel momento deve
+\textbf{vendere l'idea all'azienda per cui lavora}, perché ci crede, perché vuole che il
+progetto vada avanti e ha la visione che le fa dire ``puntiamo su questo, piuttosto che
+sull'altro''.
+
+\paragraph{Tradurre le richieste.} Bisogna far capire come si sono trasformate le
+richieste ricevute. Una richiesta tipica degli \emph{stakeholder} è ``voglio un gioco che
+non è ancora sul mercato'', formulata ``in sei o sette modi diversi ogni volta'': ``porta un
+gioco che non si è ancora visto''. Va bene, proviamo: per esempio i \textbf{\emph{roguelike}
+da tavolo}, di cui ce ne sono ancora pochi. Ecco la visione di che cosa può essere un
+\emph{roguelike} da tavolo; ma la si sta presentando a una persona che non li ha mai visti,
+e diventa impegnativo. Bisogna \textbf{fare sintesi} e approfondire \textbf{solo le cose che
+hanno bisogno di essere spiegate}. A volte conviene fare \textbf{due presentazioni}: una per
+il designer e una interna alla casa editrice, perché il peso delle questioni è diverso. Al
+designer la visione finale può essere già chiara; all'\emph{editor in chief}, invece, va
+fatto vedere nel dettaglio come sarà il gioco alla fine. E la presentazione deve essere
+\textbf{coerente}: ``è meglio perdere tempo a visualizzare questa idea, prendersi una
+settimana, una settimana e mezzo per formalizzarla al meglio'', piuttosto che arrivare con
+un'idea sconnessa (``ma sì dai, questa cosa poi ci penseremo'').
+
+\paragraph{Il caso \emph{The Faceless}.} Marta cerca un esempio di cui possa parlare
+(``non posso purtroppo parlare di questa cosa\ldots{} sto pensando se c'è qualcosa che posso
+dire'') e sceglie un progetto passato, \textbf{\emph{The Faceless}}\footnote{Così nella
+trascrizione; il titolo, l'anno e l'editore non sono verificabili dal testo. Marta dice
+che l'immagine del gioco avrebbe dovuto essere nelle slide, ma non la trova.}.
+\begin{itemize}
+  \item Il cuore del gioco era il \textbf{magnetismo}: un gioco \textbf{cooperativo} con una
+        \textbf{bussola al centro} del tavolo e dei \textbf{magneti ai lati del tabellone};
+        spostandoli si modificava il campo magnetico, e quindi l'orientamento della bussola.
+        La bussola rappresentava \textbf{dove si trovano i giocatori}, che si muovono di
+        conseguenza.
+  \item Il gioco era stato presentato inizialmente come un \textbf{gioco sui pirati}, più o
+        meno quando lo hanno valutato, nel \textbf{2017} se Marta non sbaglia: ``e in quel
+        momento di giochi di pirati ce n'era un vagone''. Non poteva essere presentato così.
+  \item Che cosa rappresenta, allora, la bussola? Hanno scelto di cavalcare il \emph{trend}
+        di \textbf{\emph{Stranger Things}}, all'epoca una serie popolare, ma non ancora
+        quanto lo sarebbe diventata, e hanno \textbf{riambientato} tutto lì. Potevano farlo
+        anche perché il gioco andava su \textbf{Kickstarter}: parlavano a un pubblico di
+        appassionati, che sapeva che cosa cercava, non a una persona che passa al
+        supermercato e vede un gioco; avevano la possibilità di spiegare la propria idea.
+  \item Hanno cominciato a implementare la visione cercando di ricalcare i
+        \textbf{topoi narrativi} della serie\footnote{Nella trascrizione ``i top
+        narrativi''.}, e questo ha richiesto \textbf{una visione molto chiara dall'inizio}:
+        perché la bussola va in cerca dei tesori? Che cosa sono i tesori? Come si legano al
+        resto del gioco, soprattutto alle cose esterne che muovono la bussola? Piano piano
+        hanno aggiunto i pezzi. È stato ``un processo lunghissimo'': \textbf{quasi un mese}
+        per arrivare a una sintesi e capire su che cosa focalizzare il gioco.
+  \item Ha ripagato: per l'epoca \emph{The Faceless} è stato un ottimo successo per la casa
+        editrice, ``considerando che era una casa editrice sconosciuta'', e per Marta è
+        stato frutto anche del fatto che c'era una \textbf{visione chiara all'inizio}, seguita
+        rispettando il più possibile i canoni stabiliti.
+\end{itemize}
+
+\paragraph{Approfondimento: presentare sapendo cambiare.} Schell, nel capitolo sul
+\emph{pitch} di \emph{The Art of Game Design}, racconta un episodio di Richard Garfield
+(l'autore che torna più volte in questa lezione): andato da un editore a presentare
+\emph{RoboRally}, si sentì rispondere che il gioco era troppo grande, e che l'editore
+cercava giochi piccoli e portatili. Invece di andarsene offeso, Garfield considerò che il
+suo obiettivo era pubblicare \emph{un} gioco, non necessariamente \emph{quel} gioco, e
+propose un'idea di gioco di carte a cui stava lavorando: diventò \emph{Magic: The
+Gathering}. Il caso di \emph{The Faceless} è lo stesso principio visto dall'altra parte del
+tavolo: il meccanismo della bussola era il gioco; i pirati no, e si potevano cambiare per
+dargli una possibilità sul mercato. È anche il rovescio di quanto detto sulla selezione:
+quando tema e meccaniche sono legati in modo indissolubile, come in \emph{Hegemony}, questa
+via non c'è.
+
+\paragraph{Seconda pausa.} Marta propone ``altri dieci minutini di pausa'' e chiede di
+portare le domande al ritorno. La trascrizione registra di nuovo alcuni minuti di frasi
+ripetute in ciclo.
+
+% ---------------------------------------------------------------------
+\section{Alla ripresa: lo sguardo distaccato, Stonemaier, \emph{Oath}}
+\label{a13:sec:ripresa}
+
+Al ritorno (``eccomi, ci siamo''), Marta aggiunge un paio di cose che le sono tornate in
+mente durante la pausa.
+
+\paragraph{Il senso dell'esercizio iniziale.} Il giro di presentazioni non era solo per
+rompere il ghiaccio: lo stimolo era \textbf{valutare i giochi da una prospettiva
+distaccata}, cioè riuscire a individuarne punti di forza e di debolezza \textbf{a
+prescindere dal fatto che ci piacciano}. È il lavoro di chi sviluppa: capire quali aspetti
+fanno funzionare il gioco e quali ``vanno a detrarre'' dall'esperienza. Lo si può
+applicare a qualsiasi gioco: perché \emph{Magical Athlete} sta avendo tutto questo
+successo? Perché lo ha avuto, all'epoca, \emph{Terraforming Mars}? Perché \emph{Wingspan}?
+``È importante chiedersi il perché, avere la curiosità, approfondire'', anche se la
+risposta non è perfetta: cercare risposte avvicina al processo.
+
+\paragraph{``Non si può prevedere il futuro'', chiarito.} Quando Marta ha detto che non è
+possibile prevedere il mercato, intendeva questo: \textbf{se fosse davvero possibile
+intuire dove va il mercato, ci sarebbe un'azienda leader che avrebbe fatto miliardi},
+perché saprebbe anticipare con regolarità quello che esce. Ci si può però diventare bravi.
+L'esempio è \textbf{Stonemaier Games}\footnote{Nella trascrizione ``Stonehanger'',
+``Stigmeier'' e ``Sommeyer'': si tratta di Stonemaier Games e del suo fondatore, Jamey
+Stegmaier.}, una casa editrice che ``butta fuori un sacco di giochi che effettivamente poi
+vendono''. Molti dicono ``sì, vabbè, ma è un culto''; Marta risponde che sì, ma è perché
+\textbf{Stegmaier è bravo anche a fare comunicazione}: fornisce i giochi che la sua
+clientela vuole, e li fa percepire come adatti a lei. Non è un culto a caso. E ciò che a
+molti sfugge è che anche nel catalogo di Stonemaier ci sono \textbf{giochi che hanno
+fallito}, alcuni importanti: ``non penso che nessuno abbia in mente che cos'è
+\textbf{\emph{Stamp Swap}}'', uscito ``tipo tre anni fa'' e stato ``un fallimento
+colossale''. Esiste perché il futuro non si può prevedere in modo certo.
+
+\paragraph{Tutto questo vale anche per chi progetta.} Tutto ciò che Marta sta dicendo è
+\textbf{applicabile anche lato \emph{design}}: si possono prendere questi concetti e usarli
+per portare un prodotto \textbf{il più vicino possibile all'essere pubblicabile senza
+l'intervento di una casa editrice}. ``Se ci riuscite, è fantastico'', perché la visione è
+totalmente vostra ed esce inalterata. Ma si mettono così tantissimi vincoli, e le
+probabilità di pubblicare diventano bassissime: trovare esattamente la casa editrice che
+vuole esattamente il gioco come lo si è pensato è molto raro. C'è sempre una questione di
+mediazione.
+
+\paragraph{Il caso \emph{Oath}.} Le è venuto in mente il caso di
+\textbf{\emph{Oath}}\footnote{Nella trascrizione ``OTH'', ``Cole Verle'', ``Kohl'' e
+``Leather Games'': si tratta di \emph{Oath}, gioco di Cole Wehrle pubblicato da Leder
+Games. Marta lo data ``nel 2020, mi pare, comunque in quell'epoca''; il gioco è uscito
+all'inizio degli anni '20. La trascrizione non dà il nome della revisione di cui Marta
+parla.}, di \textbf{Cole Wehrle}, uscito per \textbf{Leder Games}. Wehrle aveva un'idea, una
+visione di come realizzare il gioco; e nonostante \emph{Oath} abbia avuto un discreto
+successo nel suo mercato di riferimento, al designer è rimasto ``un groviglio nella pancia
+di qualcosa di irrisolto'': il gioco non faceva quello che voleva, non portava la sua
+visione fino in fondo. Per questo ha pubblicato una cosiddetta \textbf{espansione che rivede
+il gioco} per andare più incontro alla visione iniziale. È un caso ``a cavallo tra
+\emph{design} e sviluppo'': l'idea iniziale c'era già, andava solo sviluppata, implementata
+ed esaltata, e il processo è molto più compatibile con lo sviluppo che con il
+\emph{design}. Ed è un caso di studio interessante anche perché \textbf{Wehrle pubblica i
+propri diari di sviluppo su BGG}: un'occasione per vedere che tipo di ragionamenti si fanno
+su un gioco già arrivato a un certo punto, a cui va fatto ``uno sviluppo sopra''. Uno
+sviluppo ``lato \emph{design}''.
+
+\subsection{Che cos'è il \emph{game feel}?}
+\label{a13:sec:gamefeel}
+
+Uno studente torna sulla parte tecnica del GCD: il \emph{game feel} sono \textbf{le emozioni
+che si provano giocando}, o è qualcosa di particolare? ``Possiamo chiamarle emozioni'',
+risponde Marta, ma è proprio l'aspetto che va \textbf{al di là del \emph{gameplay} nel
+senso tecnico} (``muovo la pedina su questo spazio e faccio questa cosa''): \textbf{che cosa
+mi restituisce il gioco}? Qual è la dinamica? Spesso non è facile far passare, per esempio,
+\textbf{l'interazione}, e come la si vive al tavolo: come si trasmette il fatto che in
+\emph{Magical Athlete}, quando due pedine attivano i loro effetti, si crea ``una sensazione
+del tutto esplosiva'', in cui succedono cose a cascata e le persone al tavolo ``fanno wow,
+incredibile''? Non è facile da trasportare in un documento, e per questo ci vuole una
+sezione che analizzi più nel dettaglio che cosa succede al tavolo a livello di emozioni, o
+di sentimenti: che cosa si prova giocando.
+
+\paragraph{Non far provare il prototipo troppo presto.} A questo stadio si ha un prototipo,
+e non è detto che lo si possa far provare a tutte le parti. Se lo si fa vedere al
+\textbf{commerciale} prima di averci lavorato, è possibile che provare il prototipo in quello
+stadio \textbf{alteri il giudizio} (ne riparlerà venerdì). Anche il modo in cui si presentano
+le cose altera la percezione: una persona abituata a vedere giochi finiti si trova
+spiazzata da un prototipo a cui mancano delle cose. Marta resta vaga, perché è un progetto
+su cui sta lavorando proprio in questi giorni: c'è un prototipo in cui \textbf{funziona
+tutto}, ma \textbf{non è mai stata implementata la meccanica che giustifica il tema del
+gioco}. ``Sembra un paradosso, e capisco che da fuori lo è'': è una meccanica minore, ma
+giustifica il senso di quello che si fa nel gioco. Se Marta facesse provare quel gioco al
+commerciale, si sentirebbe dire: ``ok, però dov'è il gioco? Mi stai nominando questo gioco
+che si chiama Pinco Pallino, e poi non c'è né pinco né pallino''. ``Sì, questa è una cosa
+che posso fare, mi devi dare un attimo di tempo'': ma intanto ``ti bruci un po' la
+sensibilità del commerciale''. Meglio fargli vedere un prototipo più avanzato, così che la
+sua risposta sia più aderente a ciò che si aspetta di vedere. Marta si scusa di dover
+parlare per allusioni: preferirebbe esempi più pratici, ma ragiona molto sui progetti
+attuali, ``e sono tanti quelli di cui non posso parlare''; con i giochi passati è più facile.
+
+% ---------------------------------------------------------------------
+\section{Il \emph{testing}}
+\label{a13:sec:testing}
+
+Prima di passare al \emph{testing} Marta chiede se c'è qualche altra domanda, ``magari
+qualche persona più timida''. Il \emph{testing} è forse l'aspetto che la classe conosce
+meglio, se ha già fatto qualcosa di \emph{design}: ``\textbf{non si può arrivare a una
+visione, almeno in campo di gioco, senza adeguate fasi di \emph{testing}}''. Per un
+designer, come si diceva all'inizio, il tempo di \emph{test} può essere infinito, finché
+non raggiunge ciò che si è prefissato\footnote{A questo punto la trascrizione è coperta per
+alcune righe da frasi ripetute senza senso (``i \emph{preprint}, i \emph{preprint}''); il
+discorso riprende con i \emph{test} ``in funzione di lavorare all'implementazione
+successiva''.}. Per chi sviluppa, i \emph{test} sono \textbf{in funzione
+dell'implementazione successiva}.
+
+\paragraph{Due \emph{testing}.} Marta precisa di aver omesso una cosa: c'è già una fase di
+\emph{test} durante la \textbf{selezione} e la \textbf{ricerca}, per assicurarsi che il gioco
+abbia le caratteristiche necessarie. Quella di cui parla ora è diversa: il gioco è
+\textbf{già stato accettato}, e bisogna capire come lavorare perché si realizzi la visione
+che si ha in mente.
+
+\subsection{In \emph{target} e fuori \emph{target}}
+
+Prima cosa: ci sono vari tipi di \emph{test}, e \textbf{si può testare in \emph{target} o
+fuori \emph{target}}. L'importante è \textbf{riconoscere quando si sta testando in un modo o
+nell'altro} (tabella~\ref{a13:tab:target}).
+\begin{itemize}
+  \item Se si fa un \emph{test} \textbf{fuori \emph{target}} aspettandosi di sentirsi dire
+        ``bellissimo, non vedo l'ora di giocarlo'', ``si sta per ricevere grandi delusioni, e
+        basta''. Fuori \emph{target} l'obiettivo deve essere un altro: capire \textbf{quali
+        aspetti risultano difficili a chi non è il \emph{target} tipico}. Per esempio si fa
+        testare un gioco di complessità maggiore a una persona che di solito gioca
+        \emph{party game}, e già solo così ci si accorge che \textbf{alcuni concetti dati per
+        assodati vanno spiegati in modo più semplice}.
+  \item Il \emph{test} \textbf{in \emph{target}} comunica \textbf{le esigenze e le richieste di
+        chi conosce bene il genere}; ma non parla a chi vuole avvicinarsi a un genere, o
+        conoscere meglio un gioco che non è nelle proprie corde.
+\end{itemize}
+Bisogna fare tutti e due i tipi di \emph{test}, ma \textbf{sapere sempre che cosa si sta
+testando}. Lo stesso vale per altri aspetti: se si sta facendo un gioco \emph{cyberpunk} e lo
+si fa testare a una persona che \textbf{odia il \emph{cyberpunk}}, è normale che non le
+arrivino le emozioni vere del genere e che non capisca fino in fondo l'ambientazione; ma può
+dare comunque \emph{feedback} utile, e bisogna saperlo \textbf{filtrare} da quello inutile,
+che è sostanzialmente ``a me il \emph{cyberpunk} non piace''.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.4cm}p{5.3cm}p{5.3cm}@{}}
+\toprule
+ & \textbf{Che cosa dice} & \textbf{Che cosa non può dire} \\
+\midrule
+\textbf{In \emph{target}} & le esigenze e le richieste di chi conosce bene il genere &
+  come reagisce chi si avvicina al genere, o chi non lo ha nelle proprie corde \\
+\addlinespace
+\textbf{Fuori \emph{target}} & che cosa risulta difficile; quali concetti, dati per
+  scontati, vanno spiegati meglio & se il gioco ``è bello'': aspettarselo porta solo
+  delusioni; il \emph{feedback} di gusto (``a me il \emph{cyberpunk} non piace'') va
+  filtrato \\
+\bottomrule
+\end{tabular}
+\caption{I due tipi di \emph{test} secondo Marta: servono entrambi, ma bisogna sempre
+sapere quale si sta facendo.}
+\label{a13:tab:target}
+\end{table}
+
+\paragraph{Approfondimento: \emph{tester} esperti e \emph{tester} ``usa e getta''.} Schell,
+nel capitolo sul \emph{playtesting}, distingue tra i tipi di \emph{tester} quasi negli
+stessi termini. Gli \emph{expert gamers}, i giocatori esperti di un genere, sanno dire nel
+dettaglio come il gioco si confronta con giochi simili, ma sono ``più disincantati'' e
+chiedono sfide più complesse del giocatore medio: ``molti giochi sono stati rovinati
+dall'averli regolati sui gusti elitari'' di una nicchia (l'esempio è \emph{The Sims
+Online}). I \emph{tissue testers}, chiamati così perché, come un fazzoletto, si possono usare
+una volta sola, vedono il gioco con occhi nuovi e notano ciò a cui il designer si è
+abituato, e sono preziosi per le domande di usabilità e di comunicazione; ma se si testa
+solo con loro si rischia un gioco che piace la prima volta e annoia dopo. La conclusione di
+Schell è quella di Marta: ``con chi testare dipende interamente da che cosa si sta cercando
+di imparare''.
+
+\subsection{I \emph{bias} dovuti alla presentazione del prototipo}
+
+Un aspetto ``molto sottovalutato'': se non si testa con persone consapevoli (designer, o
+persone che sanno che cos'è un prototipo), ci sono \textbf{\emph{bias} dovuti alla
+presentazione del prototipo}. Marta segue il principio del \textbf{\emph{fail fast}}: fa
+prototipi molto grezzi e molto veloci, e quando deve testare delle carte spesso le stampa su
+\textbf{fogli A4 di grammatura bassa}, ``tipo 160, una roba veramente misera'', le taglia al
+volo e le mescola. Chi ha testato così sa che cosa succede: prendi una carta e ne vengono su
+due, le carte si scombinano, una persona soffia e le carte volano. Sembrano cose che si
+giustificano con ``sì, ma è un prototipo''; in realtà \textbf{impattano sull'esperienza},
+perché quelle carte sono frustranti da usare. Se, per qualsiasi ragione, il prototipo non
+è all'altezza (e a volte ci sta, non si vuole fare un prototipo finale), bisogna
+\textbf{tenere da parte questi \emph{bias}} e sapere che entreranno nel processo di
+\emph{feedback}. Ma se il gioco prevede delle tessere che devono restare ferme, farle a
+grammatura 160 ``è cercare di far fallire il \emph{test}'': dove possibile, si usino
+materiali adeguati.
+
+\subsection{Testare con uno scopo}
+
+\textbf{Non fate mai \emph{test} a vuoto}, solo per testare. ``È un rischio in cui si cade,
+penso, il 90\% delle volte'': si dice ``facciamo un \emph{test}'', si cominciano ad analizzare
+cento aspetti, e alla fine non si capisce più su che cosa lavorare, ``sembra tutto
+sbagliato''. ``È la ricetta per il fallimento.'' Bisogna avere in mente \textbf{che cosa si
+sta testando}: come reagisce questa meccanica; come reagiscono le persone al tavolo; se la
+durata è giusta. Un aspetto in particolare, o anche due o tre, ``non è che deve essere per
+forza uno'', ma \textbf{focalizzati}. Arriveranno \emph{feedback} anche su tutto il resto:
+\textbf{tracciateli}, perché sono importanti, ma \textbf{metteteli da parte} e analizzateli
+in un secondo momento; concentratevi solo su ciò che state testando.
+
+% ---------------------------------------------------------------------
+\section{Chi è il nostro \emph{target}}
+\label{a13:sec:target}
+
+Si è parlato di \emph{test} in \emph{target} e fuori \emph{target}: ma \textbf{chi è il
+nostro \emph{target}}? Capirlo può essere ``molto scomodo''. Il designer ha sicuramente in
+mente un \emph{target}, difficilmente fa un gioco senza pensarci; ma a volte il
+\emph{target} è \textbf{il designer stesso}, che fa il gioco più per la voglia di farlo che
+per pubblicarlo, e il gioco può comunque avere possibilità sul mercato. Chi sviluppa deve
+capire \textbf{qual è la fetta più grande che si può prendere senza alterare il
+\emph{design}}. Marta indica quattro riferimenti.
+
+\paragraph{1. I premi di settore.} Lo \textbf{\emph{Spiel des Jahres}}\footnote{Nella
+trascrizione ``lo Spill dei Ciares'' e ``lo spill''; più avanti ``il Kenner'' è il
+\emph{Kennerspiel des Jahres}, il premio della stessa giuria per i giochi più impegnativi.}
+è il premio più conosciuto; si considerano ``un po' gli Oscar del nostro settore'', perché
+in Germania hanno tanto peso, la Germania è uno dei mercati più importanti e i premi
+guidano l'attenzione degli addetti ai lavori. Sapere se il gioco rientra nella categoria di
+un premio dice due cose: se è \textbf{candidabile}, e quindi può ricevere esposizione
+mediatica, e \textbf{a chi è destinato}. Marta vede spesso discussioni del tipo ``lo
+\emph{Spiel} non è più quello di una volta'' o ``il \emph{Kenner} ormai va solo a questi
+giochi'': fatte così sono ``per lo più sterili''. Da professionisti bisogna capire
+\textbf{perché} lo \emph{Spiel} e il \emph{Kenner} stanno andando in quella direzione, e
+che cosa aspettarsi l'anno dopo. In azienda fanno ``un gioco molto, molto stupidino'':
+\textbf{provano a predire} ogni anno lo \emph{Spiel} e il \emph{Kenner}. Non ci prendono
+sempre, ma su sei persone che partecipano al sondaggio, in genere, prendono un po' tutti i
+giochi, vincitori e nominati, anche se non è sempre la stessa persona a indovinarli tutti.
+``Non è magia: è intuizione.'' Più si lavora e ci si fa domande, più si prevedono le
+categorie. Ci sono anche tanti progetti che \textbf{non sono pensati per i premi}: anche se fa
+piacere vedere un gioco su cui si è lavorato finire sullo \emph{Spiel}, Marta sa per certo
+che alcuni suoi giochi non saranno candidati, perché non rientrano nella categoria, anche se
+hanno la complessità giusta: ``non basta. Ci sono tante variabili, non è solamente un
+discorso di complessità''.
+
+\paragraph{2. Bartle.} Ci sono poi le \textbf{tassonomie}, come quelle di Bartle e di LeBlanc
+(``oddio, ho un vuoto di memoria\ldots{} LeBlanc, ecco''). La tassonomia di \textbf{Bartle} si
+applicava ai \textbf{MUD}, i \emph{multi-user dungeon}\footnote{Nella trascrizione
+``Mood''.}: implementazioni in rete di giochi di ruolo testuali, ``immaginatevi gente che
+gioca di ruolo su internet, su dei forum, gli antenati dei social network'', e Marta cita
+come esempio qualcosa che nella trascrizione è ``le LANDE''\footnote{Così nella
+trascrizione; è probabilmente il nome di un MUD italiano, ma non è ricostruibile con
+certezza.}. Bartle definiva le categorie di giocatori su \textbf{due assi},
+\textbf{agire} o \textbf{interagire}, e \textbf{giocatori} o \textbf{mondo}, e ne ricavava
+\textbf{quattro archetipi} (figura~\ref{a13:fig:bartle}):
+\begin{itemize}
+  \item i \textbf{\emph{killer}}, che ``giocano per rompere le scatole agli altri
+        giocatori'';
+  \item gli \textbf{\emph{achiever}}, che vogliono raggiungere dei risultati: vincere la
+        partita, fare più oro degli altri, avere più carte in mano, ``qualsiasi cosa di
+        questo tipo'';
+  \item i \textbf{\emph{socializer}}, che vogliono l'esperienza di stare insieme, giocare e
+        conoscere altre persone;
+  \item gli \textbf{\emph{explorer}}, che testano le meccaniche, vogliono vedere i limiti del
+        sistema e capire esattamente come è strutturato il gioco.
+\end{itemize}
+Marta li cita rapidamente, immaginando che nel corso si vedranno (``solitamente si fa''); è
+uno dei modi di dividere i giocatori, ed è stato usato molto anche nel gioco da tavolo e nel
+gioco di ruolo per definire i profili dei giocatori.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small, a13q/.style={text width=3.4cm, align=center}]
+  \draw[-{Stealth[length=3mm]}, thick] (-3.4,0) -- (3.4,0) node[right,
+    font=\footnotesize] {giocatori};
+  \node[left, font=\footnotesize] at (-3.4,0) {mondo};
+  \draw[-{Stealth[length=3mm]}, thick] (0,-2.6) -- (0,2.6) node[above,
+    font=\footnotesize] {agire};
+  \node[below, font=\footnotesize] at (0,-2.6) {interagire};
+  \node[a13q] at (1.8,1.4) {\textbf{\emph{killer}}\\agiscono \emph{sui}
+    giocatori};
+  \node[a13q] at (-1.8,1.4) {\textbf{\emph{achiever}}\\agiscono sul mondo: risultati,
+    vittoria};
+  \node[a13q] at (1.8,-1.4) {\textbf{\emph{socializer}}\\interagiscono \emph{con} i
+    giocatori};
+  \node[a13q] at (-1.8,-1.4) {\textbf{\emph{explorer}}\\interagiscono con il mondo:
+    limiti del sistema};
+\end{tikzpicture}
+\caption{I quattro tipi di giocatore di Bartle, nati per i MUD, sui due assi citati da
+Marta (agire/interagire, giocatori/mondo). La disposizione segue lo schema classico di
+Bartle, ripreso anche da Schell.}
+\label{a13:fig:bartle}
+\end{figure}
+
+\paragraph{3. LeBlanc.} Allo stesso modo, \textbf{LeBlanc} ha diviso in \textbf{otto
+categorie} quelle che ha chiamato le \textbf{categorie del piacere}: che cosa cerca un
+giocatore quando gioca. Sono modi di valutare chi è il \emph{target}, di tracciare i profili
+delle persone per cui si sta producendo il gioco.
+
+\paragraph{4. Il \emph{target} demografico.} Il \emph{target} può essere anche
+\textbf{demografico}: fare un gioco per gli \textbf{Stati Uniti} è molto diverso dal farlo per
+l'\textbf{Europa}, e i giochi che vendono negli Stati Uniti non sono gli stessi che vendono in
+Europa. Marta dice ``vendono'', ma vale anche se si pubblica gratuitamente su itch.io:
+l'attenzione che un gioco riceve in America è molto diversa da quella che riceve in Europa.
+Cita i due continenti perché sono i più conosciuti, ma il discorso si allarga al mercato
+\textbf{asiatico} e ancor più a quello \textbf{africano}, ``di cui non si parla praticamente
+mai'', che è praticamente sconosciuto. Uno degli ultimi giochi su cui Marta ha lavorato era
+pensato per gli \textbf{Stati Uniti}, e sapevano benissimo che in Europa non avrebbe venduto
+bene: ``ed è andata proprio così''. A \textbf{Lucca}, quando è uscito, ``nessuno praticamente
+l'ha guardato''; negli Stati Uniti è stato ``un fulmine a ciel sereno'', tutti volevano quel
+gioco. ``È importante capire a chi stiamo parlando.''
+
+\paragraph{Non legarsi troppo alle tassonomie.} Visto che la classe Bartle non l'ha ancora
+analizzato, ``queste saranno cose un po' superflue''; ma se ne parla tantissimo. Secondo Marta
+\textbf{non bisogna legarcisi troppo}, perché è nata per un contesto di gioco molto diverso.
+Le categorie di LeBlanc sono già più orientate a definire il concetto di
+\textbf{esperienza}, e quindi a individuare meglio i profili delle persone; ma secondo lei
+``si è fatto ancora poco'', e forse serve \textbf{qualcosa di nuovo}, che parli più nello
+specifico di chi gioca da tavolo e di chi gioca di ruolo, con profili più centrati. Questo
+tornerà utile quando si parlerà delle \textbf{\emph{personas}}.
+
+\paragraph{Approfondimento: gli otto piaceri di LeBlanc.} Marta nomina le categorie di
+LeBlanc senza elencarle. Schell le riporta nel capitolo sul giocatore di \emph{The Art of
+Game Design}: \emph{sensazione} (il piacere dei sensi, affidato soprattutto all'estetica:
+``non può trasformare un brutto gioco in un buon gioco, ma spesso può rendere un buon gioco
+migliore''), \emph{fantasia} (il mondo immaginario, l'immaginarsi diversi da sé),
+\emph{narrativa} (non una storia lineare prescritta, ma lo svolgersi drammatico di una
+sequenza di eventi), \emph{sfida}, \emph{compagnia} (\emph{fellowship}: amicizia,
+cooperazione, comunità), \emph{scoperta}, \emph{espressione} (esprimere sé stessi e creare) e
+\emph{sottomissione} (\emph{submission}: il piacere di entrare nel cerchio magico e lasciarsi
+alle spalle il mondo reale). Subito dopo Schell presenta i quattro tipi di Bartle, che
+associa ai semi delle carte (\emph{achiever} quadri, \emph{explorer} picche,
+\emph{socializer} cuori, \emph{killer} fiori), e mette in guardia proprio come Marta: queste
+tassonomie semplici, ``sotto un esame attento'', hanno dei buchi, e se usate male fanno
+perdere di vista piaceri più sottili.
+
+\paragraph{Approfondimento: un modello costruito sul pubblico.} La richiesta di Marta di
+``qualcosa di nuovo'' ha un precedente nel mondo videoludico. Bateman e Boon, in \emph{21st
+Century Game Design}, partono proprio dall'osservazione che il modello di pubblico più
+diffuso è ``tutti i giocatori pensano come me'', ``del tutto inutile, a meno che tu non sia
+l'unica persona che giocherà il gioco'', e costruiscono un modello demografico
+(\emph{DGD1}) a partire da questionari sui giocatori reali, con quattro stili di gioco
+(\emph{Conqueror}, \emph{Manager}, \emph{Wanderer}, \emph{Participant}), usando i dati di
+Bartle come confronto. È un modello per i videogiochi, e quindi non è la risposta che Marta
+cerca per il tavolo; ma il metodo (partire dal pubblico che c'è, e non da una tipologia nata
+per un altro contesto) è lo stesso che lei auspica.
+
+% ---------------------------------------------------------------------
+\section{L'implementazione}
+\label{a13:sec:implementazione}
+
+``Questo spero che lo conosciate'': il processo di implementazione è il classico
+\textbf{ciclo di prototipazione} (figura~\ref{a13:fig:ciclo}). Si fa il prototipo, si va
+in \emph{playtest}, si valutano i \emph{feedback} e si torna alla fase di \emph{design}, o
+in questo caso di sviluppo. ``È lo stesso identico ciclo'', ma con alcune differenze
+importanti.
+
+\paragraph{Non avere paura di fare modifiche.} Vale anche per il \emph{design}, ma qui si
+lavora su un progetto che \textbf{probabilmente ha una sua stabilità}: un gioco che ha una
+sua dimensione e che, se è stato selezionato bene, funziona. Quindi qualsiasi modifica si
+faccia, \textbf{si può sempre tornare allo stato iniziale}, ripartire, provare altre strade.
+È un processo molto tipico: si fanno modifiche, e ancora modifiche, e ancora modifiche;
+poi a un certo punto si capisce che non funzionano, si torna all'inizio, e magari si dice:
+``no, ok, questa cosa, come l'aveva fatta il designer, è effettivamente il modo migliore di
+portarla, e non ci sono modifiche ulteriori che si possono fare''.
+
+\paragraph{Un piccolo passo alla volta.} \textbf{Il prototipo, a ogni ciclo, dovrebbe
+migliorare}; e poiché deve essere presentato a persone diverse, anche non abituate ai
+prototipi, il consiglio di Marta è \textbf{fare un piccolo passo alla volta in cui si
+migliora qualcosa}. Esempio: si usavano pezzi di carta per i gettoni; ``prendiamo dei gettoni
+di cartone veri e propri, iniziamo a impilarli e vediamo che succede'', se l'esperienza è
+quella che ci si immagina o se le persone al tavolo hanno difficoltà. ``Qui entriamo un po'
+nel campo della UX''\footnote{Nella trascrizione ``della Wix'', come già nella prima lezione
+del corso.}, ma sono aspetti fondamentali: se i pezzetti di cartoncino sono fini e scomodi
+da prendere, una persona fa fatica anche solo a prenderli, ne è influenzata, e \textbf{non
+gioca su quel sistema}. Se poi si migliorano i \emph{token}, li si fa di cartone spesso, più
+grandi, impilabili, e \textbf{improvvisamente le persone cominciano a giocare con quel
+sistema}, allora si capisce che il problema non era il meccanismo in sé, ma che era
+\textbf{scomodo o difficile accedere a quei segnalini}; e solo ora lo si può valutare come è
+giusto.
+
+\paragraph{Non troppi cambiamenti insieme.} Allo stesso tempo, \textbf{evitate di fare troppi
+cambiamenti tutti insieme}, perché si perde il \emph{focus}: è il discorso del
+\emph{testing}. Se si è focalizzati nei \emph{test}, probabilmente non si faranno troppi
+cambiamenti alla volta. Chi ha già messo le mani in pasta se ne sarà accorto: il \emph{game
+design} è difficile, lo sviluppo è difficile, perché \textbf{quando si cambia qualcosa si
+ripercuote a cascata anche su sistemi che non si prevedevano}. Per questo servono i
+\emph{test}; e per questo, se si fanno troppi cambiamenti, non si sa più che cosa influenza
+che cosa, ed è difficile capire se il cambiamento fatto abbia davvero prodotto un risultato.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a13ci/.style={draw, thick, rounded corners=3pt, text width=2.5cm, align=center,
+                minimum height=1.0cm, fill=white},
+  a13arr/.style={-{Stealth[length=3mm]}, thick}
+]
+  \node[a13ci] (pr) at (0,1.7) {prototipo};
+  \node[a13ci] (pt) at (3.4,0) {\emph{playtest}\\(con uno scopo)};
+  \node[a13ci] (fb) at (0,-1.7) {valutazione\\dei \emph{feedback}};
+  \node[a13ci, fill=gray!12] (sv) at (-3.4,0) {sviluppo\\(modifiche)};
+  \draw[a13arr] (pr) to[bend left=20] (pt);
+  \draw[a13arr] (pt) to[bend left=20] (fb);
+  \draw[a13arr] (fb) to[bend left=20] (sv);
+  \draw[a13arr] (sv) to[bend left=20] (pr);
+  \node[font=\footnotesize, text width=4.3cm, align=left, anchor=west] at (5.0,1.0)
+    {$\bullet$ un piccolo passo alla volta;\\$\bullet$ mai troppi cambiamenti
+    insieme;\\$\bullet$ si può sempre tornare allo stato iniziale (la versione del
+    designer)};
+  \node[font=\footnotesize, text width=4.3cm, align=left, anchor=west] at (5.0,-1.2)
+    {i \emph{feedback} su ciò che non si sta testando si tracciano e si mettono da
+    parte};
+\end{tikzpicture}
+\caption{Il ciclo di implementazione: lo stesso ciclo di prototipazione del \emph{design},
+con le regole pratiche indicate da Marta.}
+\label{a13:fig:ciclo}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Il bilanciamento}
+\label{a13:sec:bilanciamento}
+
+Si arriva al \textbf{bilanciamento}, ``quello che mi chiedono spesso'' quando si parla di
+sviluppo. Molte persone identificano lo sviluppo con il bilanciamento: ``non c'è cosa più
+falsa''. Intanto, \textbf{non tutti i giochi sono soggetti alla matematica}: se si lavora a
+un gioco narrativo, che numeri ci sono da bilanciare? In una \textbf{cena con delitto} su
+cui hanno lavorato, ``che numeri vado a bilanciare? Sono relativamente scarsi''. E poi molte
+persone hanno preso così alla lettera l'idea di bilanciare che si è arrivati al fenomeno del
+\textbf{sovrabilanciamento}.
+
+\paragraph{La percezione è più importante della realtà.} Per bilanciare un gioco bisogna
+ricordare che \textbf{la percezione è più importante della realtà}. Marta racconta il caso di
+un videogioco molto famoso di cui non ricorda il nome (``adesso mi viene \emph{Big Rigs}, ma
+non era \emph{Big Rigs}'')\footnote{Il gioco non è identificabile dalla trascrizione, e il
+capitolo non prova a indovinarlo.}, uscito, le pare, nel 1998. Era un gioco di corse in cui
+ogni giocatore aveva un veicolo diverso, la moto, il camion, l'auto, ciascuno con le sue
+caratteristiche: la moto molto veloce, il camion molto resistente, l'auto bilanciata. Per
+\textbf{vent'anni}, sui \emph{forum}, i giocatori hanno discusso: ``per me il camion è più
+adatto perché evito gli spintoni'', ``con la moto faccio tempi migliori''. Poi è saltato fuori
+che \textbf{gli sviluppatori si erano dimenticati di implementare il meccanismo che regolava i
+valori dei veicoli}: la grafica li mostrava, ma i valori \textbf{erano tutti uguali}. Marta
+porta sempre questo caso perché fa capire quanto la percezione possa essere più influente
+della realtà.
+
+\paragraph{Cinque partite non bastano.} Oggi escono così tanti giochi che le persone
+difficilmente fanno più di \textbf{5--10 partite} a un gioco, e 5--10 partite ``non servono a
+niente'' per capirne il bilanciamento. Molti commentano se un gioco è bilanciato o rotto
+\textbf{dopo una sola partita}: ``pura follia''. ``Io faccio questo lavoro da dieci anni, e non
+riuscirei a valutare questa cosa su una partita, neanche se mi impegnassi tantissimo.'' Ma
+proprio per questo la percezione conta, forse più della realtà: quando si bilancia bisogna
+capire \textbf{come una cosa viene percepita} e come viene realizzata. L'esempio dei
+\emph{token} è un esempio di percezione: il \emph{token} dà sempre gli stessi punti, ma se è
+grande e lo si vede costantemente fa molta differenza. Vale anche per i numeri:
+\textbf{se si dà molta importanza a un elemento, a una risorsa, i giocatori tenderanno a
+giocare su quella risorsa}. E questo può tornare comodo.
+
+\paragraph{Che cosa si vuole ottenere.} \textbf{Non si vuole ottenere un risultato preciso}: si
+vuole che i giocatori \textbf{seguano dei percorsi}, facciano delle esperienze, giochino con
+dei sistemi; e lo si ottiene anche con il bilanciamento.
+
+\paragraph{Il sovrabilanciamento.} Si sovrabilancia quando, nel tentativo di bilanciare,
+\textbf{si appiattisce l'esperienza}, regolando tutte le strategie sugli stessi livelli (``lo
+vedremo meglio venerdì''). Se ci sono \textbf{due strade} per vincere, e tutte e due danno
+\textbf{10 punti}, quelli che servono per vincere, qualsiasi cosa si faccia porta a 10 punti:
+``alla fine io non ho scelte, perché qualsiasi cosa faccio va bene''. Il fenomeno, qui
+semplificato, si sta presentando in molti giochi moderni, soprattutto in quelli definiti
+\textbf{``insalata di punti''} (\emph{point salad}): non c'è stato un bilanciamento che
+seguisse la dinamica di \textbf{dare scelte sensibili}, come la classica strada \textbf{meno
+rischiosa ma meno remunerativa} contro una \textbf{più rischiosa ma più remunerativa}. ``È uno
+\emph{standard} del \emph{design}'', che oggi a volte viene trascurato; e quando si gioca il
+gioco ``non lascia assolutamente nulla'', perché ogni scelta è uguale alle altre: ``non c'è
+scelta'' (figura~\ref{a13:fig:sovrabil}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a13p/.style={draw, thick, rounded corners=3pt, text width=2.3cm, align=center,
+               minimum height=0.9cm, fill=white},
+  a13arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  % sinistra: sovrabilanciato
+  \node[font=\small\bfseries] at (2.2,2.6) {sovrabilanciato};
+  \node[a13p] (s) at (0,0.9) {inizio};
+  \node[a13p, fill=gray!12] (v) at (4.4,0.9) {vittoria};
+  \draw[a13arr] (s.north east) to[bend left=30] node[above, font=\footnotesize]
+    {strada A: 10 punti} (v.north west);
+  \draw[a13arr] (s.south east) to[bend right=30] node[below, font=\footnotesize]
+    {strada B: 10 punti} (v.south west);
+  \node[font=\footnotesize, text width=4.8cm, align=center] at (2.2,-1.2) {qualsiasi
+    cosa faccio va bene:\\\textbf{nessuna scelta}};
+  % destra: scelte sensibili
+  \node[font=\small\bfseries] at (9.4,2.6) {scelte sensibili};
+  \node[a13p] (s2) at (7.2,0.9) {inizio};
+  \node[a13p, fill=gray!12] (v2) at (11.6,0.9) {vittoria};
+  \draw[a13arr] (s2.north east) to[bend left=30] node[above, font=\footnotesize,
+    align=center] {più rischio,\\più ricompensa} (v2.north west);
+  \draw[a13arr] (s2.south east) to[bend right=30] node[below, font=\footnotesize,
+    align=center] {meno rischio,\\meno ricompensa} (v2.south west);
+  \node[font=\footnotesize, text width=4.8cm, align=center] at (9.4,-1.2) {le strade
+    sono equilibrate, ma \textbf{diverse}: scegliere conta};
+\end{tikzpicture}
+\caption{Il sovrabilanciamento come lo semplifica Marta: se ogni strada vale lo stesso
+nello stesso modo, l'esperienza si appiattisce. Bilanciare non vuol dire rendere tutto
+uguale.}
+\label{a13:fig:sovrabil}
+\end{figure}
+
+\paragraph{Fruibilità e accuratezza matematica.} Altro aspetto importante, e ``il più
+importante'': \textbf{fruibilità} contro \textbf{accuratezza matematica}. A Marta è capitato
+di recente di giocare un gioco che dava \textbf{1,5 punti}: ``non si può giocare un gioco in
+cui ti danno i virgola 5''. E avevano fatto anche un passo in più, mettendo le \textbf{mezze
+monete}: si poteva ottenere una moneta e mezza, e ti davano mezza moneta. A livello
+matematico sarà una precisione svizzera, ``è il gioco più bilanciato della storia'', ma
+\textbf{nessuno lo giocherà}, perché ci sono variabili non facilmente processabili dalle
+persone, non accessibili. Come dice l'ultima frase della slide:
+\begin{quote}
+\textbf{state modellando un gioco, non un missile balistico.}
+\end{quote}
+È molto facile perdersi nella matematica delle cose e ignorare gli aspetti più importanti
+del bilanciamento.
+
+\paragraph{Lasciare ``aria''.} Quando si bilancia, bisogna ricordarsi quali aspetti si vogliono
+tirare fuori e quali strade strategiche si hanno in mente, e lasciare anche un po' di
+spazio, ``io la chiamo \textbf{aria}'', \textbf{tra i sistemi}, perché le persone abbiano
+possibilità di espressione. Marta cita una frase di \textbf{Richard Garfield} che adora:
+\begin{quote}
+\textbf{un gioco in cui il designer è più bravo di qualsiasi altra persona è più un puzzle
+che un gioco}: lasciate che le persone sperimentino.
+\end{quote}
+I giochi sono sistemi fatti anche \textbf{per essere esplorati}, e non è detto che il
+designer debba conoscerne fino in fondo tutte le implicazioni: a volte è bello che i
+giocatori possano muoversi e \textbf{sorprendere}. È forse uno degli aspetti più interessanti
+dei giochi, la \textbf{dinamica emergente}, che non si può prevedere alla radice ma viene fuori
+giocando il gioco tante volte. Quando si bilancia, quindi, il riferimento è sempre che si sta
+portando, e comunicando, \textbf{un'esperienza}.
+
+\paragraph{Approfondimento: scelte significative e strategie dominanti.} Schell dedica al
+bilanciamento un intero capitolo, con dodici tipi di bilanciamento. Il terzo riguarda le
+\emph{scelte significative}, e il suo esempio è curiosamente vicino a quello di Marta: ``in un
+gioco di corse potresti avere 50 veicoli tra cui scegliere, ma se si guidano tutti allo stesso
+modo è come non avere nessuna scelta''. Schell chiama \emph{strategia dominante} il caso
+opposto, in cui una scelta è chiaramente migliore delle altre: anche lì ``è come non avere
+scelta''. Il sovrabilanciamento di Marta è il primo caso, la strategia dominante il secondo; il
+bilanciamento sta in mezzo, e per Schell una delle sue forme migliori è proprio quella che Marta
+chiama ``standard del \emph{design}'': la \emph{lente della triangolarità}, cioè offrire al
+giocatore una scelta tra una mossa sicura a bassa ricompensa e una rischiosa ad alta ricompensa.
+Schell scrive che, delle persone che gli chiedono aiuto per un prototipo che ``semplicemente
+non diverte'', circa otto su dieci hanno un gioco a cui manca proprio questo tipo di scelta.
+L'aneddoto del videogioco di corse aggiunge però qualcosa che il libro non dice: per vent'anni i
+giocatori hanno \emph{percepito} delle scelte significative che, nei numeri, non c'erano.
+
+% ---------------------------------------------------------------------
+\section{La preparazione degli \emph{asset}}
+\label{a13:sec:asset}
+
+Quando si va a produrre un gioco ci sono tanti \textbf{elementi}, e la slide ne mostra alcuni:
+la \textbf{scatola}, i \textbf{tabelloni}, le \textbf{plance}, le \textbf{fustelle}, le
+\textbf{carte}, il \textbf{regolamento}. Lato sviluppo vanno tutti tenuti sott'occhio,
+``perché alla fine noi siamo le persone che conoscono il gioco più a fondo''. I compromessi
+di cui parla Marta sono riassunti nella tabella~\ref{a13:tab:asset}.
+
+\paragraph{La misura delle carte.} La dimensione delle carte può essere un discorso di
+\emph{design}: per esaltare il \emph{design}, o per guidare un giocatore verso una scelta
+piuttosto che un'altra, le carte possono dover essere più grandi o più piccole. In
+\textbf{\emph{Escape the Dark Castle}} le carte sono grandissime perché devono comunicare
+l'idea che \textbf{si sta leggendo un libro-gioco}: il gioco simula un libro-gioco, c'è tanto
+testo, ci sono immagini evocative, e le carte sono state fatte \textbf{fuori formato standard}
+perché era importante veicolare questa sensazione. Ma ci sono dei rischi: si paga di più in
+produzione; magari \textbf{non esistono le bustine} protettive di quel formato, ``che comunque
+è un aspetto a cui alcune persone tengono''; oppure lo \textbf{scopo meccanico viene tradito},
+perché l'elemento diventa qualcosa con cui le persone interagiscono troppo, o per niente.
+
+\paragraph{Plance, fustelle e la stima dei componenti.} Bisogna analizzare com'è la plancia e
+com'è la fustella: anche qui le dimensioni sono importanti. E serve una \textbf{stima dei
+componenti}, perché il designer che ha fornito il gioco non ha necessariamente pensato
+esattamente ai componenti, mentre lo sviluppo li deve \textbf{mettere fisicamente su delle
+fustelle}, e \textbf{ogni fustella in più è un costo ulteriore}. Quanti ce ne entrano? Se ci
+sono \textbf{15 obiettivi} e sulla fustella non ci stanno, bisogna regolarsi con il designer:
+``ho capito che volevi metterci 15 obiettivi, ma era veramente importante? Possiamo fare una
+cernita e sceglierne 10?'', perché magari conviene che il gioco \textbf{costi 5 euro in meno}
+e abbia comunque una buona variabilità di obiettivi. Non è un aspetto sempre trascurabile: a
+volte i 15 obiettivi servono, e bisogna ingegnarsi per farli entrare. Contano la
+\textbf{dimensione}, lo \textbf{spessore} e l'\textbf{usabilità}.
+
+\paragraph{La dimensione della scatola.} Qui c'è un discorso commerciale. Si parla spesso di
+\textbf{scatole che hanno più aria che componenti}, e questo dipende dalla \textbf{presenza
+sullo scaffale}: una scatola più grande si vede meglio e ha più probabilità di essere presa
+in mano. Ma ci sono gli aspetti contrari: il \textbf{costo}, perché una scatola più grande
+costa di più e probabilmente verrà percepita come più costosa; e l'\textbf{aspettativa}, perché
+se si apre una scatola vuota ``si sente di non aver acquistato qualcosa di valore''. È un
+aspetto critico, perché in questa percezione spesso non rientra il \textbf{costo dell'idea}, del
+gioco, delle meccaniche, dell'implementazione. Marta fa il paragone con i videogiochi: un tempo
+erano su CD, oggi si scaricano e non hanno niente di fisico, eppure la maggior parte delle
+persone non si fa problemi a spendere 70 euro, perché non sta comprando la componente fisica.
+Nel gioco da tavolo questo discorso è ancora poco percepito; è un aspetto da tenere
+sott'occhio, e chi pubblica nel mercato attuale finirà per farci i conti, ``sia da designer
+che da sviluppatori''.
+
+\paragraph{L'indipendenza dalla lingua.} L'\textbf{indipendenza dalla lingua} è importante per
+una serie di ragioni, a cominciare dall'\textbf{economia di scala}: un gioco indipendente dalla
+lingua permette \textbf{tirature molto più alte} e quindi costi più bassi; un gioco dipendente
+dalla lingua richiede che \textbf{ogni mercato abbia la sua scatola} e la sua linea
+produttiva\footnote{Subito dopo, la trascrizione diventa incomprensibile per alcune frasi
+(``utilizzata a livello di Uno'', ``Creative Commons'', ``quello che viene chiamato Nano''),
+forse un esempio legato alle icone o a giochi senza testo; il capitolo non prova a
+ricostruirlo. Il discorso riprende con una domanda sugli obiettivi (``li possiamo fare con
+una fustella?''), che sembra tornare all'esempio dei 15 obiettivi: carte o segnalini in
+fustella?}.
+
+\paragraph{Variabili di produzione, e un taglio.} Capire anche che cosa si può fare
+\textbf{rispetto al \emph{design} originale} (per esempio: gli obiettivi li facciamo come carte,
+o con una fustella? è la stessa cosa, o no?) serve a gestire tutte queste variabili di
+produzione. Marta comincia a dire che potrebbero sembrare questioni che riguardano solo la
+figura editoriale, ma la frase si perde in un altro tratto di trascrizione ripetuta (``cosa ci
+vuole, cosa ci vuole'')\footnote{Il tratto copre la fine del discorso sugli \emph{asset}; è
+plausibile, dato il resto della lezione, che Marta volesse dire che queste variabili
+riguardano anche chi progetta, ma la trascrizione non permette di affermarlo.}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.6cm}p{5.0cm}p{5.6cm}@{}}
+\toprule
+\textbf{Elemento} & \textbf{Perché lo si cambia} & \textbf{Che cosa costa} \\
+\midrule
+Carte fuori formato & veicolano una sensazione (\emph{Escape the Dark Castle}: il
+  libro-gioco) & produzione più cara; niente bustine; lo scopo meccanico può essere
+  tradito \\
+\addlinespace
+Componenti in fustella & ogni elemento deve stare fisicamente su una fustella &
+  ogni fustella in più è un costo: 15 obiettivi o 10, e 5 euro in meno? \\
+\addlinespace
+Scatola grande & presenza sullo scaffale, più probabilità di essere presa in mano &
+  costa di più, sembra più cara, e se è vuota delude l'aspettativa \\
+\addlinespace
+Indipendenza dalla lingua & economia di scala: tirature più alte, costi più bassi &
+  (se manca) una scatola e una linea produttiva per ogni mercato \\
+\bottomrule
+\end{tabular}
+\caption{I compromessi sugli \emph{asset} di cui parla Marta. Dimensione, spessore e
+usabilità contano per ogni componente.}
+\label{a13:tab:asset}
+\end{table}
+
+\paragraph{Approfondimento: il materiale e il piacere dei sensi.} Gli esempi di Marta (le carte
+enormi di \emph{Escape the Dark Castle}, i gettoni spessi che fanno finalmente giocare un
+sistema) sono il lato produttivo di ciò che LeBlanc chiama il piacere della \emph{sensazione}.
+Schell, nel riportarlo, cita un aneddoto di Greg Costikyan su \emph{Axis \& Allies}: nella
+prima edizione, con un tabellone sgargiante e brutti segnalini di cartone, lo aveva giocato una
+volta, lo aveva trovato ``piuttosto stupido'' e lo aveva messo via; ripubblicato con un
+tabellone elegante e centinaia di miniature di plastica, lo ha giocato molte volte, per ``la
+pura gioia tattile'' di spingere le figurine sul tabellone. Il gioco era lo stesso; la
+percezione no.
+
+% ---------------------------------------------------------------------
+\section{Chiusura: il resto a venerdì}
+\label{a13:sec:chiusura}
+
+Nelle slide ci sono ancora \textbf{come scrivere un regolamento}, ``che però ci prende qualche
+minuto'', e ``un altro paio di punti'' (le \textbf{revisioni}, l'ultima delle otto fasi). Marta
+decide di rimandarli alla \textbf{prossima volta}: ``stiamo già un po' sovrapponendo le due
+lezioni, perché stiamo iniziando a entrare nel pratico, se ci avete fatto caso''. Li
+spiegherà con più calma venerdì, e lascia gli ultimi cinque o sei minuti alle domande.
+
+\paragraph{Le domande.} ``Qualche curiosità, o anche qualche dubbio, perché mi rendo conto che
+è tantissima roba?'' Silenzio. ``Allora le cose sono due: o mi spiego molto bene, oppure non
+ci state capendo niente. Spero che sia la prima.'' \textbf{Gianmarco} ha in realtà un paio di
+domande, ma per lui ``inizia a essere un po' tardi'': se le segna e le farà venerdì. ``Va
+benissimo'', risponde Marta, che ne approfitta per una raccomandazione: visto che ci si
+rivede venerdì, \textbf{portate le domande}. C'è il tempo per riflettere e per fare qualche
+ricerca sullo sviluppo.
+
+\paragraph{I compiti per venerdì.} Marta suggerisce di indagare su \textbf{chi sono gli
+sviluppatori}. In Italia ci sono dei nomi noti: oltre a lei, \textbf{Simone Luciani}, che
+Marta chiama ``storico sviluppatore'' di \textbf{Cranio Creations}\footnote{Nella trascrizione
+solo ``Cranio''. Simone Luciani è noto soprattutto come autore di giochi.}; e un docente del
+corso che, ``mi sembra'', fa sviluppo per una casa editrice\footnote{Nella trascrizione
+``Ruger Fred''; è con ogni probabilità Ruggero, il docente del corso, ma la trascrizione
+non permette di esserne certi.}. Ci sono ``molte realtà e molte persone'' che lavorano dietro
+allo sviluppo, e cercando su internet può venire un po' di curiosità. Si possono anche
+guardare \textbf{i giochi su cui Marta ha lavorato}, magari qualcuno li ha giocati, e chiederle
+come è andato lo sviluppo: se il gioco è uscito ne può parlare; se è ancora in lavorazione,
+``non posso essere così esplicita''.
+
+\paragraph{Il saluto.} ``Senza caricarci di troppe cose'', Marta lascia tutto a venerdì: ``ci
+vediamo venerdì. Grazie''. La trascrizione si chiude con qualche frase ripetuta senza senso,
+registrata dopo la fine della lezione. La figura~\ref{a13:fig:calendario} riassume le date
+nominate.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  a13ev/.style={draw, thick, rounded corners=3pt, text width=2.5cm, align=center,
+                minimum height=1.3cm, fill=white},
+  a13arr/.style={-{Stealth[length=3mm]}, thick}
+]
+  \draw[a13arr] (0,0) -- (14.6,0);
+  \foreach \x/\lab in {1.0/lun.\ 16 nov.\ (prob.), 4.3/ven.\ 20 nov., 7.6/lun.\ 23 nov.,
+                       10.6/27 nov., 13.5/6 dic.}{
+    \fill (\x,0) circle (2.5pt);
+    \node[below=4pt, font=\footnotesize] at (\x,0) {\lab};
+  }
+  \node[a13ev, above=0.5cm, fill=gray!12] at (1.0,0) {\textbf{oggi}: sviluppo, prima
+    lezione (Marta)};
+  \node[a13ev, above=0.5cm] at (4.3,0) {sviluppo, seconda lezione: regolamento,
+    revisioni, \emph{personas}, tecniche};
+  \node[a13ev, above=0.5cm] at (7.6,0) {gioco di ruolo e \emph{fiction} (Daniele)};
+  \node[a13ev, above=0.5cm] at (10.6,0) {Gianmarco parte};
+  \node[a13ev, above=0.5cm] at (13.5,0) {Gianmarco torna};
+\end{tikzpicture}
+\caption{Le date nominate nella lezione. La data di oggi è dedotta (vedi la nota
+all'inizio del capitolo); è nominata anche una lezione con Flavio, senza data.}
+\label{a13:fig:calendario}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Un gioco può cambiare dopo il \emph{pitch}, ma \textbf{più si va avanti, più uno
+        stravolgimento è controproducente}: prima si diverge, poi si converge, e
+        convergere vuol dire soprattutto \textbf{tagliare}.
+  \item La \textbf{narrativa combinatoria} (\emph{Reigns}) è un caso ``imboccato'': contenuti
+        scritti a mano, estratti da un ``sacchetto'' le cui probabilità cambiano con le
+        scelte, più alcune sequenze fisse.
+  \item Lo \textbf{sviluppo} è \textbf{un rapporto di mediazione tra \emph{stakeholder} per far
+        convergere diverse visioni in un prodotto che soddisfi tutte le parti}. Porta un
+        gioco dal prototipo allo scaffale. \textbf{Non è} ``bilanciare i numerini'', né un
+        altro designer.
+  \item Lo sviluppo è \textbf{personale} (due sviluppatori, due giochi diversi), \textbf{armonico}
+        (le spezie sul piatto, non un altro piatto) e \textbf{collaborativo} (uno sguardo
+        distaccato che permette di cambiare).
+  \item Gli \emph{stakeholder}: \textbf{designer}, \textbf{casa editrice}, \textbf{chi gioca} (la
+        voce che non c'è alle riunioni), e a volte chi ha dato la \textbf{licenza} o scritto
+        il \textbf{\emph{world building}}.
+  \item \emph{Design}: niente scadenze, libertà, attaccamento, originalità, un'idea. Sviluppo:
+        scadenze (\emph{time to market}, contratto), vincoli produttivi, distacco,
+        standardizzazione (che smussa, nel bene e nel male), esperienza su molti generi. I
+        confini sono sfumati.
+  \item Collaborazione \textbf{attiva} o \textbf{passiva}; il gioco è un processo
+        \textbf{collettivo} e passando per altre mani cambia: servono \textbf{aspettative
+        realistiche} e \textbf{fiducia}.
+  \item Lo sviluppatore nasce con i \emph{wargame} (SPI) e poi in Fantasy Flight, \emph{alea},
+        Hans im Glück; l'\emph{editor} tedesco curava tutto tranne le regole. Oggi i ruoli
+        si sono \textbf{invertiti}: lo sviluppo cura tutto, l'\emph{editor} le parole.
+  \item Il conflitto di interessi: chi sviluppa è assunto dall'editore, ma è anche
+        \textbf{l'unica voce del designer} nelle riunioni. Con 2500 giochi l'anno a Essen, un
+        editore non può permettersi di sbagliare.
+  \item Le \textbf{otto fasi}: selezione, ricerca, concettualizzazione, presentazione,
+        \emph{testing}, implementazione, preparazione degli \emph{asset}, revisioni. Non
+        lineari.
+  \item \textbf{Selezione}: catalogo e durata, complessità, sensibilità del \emph{team},
+        \textbf{coerenza tema--meccaniche} (\emph{Hegemony}: il tema non si cambia).
+        \textbf{Ricerca}: BGG, concorrenti, tendenze; il mercato non si prevede, ma la
+        sensibilità si affina (\emph{Magical Athlete} come risposta ai giochi di controllo).
+  \item Il \textbf{\emph{Game Concept Document}}: al massimo 8 pagine, chiaro più che
+        esaustivo, \textbf{statico}. Parte generale (nome, \emph{high concept},
+        \textbf{pilastri}, materiali, ruoli, \emph{timeline}), commerciale (\emph{target},
+        \emph{personas}, USP, \emph{competitor}), tecnica (\emph{gameplay}, \emph{game feel},
+        \emph{art direction}, produzione), \emph{post mortem}. I pilastri non sono gli USP.
+  \item La \textbf{presentazione} è un \emph{pitch} a chi è abituato ai giochi finiti: sintesi,
+        coerenza, a volte due versioni. \emph{The Faceless}: dai pirati a \emph{Stranger
+        Things}, con un mese di lavoro sulla visione.
+  \item \textbf{\emph{Testing}}: in \emph{target} e fuori \emph{target}, sapendo quale si sta
+        facendo; attenzione ai \emph{bias} del prototipo grezzo; \textbf{mai \emph{test} a
+        vuoto}, sempre con uno scopo, mettendo da parte il resto.
+  \item \textbf{\emph{Target}}: premi (\emph{Spiel} e \emph{Kennerspiel des Jahres}),
+        tassonomie (Bartle, LeBlanc, da non prendere troppo alla lettera), demografia
+        (Stati Uniti contro Europa).
+  \item \textbf{Implementazione}: un piccolo passo alla volta, mai troppi cambiamenti insieme;
+        si può sempre tornare alla versione del designer.
+  \item \textbf{Bilanciamento}: la \textbf{percezione conta più della realtà}; il
+        \textbf{sovrabilanciamento} toglie le scelte; la fruibilità batte l'accuratezza
+        (``un gioco, non un missile balistico''); lasciare \textbf{aria} tra i sistemi.
+  \item \textbf{\emph{Asset}}: formato delle carte, fustelle e costi, scatola e scaffale,
+        indipendenza dalla lingua.
+  \item Per venerdì: portare le domande, cercare chi sono gli sviluppatori italiani, e,
+        come esercizio, \textbf{immaginare il GCD del proprio progetto}.
+\end{itemize}

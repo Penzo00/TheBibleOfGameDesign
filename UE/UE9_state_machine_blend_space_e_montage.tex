@@ -1,0 +1,1975 @@
+% =====================================================================
+%  Fondamenti di Unreal Engine, lezione 9 — State Machine, Blend Space
+%  e Montage.
+%  Nona lezione del corso breve di introduzione a Unreal Engine (focus
+%  sui Blueprint), online su Zoom, nel tardo pomeriggio (pausa
+%  annunciata con ripresa "alle 18", chiusura verso le 19; "ci sentiamo
+%  per martedì prossimo"). Docente titolare (come nelle lezioni
+%  precedenti, nella trascrizione non viene mai chiamato per nome); la
+%  classe è molto ridotta: sei persone all'inizio, poi cinque, quattro,
+%  e alla fine due o tre.
+%  Contenuti, nell'ordine della lezione: l'attesa e i corsi di indirizzo
+%  degli studenti (3D art, game design, narrative design, character
+%  animation); la lezione libera del 25 (menu e UI, o argomenti a
+%  scelta); il ripasso dell'Animation Blueprint ABP_Knight
+%  (Initialize e Update, Try Get Pawn Owner, Character Movement,
+%  GroundSpeed, IsFalling); la State Machine Locomotion (Entry,
+%  Conduit, State, Alias, lo stato WalkRun, Output Animation Pose, gli
+%  stati Jump e Fall, le transizioni); il Blend Space 1D (asse
+%  GroundSpeed da 0 a 600, Max Walk Speed a 300 centimetri al secondo,
+%  il Blendspace Player); il problema "questo asset non ha schede
+%  ancorate" (Load Layout) e la lingua dell'editor; il personaggio come
+%  Default Pawn Class; la camera (Camera e Spring Arm, i 3C, Target Arm
+%  Length, Target Offset e Socket Offset, Field of View); i grafi di
+%  movimento copiati dal ThirdPersonCharacter; Use Pawn Control
+%  Rotation, Orient Rotation to Movement e Use Controller Rotation Yaw;
+%  il retargeting delle animazioni Jump e Fall Loop dal manichino di
+%  Unreal (Retarget Animations, Export Animation); le regole di
+%  transizione (IsFalling, Automatic Rule Based on Sequence Player in
+%  State, NOT Boolean, la velocità sulla Z); lo sprint con l'Enhanced
+%  Input (Input Mapping Context, Input Action IA_Run, Value Type,
+%  Triggers, Add Mapping Context, i pin dell'evento, Set Max Walk
+%  Speed, il controller e il Face Button Right); il tentativo con
+%  FInterp To; le animazioni da scaricare (l'attacco in root motion,
+%  gli strafe in place, il mirror, le diagonali); la pausa e i feedback
+%  (il progetto personale del docente con la pallina, inventari e UI,
+%  le lezioni con Davide: la gym e il level design); il Blend Space 2D
+%  (Calculate Direction, la variabile Direction da -180 a 180, BS2D,
+%  la griglia, la posizione delle otto animazioni, Smoothing Time);
+%  gli Animation Montage (le animazioni modulari, i Notify e il Play
+%  Sound, le Montage Section, gli Slot, Save Cached Pose e Slot
+%  DefaultSlot nell'AnimGraph, Play Montage sul tasto F, Disable e
+%  Enable Input, la camera che continua a ruotare); il compito sullo
+%  StackOBot; la chiusura.
+%  Fonte: trascrizione automatica della nona lezione (UE9), circa tre
+%  ore. Integrazioni dai libri "Blueprints Visual Scripting for Unreal
+%  Engine 5" (Romero, Sewell; capitoli 6 e 17) e "Blueprints Visual
+%  Scripting for Unreal Engine", seconda edizione (stessi autori,
+%  Unreal Engine 4), e nozioni tecniche generali su Unreal Engine 5,
+%  sempre segnalate come approfondimenti.
+%
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{amsmath},
+%  \usepackage{amssymb}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Consigliati, come per gli altri capitoli: \usepackage[italian]{babel}
+%  e \usepackage[T1]{fontenc} (il capitolo compila anche senza).
+%
+%  Collocazione nel libro: parte "Fondamenti di Unreal Engine", nono
+%  capitolo (numerazione propria 1.9). Nel file principale del libro,
+%  subito dopo la riga dell'ottava lezione:
+%
+%    \input{UE/UE9_state_machine_blend_space_e_montage}
+%
+%  Tutte le etichette di questo capitolo hanno il prefisso "ue9:"
+%  (ue9:cap:..., ue9:sec:..., ue9:fig:..., ue9:tab:...), e tutti gli
+%  stili TikZ hanno il prefisso "ue9" (ue9node, ue9exec, ue9data, ...)
+%  per non collidere con chiavi native di TikZ né con quelli delle
+%  lezioni precedenti. Il capitolo è autonomo: non contiene \ref verso
+%  altri capitoli (i rimandi alle lezioni precedenti sono a parole).
+%  Le figure sono ricostruzioni schematiche di quanto mostrato e detto a
+%  lezione, non copie delle schermate del docente. Dove la trascrizione
+%  è troppo rovinata per ricostruire un dettaglio, il capitolo lo dice
+%  invece di inventarlo.
+% =====================================================================
+
+\chapter[State Machine, Blend Space e Montage]{State Machine, Blend Space e Montage:
+dare vita al nuovo personaggio}
+\label{ue9:cap:animazioni}
+
+Questa è la \textbf{nona lezione} del corso breve di \textbf{introduzione a Unreal
+Engine}, e riprende esattamente dove si era fermata l'ottava. Alla fine della lezione
+precedente il cavaliere importato da \textbf{Mixamo} aveva uno scheletro, le sue
+animazioni e un \textbf{Animation Blueprint}, \textbf{ABP\_Knight}, che a ogni frame
+leggeva dal personaggio due dati: la velocità sul piano (\textbf{GroundSpeed}) e il fatto
+di essere in aria o meno (\textbf{IsFalling}). Mancava tutto il resto: chi decide
+\emph{quale} animazione mostrare, e quando. ``Siccome ci siamo interrotti l'altra volta,
+andiamo diretti a fare le animazioni: l'altra volta ci siamo interrotti al Blend
+Space.''
+
+La lezione costruisce, un pezzo alla volta, un personaggio giocabile completo. La
+\textbf{State Machine} organizza le animazioni in \emph{stati} (camminare e correre,
+saltare, cadere) e in \emph{transizioni} con delle condizioni; il \textbf{Blend Space
+1D} mescola fermo, camminata e corsa in base alla velocità; una \textbf{camera} con il
+suo \textbf{Spring Arm}, i grafi di movimento presi in prestito dal modello Third Person
+e un nuovo input per lo \textbf{sprint}, costruito con l'\textbf{Enhanced Input},
+rendono il cavaliere controllabile; il \textbf{retargeting} porta sul suo scheletro le
+animazioni di salto e di caduta del manichino di Unreal. Dopo la pausa arrivano il
+\textbf{Blend Space 2D}, che aggiunge alla velocità la \textbf{direzione} e permette di
+camminare di lato e all'indietro, e gli \textbf{Animation Montage}, le animazioni
+``una tantum'' (un attacco con la spada) che si inseriscono sopra il ciclo di
+locomozione.
+
+La lezione è \textbf{online}, su Zoom, come le precedenti, e la classe è ridottissima:
+``vediamo un po' quanti siete: siamo in sei''; dopo la pausa ``siamo rimasti in
+cinque'', poi ``uno, due, tre e quattro''; quando uno studente crasha (``Filippo è andato
+via''), ``siamo rimasti noi tre''; alla fine, ``mi sembra che siamo rimasti in due''.
+``Pochi ma buoni.'' Il ritmo è quello della dimostrazione dal vivo, interrotta più volte
+dai problemi degli studenti, risolti in condivisione di schermo, e da un editor che
+``oggi lagga'' in modo vistoso (``non capisco perché mi sta laggando oggi''). La pausa
+arriva dopo la scelta delle animazioni da scaricare (``ci rivediamo alle 18''); si
+chiude con un compito facoltativo e un ``ci sentiamo per martedì prossimo''.
+
+Tre avvertenze di lettura, le stesse delle lezioni precedenti. La prima: la
+trascrizione è automatica e storpia moltissimi nomi. Unreal è ``Arreal'', ``a Real'',
+``ArrayL'', ``Array Alt'' e ``a Rial''; il \textbf{Pawn Owner} è ``Pwn Honor'' e
+``Pwnowner''; il \textbf{Blend Space} è ``Blaine Space'', ``Blendspace'' e ``BlizzBase'';
+lo stato \textbf{WalkRun} è ``walk run'', ``Warcran'', ``war crunch'' e ``walker run'';
+l'\textbf{Idle} è ``Idol'' e ``idol''; \textbf{BP\_Knight} è ``Vip Night'', ``Pippi
+Night 1'' e ``BP Night''; \textbf{BS\_Knight} è ``BS Night'' (``che dovrebbe essere un
+po' più British''); il manichino \textbf{Manny/Quinn} è ``Many Quincy''; il
+\textbf{root motion} è ``rut'' e ``outmotion''; lo \textbf{Strafe} è ``Strife'' e
+``stair right''; la \textbf{Mesh} è ``Mesci''; l'\textbf{FInterp To} è ``finter2'';
+\textbf{Calculate Direction} è ``calcolo interaction''; il \textbf{Save Cached Pose} è
+``save cache, pause''; lo \textbf{StackOBot} è ``StaccoBot'' e ``stacco bot''; lo
+\textbf{Yaw} è ``io'', ``yo'' e ``YAW''; l'\textbf{Orient Rotation to Movement} è
+``orientation to movement'', ``anche rotacion'' e ``orient rotace tu mente tu''; lo
+\textbf{Use Pawn Control Rotation} è ``us control pawn rotation'' e ``you spawn control
+rotation''. Dove la ricostruzione è sicura il capitolo usa la forma corretta; dove non
+lo è riporta la forma della trascrizione e lo dice. La seconda: all'inizio della
+registrazione e durante la pausa il riconoscimento vocale produce lunghi blocchi di
+testo senza senso e ripetuto (``grazie a tutti per l'attenzione che ci ha spiegato'',
+``qual è la risposta che ci può essere?'', ``la situazione è questa, la migliore dal
+2005'', la ``dottrina sul mercato del lavoro'', la ``Corte Suprema di Internet'', il
+governo di Dubai, una lunga fila di ``di Sarajevo'', la ``struttura del giardino'', ``la
+blue map'', un Vittorio Prodi chiamato in causa senza motivo): sono artefatti, non
+parole di nessuno, e il capitolo li ignora. La terza: gran parte della lezione è una
+dimostrazione dal vivo nell'editor, costruita a voce (``tirate fuori'', ``promote to
+variable'', ``ce lo attacchiamo qui''), e in più punti il docente improvvisa, prova,
+sbaglia e corregge, soprattutto nella parte sulla camera e in quella finale sul
+Montage. Il capitolo ricostruisce i grafi da ciò che il docente dice mentre li
+costruisce, distingue i tentativi falliti dalla soluzione finale, e completa i nomi
+esatti dei nodi e dei pin di Unreal Engine 5; dove la trascrizione lascia un buco, lo
+dichiara.
+
+\paragraph{Come leggere questo capitolo.} Il capitolo segue l'ordine della lezione. Le
+figure ricostruiscono la State Machine della locomozione, il Blend Space 1D sulla
+velocità, la camera con lo Spring Arm, la catena dell'Enhanced Input, il grafo dello
+sprint, il cerchio della direzione, il Blend Space 2D con le sue otto animazioni, la
+catena di pose dell'AnimGraph con lo Slot del Montage e il grafo del tasto che fa
+partire l'attacco. Le tabelle riassumono le transizioni della State Machine, i
+parametri della camera, i valori e i trigger di una Input Action, la posizione delle
+animazioni nel Blend Space 2D, gli errori incontrati durante la lezione e i nodi della
+giornata. Qua e là, dei paragrafi di \textbf{approfondimento} collegano la lezione ai
+libri di Marcos Romero e Brenden Sewell (\emph{Blueprints Visual Scripting for Unreal
+Engine 5} e la seconda edizione dello stesso testo, scritta per Unreal Engine 4), i
+testi di riferimento per questa parte del libro, e a qualche nozione tecnica generale su
+Unreal Engine 5; sono segnalati come tali e non fanno parte della lezione.
+
+Il percorso del capitolo:
+\begin{enumerate}
+  \item l'\textbf{inizio della lezione}: i corsi degli studenti e la lezione libera del
+        25 (sezione~\ref{ue9:sec:inizio});
+  \item il \textbf{ripasso} dell'Animation Blueprint (sezione~\ref{ue9:sec:ripasso});
+  \item la \textbf{State Machine} della locomozione (sezione~\ref{ue9:sec:statemachine});
+  \item il \textbf{Blend Space 1D}, con una parentesi sui problemi dell'editor (sezioni
+        \ref{ue9:sec:blend1d} e~\ref{ue9:sec:layout});
+  \item il personaggio in gioco: \textbf{Default Pawn Class}, \textbf{camera} e
+        \textbf{Spring Arm}, grafi di movimento e rotazioni (sezioni
+        da~\ref{ue9:sec:pawnclass} a~\ref{ue9:sec:rotazioni});
+  \item il \textbf{retargeting} del salto e della caduta, e le \textbf{regole di
+        transizione} (sezioni \ref{ue9:sec:retarget} e~\ref{ue9:sec:transizioni});
+  \item lo \textbf{sprint} con l'\textbf{Enhanced Input} e il tentativo con FInterp To
+        (sezioni da~\ref{ue9:sec:enhanced} a~\ref{ue9:sec:finterp});
+  \item le \textbf{animazioni da scaricare}, la pausa e i \textbf{feedback} (sezioni
+        \ref{ue9:sec:download} e~\ref{ue9:sec:feedback});
+  \item il \textbf{Blend Space 2D} e la \textbf{direzione} (sezioni
+        \ref{ue9:sec:direction} e~\ref{ue9:sec:blend2d});
+  \item gli \textbf{Animation Montage}: l'asset, i Notify, le sezioni, gli Slot e il
+        tasto che li fa partire (sezioni da~\ref{ue9:sec:montage}
+        a~\ref{ue9:sec:playmontage});
+  \item il \textbf{compito} sullo StackOBot e la chiusura
+        (sezione~\ref{ue9:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{Prima della lezione: i corsi degli studenti e la lezione del 25}
+\label{ue9:sec:inizio}
+
+La registrazione si apre con qualche minuto di attesa, in cui il riconoscimento vocale
+produce soprattutto rumore. Poi i saluti (``ragazzi, come state? Buonasera, buonasera''),
+un controllo rapido (``nessun problema sulla telecamera'': stavolta la webcam del docente
+funziona) e la decisione di aspettare ``altri cinque minuti, così vediamo che tutti siate
+in carreggiata''. Uno studente, Tommaso, ha dei problemi di collegamento. Il docente
+sistema le finestre (``oggi c'è il secondo schermo'') e parte: ``bando alle ciance''.
+
+\paragraph{I corsi di indirizzo.} Prima di cominciare, il docente chiede ai presenti
+quale corso seguiranno ``quando inizierete a settembre'': il corso di Unreal è infatti
+un'introduzione comune, a cui seguono gli indirizzi specialistici. Le risposte dei sei
+presenti:
+\begin{itemize}
+  \item \textbf{3D art};
+  \item \textbf{game design} (due studenti);
+  \item \textbf{narrative design};
+  \item \textbf{character animation} (``perfetto, character animation'').
+\end{itemize}
+La domanda serve a tarare la lezione: chi farà character animation, in particolare, è
+il destinatario naturale di quasi tutto quello che si vedrà oggi.
+
+\paragraph{La lezione libera del 25.} ``Stiamo praticamente arrivando a una lezione che
+di solito noi lasciamo abbastanza \emph{free}, come argomenti'': la lezione del
+\textbf{25} sarà ``fondamentalmente la mia ultima lezione di base''. Se non ci sono
+richieste particolari, si faranno ``i menu'', cioè ``la \textbf{UI}'': ``che si intende
+la UI: menu, bottoni, scritte eccetera''. In alternativa, ``se ci sono degli argomenti
+particolari'', da concordare fra gli studenti, ``possiamo tranquillamente affrontarli'',
+oppure ``dividere anche la lezione in due: fare un piccolo menu e poi fare anche la parte
+in più''. ``Nel caso, sentitevi tra di voi.'' La richiesta concreta arriverà durante la
+pausa (sezione~\ref{ue9:sec:feedback}).
+
+% ---------------------------------------------------------------------
+\section{Il ripasso: l'Animation Blueprint del cavaliere}
+\label{ue9:sec:ripasso}
+
+``Eravamo rimasti al nostro bellissimo \textbf{ABP\_Knight}.'' Il docente ha il
+cavaliere (\emph{Knight}, il paladino di Mixamo); ``altri di voi avevano scelto il
+proprio personaggio''. Nella preview dell'Animation Blueprint il personaggio è ancora
+``il nostro bel character in T-pose'': l'AnimGraph non decide ancora nessuna
+animazione.
+
+\paragraph{Initialize e Update.} L'ultima cosa fatta era l'evento \textbf{Event Blueprint
+Initialize Animation}: ``quando l'animazione si inizializza'', una volta sola. L'altro
+evento, \textbf{Event Blueprint Update Animation}, scatta invece ogni volta che
+``si cambia qualsiasi particolare all'interno di un'animazione, la rotazione di un braccio
+o un minimo particolare'': ``quello che è fondamentalmente il nostro Tick sulle
+animazioni''. ``Quando abbiamo visto Begin Play e Tick: questi praticamente sono i loro
+corrispettivi.''
+
+\paragraph{Il Pawn Owner e le due referenze.} Nell'Initialize si prende il \textbf{Pawn
+Owner} con \textbf{Try Get Pawn Owner}. ``Ricordiamoci: il Pawn Owner è l'entità che
+controlla il character'': il docente distingue il \emph{pawn}, ``quello che lo controlla'',
+e il \emph{character} stesso, ``che ha la mesh, lo scheletro e tutto quanto''. Con il
+\textbf{Cast To} BP\_Knight si ottiene una referenza al cavaliere, e si salvano in due
+variabili il cavaliere e il suo \textbf{Character Movement Component}: ``queste due
+variabili ci serviranno per comunicare in modo più diretto con il nostro cavaliere''.
+
+\paragraph{Il Character Movement.} ``Dentro il Blueprint, qualsiasi character lo troverete
+qui sotto, Character Movement'': selezionandolo, il pannello Details a destra ``presenta
+tutte le particolarità di movimento'', per esempio la \textbf{gravità} (\emph{Gravity
+Scale}), la \textbf{Max Acceleration}, la \textbf{Max Step Height} (l'altezza massima di
+un gradino che il personaggio sale senza saltare). ``Vogliamo farlo andare più veloce,
+meno veloce? Se volessimo farlo sprintare, dovremmo lavorare su questa particolarità''; e
+infatti ``dopo faremo anche uno sprintino molto veloce, per differenziare le
+animazioni''.
+
+\paragraph{GroundSpeed e IsFalling.} Nell'Update, dopo una \textbf{Sequence}, si prende
+``la velocity attuale del nostro character'', a ogni frame, e se ne salva la lunghezza in
+\textbf{GroundSpeed}. Allo stesso modo, con il nodo \textbf{Is Falling} del Character
+Movement, ``andiamo a vedere se effettivamente il nostro character sta cadendo o meno'':
+``questo blocco ci dice letteralmente se sta cadendo, e noi riportiamo con un booleano,
+true o false''. ``Di conseguenza, tramite questi dati, andremo a differenziare le
+animazioni nella nostra State Machine.''
+
+% ---------------------------------------------------------------------
+\section{La State Machine della locomozione}
+\label{ue9:sec:statemachine}
+
+\paragraph{Creare la State Machine.} La State Machine ``la possiamo invocare
+nell'AnimGraph'': tasto destro nell'AnimGraph (``ricordatevi che c'è il blocco
+\textbf{Output Pose}''), \textbf{State Machine}, e la si chiama \textbf{Locomotion}:
+``questo è il nome classico per la locomozione, appunto il movimento''. ``Una State
+Machine, appunto, è una macchina a stati.'' Con un doppio clic si entra nel suo grafo.
+
+\paragraph{Entry, Conduit, State, Alias.} Dentro c'è un solo nodo, \textbf{Entry}. ``Se
+noi trasciniamo, abbiamo una freccia che esce fuori''; lasciandola nel vuoto, il menu non
+è ``tutto l'elenco gigantesco'' dei nodi dei Blueprint, ma tre sole voci:
+\textbf{Conduit}, \textbf{State} e \textbf{Alias}. ``A noi adesso interessa vedere
+quelli che sono gli stati.'' Il primo stato, invece di \emph{Locomotion}, si chiama
+\textbf{WalkRun}: ``differenziamo''.
+
+\paragraph{Un'altra inception.} ``Ecco a voi che, ancora sempre, un po' un
+\emph{inception}'': con un doppio clic si entra anche nello stato. Dentro, un nodo
+\textbf{Output Animation Pose}: ``in questo stato risiede una tipologia di output'',
+l'animazione che lo stato produce. Il docente vi collega \emph{Walking 1}. La preview
+però non si aggiorna, ``perché non abbiamo collegato la State Machine all'output'':
+bisogna tornare nell'AnimGraph e collegare il nodo Locomotion all'Output Pose. Fatto
+questo, il cavaliere cammina, ma una volta sola: ``l'animazione non è in loop'', e basta
+spuntare il loop nei Details del nodo. ``Ecco a voi che cosa fa la State Machine'':
+``dentro Locomotion lui entra, dice ok, inizio, passo e vado direttamente a WalkRun''; in
+WalkRun ``c'è una richiesta di un output, quindi di un'animazione che noi gli diamo''.
+
+\paragraph{Gli stati Jump e Fall.} ``Ma la cosa interessante della State Machine'' è che
+si possono creare altri stati: \textbf{Jump} e \textbf{Fall}. ``A livello di logica, la
+State Machine vuole essere'' il racconto di ``come entrano e perché entrano'' le
+animazioni nei loro stadi. Una freccia da WalkRun a Jump ``vuol dire che dallo stadio
+WalkRun passerà allo stadio Jump''; una freccia inversa vuol dire che dal Jump ``potrà
+passare di nuovo al WalkRun''. Lo schema di oggi ha tre stati
+(figura~\ref{ue9:fig:statemachine}): si entra in WalkRun; ``se starà cadendo'' (la
+variabile IsFalling diventa vera) si passa a Jump o a Fall; ``e far sì che poi, quando
+lui finisca di cadere, ritorni'' a WalkRun. ``Quindi fondamentalmente creiamo un loop di
+animazione secondo delle condizioni.'' Le animazioni di salto e di caduta non ci sono
+ancora: ``la faremo, la ritargetteremo'' (sezione~\ref{ue9:sec:retarget}).
+
+\paragraph{Le transizioni.} ``Come facciamo a mettere queste condizioni? Tramite questi
+nodini qua'': sulle frecce fra due stati compare un'icona tonda, la \textbf{transition
+rule}, che ``ci dice il comportamento effettivo che dovrà avere'' il personaggio. ``Quando
+è che passo da WalkRun a Jump, a livello di animazione? Quando, ad esempio, stai cadendo.
+Quando passo da Fall a WalkRun? Se non sta più cadendo. Questa è la logica generale.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ue9state/.style={draw, thick, rounded corners=6pt, fill=orange!12, align=center,
+                   minimum width=2.4cm, minimum height=1.0cm},
+  ue9entry/.style={draw, thick, fill=gray!15, rounded corners=2pt, align=center,
+                   minimum width=1.4cm, minimum height=0.7cm},
+  ue9tr/.style={-{Stealth[length=2.6mm]}, thick},
+  ue9rule/.style={draw, circle, fill=white, inner sep=1.5pt, font=\scriptsize}]
+  \node[ue9entry] (e) at (0,0) {Entry};
+  \node[ue9state] (w) at (3.4,0) {\textbf{WalkRun}\\{\scriptsize Blend Space}};
+  \node[ue9state] (j) at (8.2,1.5) {\textbf{Jump}\\{\scriptsize MM\_Jump}};
+  \node[ue9state] (f) at (8.2,-1.5) {\textbf{Fall}\\{\scriptsize MM\_Fall\_Loop}};
+  \draw[ue9tr] (e) -- (w);
+  \draw[ue9tr] (w.north east) to[bend left=12] node[ue9rule, pos=0.5]{1} (j.west);
+  \draw[ue9tr] (j.south) -- node[ue9rule]{2} (f.north);
+  \draw[ue9tr] (w.south east) to[bend left=12] node[ue9rule, pos=0.5]{3} (f.west);
+  \draw[ue9tr] (f.south west) to[bend left=30] node[ue9rule, pos=0.5]{4} (w.south);
+  \node[align=left, text width=12.5cm, anchor=north west, font=\scriptsize] at
+    (-1,-2.9) {\textbf{1} WalkRun $\rightarrow$ Jump: IsFalling \textbf{AND}
+    VelocityZ $>$ 0 (sta salendo)\\
+    \textbf{2} Jump $\rightarrow$ Fall: \emph{Automatic Rule Based on Sequence Player in
+    State} (finito il salto, la caduta)\\
+    \textbf{3} WalkRun $\rightarrow$ Fall: IsFalling \textbf{AND} VelocityZ $<$ 0 (cade
+    senza aver saltato)\\
+    \textbf{4} Fall $\rightarrow$ WalkRun: \textbf{NOT} IsFalling (è tornato a terra)};
+\end{tikzpicture}
+\caption{La State Machine Locomotion alla fine della lezione: tre stati e quattro
+transizioni. Le condizioni con la velocità sulla Z sono quelle aggiunte nella seconda
+versione (sezione~\ref{ue9:sec:transizioni}); nella prima, la 1 e la 3 erano soltanto
+IsFalling. Schema ricostruito.}
+\label{ue9:fig:statemachine}
+\end{figure}
+
+\paragraph{Approfondimento: Conduit e Alias.} I tre tipi di nodo proposti dal menu della
+State Machine hanno ruoli diversi. Uno \textbf{State} contiene un grafo che produce una
+posa (un'animazione, un Blend Space, una combinazione). Un \textbf{Conduit} non produce
+pose: è un incrocio, uno snodo da cui partono più transizioni, utile quando molti stati
+condividono la stessa condizione d'ingresso o d'uscita e non si vuole ripeterla su ogni
+freccia. Un \textbf{State Alias} è un ``alias'' di uno o più stati: le transizioni che
+partono dall'alias valgono come se partissero da ciascuno degli stati che rappresenta
+(per esempio, ``da qualunque stato, se il personaggio muore, vai a Death''), e
+risparmiano un groviglio di frecce. Romero e Sewell (capitolo 17) costruiscono la loro
+prima State Machine, \emph{Char States}, con due soli stati, \emph{Idle} e
+\emph{Moving}, e due regole sulla velocità (``Speed maggiore di 5'' e ``minore di 5''); la
+scelta della lezione, un solo stato WalkRun che contiene un Blend Space, sposta la
+distinzione fra fermo e in movimento dentro il Blend Space, e lascia alla State Machine
+le sole differenze ``qualitative'' (a terra, in salto, in caduta).
+
+% ---------------------------------------------------------------------
+\section{Il Blend Space 1D}
+\label{ue9:sec:blend1d}
+
+``Visto che WalkRun non è solo un'animazione, è un insieme'': sono tre animazioni,
+\textbf{Idle}, \textbf{Walk} e quella che il docente ha chiamato \textbf{Slow Run}.
+``Dobbiamo mixarle insieme. Come si fa? Perché non possiamo mettere un'animazione solo
+così: dobbiamo far sì che sia dipendente dalla nostra velocità.'' Lo strumento è il
+\textbf{Blend Space}.
+
+\paragraph{Creare il Blend Space 1D.} ``Fate solamente il Blend Space 1D.'' Invece di
+cercarlo nei menu, si può scrivere nella barra di ricerca del menu del tasto destro
+``blend space'', e scegliere \textbf{Blend Space 1D}: ``già vi dice il percorso, che sta
+in Animation, Legacy''. L'icona ha un colore ``rosa pelle''. Aperto, si troverebbe il
+personaggio in T-pose; ma molti l'avevano già creato la volta precedente (``sì, mi sa che
+già l'avevamo fatto'').
+
+\paragraph{Che cos'è un Blend Space.} ``Un Blend Space è l'azione di \emph{blendare}
+qualche cosa'', di ``interpolare o comunque mixare le animazioni'': un asset che ``ci dà
+la possibilità di poter traslare da un'animazione all'altra''. Si vede subito: dal
+pannello \textbf{Asset Browser} dell'editor (``se non lo trovate, ripeto: Window, Asset
+Browser'') si trascina un'animazione sul grafico; tenendo premuto \textbf{Shift} la si
+aggancia ``su dei punti precisi'' della griglia. Con un'animazione sola, il personaggio
+fa solo quella; aggiungendone una seconda, il grafico ``crea una linea di passaggio tra
+un'animazione e l'altra''.
+
+\paragraph{Il parametro, come l'alfa.} ``Ma importante: qual è questo dato?'' Il docente
+lo collega all'\textbf{alfa} di un Lerp visto in una lezione precedente: ``quel puntatore
+che punta, dipendente da uno spazio tra due punti, dove sta al momento''. Qui il valore
+dirà ``ehi, guarda che sto camminando, sto andando a velocità 300, oppure sto correndo, a
+velocità 600, oppure sono fermo''. Il Blend Space \textbf{1D} ``ci dà solamente la
+possibilità di poter usare un asse'': nei Details, \textbf{Horizontal Axis} (la sezione
+potrebbe essere chiusa: ``basta che la aprite''). L'asse si chiama \textbf{GroundSpeed},
+``come quella che abbiamo trovato all'interno dell'Animation Blueprint''; poi chiede un
+\textbf{Minimum Axis Value} e un \textbf{Maximum Axis Value}.
+
+\paragraph{Le velocità sono relative.} ``Importante, ragazzi, quando si va a vedere le
+animazioni: dovete sempre farlo relativo, se si parla di velocità'', relativo cioè alla
+velocità reale del personaggio. Dove si legge? Nel Blueprint del personaggio,
+BP\_Knight, selezionando \textbf{Character Movement}: ``potete andare a vedere tutti i
+dati che vi servono''. Quello che serve è la \textbf{Max Walk Speed}, in alto, nella
+sezione \emph{Character Movement: Walking}: ``è 600 centimetri al secondo''. ``Unreal
+ragiona per centimetri'': il personaggio va a 6 metri al secondo.
+
+\paragraph{Dividere la velocità a metà.} ``Visto che noi abbiamo due stadi, uno di walk e
+uno di run'', si vuole che ``la walk sia un movimento normale'': di default il personaggio
+cammina, e corre solo se il giocatore lo chiede con un tasto (sezione
+\ref{ue9:sec:enhanced}). ``Quindi la dividiamo a metà'': \textbf{Max Walk Speed a 300}.
+Nel Blend Space l'asse va da \textbf{0} a \textbf{600}, ``in modo tale che a metà la
+nostra walk sia a 300'' (figura~\ref{ue9:fig:blend1d}). A uno studente l'asse arriva solo
+a 100: ``ground speed, devi metterlo a 600, lo trovi qua''. E un consiglio: dopo aver
+cambiato il massimo, ``sposta i pallini, perché poi ti switcha tutto''; il valore di
+ciascun campione si può anche scrivere a mano nei Details.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ue9pt/.style={draw=black, fill=white, thick, diamond, inner sep=2.2pt}]
+  \draw[-{Stealth[length=2.5mm]}, thick] (0,0) -- (11.2,0) node[right]{GroundSpeed};
+  \foreach \x/\v in {0/0, 2.5/150, 5/300, 7.5/450, 10/600}
+    \draw (\x,0.1) -- (\x,-0.1) node[below, font=\scriptsize]{\v};
+  \node[ue9pt] (i) at (0,0) {}; \node[ue9pt] (w) at (5,0) {}; \node[ue9pt] (r) at
+    (10,0) {};
+  \node[above=6pt of i, font=\scriptsize\bfseries] {Idle};
+  \node[above=6pt of w, font=\scriptsize\bfseries, align=center] {Walk\\
+    {\normalfont Max Walk Speed di default}};
+  \node[above=6pt of r, font=\scriptsize\bfseries, align=center] {Slow Run\\
+    {\normalfont con lo sprint}};
+  \fill[red!60!black] (3.33,0) circle (0.12);
+  \draw[red!60!black, thick, ->] (3.33,-1.2) -- (3.33,-0.25);
+  \node[red!50!black, font=\scriptsize, align=center] at (3.33,-1.55) {200: un misto
+    fra Idle e Walk, ``un obbrobrio''};
+\end{tikzpicture}
+\caption{Il Blend Space 1D BS\_Knight: un solo asse, la GroundSpeed, da 0 a 600, con
+Idle a 0, Walk a 300 (la Max Walk Speed impostata nel Character Movement) e la corsa a
+600 (la velocità dello sprint). Un valore intermedio, come 200, mescola due animazioni
+nate per velocità diverse. Schema ricostruito.}
+\label{ue9:fig:blend1d}
+\end{figure}
+
+\paragraph{Il Blendspace Player.} Tornati in ABP\_Knight (``normale, ragazzi, che vi dia
+dei warning, perché ancora non abbiamo le condizioni'': ``lui dice, ma io non ho
+condizioni, quindi faccio tutto in una botta''), si entra nello stato WalkRun. Nell'Asset
+Browser ``è apparso BS\_Knight''; trascinato nel grafo, ``ci presenta un \textbf{Blend
+Space Player}'', diverso dal nodo di un'animazione normale: ha un \textbf{valore in
+entrata}, la GroundSpeed. A quel pin si collega un \textbf{Get} della variabile
+GroundSpeed, calcolata nell'Event Graph (la lunghezza della velocity), e l'uscita del
+Blend Space Player si collega al \textbf{Result} dell'Output Animation Pose, ``in modo
+tale che vada in output''.
+
+\paragraph{Get con Ctrl, Set con Alt.} Un promemoria: trascinando una variabile nel
+grafo, ``tenete premuto \textbf{Ctrl} e tirate fuori direttamente un Get''; ``se invece
+volete fare un Set, tenete premuto \textbf{Alt}''. Nel grafo dello stato l'Alt non
+funziona: ``non si può settare all'interno'' (gli stati dell'AnimGraph leggono le
+variabili, non le scrivono), ``però nei Blueprint, di base, se premete Alt vi setta la
+variabile''.
+
+\paragraph{La prova nella preview.} Compilato, ``il nostro character nella preview adesso
+sta in idle, perché giustamente ha velocità 0''. Cambiando il valore di GroundSpeed nella
+preview: a \textbf{300} cammina; a \textbf{200} ``sta interpolando tra l'animazione di
+idle e l'animazione di walk'': ``mettere un valore a 200 non è buona cosa'', perché
+``deve essere relativo al vostro movimento, se no vengono degli obbrobri''; a
+\textbf{600} ``il nostro carissimo corre'' (``guarda come è eroico''). ``Quindi adesso
+andiamo a cambiare le animazioni tramite un valore.''
+
+\paragraph{Allineare i nodi con Q.} ``Se volete fare un po' di ordine'': selezionati due
+o più nodi, il tasto \textbf{Q} li allinea (\emph{Straighten Connections}). ``Tutto bello
+ordinato.''
+
+\paragraph{Una prova con un solo stato.} Prima di andare avanti, un test in gioco:
+nell'AnimGraph si tolgono le frecce verso Jump e Fall (selezionate e cancellate, o
+staccate con \textbf{Alt}+clic sul pin), e si lascia ``solamente WalkRun, che vada in
+entrata''.
+
+\paragraph{Approfondimento: il Blend Space nel libro.} Romero e Sewell (capitolo 17)
+definiscono il Blend Space come ``un tipo di asset che permette di mescolare animazioni
+in base ai valori di uno o due parametri''; nel loro esempio, tratto dal modello Third
+Person, Idle è a 0, Walk a 93,75 e Run a 375, con una Max Walk Speed di 375. Il principio
+è lo stesso della lezione: i campioni vanno posti dove la velocità reale del personaggio
+corrisponde alla velocità ``disegnata'' nell'animazione. Se un'animazione di camminata è
+stata animata per una velocità di 150 centimetri al secondo e il personaggio si muove a
+300, i piedi ``scivolano'' sul pavimento (\emph{foot sliding}); è il motivo pratico
+dietro il ``deve essere relativo'' del docente. Gli autori ricordano anche che il valore
+del parametro si può cambiare nell'\emph{Anim Preview Editor}, in basso a destra
+nell'editor dell'Animation Blueprint, senza andare in Play: è ciò che il docente fa per
+mostrare i valori 200, 300 e 600.
+
+% ---------------------------------------------------------------------
+\section{Una parentesi: ``questo asset non ha schede ancorate''}
+\label{ue9:sec:layout}
+
+Mentre si sistema la Max Walk Speed, uno studente interviene: ``io ho un problema col
+Blueprint: quando apro la scheda Blueprint mi dice: questo asset non ha ancora schede
+ancorate''. Il docente ha l'editor in inglese (``di solito gli errori me li ricordo in
+inglese'') e chiede di vedere: lo studente condivide prima soltanto una scheda del
+browser, poi lo schermo intero.
+
+\paragraph{Il messaggio.} Aprendo BP\_Knight, l'editor del Blueprint è vuoto, senza
+pannelli. Il testo completo del messaggio, letto ad alta voce, spiega che l'editor
+dell'asset è stato aperto in un sistema di finestre fluttuanti e nascoste, ``non mostra
+le schede ancorate nell'interfaccia principale'', e che ``questo comportamento può essere
+facilmente ripristinato'' ripristinando il layout dell'editor o modificando le preferenze
+perché gli asset si aprano sempre ancorati alla finestra principale (in inglese,
+\emph{Editor Preferences $\rightarrow$ General $\rightarrow$ Appearance $\rightarrow$
+Asset Editor Open Location}). Inoltre, sopra il grafo compare una nota: il Blueprint è
+\emph{data-only}, e c'è un link \textbf{Open Full Blueprint Editor}.
+
+\paragraph{La soluzione.} ``Mi sa che è meglio ripristinare il layout di default'':
+dalla barra in alto, \textbf{Window} (in italiano \emph{Finestra}) $\rightarrow$
+\textbf{Load Layout} (\emph{Carica il layout}) $\rightarrow$ \textbf{Default Editor
+Layout} (\emph{Editor predefinito}). Poi, sulla nota, ``apri l'editor Blueprint
+completo''. ``Perfetto, eccolo qua.''
+
+\paragraph{La lingua dell'editor.} ``Comunque, per mettere l'editor in inglese'' senza
+riavviare: si cerca \emph{Language} nelle preferenze. Il docente prova prima in
+\textbf{Editor Preferences} (sotto \emph{Edit}), scrivendo ``lingua'' e poi ``language''
+(``non gli piace che mettiamo due cose insieme''), poi nei \textbf{Project Settings};
+alla fine la voce \emph{Language} viene trovata con la ricerca (``ah, ecco perché'').
+Dalla trascrizione non si capisce con certezza in quale delle due finestre. Lo studente
+ringrazia (``mi hai fatto sentire molto ignorante''; ``verrai buttato fuori dalla
+classe, tranquillo''), e il docente annuncia di volerlo usare in inglese anche lui ``per
+la prossima volta''.
+
+\paragraph{Approfondimento: dov'è la lingua.} In Unreal Engine 5 la lingua
+dell'interfaccia è in \textbf{Edit $\rightarrow$ Editor Preferences $\rightarrow$ General
+$\rightarrow$ Region \& Language $\rightarrow$ Editor Language}; nei Project Settings c'è
+invece la lingua del \emph{gioco} (la localizzazione), che è un'altra cosa. Lavorare
+con l'editor in inglese è una scelta pratica: la documentazione, i tutorial, i libri e i
+forum usano i nomi inglesi dei nodi e dei pannelli, e la ricerca dei nodi nel menu del
+tasto destro accetta i nomi inglesi anche quando l'interfaccia è tradotta.
+
+% ---------------------------------------------------------------------
+\section{Il cavaliere in gioco: la Default Pawn Class}
+\label{ue9:sec:pawnclass}
+
+``Adesso vi faccio vedere come impostiamo il player nuovo.'' Si aprono i \textbf{World
+Settings} del livello (``qualsiasi cosa che non trovate, c'è sempre Window, e troverete
+World Settings''); fra le voci della Game Mode c'è \textbf{Default Pawn Class}.
+``Ricordiamo che il Pawn è appunto l'entità che controlla il player.'' Nel menu a
+tendina c'è BP\_Knight, il personaggio finito che il docente aveva mostrato alla fine
+della lezione precedente, e c'è BP\_Knight1, ``quello nuovo'', che si può anche cercare
+scrivendone il nome. Si sceglie BP\_Knight1 e si va in Play.
+
+\paragraph{Il primo problema: nessuna camera.} ``Ecco già un problemino.'' ``Fate
+attenzione, perché i character non vengono con la camera'': un Blueprint creato dalla
+classe Character ha la capsula, la freccia, la mesh e il Character Movement, ma non una
+camera. In Play, la visuale finisce in un punto qualsiasi del corpo (``questo
+meraviglioso\dots'', la frase si perde). Si esce dal Play e si apre BP\_Knight1: ``come
+potete vedere, non c'è una camera''.
+
+% ---------------------------------------------------------------------
+\section{La camera: Camera e Spring Arm}
+\label{ue9:sec:camera}
+
+``La camera è impostata su due cose particolari, ragazzi, molto importanti'': la
+\textbf{camera} stessa e il suo \textbf{braccio}. ``Immaginatelo come lo stand'': il
+braccio dice ``quanto è lontana'' la camera, ``quanto offset ha''.
+
+\paragraph{Aggiungere i due componenti.} Si aggiunge un componente \textbf{Camera}
+(``camera normale''): ``eccola qua, che si è già attaccata'' al personaggio, ma in una
+posizione che non va bene (``al suo lato B''). Poi uno \textbf{Spring Arm} (il docente
+lo chiama prima ``arm length'', poi si corregge: ``perdonate, l'arm length è un
+parametro; lo Spring Arm''). La gerarchia è importante: \textbf{lo Spring Arm deve avere
+la camera dentro di sé}, cioè la Camera va trascinata sopra lo Spring Arm e diventa sua
+figlia. Selezionando lo Spring Arm, nel viewport compare ``un piccolo tracciato rosso'':
+``la lunghezza del nostro braccio'', il braccio della camera
+(figura~\ref{ue9:fig:springarm}).
+
+\paragraph{I 3C.} ``Ricordatevi, ragazzi, molto importante, perché la camera è
+importantissima: ci sono delle figure che si chiamano \textbf{3C}, \emph{Camera, Control
+e Character}, che lavorano solo su questo.'' Da qui una regola: ``se volete allontanare la
+camera o cambiarle l'offset, \textbf{non cambiate la location della camera}. Non lo fate.
+Controllatelo sempre da qui, dallo Spring Arm.''
+
+\paragraph{Target Arm Length.} Il parametro \textbf{Target Arm Length} ``ci permette di
+aumentare o diminuire la distanza della camera''. Valore scelto: \textbf{300}.
+
+\paragraph{Target Offset e Socket Offset.} Ci sono due offset, e il docente ha una
+preferenza netta. Il \textbf{Target Offset} ``usatelo solamente sulla Z, di poco,
+veramente di poco, massimo 20''; ``e fate tutto con il \textbf{Socket Offset}''. Il
+motivo: ``se voi cambiate l'offset del target, la camera vi può più facilmente
+compenetrare con le cose''. Con il Socket Offset, invece, ``vedrete che la camera va sul
+muro e torna'': ``va più vicino'', cioè ``riduce il suo arm length, fondamentalmente''.
+Dopo la prima prova in Play (``lo testiamo, ragazzi?''), la camera è un po' alta: il
+Socket Offset sulla Z viene abbassato a \textbf{40}.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize]
+  % capsula
+  \draw[thick, fill=blue!8, rounded corners=14pt] (0,0) rectangle (1.1,2.6);
+  \node[align=center, font=\scriptsize] at (0.55,1.1) {Cap-\\sule};
+  \node[font=\scriptsize, below] at (0.55,-0.2) {BP\_Knight1};
+  \fill (0.55,2.0) circle (0.06);
+  \node[font=\scriptsize, anchor=north west] at (0.62,1.95) {pivot};
+  % braccio
+  \draw[very thick, red!70!black] (0.55,2.0) -- (-4.2,2.0);
+  \node[red!60!black, font=\scriptsize, above] at (-1.8,2.0) {Target Arm Length
+    = 300};
+  % socket offset
+  \draw[thick, dashed, -{Stealth[length=2mm]}, green!40!black] (-4.2,2.0) --
+    (-4.2,2.8);
+  \node[green!40!black, font=\scriptsize, anchor=east, align=right] at (-4.9,2.3)
+    {Socket Offset\\Z = 40};
+  % camera
+  \draw[thick, fill=gray!30] (-4.75,2.6) rectangle (-3.95,3.05);
+  \draw[thick, fill=gray!30] (-3.95,2.7) -- (-3.6,2.55) -- (-3.6,3.1) -- (-3.95,2.95);
+  \node[font=\scriptsize, above] at (-4.3,3.1) {Camera (figlia)};
+  % target offset
+  \draw[thick, dashed, -{Stealth[length=2mm]}, orange!70!black] (0.55,2.0) --
+    (0.55,2.35);
+  \node[orange!60!black, font=\scriptsize, anchor=south, align=center] at (0.55,2.4)
+    {Target Offset: solo Z,\\al massimo $\approx$ 20};
+  % muro
+  \fill[gray!40] (-2.6,-0.2) rectangle (-2.35,1.4);
+  \draw[thick] (-2.6,-0.2) rectangle (-2.35,1.4);
+  \node[font=\scriptsize, align=center] at (-2.47,-0.6) {muro};
+  \draw (-6,-0.2) -- (3.5,-0.2);
+  % gerarchia
+  \node[draw, thick, rounded corners=3pt, fill=gray!8, align=left, font=\scriptsize,
+    anchor=north west] at (3.3,2.2) {\textbf{Components}\\
+    Capsule Component\\
+    \quad Arrow\\
+    \quad Mesh\\
+    \quad \textbf{Spring Arm}\\
+    \qquad \textbf{Camera}\\
+    Character Movement};
+\end{tikzpicture}
+\caption{La camera del cavaliere. La Camera è figlia dello Spring Arm, e la distanza e
+l'altezza si regolano sul braccio, mai spostando la camera. Se fra il personaggio e la
+camera si mette un ostacolo (il muro), lo Spring Arm accorcia il braccio e la camera
+``torna'' verso il personaggio; con un Target Offset grande, invece, è più facile che la
+camera entri negli oggetti. Schema ricostruito, valori della lezione.}
+\label{ue9:fig:springarm}
+\end{figure}
+
+\paragraph{Il Field of View.} Più avanti, mentre aspetta uno studente, il docente mostra
+che ``nella camera è presente anche un po' di dati con cui potete giocarci'', per esempio
+il \textbf{Field of View}. Lo abbassa a \textbf{80}: ``sappiate che tanti giochi horror
+usano il field of view a 80. Questo è un piccolo tip.''
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.6cm}p{2.0cm}p{8.4cm}@{}}
+\toprule
+\textbf{Parametro} & \textbf{Valore} & \textbf{Effetto e consiglio del docente} \\
+\midrule
+Spring Arm $\rightarrow$ Target Arm Length & 300 & distanza della camera dal
+personaggio \\
+Spring Arm $\rightarrow$ Socket Offset & Z = 40 & spostamento della camera alla fine del
+braccio; da preferire \\
+Spring Arm $\rightarrow$ Target Offset & Z $\le$ 20 & spostamento dell'origine del
+braccio; poco e solo sulla Z, perché fa compenetrare la camera \\
+Spring Arm $\rightarrow$ Use Pawn Control Rotation & attivo & il braccio ruota con il
+mouse (il controller); va sullo Spring Arm, non sulla Camera \\
+Camera $\rightarrow$ Field of View & 80 & angolo di visuale; 80 è tipico dei giochi
+horror \\
+Camera $\rightarrow$ Location & non toccare & la posizione si regola sempre dallo Spring
+Arm \\
+\bottomrule
+\end{tabular}
+\caption{I parametri della camera toccati durante la lezione.}
+\label{ue9:tab:camera}
+\end{table}
+
+\paragraph{Approfondimento: perché lo Spring Arm si accorcia.} Lo \textbf{Spring Arm
+Component} fa, a ogni frame, una traccia (un \emph{sweep} di una piccola sfera, di
+raggio \emph{Probe Size}) dal suo punto d'origine verso la posizione desiderata della
+camera; se incontra un ostacolo nel canale \emph{Probe Channel} (di default
+\emph{Camera}), accorcia il braccio fino al punto di impatto, e lo riallunga quando
+l'ostacolo sparisce (la proprietà è \emph{Do Collision Test}). Il \emph{Target Offset}
+sposta l'\emph{origine} di quella traccia, nello spazio del mondo: spostarla molto può
+portare l'origine dentro un muro o dietro un oggetto, e allora il test non ``vede'' più
+l'ostacolo; il \emph{Socket Offset} sposta invece la \emph{fine} del braccio, nello
+spazio del braccio stesso, e la traccia resta coerente. È la ragione tecnica del
+consiglio del docente. Lo Spring Arm ha anche le opzioni \emph{Enable Camera Lag} ed
+\emph{Enable Camera Rotation Lag}, che fanno ``inseguire'' la camera con un leggero
+ritardo e rendono più morbidi i movimenti: il docente le sfiora più tardi, nella sezione
+del Montage. Quanto ai 3C, nell'industria la sigla indica la disciplina che cura come il
+giocatore \emph{vede} (camera), \emph{comanda} (controlli) e \emph{abita} (personaggio)
+il gioco: tre cose che si progettano insieme, perché ognuna cambia la percezione delle
+altre.
+
+% ---------------------------------------------------------------------
+\section{I grafi di movimento, presi in prestito}
+\label{ue9:sec:movimento}
+
+In Play, la camera c'è, ma ``non ci possiamo muovere'': ``perché non abbiamo né input né
+le funzioni di base di movimento''. ``Questo, ragazzi, non andiamo a farlo direttamente a
+mano, ma andiamo a fare quella che è una bellissima'' scorciatoia (la trascrizione dice
+``mandragata''): si apre il \textbf{BP\_ThirdPersonCharacter} classico, ``quello che
+abbiamo usato'' finora, che contiene ``questi tre principali blocchi che Unreal fa di
+base'': il controllo della \textbf{camera} (\emph{Look}), il controllo del
+\textbf{movimento} (con \emph{Add Movement Input}) e il \textbf{salto} (\emph{Jump}).
+
+\paragraph{Copiare anche l'Input Mapping.} ``Mi raccomando, prendete anche questo qua
+sopra, che è l'\textbf{input mapping}'', cioè il grafo sull'Event Begin Play che aggiunge
+l'Input Mapping Context (``andremo a spiegare che cosa si intende''). Tutto con
+\textbf{Ctrl+C}, e poi \textbf{Ctrl+V} nell'Event Graph di BP\_Knight1: ``perché queste
+sono le funzioni basiche di Unreal''.
+
+\paragraph{IA\_Move.} Un'occhiata all'evento \textbf{IA\_Move} con l'Add Movement Input,
+``proprio per fare una lezione sull'input'': ``questo evento dice che è legato a un
+tasto, o a dei tasti, che ci riporta due valori, X e Y'', che ``di conseguenza diventano
+dei vettori che vanno a creare il movimento sui due assi''. Uno è avanti e indietro
+(\emph{forward}, \emph{backward}), l'altro è destra e sinistra.
+
+\paragraph{La camera che ruota male.} Compilato, ``adesso la nostra camera si muove'', ma
+in modo strano: si muove ``solo così'', su un asse. ``L'avevo visto un'altra volta'':
+``devo usare il control rotation''. La spunta è \textbf{Use Pawn Control Rotation}:
+``se lo attaccate, la camera vi va in \emph{free mode}'', ``nel senso che usa la
+rotazione del controller'', sia in beccheggio sia in imbardata.
+
+% ---------------------------------------------------------------------
+\section{Tre spunte sulla rotazione}
+\label{ue9:sec:rotazioni}
+
+\paragraph{Use Pawn Control Rotation, sullo Spring Arm.} Uno studente ha la camera che
+``quando vado in Play posso abbassarla e guardare solo il terreno, non vedo proprio
+neanche più il personaggio''. Il docente pensa prima a una compenetrazione, poi si fa
+condividere lo schermo: ``che camera hai messo? Camera normale, giusto?''. Guardando i
+componenti, il problema salta fuori: ``non Use Pawn Control Rotation sulla camera: Use
+Pawn Control Rotation sullo \textbf{Spring Arm}''. ``Quindi levalo da lì e mettilo sullo
+Spring Arm.'' ``Anche l'altro?'' ``No, no, no: solo sullo Spring Arm.'' La spunta va su
+\emph{un} componente solo, il braccio: è il braccio a ruotare intorno al personaggio, e
+la camera, che ne è figlia, lo segue.
+
+\paragraph{Orient Rotation to Movement.} In Play, il cavaliere cammina (alla velocità di
+300), ma andando a destra ``lui cammina dritto, fondamentalmente'': si sposta di lato
+continuando a guardare avanti. ``Questo lo possiamo risolvere con'' \textbf{Orient
+Rotation to Movement}, sempre nel Character Movement: ``dal nome, orienta la rotazione al
+movimento''. Accanto c'è la \textbf{Rotation Rate}, la velocità con cui il personaggio si
+gira (``non è proprio precisissima, però ci piace'').
+
+\paragraph{Use Controller Rotation Yaw.} Il personaggio però continua a non girarsi bene.
+``Perché mi ricordo che qua c'era una particolarità che non ricordo'': il docente scorre
+le categorie del Blueprint (\emph{Simulate}, \emph{Rotation}, \emph{Character},
+\emph{Orientation}, \emph{Physics}, \emph{Controller}\dots) e la trova. ``Per fissare il
+nostro character che non si girava, basta che eliminiamo il tick'': selezionato il Pawn
+(la radice del Blueprint, \emph{BP\_Knight1 (Self)}), si cerca \emph{yaw} e si toglie
+\textbf{Use Controller Rotation Yaw}, ``in modo tale che il character non usi il suo
+yaw''. Senza questa spunta, il personaggio non ruota più insieme alla camera: ``andrà
+dove siamo direzionati'', ``se io vado a destra, lui si gira completamente verso
+destra''. A uno studente non basta: aveva tolto lo Yaw ma non attivato Orient Rotation to
+Movement. ``Ok, non ce l'avevo.'' Con tutte e due, ``abbiamo il nostro bel character
+fatto per benissimo''.
+
+\paragraph{Approfondimento: chi comanda la rotazione.} Le tre spunte della lezione sono
+le tre ``mani'' che possono ruotare un personaggio in terza persona, e vanno combinate
+con criterio. \textbf{Use Pawn Control Rotation} (sullo Spring Arm) fa seguire alla
+\emph{camera} la rotazione del controller, cioè del mouse o della levetta destra.
+\textbf{Use Controller Rotation Pitch/Yaw/Roll} (sul Pawn) fa seguire quella stessa
+rotazione al \emph{corpo} del personaggio. \textbf{Orient Rotation to Movement} (nel
+Character Movement) fa girare il corpo verso la direzione in cui si muove. La
+combinazione ``da avventura'' della prima parte della lezione è: camera libera (Use Pawn
+Control Rotation sul braccio), corpo indipendente dalla camera (Use Controller Rotation
+Yaw spento), corpo orientato al movimento (Orient Rotation to Movement acceso): è quella
+del modello Third Person di Unreal. La combinazione ``da combattimento'' della seconda
+parte, con il Blend Space 2D (sezione~\ref{ue9:sec:direction}), è opposta: il corpo
+guarda sempre dove guarda la camera (Use Controller Rotation Yaw acceso), e le
+animazioni di strafe mostrano lo spostamento laterale. Se sono accese insieme Use
+Controller Rotation Yaw e Orient Rotation to Movement, le due ``mani'' si contendono il
+personaggio; per questo, nel Character Movement, esiste anche \emph{Use Controller
+Desired Rotation}, che fa ruotare il corpo verso la direzione della camera in modo
+graduale, con la Rotation Rate (forse il ``desired'' che il docente prova a un certo
+punto, senza esito chiaro nella trascrizione).
+
+% ---------------------------------------------------------------------
+\section{Il retargeting: il salto del manichino sul cavaliere}
+\label{ue9:sec:retarget}
+
+``Adesso, però, guardate una cosa: se ad esempio provo a saltare, non ho nessuna
+animazione.'' Il salto funziona (lo fa il Character Movement), ma il cavaliere sale e
+scende nella posa della camminata. Le animazioni di salto si potrebbero prendere da
+Mixamo, ``anche se potremmo, volendo''; invece il docente usa ``l'opzione di Unreal che
+si chiama \textbf{retargeting}''. ``Diciamo che il retargeting, sappiatelo, può uscire
+bene, ma può uscire anche abbastanza male: è dipendente dall'animazione. Però andiamo a
+farlo comunque, per vedere come si fa.''
+
+\paragraph{I passaggi.}
+\begin{enumerate}
+  \item Nel Content Browser si cerca \emph{Jump}: si trova l'animazione del salto del
+        manichino base di Unreal, \textbf{MM\_Jump}.
+  \item Tasto destro sull'animazione $\rightarrow$ \textbf{Retarget Animations}.
+  \item La finestra mostra lo scheletro \textbf{sorgente} (\emph{source}), quello da cui
+        viene l'animazione: il manichino di Unreal, \textbf{Manny} o \textbf{Quinn}
+        (``Many Quincy''). Come \textbf{target} si sceglie lo scheletro del cavaliere, il
+        paladino di Mixamo: ``eccolo qua, li mette a confronto''.
+  \item Si seleziona \textbf{MM\_Jump} nella lista delle animazioni: nella preview il
+        paladino salta. ``Fortunatamente Mixamo usa degli scheletri che sono abbastanza
+        compatibili con quello di Unreal'', e il risultato ``è venuto abbastanza bene'';
+        ``potete girarci tranquillamente intorno con la viewport''.
+  \item Due pulsanti di esportazione. \textbf{Export Retargeted Assets} ``non ci serve,
+        ragazzi'': ``vi crea un asset retargettato'', una copia completa degli asset sullo
+        scheletro di destinazione. Basta \textbf{Export Animations}: ``esportare
+        l'animazione così, come nuova''. ``Ricordate che c'è il source, e vi esporta il
+        target.''
+  \item Come cartella si sceglie quella del personaggio (\emph{Characters $\rightarrow$
+        Knight1 $\rightarrow$ Animation}) e si esporta.
+\end{enumerate}
+Lo stesso procedimento si ripete per la caduta: \textbf{MM\_Fall\_Loop}, un'animazione
+``in loop'' di caduta, retargettata sul paladino ed esportata nella stessa cartella.
+
+\paragraph{Il root motion ``rotto''.} Il risultato del salto ``non è fantastico'':
+``il problema di Mixamo è che ha il \textbf{root motion} un po' rotto''. Il docente
+mostra il \emph{root}, ``un punto dello scheletro'', l'osso alla base della gerarchia, e
+osserva che lo spostamento non è quello atteso; ``potremmo vederlo'', ``ma per vedere come
+funziona il retarget va benissimo''. Si potrebbe sistemare in seguito.
+
+\paragraph{Approfondimento: il retargeting in Unreal Engine 5.} Il retargeting trasferisce
+un'animazione da uno scheletro a un altro con proporzioni e nomi delle ossa diversi. In
+Unreal Engine 5 si basa su due tipi di asset: l'\textbf{IK Rig}, che descrive uno
+scheletro raggruppando le ossa in \emph{catene} (spina dorsale, braccia, gambe, testa)
+con un osso di \emph{retarget root} (di solito il bacino), e l'\textbf{IK Retargeter},
+che mette in corrispondenza le catene di due IK Rig e corregge la differenza fra le pose
+di riferimento (la A-pose del manichino e la T-pose di Mixamo). Nelle versioni più recenti il
+comando \emph{Retarget Animations} del menu contestuale apre una finestra che crea al
+volo questi asset quando gli scheletri sono riconosciuti (come quelli di Mixamo e del
+manichino), ed è ciò che si vede a lezione; per risultati migliori, o con scheletri
+insoliti, si creano e si regolano a mano. Il problema del root di Mixamo è noto: gli
+scheletri di Mixamo non hanno un osso di root a terra, e lo spostamento del personaggio
+è registrato sull'osso dei fianchi (\emph{Hips}); un'animazione retargettata può quindi
+avere il movimento nel posto ``sbagliato'' per il sistema di root motion di Unreal.
+
+% ---------------------------------------------------------------------
+\section{Le regole di transizione}
+\label{ue9:sec:transizioni}
+
+Con le due animazioni nuove si aggiorna l'Animation Blueprint: ``dentro il nostro Jump
+ci mettiamo l'animazione di jump'' (``niente di particolare, ragazzi''), dentro Fall
+l'animazione di caduta. Si ricollegano le frecce. ``Se cammina e corre, può saltare? Sì,
+certo. Se salta, dovrà per forza almeno loopare in caduta'', e ``dal Fall dovrà ritornare
+al nostro WalkRun''.
+
+\paragraph{Prima versione.} Nelle icone delle transizioni c'è un grafo con un nodo
+\textbf{Result}, che ``ci dà un bool'': ``ci dice quando è che posso entrare in questa
+animazione''.
+\begin{itemize}
+  \item \textbf{WalkRun $\rightarrow$ Jump}: un \emph{Get IsFalling} collegato al
+        Result. ``Potremmo farlo più preciso dopo''; per esempio, ``possiamo anche dire:
+        ha iniziato il jump''.
+  \item \textbf{Jump $\rightarrow$ Fall}: qui il grafo vuoto dà errore, ``perché noi
+        vogliamo far sì che questo processo tra il Jump e il Fall sia automatico''.
+        Selezionata l'icona della transizione, nei Details si spunta \textbf{Automatic
+        Rule Based on Sequence Player in State}: ``quando inizia quell'animazione, a
+        seguito ci sarà quest'altra''; in altre parole, la transizione scatta da sola
+        quando l'animazione dello stato Jump finisce. ``Lo mettiamo così e non ci darà
+        problemi.''
+  \item \textbf{Fall $\rightarrow$ WalkRun}: ``vuol dire che non sta cadendo'': Get
+        IsFalling, poi un \textbf{NOT Boolean}. ``Ricordo che il NOT Boolean è qualcosa
+        che ci dà il suo contrario'': deve essere false perché la caduta finisca.
+\end{itemize}
+Uno studente chiede cosa ci sia fra Jump e Fall: ``se tu clicchi su questo pallino, ci
+dice, in Details\dots\ vogliamo che questa animazione parta direttamente se effettivamente
+il jump è finito'': \emph{Automatic Rule Based on Sequence Player in State}, ``questo
+tick, lo metti vero''.
+
+\paragraph{La prova, e un difetto.} Si prova da un punto alto, ``la nostra piattaforma''.
+``Non si nota tantissimo, però effettivamente sta facendo giustamente l'azione di
+saltare.'' Ma il docente vuole collegare WalkRun anche direttamente a Fall: il
+personaggio ``può cadere anche nel caso in cui lui non abbia spinta, semplicemente cade da
+qualche parte'', per esempio scendendo da un bordo. Con le sole regole su IsFalling,
+però, le due transizioni in uscita da WalkRun avrebbero la stessa condizione, e Unreal
+non saprebbe distinguere un salto da una caduta.
+
+\paragraph{Seconda versione: la velocità sulla Z.} ``Dovremmo andare a differenziare un
+altro valore: la Z. Se la Z è maggiore di 0, vuol dire che sta saltando; se la Z invece è
+minore di 0, vuol dire che sta cadendo.'' Nell'Event Graph dell'ABP, finora, della
+velocity si prendeva solo la lunghezza. Il docente prova prima la strada sbagliata (la
+\emph{Jump Z Velocity} del Character Movement, che però è la spinta \emph{iniziale} del
+salto, un valore fisso), poi prende la \textbf{Velocity} già salvata, ne fa lo
+\textbf{Split Struct Pin} (``lo splittiamo'') e dalla \textbf{Z} fa \textbf{Promote to
+Variable}: una nuova float, \textbf{VelocityZ} (``Z va benissimo''). Nelle transizioni:
+\begin{itemize}
+  \item \textbf{WalkRun $\rightarrow$ Jump}: IsFalling \textbf{AND} VelocityZ maggiore
+        di zero, con un nodo \textbf{AND Boolean}. Il docente dice anche ``quando la
+        velocità sarà maggiore di 1, più preciso'': una soglia piccola invece di zero
+        esatto.
+  \item \textbf{WalkRun $\rightarrow$ Fall}: IsFalling e VelocityZ minore di zero.
+\end{itemize}
+Per tenere in ordine i fili, si possono usare i \emph{reroute node} (``volete collegarli
+con questo? È un po' bruttino''). Il risultato: ``se io salto, fa l'animazione''; ``se io
+adesso invece cado solamente, lui va diretto in Fall''. Il docente chiude salvando anche
+il BP\_ThirdPersonCharacter che l'editor segnala come modificato (``va bene, grazie'').
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.2cm}p{5.3cm}p{5.5cm}@{}}
+\toprule
+\textbf{Transizione} & \textbf{Regola} & \textbf{Significato} \\
+\midrule
+Entry $\rightarrow$ WalkRun & nessuna & lo stato iniziale \\
+WalkRun $\rightarrow$ Jump & IsFalling AND VelocityZ $>$ 0 & è in aria e sta salendo: ha
+saltato \\
+Jump $\rightarrow$ Fall & Automatic Rule Based on Sequence Player in State & finita
+l'animazione di salto, passa alla caduta \\
+WalkRun $\rightarrow$ Fall & IsFalling AND VelocityZ $<$ 0 & è in aria e sta scendendo:
+è caduto da un bordo \\
+Fall $\rightarrow$ WalkRun & NOT IsFalling & è tornato a terra \\
+\bottomrule
+\end{tabular}
+\caption{Le regole di transizione della State Machine Locomotion (versione finale).}
+\label{ue9:tab:transizioni}
+\end{table}
+
+\paragraph{Approfondimento: altre regole basate sul tempo.} L'opzione automatica della
+lezione è il modo più rapido per dire ``quando l'animazione finisce''. Romero e Sewell
+(capitolo 17), per gli stati \emph{StandToProne} e \emph{ProneToStand}, usano invece una
+regola esplicita: il nodo \textbf{Time Remaining (ratio)} dell'animazione dello stato,
+seguito da un \emph{Less} con 0,1: la transizione scatta quando manca meno del 10\%
+dell'animazione. Il vantaggio è il controllo: la transizione può partire un po' prima
+della fine e lasciare spazio al \emph{blend} fra i due stati, che ogni transizione ha
+(nei Details: \emph{Blend Settings}, con una durata di default di 0,2 secondi).
+Ricordano anche che le animazioni ``di una volta'', come il salto, vanno impostate senza
+\emph{Loop Animation}: è il caso dello stato Jump, mentre Fall, che deve durare quanto
+la caduta, resta in loop.
+
+% ---------------------------------------------------------------------
+\section{Lo sprint con l'Enhanced Input}
+\label{ue9:sec:enhanced}
+
+``Adesso andremo a mettere il nostro sprintino'': ``un semplicissimo sistemino che passa
+la Max Walk Speed da un tot a un altro tot''. Si torna in BP\_Knight1, ``a ragionare a
+livello di Blueprint''. ``Ma sì, facciamo anche l'input mapping.''
+
+\paragraph{L'Input Mapping Context.} ``Unreal ha introdotto, quasi dalla 5.2'', quello
+che è l'\textbf{Input Mapping Context}, ``una cosa molto interessante di Unreal che ci
+permette, ad esempio, di avere degli eventi legati a più input''. Finora, in molte
+lezioni, si sono usati gli eventi dei tasti (``abbiamo visto il tasto E, eccolo qua''):
+``semplicemente un rilevamento, da parte di Unreal, della tastiera: se è premuto o non è
+premuto''. Adesso, invece, ``gli eventi sono legati a più controlli possibili''.
+
+Nel Content Browser si cerca \textbf{IMC} (\emph{Input Mapping Context}). ``È un
+\emph{contesto}: un contesto di input che vengono dati in un certo momento, e sappiate
+che sono sovrascrivibili.'' L'esempio: ``io devo cambiare dal gioco di avventura 3D al
+gioco di guida della macchina''; ``i controlli sono completamente diversi, quindi cambio
+contesto'': un Input Mapping Context per la macchina e uno ``per il character che cammina
+normalmente''. Aperto \textbf{IMC\_Default}, ci sono i \textbf{Mappings}:
+\textbf{IA\_Jump}, \textbf{IA\_Move}, \textbf{IA\_Look}.
+
+\paragraph{L'Input Action IA\_Run.} ``Per far sì di avere un'Input Action, dobbiamo creare
+un asset chiamato \textbf{Input Action}.'' Cercando \emph{IA} nel Content Browser ``troverete
+un sacco di asset, ma a voi vi interessa questo celestino''. Con il tasto destro,
+\textbf{Show in Folder View}, ``in modo tale che voi troviate direttamente la cartella''.
+Si duplica IA\_Jump (Ctrl+C, Ctrl+V, o \emph{Duplicate}) e lo si rinomina
+\textbf{IA\_Run}.
+
+\paragraph{Dentro un'Input Action.} Aperto IA\_Run, ``ci sono un po' di valori che
+possiamo vedere'':
+\begin{itemize}
+  \item \textbf{Description}: ``semplice descrizione, quindi quello che fa'';
+  \item \textbf{Trigger when Paused}: se l'azione deve scattare anche quando il gioco è in
+        pausa, ``quindi si blocca il tempo'';
+  \item \textbf{Value Type}: ``la tipologia di valore che ci ritorna indietro. Un input ci
+        dà un valore'': \textbf{Digital (bool)}, \textbf{Axis1D (float)} (``come abbiamo
+        visto, avanti e indietro''), \textbf{Axis2D (Vector2D)} (``più assi, due
+        dimensioni'') o \textbf{Axis3D (Vector)} (``tre tipologie di input che ci vengono
+        dati''). ``A noi interessa il Run, che è un bool, quindi premuto o non premuto'':
+        Digital (bool) ``va benissimo'';
+  \item \textbf{Triggers}: ``le azioni che sono già preinstallate in Unreal'', che dicono
+        ``ehi, guarda, si triggera se è premuto, o se è rilasciato, o se è sempre
+        premuto''. L'elenco letto dal docente: \emph{Chorded Action}, \emph{Combo},
+        \emph{Down}, \emph{Hold}, \emph{Hold and Release}, \emph{Pressed}, \emph{Pulse},
+        \emph{Released}, \emph{Tap} (la trascrizione dice anche ``Short Deduction'' e
+        ``repeat'', non identificabili con certezza). ``Fondamentalmente, questo vuol
+        dire che quando si compie questa azione, questo input viene triggerato.'' IA\_Run
+        eredita da IA\_Jump la sua configurazione, ``e va benissimo così, perché tanto è
+        un'azione molto simile al jump''.
+\end{itemize}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.2cm}p{10.8cm}@{}}
+\toprule
+\textbf{Voce} & \textbf{Significato} \\
+\midrule
+Digital (bool) & premuto / non premuto: un pulsante (salto, corsa, interazione) \\
+Axis1D (float) & un valore su un asse: un grilletto analogico, avanti/indietro \\
+Axis2D (Vector2D) & due assi: il movimento (X, Y) o la visuale del mouse \\
+Axis3D (Vector) & tre assi: input 3D (per esempio un controller di movimento) \\
+\midrule
+Down & scatta a ogni frame finché il tasto è giù \\
+Pressed & scatta una volta, quando il tasto viene premuto \\
+Released & scatta una volta, quando il tasto viene rilasciato \\
+Hold & scatta dopo che il tasto è stato tenuto premuto per un certo tempo \\
+Hold and Release & scatta al rilascio, se il tasto è stato tenuto abbastanza \\
+Tap & scatta se il tasto viene premuto e rilasciato entro un tempo breve \\
+Pulse & scatta a intervalli regolari mentre il tasto è premuto \\
+Chorded Action & scatta solo se un'altra azione è attiva insieme (una ``combinazione'') \\
+Combo & scatta se una sequenza di azioni viene eseguita nell'ordine \\
+\bottomrule
+\end{tabular}
+\caption{I tipi di valore (Value Type) e i trigger di un'Input Action, letti a lezione
+dall'elenco dell'editor. Le descrizioni sono un'integrazione: a lezione il docente
+legge i nomi senza spiegarli uno per uno.}
+\label{ue9:tab:inputaction}
+\end{table}
+
+\paragraph{Il contesto va caricato.} Tornati in BP\_Knight1: ``abbiamo già il contesto
+caricato'', con il grafo copiato dal ThirdPersonCharacter. ``Sappiate che se voi non
+caricate il contesto, non vi prenderà nessuna cosa'': sull'Event Begin Play, dal Player
+Controller si prende l'\emph{Enhanced Input Local Player Subsystem} e si chiama
+\textbf{Add Mapping Context} con IMC\_Default (figura~\ref{ue9:fig:enhanced}).
+
+\paragraph{L'evento IA\_Run e i suoi pin.} Nel grafo si invoca \textbf{IA\_Run}; ``se lo
+estendete'' (la freccina in basso del nodo), compaiono tutti i pin:
+\begin{itemize}
+  \item i pin di esecuzione \textbf{Triggered} (``quando è triggerato''), \textbf{Started}
+        (``quando inizia a essere triggerato''), \textbf{Ongoing}, \textbf{Canceled},
+        \textbf{Completed};
+  \item i valori: l'\textbf{Action Value} (``se è true o false, in questo caso''),
+        \textbf{Elapsed Seconds} e \textbf{Triggered Seconds} (``quanto tempo è stato
+        triggerato''), e l'\textbf{Input Action}, ``la referenza stessa'' all'asset.
+\end{itemize}
+
+\paragraph{Set Max Walk Speed.} ``Dobbiamo modificare il Character Movement, ragazzi, che
+dovrà definire quanta velocità avremo'': si trascina nel grafo il componente
+\textbf{Character Movement} e se ne tira fuori \textbf{Set Max Walk Speed}, due volte.
+Sul \textbf{Triggered}, \textbf{600}; sul \textbf{Completed}, \textbf{300}
+(figura~\ref{ue9:fig:sprint}).
+
+\paragraph{Il mapping dimenticato.} In Play non succede niente. ``Scusate, ragazzi, mi
+sono dimenticato di dare l'input'': IA\_Run esiste, ma non è nel contesto. Si apre
+IMC\_Default, si aggiunge un mapping (il \emph{+} accanto a \emph{Mappings}), si sceglie
+IA\_Run e gli si assegna il tasto: ``un nostro bello \textbf{Shift}''. ``L'Input Mapping
+Context ci permette di mettere quali tipologie di pulsanti facciano'' ciascuna azione.
+
+\paragraph{Lo stesso input, anche con il controller.} ``Io ad esempio qua, ragazzi, ho un
+controller'': il docente lo collega (``Unreal riesce a prendere il controller''), aggiunge
+un secondo tasto alla stessa azione, clicca sull'icona della tastiera accanto al campo e
+preme un pulsante del controller (``mi sono fregato la sorpresa''): ``facciamo tipo Dark
+Souls? Premo cerchio'', e l'editor scrive \textbf{Gamepad Face Button Right}. ``Questa
+azione, cioè l'azione di correre, è collegata a più input.'' ``Quando faccio progetti in
+generale, devo fare anche il controller'': si corre con Shift sulla tastiera ``oppure con
+il nostro bel controllino, con quello che vogliamo noi'', ``come è stato designato il
+gioco''. Tutto il resto del movimento sul controller ``non ci interessa adesso''.
+
+\paragraph{La prova.} ``Se noi proviamo\dots\ rilascio.'' Con Shift il cavaliere corre, e
+il Blend Space passa alla corsa; al rilascio torna a camminare. ``Ecco a voi che abbiamo
+creato un nostro bel character nuovo, in cui semplicemente possiamo correre, possiamo
+modificare la velocità.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ue9box/.style={draw, thick, rounded corners=4pt, align=center, fill=gray!8,
+                 minimum height=1.0cm, text width=2.5cm},
+  ue9arr/.style={-{Stealth[length=2.5mm]}, thick}]
+  \node[ue9box, fill=yellow!15] (k1) at (0,0.7) {Left Shift\\{\scriptsize tastiera}};
+  \node[ue9box, fill=yellow!15] (k2) at (0,-0.7) {Gamepad Face\\Button Right};
+  \node[ue9box, fill=blue!10, text width=2.8cm] (imc) at (3.8,0) {\textbf{IMC\_Default}\\
+    {\scriptsize Input Mapping Context}\\{\scriptsize (mapping IA\_Run)}};
+  \node[ue9box, fill=cyan!12] (ia) at (7.6,0) {\textbf{IA\_Run}\\{\scriptsize Input
+    Action, Digital (bool)}};
+  \node[ue9box, fill=red!12, text width=2.8cm] (ev) at (11.4,0) {evento
+    \textbf{IA\_Run}\\{\scriptsize nel Blueprint}\\{\scriptsize Triggered / Completed}};
+  \draw[ue9arr] (k1) -- (imc); \draw[ue9arr] (k2) -- (imc);
+  \draw[ue9arr] (imc) -- (ia); \draw[ue9arr] (ia) -- (ev);
+  \node[ue9box, fill=green!10, text width=4.2cm] (bp) at (3.8,-2.4) {\textbf{Event Begin
+    Play} $\rightarrow$ Enhanced Input Local Player Subsystem $\rightarrow$ \textbf{Add
+    Mapping Context} (IMC\_Default)};
+  \draw[ue9arr, dashed] (bp) -- node[right, font=\scriptsize]{attiva} (imc);
+\end{tikzpicture}
+\caption{La catena dell'Enhanced Input. I tasti fisici non sono legati direttamente
+all'evento: il contesto (IMC) associa più tasti alla stessa azione (IA), e il Blueprint
+reagisce all'azione. Senza Add Mapping Context, il contesto non è attivo e nessun input
+arriva. Schema ricostruito.}
+\label{ue9:fig:enhanced}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ue9node/.style={draw, thick, rounded corners=4pt, align=center, fill=gray!8,
+                  minimum height=0.8cm, text width=2.4cm},
+  ue9ev/.style={ue9node, fill=red!12},
+  ue9var/.style={ue9node, fill=blue!10, rounded corners=8pt},
+  ue9exec/.style={-{Stealth[length=2.5mm]}, very thick, black!80},
+  ue9data/.style={-{Stealth[length=2mm]}, thick, blue!60!black}]
+  \node[ue9ev, text width=2.2cm, minimum height=1.8cm] (ev) at (0,0) {\textbf{IA\_Run}\\
+    {\scriptsize Enhanced Input Action}};
+  \node[ue9node, text width=3.2cm] (s1) at (5,0.8) {\textbf{Set Max Walk Speed}\\
+    {\scriptsize Max Walk Speed = 600}};
+  \node[ue9node, text width=3.2cm] (s2) at (5,-0.8) {\textbf{Set Max Walk Speed}\\
+    {\scriptsize Max Walk Speed = 300}};
+  \node[ue9var, text width=2.6cm] (cm) at (9.6,0) {\textbf{Character}\\
+    \textbf{Movement}};
+  \draw[ue9exec] (ev.east |- s1) -- node[above, font=\scriptsize]{Triggered} (s1);
+  \draw[ue9exec] (ev.east |- s2) -- node[below, font=\scriptsize]{Completed} (s2);
+  \draw[ue9data] (cm.west) -- ++(-0.5,0) |- node[pos=0.25, right, font=\scriptsize]
+    {Target} (s1.east);
+  \draw[ue9data] (cm.west) -- ++(-0.5,0) |- (s2.east);
+\end{tikzpicture}
+\caption{Lo sprint di BP\_Knight1. Premendo Shift (o il cerchio del controller) la
+velocità massima sale a 600 e il Blend Space mostra la corsa; al rilascio torna a 300,
+la camminata. Schema ricostruito.}
+\label{ue9:fig:sprint}
+\end{figure}
+
+\paragraph{Approfondimento: Action Mapping ed Enhanced Input.} Il libro di Romero e
+Sewell, scritto per le prime versioni di Unreal Engine 5, costruisce lo stesso sprint
+con il vecchio sistema: un \emph{Action Mapping} chiamato \emph{Sprint} nei Project
+Settings (sezione \emph{Input}), legato a \emph{Left Shift}, e un evento
+\emph{InputAction Sprint} con i pin \emph{Pressed} e \emph{Released}, su cui due
+\emph{Set Max Walk Speed} portano la velocità a 2200 e poi di nuovo ai 600 di default
+(capitolo 6). Il principio è identico; cambia il sistema. L'\textbf{Enhanced Input},
+introdotto come plugin in Unreal Engine 5.0 e diventato il sistema predefinito dei
+modelli dalla 5.1 (il ``quasi dalla 5.2'' del docente è un ricordo approssimativo), separa
+tre livelli: l'\emph{azione} (Input Action, che cosa vuole fare il giocatore), il
+\emph{contesto} (Input Mapping Context, quali tasti attivano quali azioni in una certa
+situazione) e il \emph{comportamento} (Triggers e \emph{Modifiers}, come per esempio la
+\emph{zona morta} di una levetta o l'inversione di un asse). I contesti si aggiungono e
+si tolgono a runtime con \emph{Add Mapping Context} e \emph{Remove Mapping Context}, e
+hanno una \emph{Priority}: è così che si passa ``dal gioco a piedi alla macchina''
+dell'esempio del docente, e così che si costruisce una schermata di rimappatura dei
+tasti. Gli autori raccomandano anche di raggruppare i nodi dello sprint in un
+\emph{commento} (\emph{Create Comment from Selection}), per tenere ordinato il grafo.
+
+% ---------------------------------------------------------------------
+\section{Un tentativo: FInterp To}
+\label{ue9:sec:finterp}
+
+``Se volessimo farlo un po' più carino, ragazzi'', il passaggio fra 300 e 600 potrebbe
+essere graduale invece che istantaneo. Il blocco è \textbf{FInterp To} (``finter2''):
+``fa un'interpolazione di un float''. ``Avete presente quando abbiamo parlato di
+interpolazione?'' ``Fa il passaggio tra due numeri. Lui dice: devi passare da questo
+valore, cioè \textbf{Current}, a questo valore, \textbf{Target}, in questo tempo'',
+\textbf{Delta Time}, per cui il docente consiglia \textbf{Get World Delta Seconds}; e
+poi c'è l'\textbf{Interp Speed}, la velocità dell'interpolazione.
+
+\paragraph{Il grafo.} Sul Triggered: \textbf{Current} = Character Movement $\rightarrow$
+\textbf{Get Max Walk Speed}; \textbf{Target} = 600; \textbf{Delta Time} = World Delta
+Seconds; il risultato nel Set Max Walk Speed. Il docente ricorda che il Delta Seconds si
+può moltiplicare per un valore (``ricordiamo che possiamo modificarlo moltiplicandolo
+per un valore''), e prova con 10, poi con un decimo. Sul Completed lo stesso, ``ma
+semplicemente invertiamo'': il Current parte da 600, il Target è 300. ``Ricordiamoci di
+collegare anche al Character Movement.''
+
+\paragraph{Non funziona, e perché.} La corsa resta ``ancora molto veloce'', il passaggio
+istantaneo. Il docente prova valori diversi (10, 100: ``è alla norma del pianeta stare
+continuamente a vedere se i valori sono giusti'') e poi mette dei \textbf{Print String}:
+``ci dà seicento''. La diagnosi: ``fondamentalmente questa è un'azione a triggered
+unico, quindi non farà l'interpolazione''. FInterp To fa \emph{un passo}
+dell'interpolazione ogni volta che viene eseguito: se viene eseguito una volta sola, fa
+un solo passo. ``Lo deve fare tramite un \textbf{timer}'': si rimanda a dopo (``volendo,
+ragazzi, si può fare con un timer, però facciamolo magari dopo''), e non verrà ripreso
+nella lezione.
+
+\paragraph{Approfondimento: dove mettere un'interpolazione.} Un nodo come FInterp To
+(o VInterp To, RInterp To per vettori e rotazioni) va eseguito \emph{a ogni frame}
+finché il valore non arriva al target: il suo risultato è il valore ``un po' più vicino''
+al target, e il Delta Time serve a renderlo indipendente dal frame rate. Ci sono tre
+modi tipici di farlo girare: nel \textbf{Tick}, con una variabile \emph{TargetSpeed}
+che i due pin dell'input si limitano a impostare (600 o 300); con un \textbf{timer}
+(\emph{Set Timer by Event}, con \emph{Looping}, fermato con \emph{Clear and Invalidate
+Timer} quando il valore è arrivato), come suggerisce il docente; o con una
+\textbf{Timeline}, vista nella sesta lezione, che va da 300 a 600 con \emph{Play} e
+torna indietro con \emph{Reverse}. Con l'Enhanced Input c'è anche una quarta via: il pin
+\emph{Triggered} scatta a ogni frame se il trigger è \emph{Down} (o se non c'è nessun
+trigger), e una sola volta se il trigger è \emph{Pressed}. IA\_Run, copiata da IA\_Jump,
+ha probabilmente un trigger che la fa scattare una volta sola: è ``l'azione a triggered
+unico'' del docente.
+
+% ---------------------------------------------------------------------
+\section{Prima della pausa: le animazioni da scaricare}
+\label{ue9:sec:download}
+
+``Adesso andremo a vedere, se non mi esplode prima Unreal, anche come si fanno i
+\textbf{montaggi}''; mancano una ventina di minuti alla pausa. ``Dovremmo andare un attimo
+su Mixamo'' (``a quanto pare oggi Mixamo ci mette pure un bel po' a caricare''), per
+scaricare due gruppi di animazioni.
+
+\paragraph{Un attacco in root motion.} ``Vorrei che sceglieste un'animazione che sia in
+\textbf{root motion}'': ``riprendiamo ad esempio una situazione simile a Dark Souls''.
+``Ricordatevi sempre di prendere il vostro character'' su Mixamo (il paladino, nel caso
+del docente), perché le animazioni si adattano al personaggio selezionato. Il docente
+cerca \emph{attack} e sceglie un attacco con la spada che ``di base, come potete vedere,
+non può essere messo in place''. Le impostazioni di download sono quelle della volta
+precedente: \textbf{Without Skin}, \textbf{FBX Binary}, \textbf{30} fotogrammi al
+secondo. ``Ripeto: non deve essere in place, deve avere il root motion, quindi il
+movimento ereditato.'' ``Un'azione unica'': ``ad esempio un attacco con una spada, un
+qualche cosa'', ``un'animazione che vi piace di più''.
+
+\paragraph{Le animazioni del Blend Space 2D.} Dopo la pausa si farà il \textbf{Blend
+Space 2D}, ``che ci servirà per fare anche il calcolo della direzione del nostro
+character''. Servono quindi altre animazioni: ``walk destra, sinistra, dritto e
+indietro''. ``Consiglio spassionato'': su Mixamo si chiamano \textbf{Strafe} (``provate a
+cercare Strafe''; ``Jog Strafe va benissimo anche''), e queste, al contrario
+dell'attacco, ``dovete metterle \textbf{in place}''.
+
+\paragraph{Il mirror.} ``Piccolo consiglio: se volete far sì che siano abbastanza simili
+tra di loro, potete fare il \textbf{mirror}.'' Si scarica l'animazione verso sinistra
+non specchiata; poi, con l'opzione \emph{Mirror} di Mixamo, ``in automatico andrà a
+destra''. Le due animazioni saranno così perfettamente simmetriche.
+
+\paragraph{Quante animazioni.} Su richiesta (``le puoi scrivere per messaggio?''), il
+docente le elenca anche in chat: ``in totale sono otto animazioni''. Avanti, indietro,
+destra, sinistra, e le quattro \textbf{diagonali}: avanti a destra, avanti a sinistra,
+indietro a destra, indietro a sinistra. Uno studente chiede se l'avanti serva, visto che
+c'è già la camminata: ``nel senso, possiamo usare tranquillamente quello di avanti; ma in
+questo caso abbiamo solamente avanti, dobbiamo trovare anche indietro''. E un'altra: le
+diagonali ``soltanto in avanti, o anche indietro?'' ``Anche indietro'': ``se io vado tipo
+così, indietro verso destra, e così, indietro verso sinistra''. ``Praticamente è la X,
+letteralmente'': le due diagonali incrociate, oltre alla croce degli assi. Il docente
+nomina anche alcuni pacchetti di Mixamo con animazioni di locomozione (``Locomotion
+Pack''; il resto dei nomi è incomprensibile nella trascrizione). ``Ci rivediamo alle
+18.''
+
+% ---------------------------------------------------------------------
+\section{La pausa e i feedback}
+\label{ue9:sec:feedback}
+
+Al rientro, ``siamo rimasti in cinque'', poi in quattro. Il docente apre uno spazio per
+i commenti: ``se avete dei feedback riguardo a questo corso, sparate tranquillamente'',
+``siamo anche molto coetanei, anzi credo io di essere anche forse più piccolo di alcuni
+di voi''. ``Se avete cose da chiedere, magari di andare più piano, andare più veloce,
+oppure un po' come sono strutturate le lezioni''. ``Capisco pure che può essere
+effettivamente un po' pesante in alcuni momenti'', ``perché purtroppo i Blueprint, o
+Unreal in generale, è divertente quando poi le sai, le cose''.
+
+\paragraph{Le funzioni da imparare a memoria.} Uno studente: ``immagino che sono
+tantissime funzioni, quindi sono tutte da imparare a memoria''. ``Quello, eh sì.''
+
+\paragraph{Il progetto del docente: la pallina morbida e dura.} Per mostrare dove porta
+la pratica, il docente racconta un suo progetto personale: ``una specie di
+\emph{platformer} in cui una pallina diventa morbida e dura, nel senso che diventa di
+metallo o di un materiale più morbido''. ``La cosa è che ho simulato tutta la fisica'':
+``la fisica non è simulata da Unreal, ma sono io che faccio finta, tramite i Blueprint, di
+far fare delle funzioni fisiche''. ``Hai messo proprio te le formule fisiche?'' ``Più o
+meno.'' Il meccanismo: si rileva lo \textbf{slope}, ``il quanto è piegato il piano'',
+perché ``la meccanica è il fatto che se sei più pesante con la pallina vai più veloce su
+uno slope, come nella realtà'': ``una pallina di metallo e una pallina di gomma: quella di
+metallo va più veloce, perché è più pesante, comunque più influenzata''. ``È tutto
+simulato'': ``sono io che, tramite la detection dello slope, cambio i valori''.
+
+\paragraph{Combinare i blocchi.} ``E quello è ovviamente tutto custom'': ``quando hai
+tutte le nozioni in testa, ti dici: ok, so questo blocco A, B, C, D, E, F, G; quale mi
+serve? Il blocco C e il blocco A. Li metto insieme e faccio una nuova combinazione.''
+``È sempre il fatto di capire come posso interlacciare le cose.'' ``Qua stiamo facendo
+cose magari un po' generiche''; poi ``dici: ok, voglio fare simile a quello, ma
+leggermente diverso. Voglio fare il character, però con la spada: che mi cambia?''
+
+\paragraph{Inventari e UI.} La richiesta di Federico: ``a me interesserebbero la gestione
+degli inventari e le interfacce''. ``Sfortunatamente no'': ``sappi che l'inventario e la
+UI sono un mondo a parte''. ``Esistono proprio figure riguardanti questo mondo della UI,
+sia designer sia programmatori.'' Si farà ``una cosa come un menu'', ``una cosetta
+tranquilla'', ``però per il resto non andremo a fare di più''.
+
+\paragraph{Le lezioni con Davide.} ``Sappiate che il 25 è la mia ultima lezione, e avrete
+tutte quelle con \textbf{Davide}, che invece vi farà la parte più di \emph{level}.'' Con
+lui si useranno ``tutti gli asset che abbiamo creato: le piattaforme, i pulsanti'', per
+lavorare su concetti come la \textbf{gym}, ``il concetto della palestra'', che ``si fa
+praticamente in via di sviluppo'': ``è il parco giochi'', ``letteralmente il parco giochi
+dove ho tutte le meccaniche, le posso provare tutte quante, vedo se funzionano''. Poi si
+costruiscono situazioni: ``voglio fare un livello horror, la bestia che ti insegue: tu
+entri in una stanza e devi fuggire dalla bestia''; ``situazione X, situazione Y,
+situazione Z'', ``le costruisci e metti insieme i componenti'', ``e vedi quei componenti
+che hai programmato come funzionano a livello anche di esperienza, di gioco''. Gli
+elementi saranno ``quelli di un classico platform: le piattaforme, i bottoni'', e si
+vedranno anche i tool di \textbf{modeling} dell'editor e ``un po' di teoria di level
+design'': ``chi fa game design, e a chi interessa tantissimo anche la parte di level:
+molto, molto interessante''.
+
+\paragraph{Dove lasciare i feedback.} ``Ripeto, ragazzi, anche a chi sta in differita'':
+qualsiasi feedback sulle lezioni va lasciato sul canale \textbf{general} della chat,
+``non su introduzione al materiale, perché sennò si fa casino''. Non solo sugli
+argomenti, ``ma feedback anche proprio per le lezioni in generale: andare più lento,
+andare più veloce, vedere cose più pratiche''.
+
+\paragraph{Approfondimento: la gym.} Nel level design la \textbf{gym} (o \emph{gym
+level}, \emph{gray box gym}) è un livello di servizio che non finirà nel gioco: una
+stanza in cui ogni meccanica è disposta in isolamento e misurata. Si mettono salti di
+lunghezze crescenti per sapere qual è il salto massimo del personaggio, rampe di
+pendenze diverse per verificare la \emph{Max Walkable Floor Angle}, gradini di varie
+altezze per la \emph{Max Step Height}, corridoi di larghezze diverse per la camera. Le
+misure raccolte nella gym diventano le ``regole metriche'' del level design (quanto può
+essere largo un burrone, quanto alto un muretto da scavalcare), e i livelli veri si
+costruiscono rispettandole. È il ``parco giochi'' del docente; e il problema della
+camera che compenetra, visto in questa lezione, è uno dei primi che una gym fa emergere.
+% ---------------------------------------------------------------------
+\section{La direzione: Calculate Direction}
+\label{ue9:sec:direction}
+
+``Abbiamo detto prima che oggi dobbiamo fare il Blend Space 2D.'' Il docente ha importato
+otto animazioni, ``cercando di prenderle tutte similari'': \emph{Jog Backward},
+\emph{Jog Backward Diagonal}, \emph{Jog Forward}, \emph{Jog Forward Diagonal} e così
+via, ``a parte lo Strafe Left, che devo eliminare perché non andava bene come
+animazione''. Il Blend Space 1D prende solo la velocità: ``vai più veloce, l'animazione,
+benissimo''. Il 2D aggiunge un secondo asse, la \textbf{direzione}, ``in modo tale da non
+dover magari direzionare sempre il character'', ma vedere ``che si muove in diagonale, si
+muove a sinistra''.
+
+\paragraph{Dove si calcola.} In ABP\_Knight, nell'Event Graph dell'Update, si aggiunge un
+pin alla \textbf{Sequence} (il \emph{+}, \emph{Add pin}): \emph{Then 2}, o il successivo.
+Questa volta non si parte dal Movement Component, ma dal \textbf{character}: ``perché la
+direzione è determinata dalla rotazione del character stesso'', ``cioè la capsula, come è
+ruotata''. Dalla variabile del cavaliere si tira fuori \textbf{Get Actor Rotation}.
+
+\paragraph{Il nodo Calculate Direction.} ``Potremmo tranquillamente prenderla così, ma noi,
+per semplificarci anche la vita, andiamo a calcolare proprio la direzione con un blocco
+chiamato proprio \textbf{Calculate Direction}.'' Il nodo chiede due ingressi: la
+\textbf{Velocity} attuale (dal Movement Component, \textbf{Get Velocity}) e la
+\textbf{Base Rotation} (la Get Actor Rotation). Restituisce ``un float'', che con
+\textbf{Promote to Variable} diventa \textbf{Direction}.
+
+\paragraph{Uno studente perso.} ``Io mi sono perso: Character, Movement Component, da dove
+vengono questi due?'' Il docente ripercorre: ``hai fatto questo Event Blueprint Initialize
+Animation nell'Event Graph, no?''; ``dovresti avere qua sotto, sotto le variabili, la
+variabile del character: la tiri fuori, ne tiri fuori Get Actor Rotation''; dal Movement
+Component ``tiri fuori la velocità''; ``da Get Actor Rotation fai Calculate Direction, e
+questo diventerà il nostro float''. Un altro studente nota che la variabile del docente si
+chiama \emph{Character}, mentre la sua si chiama \textbf{As BP Knight}: ``va benissimo.
+Io l'ho solo rinominata.'' Quando si fa Promote to Variable sull'uscita di un cast, Unreal
+propone il nome \emph{As} più il nome della classe (``ti dice proprio As BP Knight'').
+
+\paragraph{Da $-180$ a $180$.} ``Molto semplicemente, la direzione sarà tra un range,
+sempre senza doverla clampare'' (``il clamp l'abbiamo fatto quasi all'inizio''): fra
+\textbf{$-180$ e $180$ gradi}. ``Si parte da 0; a destra vai verso il positivo; quando
+arrivi a 180 passa a $-179$''; ``diciamo, non lo fa come un angolo da 0 a 360, ma fa 0,
+180, $-180$ e di nuovo 0'' (figura~\ref{ue9:fig:direzione}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize]
+  \draw[thick] (0,0) circle (2.2);
+  \foreach \a/\l/\pos in {90/0/above, 45/45/above right, 0/90/right, -45/135/below right,
+      -90/{180 / $-180$}/below, -135/{$-135$}/below left, 180/{$-90$}/left,
+      135/{$-45$}/above left}
+    {\draw[-{Stealth[length=2mm]}, thick, blue!60!black] (0,0) -- (\a:2.2);
+     \node[\pos, font=\scriptsize\bfseries] at (\a:2.25) {\l};}
+  \fill[gray!40] (0,0) circle (0.35);
+  \draw[thick] (0,0) circle (0.35);
+  \draw[-{Stealth[length=2mm]}, very thick] (0,0) -- (0,0.6);
+  \node[font=\scriptsize, align=left, anchor=west] at (3.4,1.2) {\textbf{0}: avanti\\
+    \textbf{positivi}: verso destra\\\textbf{negativi}: verso sinistra\\
+    \textbf{$\pm$180}: indietro};
+  \node[font=\scriptsize, align=left, anchor=west] at (3.4,-0.9) {la direzione è
+    l'angolo fra\\la velocità e il ``davanti''\\del personaggio (Base Rotation)};
+\end{tikzpicture}
+\caption{Il valore di Direction restituito da Calculate Direction. Il personaggio guarda
+in alto; le frecce sono le otto direzioni delle animazioni del Blend Space 2D. Andare
+indietro vale sia 180 sia $-180$, a seconda del lato da cui ci si arriva. Schema
+ricostruito.}
+\label{ue9:fig:direzione}
+\end{figure}
+
+\paragraph{Rimettere Use Controller Rotation Yaw.} Per vedere i movimenti laterali,
+``importante è rimettere lo \textbf{Use Controller Rotation Yaw}'': ``non vogliamo che il
+character ruoti sempre nella direzione in cui lo stiamo indirizzando''. Il corpo deve
+seguire la camera, e la direzione del movimento rispetto al corpo deve cambiare.
+
+\paragraph{La verifica con Print String.} Per sicurezza si stacca un attimo il Blend Space
+1D (``staccare un attimo le animazioni'') e si stampa Direction con un \textbf{Print
+String}, ``che lo farà a ogni frame''. ``Ci dà direttamente nella preview questo valore'';
+in Play, ``sarà un po' rotto, ma è normale, ragazzi'': ``$-70$, 70, 160, 0''. ``Mamma mia''
+(il valore dipende dalla camera, ``giustamente''). ``Come possiamo vedere, questi valori
+rappresentano la nostra direzione attuale.'' Il docente nota anche che il cavaliere
+sembra ``leggermente ruotato'' rispetto alla capsula: ``buono a sapersi''.
+
+\paragraph{Approfondimento: che cosa calcola Calculate Direction.} Il nodo, della
+libreria dell'Animation Blueprint (\emph{KismetAnimationLibrary}; nelle versioni più
+vecchie era una funzione dell'AnimInstance), trasforma la velocità nello spazio locale
+del personaggio e ne restituisce l'angolo sul piano orizzontale, in gradi, nell'intervallo
+$[-180, 180]$: 0 se la velocità punta dove guarda il personaggio, 90 se punta alla sua
+destra, $-90$ a sinistra, $\pm 180$ dietro. A velocità nulla restituisce 0. Con
+\emph{Orient Rotation to Movement} acceso il personaggio si gira sempre verso la
+velocità, e la direzione resta quasi sempre vicina a zero: il Blend Space 2D avrebbe poco
+da fare. Per questo il docente riattiva Use Controller Rotation Yaw.
+
+% ---------------------------------------------------------------------
+\section{Il Blend Space 2D}
+\label{ue9:sec:blend2d}
+
+\paragraph{Creare l'asset.} Tasto destro $\rightarrow$ \emph{Animation} $\rightarrow$
+\textbf{Blend Space}: ``Blend Space senza niente, di base, è 2D; se viene specificato
+1D, è 1D''. Unreal chiede lo scheletro: ``voi scegliete il vostro scheletro''. Il nome:
+\textbf{BS2D\_Knight}.
+
+\paragraph{I due assi.} ``Come potete vedere, a sinistra e giù sono presenti due nomi'',
+per ora \emph{None}. Nei Details:
+\begin{itemize}
+  \item \textbf{Horizontal Axis}: \textbf{Direction}, da \textbf{$-180$} a
+        \textbf{$180$};
+  \item \textbf{Vertical Axis}: \textbf{GroundSpeed} (``più che la velocità, la ground
+        speed''), da \textbf{0} a \textbf{600}.
+\end{itemize}
+Il parametro \textbf{Grid Divisions} ``ci permette di aumentare il numero di divisioni
+sulla nostra griglia'' (le linee ``non si vedono, perché sono veramente molto poco
+chiare''): sono i punti su cui si agganciano i campioni delle animazioni. Il docente ne
+mette \textbf{8} su entrambi gli assi. Con 8 divisioni, sull'asse orizzontale ogni passo
+vale 45 gradi, esattamente le otto direzioni; sull'asse verticale vale 75.
+
+\paragraph{Un quiz.} ``Domanda, ragazzi: se io sto a 600 di velocità e a 90 di direzione,
+dove sto andando?'' ``Ricordatevi che positivo è destra, negativo è sinistra.'' ``A
+destra.'' ``Pienamente a destra, perfetto.'' ``E invece a $-135$?'' ``Dietro a
+sinistra.'' ``Ottimo.''
+
+\paragraph{Dove va ogni animazione.} Si dispongono i campioni (tabella~\ref{ue9:tab:bs2d} e
+figura~\ref{ue9:fig:blend2d}). In basso, a velocità zero, l'\textbf{Idle}: ``mettetene
+tre, così abbiamo un range per tutto'' (a $-180$, 0 e 180): ``siamo fermi, siamo fermi''.
+In alto, a 600, le otto animazioni. L'animazione all'indietro va messa due volte, a
+$-180$ e a $180$: ``stiamo andando indietro sia se abbiamo girato da sinistra, sia da
+destra''. Il docente si corregge una volta (``Backward Diagonal L sarà\dots\ no, ho
+sbagliato'': a $-135$, non a 90) e invita a controllare i valori nei Details del
+campione.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{4.4cm}p{2.2cm}p{2.2cm}p{4.6cm}@{}}
+\toprule
+\textbf{Animazione} & \textbf{Direction} & \textbf{GroundSpeed} & \textbf{Movimento} \\
+\midrule
+Idle (tre copie) & $-180$, 0, 180 & 0 & fermo \\
+Jog Forward & 0 & 600 & avanti \\
+Jog Forward Diagonal R & 45 & 600 & avanti a destra \\
+Strafe R & 90 & 600 & a destra \\
+Jog Backward Diagonal R & 135 & 600 & indietro a destra \\
+Jog Backward & 180 e $-180$ & 600 & indietro \\
+Jog Backward Diagonal L & $-135$ & 600 & indietro a sinistra \\
+Strafe L & $-90$ & 600 & a sinistra \\
+Jog Forward Diagonal L & $-45$ & 600 & avanti a sinistra \\
+\bottomrule
+\end{tabular}
+\caption{La posizione dei campioni nel Blend Space 2D BS2D\_Knight. I nomi delle
+animazioni sono quelli di Mixamo citati a lezione, per quanto ricostruibili dalla
+trascrizione; i valori sono quelli dettati dal docente.}
+\label{ue9:tab:bs2d}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize, x=0.032cm, y=0.006cm,
+  ue9pt/.style={draw=black, fill=white, thick, diamond, inner sep=1.8pt}]
+  % griglia
+  \foreach \x in {-180,-135,...,180} \draw[gray!30] (\x,0) -- (\x,600);
+  \foreach \y in {0,75,...,600} \draw[gray!30] (-180,\y) -- (180,\y);
+  \draw[thick] (-180,0) rectangle (180,600);
+  \foreach \x in {-180,-90,0,90,180}
+    \node[below, font=\scriptsize] at (\x,-10) {\x};
+  \foreach \y in {0,300,600} \node[left, font=\scriptsize] at (-182,\y) {\y};
+  \node[below, font=\small] at (0,-80) {Direction};
+  \node[rotate=90, font=\small] at (-235,300) {GroundSpeed};
+  % campioni
+  \foreach \x in {-180,0,180} \node[ue9pt] at (\x,0) {};
+  \node[above, font=\scriptsize] at (0,10) {Idle};
+  \foreach \x/\l in {-180/Back, -135/BackDiag L, -90/Strafe L, -45/FwdDiag L, 0/Fwd,
+      45/FwdDiag R, 90/Strafe R, 135/BackDiag R, 180/Back}
+    {\node[ue9pt] at (\x,600) {};
+     \node[above, font=\tiny, rotate=35, anchor=south west] at (\x-6,612) {\l};}
+  % punto attuale
+  \fill[green!50!black] (60,450) circle (2.2pt);
+  \node[green!40!black, font=\scriptsize, anchor=west] at (66,420) {(60, 450)};
+\end{tikzpicture}
+\caption{Il Blend Space 2D del cavaliere: Direction in orizzontale, GroundSpeed in
+verticale, griglia 8$\times$8. Le tre copie dell'Idle stanno in basso; le otto direzioni
+in alto, con la corsa all'indietro ripetuta ai due estremi. Il punto verde è un esempio:
+il personaggio sta andando in avanti a destra, un po' sotto la velocità massima, e Unreal
+mescola i quattro campioni più vicini. Schema ricostruito.}
+\label{ue9:fig:blend2d}
+\end{figure}
+
+\paragraph{La preview con Ctrl.} ``Potete fare la preview delle animazioni con
+\textbf{Ctrl}'': tenendolo premuto e trascinando il cursore sul grafico, ``potete vedere
+come l'animazione si muove tra tutti gli step''. ``Consiglio sempre di mettersi dietro''
+il personaggio nel viewport, ``perché tanto poi, se lo vedete davanti, è difficile'' capire
+destra e sinistra. Il docente controlla tutte le direzioni (``vado a sinistra, vado
+indietro, vado dritto, vado dritto a destra, vado a destra, giù a destra, indietro.
+Perfetto''); una delle animazioni ``mi sa che non va bene'', ma ``sì, sto andando a
+sinistra, è solo molto strana''.
+
+\paragraph{Smoothing Time.} ``Piccola cosa, se volete introdurla'': lo \textbf{Smoothing
+Time}, ``il tempo di passaggio tra un'animazione e l'altra in generale, per tutte le
+animazioni''. Lo si mette a \textbf{0,2} su entrambi gli assi. Il \emph{Damping Ratio}
+``non ci interessa''.
+
+\paragraph{Nello stato WalkRun.} ``Facciamo tutto il percorso a ritroso'': AnimGraph,
+Locomotion, WalkRun. Al posto del Blend Space 1D si trascina BS2D\_Knight, che chiede
+``dammi la Direction e la GroundSpeed'': si collegano i due Get. Compile: ``vediamo che il
+nostro Blend Space funziona in preview''.
+
+\paragraph{Le impostazioni del personaggio.} In BP\_Knight1: ``mi raccomando, l'abbiamo
+detto prima, ma lo diciamo anche adesso'', si riattiva \textbf{Use Controller Rotation
+Yaw}; e nel Character Movement la \textbf{Max Walk Speed} va a \textbf{600}, ``che è
+quanto abbiamo messo'' come massimo dell'asse. ``Ecco a voi, ragazzi'': ``se io mi muovo a
+destra lui va a destra, se mi muovo a sinistra, anche se l'animazione non è fantastica,
+va a sinistra; vado indietro; vado in diagonale''. Nel frattempo ``parte la torretta, che
+mi spara'': ``il mio bel cavaliere se ne va a zonzo come gli pare''.
+
+\paragraph{Gli scatti.} C'è ``un piccolo \emph{clip}'', uno scatto, in alcuni passaggi.
+Il docente prova a prendere la rotazione della \textbf{Mesh} invece di quella
+dell'actor (``facciamo che invece di prendere la direzione del character, prendiamo
+quella della Mesh''; ``Get Mesh''), poi ad aumentare lo Smoothing Time della Direction
+a \textbf{0,5} (``un po' più tranquillo''), e infine torna al collegamento originale.
+La conclusione: ``probabilmente sono dei problemi sull'animazione''; ``mi sa che devo
+riscaricare l'animazione, perché snappa un pochino''. Ma il risultato c'è: ``abbiamo il
+nostro character che si muove in tutte le direzioni''; ``è un po' veloce, devo essere
+sincero'', e la velocità si può abbassare.
+
+\paragraph{Il cerchio, per chi si è perso.} Uno studente chiede di rivedere il Blend
+Space 2D. ``Immaginatelo come un cerchio'': ``se stai a 0 di direction, stai andando
+dritto; se stai a 180 o $-180$, stai andando dietro''; ``tutti i valori intermedi'' sono le
+diagonali e i lati. ``Destra è positivo: 0, 90, 180; sinistra è $-90$, $-180$.'' ``Se vai
+in diagonale a destra sarà 45, se vai pienamente a destra sarà 90'', ``e 135 a 600 vuol
+dire che andrai praticamente indietro, ma verso destra''. ``Una volta capito che una è
+l'opposto dell'altra'', i valori negativi seguono da soli.
+
+\paragraph{Approfondimento: Blend Space 2D e foot sliding.} In un Blend Space 2D Unreal
+divide lo spazio dei campioni in triangoli e, per un valore dato, mescola i campioni ai
+vertici del triangolo che lo contiene. Ne seguono tre conseguenze pratiche. Primo,
+l'Idle ripetuto lungo tutta la riga inferiore (le tre copie del docente) evita che a
+bassa velocità il personaggio ``scelga'' una direzione a caso. Secondo, la corsa
+all'indietro va duplicata ai due estremi, perché $-180$ e 180 sono lo stesso angolo ma
+due punti diversi della griglia: con un solo campione, passando da 179 a $-179$ il
+personaggio attraverserebbe in un istante tutto il grafico. Terzo, lo scatto che il
+docente vede è spesso proprio quel salto da $+180$ a $-180$, che lo \emph{Smoothing
+Time} non può interpolare bene (interpola il valore numerico, non l'angolo); le
+alternative sono il \emph{Weight Speed} per campione, oppure le soluzioni più avanzate
+di Unreal Engine 5 come l'\emph{Orientation Warping}, che ruota la parte inferiore del
+corpo verso la direzione del movimento con quattro sole animazioni cardinali. Infine,
+una griglia con l'asse verticale fino a 600 e i campioni tutti a 600 significa che anche
+la camminata a 300 è un misto fra Idle e corsa: per avere una vera camminata laterale
+servirebbe una seconda riga di campioni a 300, con le animazioni di camminata.
+
+% ---------------------------------------------------------------------
+\section{Gli Animation Montage}
+\label{ue9:sec:montage}
+
+``Intanto ci abbiamo un'ultima mezz'oretta, ragazzi. Vediamo un attimo i Montage.''
+L'animazione di attacco (``l'avevo scaricata, mi sa che non l'ho messa in Knight
+Animation''; ``scusate, ragazzi'') è una \textbf{Sword and Shield Attack} di Mixamo:
+``questa qua sta in root motion'': ``come potete vedere, eredita il movimento''.
+
+\paragraph{Il problema.} ``Quando vogliamo fare una nostra animazione che di conseguenza
+sia attivabile durante un ciclo di animazioni'', non basta aggiungere uno stato: ``dobbiamo
+creare quello che viene chiamato un \textbf{Montage}''. (Nel frattempo ``Filippo è andato
+via, è crashato'': ``siamo rimasti noi tre''.)
+
+\paragraph{Che cos'è un Montage, dalla documentazione.} Il docente apre la pagina della
+documentazione di Unreal sugli \textbf{Animation Montage}. ``Il montaggio di animazioni ci
+permette sia di montare delle animazioni\dots'' L'esempio della pagina è la ricarica di
+un fucile: un'animazione formata da tre animazioni diverse, \emph{MM Shotgun Reload Drop},
+\emph{Reload Load} e \emph{Reload Lock}. ``Mettiamo conto che vogliamo fare un bel gioco
+shooter. Il fatto di staccare il caricatore su quattro fucili diversi è praticamente
+uguale''; ``non dobbiamo fare quattro animazioni diverse'': ``l'unica cosa che cambia è il
+lock, perché magari uno vuole farlo un po' più grosso''. Con un Montage si creano
+\textbf{animazioni modulari}: ``guarda, il drop è uguale, il load è uguale, il lock invece
+è diverso''. E poi il secondo uso, quello di oggi: ``inserire animazioni in contesti di
+cicli di animazione''; ``sono una tantum'': ``premo un tasto e compio questa animazione,
+nel mentre che sto camminando''. ``Magari la prossima volta andiamo a vedere pure un po'
+più approfondito.''
+
+\paragraph{Creare il Montage.} Tasto destro sull'animazione di attacco $\rightarrow$
+\textbf{Create} $\rightarrow$ \textbf{Create AnimMontage}. Il nuovo asset si chiama come
+l'animazione con il suffisso \emph{Montage} (\emph{Sword And Shield Attack\_Montage}).
+``La cosa bella del Montage è che ci permette di fare un sacco di cose all'interno dei
+suoi parametri.''
+
+% ---------------------------------------------------------------------
+\section{Dentro il Montage: Notify, sezioni e Slot}
+\label{ue9:sec:notify}
+
+\paragraph{I Notify.} ``Una cosa interessante da spiegare sono i \textbf{Notify}'': ``dei
+punti, dei puntini, sulla linea del tempo dell'animazione'', che permettono di aggiungere
+``un'azione che si triggera'': ``suoni, un VFX, qualsiasi cosa''. ``Quelli più generici
+sono già fatti da Unreal, fortunatamente.'' Il docente fa clic destro sulla traccia dei
+Notify, \textbf{Add Notify} $\rightarrow$ \textbf{Play Sound}, e come suono sceglie
+``l'unico sound che abbiamo'', quello della piattaforma (un Sound Cue). Le tracce dei Notify
+possono essere più d'una: con \emph{Add Notify Track} se ne crea un'altra, per esempio
+una per i VFX e una per i suoni. In preview (tolto il loop, ``fammelo fare una volta''):
+``appena il nostro character arriva a questo punto dell'animazione, compie il suono''.
+``Mettiamo conto: in combattimento c'è un VFX, c'è un suono, c'è un tirare fuori la spada,
+e quindi si sente la spada che esce fuori dal fodero'': con una linea di Notify ``questo
+suono avviene in un preciso momento dell'animazione''. ``Ovviamente, non andremo a usare
+il sound effect della piattaforma per il nostro Knight.''
+
+\paragraph{Le Montage Section.} Nel \emph{Montage group} c'è la sezione \textbf{Default}.
+Con il tasto destro, \textbf{New Montage Section}: il docente ne crea una chiamata
+\textbf{Attack}, nel punto in cui ``lui sta attaccando''. Le sezioni servono ``per
+ordinare il lavoro'' e per ``dividere l'animazione in più punti diversi, con più
+animazioni''.
+
+\paragraph{Più animazioni nello stesso Montage.} La striscia verde sotto le sezioni è
+l'animazione stessa. ``Se vogliamo, possiamo anche introdurre delle animazioni in più.''
+Una dimostrazione volutamente assurda: ``io voglio, per qualche motivo arcano, far sì
+che quando finisce l'animazione lui salti'': si trascina \textbf{MM\_Jump} nella traccia,
+dopo l'attacco. ``È un salto orribile, però farà le due animazioni di conseguenza.'' Il
+Montage è ``molto importante per azioni consecutive''. ``Quando si parla con l'animatore,
+è importante il fatto di dire: questa animazione deve essere consecutiva a questa'', per
+esempio ``mi serve che da questo punto in poi continui l'attacco, oppure faccia un'altra
+animazione che ritorna in place''.
+
+\paragraph{L'animazione di ritorno.} Finito l'attacco in root motion, il cavaliere resta dove l'attacco lo ha lasciato e non
+torna in posa: manca ``un'animazione che ritorna in place'', cioè in idle. Il docente la
+cerca su Mixamo, provando voci come \emph{Sword and Shield Idle}, \emph{Idle
+Transition} e \emph{Start Block}; ma ``è un po' difficile'', perché ``bisogna trovare
+il cavaliere proprio'', con la stessa posa di fine attacco, altrimenti ``snapperà
+malissimo, almeno nel mio caso''.
+
+\paragraph{Gli Slot.} Sotto, c'è il \textbf{Default Group} con lo \textbf{Slot}
+\textbf{DefaultSlot}: ``questo ci permette di dire: su quale slot vuoi che questa
+animazione si compia?''. DefaultSlot ``riprende tutto il corpo''. ``Potremmo, ad esempio,
+voler creare uno slot che riprenda solamente alcune zone del nostro character'': ``vogliamo
+che faccia un'azione solo nella parte superiore del corpo'' (sparare o salutare mentre si
+corre); ``in quel caso creeremo un altro slot, che prenderà solo le ossa'' di quella
+parte. ``Ma in questo caso ci serve tutto il corpo.''
+
+% ---------------------------------------------------------------------
+\section{Lo Slot nell'AnimGraph: Save Cached Pose}
+\label{ue9:sec:slot}
+
+Un Montage suona solo se l'AnimGraph ha un nodo \textbf{Slot} con lo stesso nome. In
+ABP\_Knight, nell'AnimGraph:
+\begin{enumerate}
+  \item dall'uscita della State Machine Locomotion si crea un \textbf{New Save Cached
+        Pose}, chiamato \textbf{LocomotionCache}: ``andiamo a conservarci quello che ha
+        fatto la State Machine'', ``come se tutto questo procedimento lo mettesse in una
+        memoria'';
+  \item si aggiunge \textbf{Use cached pose 'LocomotionCache'};
+  \item da lì un nodo \textbf{Slot 'DefaultSlot'} (la trascrizione: ``default slot'');
+  \item lo Slot va all'\textbf{Output Pose}.
+\end{enumerate}
+``Semplicemente mixa insieme i due'': lo slot del Montage e la cache della locomozione
+(figura~\ref{ue9:fig:slot}). Quando non c'è nessun Montage in corso, lo Slot lascia
+passare la locomozione; quando un Montage su DefaultSlot parte, la sostituisce. Alla
+fine della lezione, a uno studente che non legge il nome del nodo (``vedo tutto
+pixelato''), il docente conferma: ``tiri fuori Locomotion Cache'', poi ``default slot''.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ue9pose/.style={draw, thick, rounded corners=4pt, align=center, fill=gray!8,
+                  minimum height=1.0cm, text width=2.3cm},
+  ue9arr/.style={-{Stealth[length=2.5mm]}, very thick, black!70}]
+  \node[ue9pose, fill=orange!12] (sm) at (0,0) {\textbf{Locomotion}\\{\scriptsize State
+    Machine}};
+  \node[ue9pose, fill=blue!8] (sc) at (3.1,0) {\textbf{Save Cached Pose}\\{\scriptsize
+    LocomotionCache}};
+  \node[ue9pose, fill=blue!8] (uc) at (6.2,0) {\textbf{Use Cached Pose}\\{\scriptsize
+    LocomotionCache}};
+  \node[ue9pose, fill=green!10] (sl) at (9.3,0) {\textbf{Slot}\\{\scriptsize
+    'DefaultSlot'}};
+  \node[ue9pose, fill=red!10, text width=1.8cm] (op) at (12.1,0) {\textbf{Output
+    Pose}};
+  \draw[ue9arr] (sm) -- (sc); \draw[ue9arr] (uc) -- (sl); \draw[ue9arr] (sl) -- (op);
+  \draw[dashed, thick, gray] (sc.east) -- (uc.west);
+  \node[ue9pose, fill=yellow!15, text width=3.2cm] (mt) at (9.3,-2.1)
+    {\textbf{Anim Montage}\\{\scriptsize Sword and Shield Attack, slot
+    DefaultGroup.DefaultSlot}};
+  \draw[-{Stealth[length=2.5mm]}, thick, dashed] (mt) -- node[right, font=\scriptsize]
+    {quando suona, sostituisce la posa} (sl);
+\end{tikzpicture}
+\caption{La catena di pose finale dell'AnimGraph di ABP\_Knight. La State Machine produce
+la locomozione, che viene salvata in una cache e riletta; lo Slot DefaultSlot la lascia
+passare, a meno che un Montage assegnato a quello slot non sia in esecuzione. Schema
+ricostruito.}
+\label{ue9:fig:slot}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Far partire l'attacco: Play Montage}
+\label{ue9:sec:playmontage}
+
+\paragraph{Il tasto F e il nodo.} Per far partire il Montage, il docente non crea
+un'altra Input Action: usa direttamente un evento di tastiera, \textbf{F} (``facciamo con
+OK\dots\ no, facciamo F, F va benissimo''). Nel Blueprint del personaggio, il nodo
+\textbf{Play Montage}:
+\begin{itemize}
+  \item \textbf{In Skeletal Mesh Component}: ``in quale Skeletal Mesh Component
+        farlo'', cioè la \textbf{Mesh} del personaggio;
+  \item \textbf{Montage to Play}: ``quello che abbiamo appena fatto'' (``ce n'è tanto solo
+        uno'');
+  \item \textbf{Play Rate}: ``possiamo modificare quanto è veloce l'animazione'';
+  \item fra le uscite: \textbf{On Completed} (``quando sarà finita''), \textbf{On Blend
+        Out} (``mentre finisce''), \textbf{On Interrupted} (``se fosse interrotta''),
+        \textbf{On Notify Begin} e \textbf{On Notify End} (``quando un Notify inizia'' e
+        ``quando finisce'').
+\end{itemize}
+``Se noi premiamo F, compiamo un Montage.''
+
+\paragraph{Fermare il personaggio.} ``È orribile'': a parte la mancanza dell'animazione di
+ritorno, durante l'attacco ``possiamo muovere il character tranquillamente''. Quindi, sul
+tasto F, prima del Play Montage:
+\begin{enumerate}
+  \item \textbf{Set Max Walk Speed} a \textbf{0}: ``non dobbiamo farlo muovere'';
+  \item \textbf{Get Player Controller} $\rightarrow$ \textbf{Disable Input}: ``andiamo a
+        disabilitare gli input, qualsiasi''.
+\end{enumerate}
+Sulle uscite del Play Montage:
+\begin{itemize}
+  \item \textbf{On Completed}: Get Player Controller $\rightarrow$ \textbf{Enable Input}
+        (``on completed solamente'');
+  \item \textbf{On Blend Out}: \textbf{Set Max Walk Speed} a \textbf{600}, ``al suo
+        massimo''.
+\end{itemize}
+
+\paragraph{La camera che si muove ancora.} In Play, però, ``la camera si muove
+effettivamente'', e con la camera il personaggio, ``quindi dobbiamo far sì che non sia
+dipendente dalla camera''. Segue una serie di tentativi, ragionati ad alta voce:
+\begin{itemize}
+  \item togliere \emph{Use Pawn Control Rotation} sullo Spring Arm (``no, no'');
+  \item l'\emph{Enable Camera Lag} dello Spring Arm;
+  \item le spunte \emph{Inherit Pitch}, \emph{Inherit Yaw} e \emph{Inherit Roll} dello
+        Spring Arm (``inerit yo e roll''; ``no, lo yaw ci deve essere''; ``forse sì,
+        solo il roll va bene''), con un \emph{Set} preso dallo Spring Arm (``Set Inherit
+        Yaw'', a false, e di nuovo a true alla fine); ``completamente\dots\ non va'';
+  \item \emph{Stop Movement Immediately} e i parametri di input del Player Controller
+        (\emph{movement input}, \emph{look input}).
+\end{itemize}
+La soluzione, alla fine, è sulle due spunte già incontrate nella prima parte: ``non è lo
+yaw'' dello Spring Arm, ``ma è l'orientamento al movimento''. Sul tasto F si disattivano
+entrambe:
+\begin{itemize}
+  \item dal \textbf{Character Movement}, \textbf{Set Orient Rotation to Movement} a
+        \textbf{false};
+  \item sul Pawn stesso, senza collegare nessun target, \textbf{Set Use Controller
+        Rotation Yaw} a \textbf{false};
+\end{itemize}
+e sull'\textbf{On Completed} si rimettono entrambe a \textbf{true}
+(figura~\ref{ue9:fig:playmontage}). ``Ottimo. Adesso riusciamo'': il cavaliere attacca
+fermo, la camera gira senza trascinarlo, e alla fine riprende la locomozione. ``Abbiamo
+fatto il nostro character che attacca e fa la locomotion.'' (Il docente nota anche, di
+passaggio, che il cavaliere non interagisce con il pulsante del livello, ``giustamente,
+perché è la Mesh''; dalla trascrizione non si ricostruisce meglio il punto.)
+
+A Federico, che non riesce a sistemare la camera, il docente riassume: ``devi giocare con
+lo yaw e con l'Orient Rotation to Movement: li disattivi tutte e due, e li riattivi
+sull'On Completed''. ``Dello Spring Arm, giusto?'' ``Non dello Spring Arm: questo qua è
+del Pawn, lo trovi direttamente senza collegare niente. Invece questo è solo del
+Character Movement.''
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ue9node/.style={draw, thick, rounded corners=4pt, align=center, fill=gray!8,
+                  minimum height=0.9cm, text width=2.5cm},
+  ue9ev/.style={ue9node, fill=red!12},
+  ue9exec/.style={-{Stealth[length=2.5mm]}, very thick, black!80}]
+  \node[ue9ev, text width=1.4cm] (f) at (0,0) {\textbf{F}\\{\scriptsize Pressed}};
+  \node[ue9node] (a) at (2.8,0) {\textbf{Set Max Walk Speed}\\{\scriptsize 0}};
+  \node[ue9node] (b) at (5.9,0) {Get Player Controller $\rightarrow$ \textbf{Disable
+    Input}};
+  \node[ue9node] (c) at (9.0,0) {\textbf{Set Orient Rotation to Movement}\\
+    {\scriptsize false}};
+  \node[ue9node] (d) at (12.1,0) {\textbf{Set Use Controller Rotation Yaw}\\
+    {\scriptsize false}};
+  \node[ue9node, fill=yellow!15, text width=3.0cm, minimum height=2.4cm] (pm) at
+    (2.8,-3.0) {\textbf{Play Montage}\\{\scriptsize Mesh,\\Sword and Shield
+    Attack\_Montage}};
+  \node[ue9node] (e) at (8.3,-2.2) {\textbf{Set Max Walk Speed}\\{\scriptsize 600}};
+  \node[ue9node, text width=3.0cm] (g) at (8.3,-3.9) {Get Player Controller
+    $\rightarrow$ \textbf{Enable Input}};
+  \node[ue9node, text width=3.0cm] (h) at (12.3,-3.9) {\textbf{Set Orient\dots} true\\
+    \textbf{Set Use Controller Rotation Yaw} true};
+  \draw[ue9exec] (f) -- (a); \draw[ue9exec] (a) -- (b); \draw[ue9exec] (b) -- (c);
+  \draw[ue9exec] (c) -- (d);
+  \draw[ue9exec] (d.south) -- ++(0,-0.6) -| (pm.north);
+  \draw[ue9exec] (pm.east |- e) -- node[above, font=\scriptsize]{On Blend Out} (e);
+  \draw[ue9exec] (pm.east |- g) -- node[below, font=\scriptsize]{On Completed} (g);
+  \draw[ue9exec] (g) -- (h);
+\end{tikzpicture}
+\caption{L'attacco sul tasto F, nella versione finale. Prima del Montage si blocca il
+personaggio (velocità zero, input disabilitato, nessuna rotazione automatica del corpo);
+al Blend Out torna la velocità, all'On Completed tornano l'input e le rotazioni. L'ordine
+esatto dei primi quattro nodi è ricostruito: a lezione vengono aggiunti uno alla volta,
+durante i tentativi. Schema ricostruito.}
+\label{ue9:fig:playmontage}
+\end{figure}
+
+\paragraph{Approfondimento: Play Montage, Montage Play e il root motion.} Il nodo usato a
+lezione, \textbf{Play Montage}, è un nodo \emph{asincrono} (con l'orologio nell'angolo):
+le sue uscite scattano più tardi, quando succede l'evento corrispondente, e per questo
+può gestire il ``dopo'' del Montage direttamente nel grafo. Esiste anche \emph{Montage
+Play}, chiamato sull'\emph{Anim Instance} della mesh, che restituisce solo la durata, e
+\emph{Play Anim Montage}, del Character. Due dettagli completano la lezione. Il primo:
+un attacco in \textbf{root motion} sposta davvero la capsula solo se il Montage ha il
+root motion attivo e l'Animation Blueprint ha la \emph{Root Motion Mode} impostata su
+\emph{Root Motion from Montages Only} (il default); se il root dell'animazione di Mixamo è
+``rotto'', come visto nel retargeting, il personaggio avanza nella mesh e poi ``torna
+indietro'' di scatto a fine animazione. Il secondo: durante un Montage che fa avanzare il
+personaggio in root motion non serve azzerare la Max Walk Speed, perché il root motion
+prende il posto dell'input di movimento; azzerarla, come fa il docente, è però un modo
+semplice e sicuro di impedire al giocatore di muoversi durante un attacco ``in place''.
+Infine, \emph{Disable Input} e \emph{Enable Input} agiscono sull'actor e richiedono un
+Player Controller: per bloccare solo alcune azioni (il movimento ma non la camera),
+l'Enhanced Input offre un'alternativa più fine, cioè rimuovere temporaneamente un
+Input Mapping Context, o aggiungerne uno di priorità più alta.
+
+% ---------------------------------------------------------------------
+\section{Il compito e la chiusura}
+\label{ue9:sec:chiusura}
+
+\paragraph{Feedback in chat.} Una studentessa, Giulia, ha scritto in chat che è rimasta un
+po' indietro ``causa trasloco'' e chiede di poter mandare dei feedback; nel frattempo è
+già uscita dalla chiamata. ``Le risponderò sul Discord, assolutamente.'' ``Controllerò i
+lavori che mandate sul canale.''
+
+\paragraph{Il compito: lo StackOBot.} ``Una cosa che vorrei darvi come task, se vi va, per
+la prossima volta'': ``fare un nuovo character totalmente da zero''. Nel progetto c'è già
+un personaggio, lo \textbf{StackOBot} (il robottino dei progetti di esempio di Epic), che
+``ha queste animazioni qua: vedete che ce le ha già dentro tutte quante''. Lo si trova
+nella cartella \emph{StackOBot $\rightarrow$ Blueprints $\rightarrow$ Character}, con la
+sua Skeletal Mesh (\emph{SKM\_Bot}) e il suo ABP. Il compito:
+\begin{itemize}
+  \item creare un \textbf{Blueprint Character} per lo StackOBot (``fare la BP'');
+  \item creare il suo \textbf{Animation Blueprint} da zero, ``fare tutto l'Animation
+        Blueprint e collegarci tutte le sue animazioni'': il ciclo di locomozione, con
+        State Machine e Blend Space, come quello del cavaliere.
+\end{itemize}
+``Se volete farlo, lo potete mandare poi sulla chat'', ``che tanto magari ci lavoreremo
+la prossima volta''. ``Per adesso, poi ne riparliamo.''
+
+\paragraph{I saluti.} ``Se tutto a posto\dots'' Il docente interrompe la condivisione:
+``vi ringrazio per l'attenzione, e ringrazio da casa chi è in differita''. ``Ci sentiamo
+per martedì prossimo. Va bene, ciao, ragazzi. Buona serata.''
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{5.4cm}p{8.6cm}@{}}
+\toprule
+\textbf{Sintomo} & \textbf{Causa e rimedio} \\
+\midrule
+L'animazione dello stato non si vede nella preview & la State Machine non è collegata
+all'Output Pose dell'AnimGraph \\
+L'animazione si ferma dopo un ciclo & manca la spunta di loop nel nodo dell'animazione \\
+Warning nella State Machine & transizioni senza condizioni: normale finché non si
+scrivono le regole \\
+Jump $\rightarrow$ Fall dà errore & regola vuota: attivare Automatic Rule Based on
+Sequence Player in State \\
+Il Blend Space 1D arriva solo a 100 & Maximum Axis Value da impostare a 600; poi
+spostare i campioni \\
+Animazioni ``mischiate'' a metà (a 200) & i campioni non corrispondono alle velocità
+reali: legarli alla Max Walk Speed \\
+Alt sul nodo non crea il Set & negli stati dell'AnimGraph le variabili si leggono e
+basta \\
+``Questo asset non ha schede ancorate'' & Window $\rightarrow$ Load Layout $\rightarrow$
+Default Editor Layout, poi Open Full Blueprint Editor \\
+In Play non si vede niente / visuale nel corpo & il Character non ha camera: aggiungere
+Spring Arm e Camera (figlia) \\
+Non ci si muove & mancano gli input: copiare dal ThirdPersonCharacter i grafi di Look,
+Move, Jump e l'Add Mapping Context \\
+La camera ruota su un solo asse, o guarda solo il terreno & Use Pawn Control Rotation
+sulla Camera invece che sullo Spring Arm \\
+Il personaggio va di lato guardando avanti & attivare Orient Rotation to Movement e
+togliere Use Controller Rotation Yaw (servono tutte e due) \\
+La camera compenetra gli oggetti & Target Offset troppo grande: usare il Socket Offset \\
+Il salto in root motion retargettato non è pulito & il root degli scheletri di Mixamo:
+accettabile per la prova, da correggere \\
+La State Machine non distingue salto e caduta & entrambe le regole su IsFalling:
+aggiungere VelocityZ maggiore o minore di zero \\
+Lo Shift non fa correre & IA\_Run non aggiunta ai mapping di IMC\_Default \\
+FInterp To non interpola & eseguito una volta sola: va eseguito a ogni frame (Tick,
+timer o Timeline) \\
+Direction quasi sempre a zero & Orient Rotation to Movement acceso, Use Controller
+Rotation Yaw spento: invertire per il Blend Space 2D \\
+Scatti nel Blend Space 2D & animazioni non omogenee, salto fra 180 e $-180$: Smoothing
+Time, o riscaricare le animazioni \\
+Durante l'attacco il personaggio si muove & Set Max Walk Speed a 0 e Disable Input prima
+del Play Montage \\
+Durante l'attacco la camera trascina il personaggio & Set Orient Rotation to Movement e
+Set Use Controller Rotation Yaw a false, a true sull'On Completed \\
+Il Montage non suona & manca il nodo Slot DefaultSlot nell'AnimGraph \\
+\bottomrule
+\end{tabular}
+\caption{I problemi incontrati durante la lezione, con la causa e il rimedio.}
+\label{ue9:tab:errori}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{4.8cm}p{9.2cm}@{}}
+\toprule
+\textbf{Nodo, asset o impostazione} & \textbf{Che cosa fa} \\
+\midrule
+State Machine (AnimGraph) & organizza le animazioni in stati e transizioni \\
+Entry / State / Conduit / Alias & ingresso; stato con una posa; snodo senza posa; alias
+di più stati \\
+Output Animation Pose & la posa prodotta da uno stato \\
+Transition Rule (Result) & la condizione booleana per passare da uno stato all'altro \\
+Automatic Rule Based on Sequence Player in State & la transizione scatta a fine
+animazione \\
+NOT Boolean / AND Boolean & negazione; congiunzione di due condizioni \\
+Split Struct Pin & divide un vettore nei suoi componenti X, Y, Z \\
+Blend Space 1D / Blend Space (2D) & mescola animazioni su uno o due assi \\
+Horizontal / Vertical Axis, Grid Divisions & nome, minimo e massimo degli assi;
+divisioni della griglia \\
+Smoothing Time & tempo di passaggio fra i campioni \\
+Blend Space Player & il nodo che suona un Blend Space nell'AnimGraph \\
+Calculate Direction & l'angolo, da $-180$ a 180, fra la velocità e la rotazione \\
+Get Actor Rotation / Get Velocity & la rotazione dell'actor; la sua velocità \\
+Default Pawn Class (World Settings) & il personaggio del giocatore nel livello \\
+Spring Arm: Target Arm Length, Socket Offset, Target Offset & lunghezza del braccio;
+spostamento in fondo al braccio; spostamento dell'origine \\
+Camera: Field of View & angolo di visuale \\
+Use Pawn Control Rotation (Spring Arm) & la camera segue il controller \\
+Use Controller Rotation Yaw (Pawn) & il corpo segue la rotazione del controller \\
+Orient Rotation to Movement, Rotation Rate (Character Movement) & il corpo si gira verso
+il movimento, con quella velocità \\
+Max Walk Speed / Set Max Walk Speed & velocità massima a piedi (cm/s) \\
+Retarget Animations, Export Animations & trasferisce un'animazione su un altro
+scheletro \\
+Input Mapping Context (IMC) & associa i tasti alle azioni in un contesto \\
+Input Action (IA): Value Type, Triggers & l'azione, il tipo di valore, quando scatta \\
+Add Mapping Context & attiva un IMC per il giocatore \\
+Evento IA: Triggered, Started, Ongoing, Canceled, Completed & le fasi di un'azione \\
+FInterp To & un passo di interpolazione fra Current e Target \\
+Get World Delta Seconds & il tempo dell'ultimo frame \\
+Animation Montage & animazione ``una tantum'', modulare, con sezioni e slot \\
+Notify / Play Sound / Notify Track & eventi sulla linea del tempo; un suono; una traccia
+di eventi \\
+Montage Section & una parte con nome del Montage \\
+Slot (DefaultGroup.DefaultSlot) & dove il Montage si applica (tutto il corpo, o parti) \\
+Save Cached Pose / Use Cached Pose & salva e rilegge una posa nell'AnimGraph \\
+Play Montage & suona un Montage; On Completed, On Blend Out, On Interrupted, Notify
+Begin/End \\
+Disable Input / Enable Input & toglie e restituisce l'input all'actor \\
+\bottomrule
+\end{tabular}
+\caption{I nodi, gli asset e le impostazioni della nona lezione.}
+\label{ue9:tab:nodi}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Una \textbf{State Machine} nell'AnimGraph organizza le animazioni in
+        \textbf{stati} (WalkRun, Jump, Fall), ciascuno con la sua \textbf{Output
+        Animation Pose}, e in \textbf{transizioni} con regole booleane: un ``loop di
+        animazione secondo delle condizioni''. Va collegata all'Output Pose.
+  \item Un \textbf{Blend Space 1D} mescola animazioni lungo un asse: per la locomozione,
+        la \textbf{GroundSpeed}. I campioni vanno posti alle velocità reali del
+        personaggio (Max Walk Speed, in centimetri al secondo): Idle a 0, Walk a 300,
+        corsa a 600. Valori intermedi ``inventati'' producono obbrobri.
+  \item Un \textbf{Character} non ha la camera: si aggiungono uno \textbf{Spring Arm} e,
+        come suo figlio, una \textbf{Camera}. Distanza e altezza si regolano sullo
+        Spring Arm (\textbf{Target Arm Length}, \textbf{Socket Offset}), mai spostando la
+        camera; il \textbf{Target Offset} solo sulla Z e poco. Sono il lavoro dei
+        \textbf{3C}: Camera, Control, Character.
+  \item Tre spunte governano la rotazione: \textbf{Use Pawn Control Rotation} sullo
+        Spring Arm (la camera segue il mouse), \textbf{Use Controller Rotation Yaw} sul
+        Pawn (il corpo segue la camera), \textbf{Orient Rotation to Movement} nel
+        Character Movement (il corpo si gira verso il movimento).
+  \item Il \textbf{retargeting} porta un'animazione su un altro scheletro (Retarget
+        Animations, Export Animations): comodo, ma il risultato dipende dall'animazione,
+        e il root di Mixamo dà problemi.
+  \item Fra salto e caduta: \textbf{Automatic Rule Based on Sequence Player in State} per
+        passare a fine animazione, \textbf{NOT IsFalling} per tornare a terra, e la
+        \textbf{velocità sulla Z} per distinguere un salto (Z $>$ 0) da una caduta
+        (Z $<$ 0).
+  \item L'\textbf{Enhanced Input} separa i tasti dalle azioni: l'\textbf{Input Action}
+        (IA\_Run, Digital bool, con i suoi Triggers) è associata a uno o più tasti
+        (Shift, il cerchio del controller) in un \textbf{Input Mapping Context}, che va
+        attivato con \textbf{Add Mapping Context}. Lo sprint: Set Max Walk Speed a 600
+        sul Triggered, a 300 sul Completed.
+  \item \textbf{FInterp To} fa un solo passo per esecuzione: per un passaggio graduale
+        va eseguito a ogni frame (Tick, timer, Timeline).
+  \item Il \textbf{Blend Space 2D} aggiunge la \textbf{direzione} (\textbf{Calculate
+        Direction}, da $-180$ a 180: positivo a destra, negativo a sinistra, $\pm 180$
+        indietro): otto animazioni a 600, l'Idle ripetuto a 0, la corsa all'indietro ai
+        due estremi, griglia 8$\times$8, Smoothing Time. Serve Use Controller Rotation Yaw
+        acceso.
+  \item Un \textbf{Animation Montage} è un'animazione ``una tantum'' e modulare, con
+        \textbf{Notify} (suoni, VFX in un punto preciso), \textbf{sezioni} e
+        \textbf{slot}. Per suonarlo, nell'AnimGraph: State Machine, \textbf{Save Cached
+        Pose}, Use Cached Pose, \textbf{Slot DefaultSlot}, Output Pose. Si fa partire con
+        \textbf{Play Montage}, bloccando prima movimento, input e rotazioni e
+        restituendoli su On Blend Out e On Completed.
+  \item Compito facoltativo: un nuovo personaggio da zero con lo \textbf{StackOBot},
+        Blueprint e Animation Blueprint completi.
+\end{itemize}
