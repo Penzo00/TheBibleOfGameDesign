@@ -17,7 +17,7 @@ Lezioni di Game Design (analogico e digitale), con elementi di Unreal Engine e i
 | `UE/` | Parte 1 – Fondamenti di Unreal Engine (`UE1`–`UE16`) |
 | `AGD/` | Parte 2 – Analog Game Design (`AGD1`–`AGD16`) |
 | `Professioni/` | Parte 3 – Alcune professioni nel mondo videoludico (`AIV*`) |
-| `GD1/` | Parte 4 – Game Design (`GD1`–`GD17`) |
+| `GD1/` | Parte 4 – Game Design (`GD1`–`GD18`) |
 | `REV/GD/` | Parte 5 – Revisioni dei compiti |
 | `blueprint_ninja/` | Documento a parte: *Diventare ninja dei Blueprint* (ha il suo `main.tex` e lo stile `bpninja.sty`) |
 | `blueprint_livelli/` | *Rifare i livelli in Blueprint* (solo PDF, nessun sorgente) |

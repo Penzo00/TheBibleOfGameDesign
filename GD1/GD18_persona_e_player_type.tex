@@ -1,0 +1,2131 @@
+% =====================================================================
+%  Capitolo 18 — Il metodo persona e i player type: Maslow, Bartle,
+%  Keirsey, Bateman, Caillois, Lazzaro e il modello prismatico
+%  (Game Design, primo anno)
+%  Fonte: trascrizione della lezione GD18 (Game Design, primo anno),
+%  stesso docente dei capitoli 9, 10 e 15 (corso di design methods), di
+%  cui la lezione è la diretta prosecuzione: si chiude la lezione sulle
+%  decisioni del capitolo 15 e si apre il tema dell'audience. Slide
+%  della lezione: DM06 "Persona & Types" (slide di Diego Ricchiuti,
+%  2026). Lezione in aula, con alcuni studenti collegati su Zoom.
+%  Contenuti, nell'ordine della lezione: l'apertura (telecamere accese,
+%  niente più intrusioni durante la lezione, comunicare è il mantra del
+%  game design, il gioco con Keanu Reeves e Dr. Langeskov); la piramide
+%  dall'agency alla mastery (feedback a breve termine, conseguenze a
+%  lungo termine, Dark Souls e i Gargoyle); il gioco si fa per qualcun
+%  altro; come capire l'audience: statistica, metodo persona, player
+%  type; data informed e non data driven, lo skinning e lo unique
+%  selling point; la digressione sulla piramide di Maslow, i suoi
+%  limiti (le notti in bianco, il treno, i bisogni "vitaminici"), cibo,
+%  sesso e violenza (Dead Space, Arancia meccanica, The Witcher, Cooking
+%  Mama, gli spot dei fast food), i tre gradini che i videogiochi
+%  toccano; le motivazioni di Quantic Foundry e le differenze culturali
+%  (Cina e Stati Uniti); il metodo persona in breve; la tassonomia di
+%  Bartle (la favola della buonanotte, i MUD, gli assi, i colori, i semi
+%  delle carte, le quattro definizioni; la domanda sui cheater e
+%  l'amico degli achievement di Mirror's Edge; intento esplicito e
+%  implicito; single player e multiplayer); la domanda sull'uso della
+%  tassonomia; la pausa; i temperamenti di Keirsey e le sedici
+%  personalità; Bartle-Keirsey; il modello demografico di Bateman e il
+%  casual di oggi; perché allargare Bartle e i suoi limiti; Caillois
+%  (agon, alea, mimicry, ilinx, il quiz sull'abbinamento, il D&D del
+%  docente, l'alea che rende tutti pari, il poker); Lazzaro e le quattro
+%  chiavi del divertimento; la tabella del modello prismatico; GNS+ e
+%  MDA+ da non usare; Handy, Gallup, Covey, motivazione, problem
+%  solving e obiettivo finale; il "non task": rifare il modello unificato
+%  (le case di Hogwarts di Federica, le classi e le personificazioni);
+%  l'analisi per generi (la leggenda della tripla A, Binding of Isaac,
+%  Pong, Ubisoft, Slay the Spire); le feature di gameplay per player
+%  type (la sorpresa come moltiplicatore, Minecraft, le emote di Clash
+%  Royale e Marvel Snap); i segmenti di Quantic Foundry (Celeste,
+%  Farewell, Metroid Dread, Spelunky, Animal Crossing e Tom Nook, Just
+%  Cause, Clash of Clans); i tre usi del modello (analisi, suggerimenti
+%  di design con le biciclette, soluzione di un problema: il gioco di
+%  carte e il bluff, con l'interruzione di un collega); la pausa; il
+%  persona finale; la vision rivista e i design value; la profilazione
+%  del target audience; il calendario e la chiusura.
+%  Integrazioni da "The Art of Game Design" (Jesse Schell) e "21st
+%  Century Game Design" (Chris Bateman e Richard Boon), segnalate come
+%  approfondimenti e tenute distinte dalla lezione.
+%
+%  Pacchetti richiesti nel preambolo del libro (già presenti nel
+%  main.tex): \usepackage{booktabs}, \usepackage{amsmath},
+%  \usepackage{enumitem}, \usepackage{tikz} con
+%    \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc,
+%      arrows.meta,positioning,calc,fit}
+%  (le librerie vanno caricate nel preambolo, non nel capitolo).
+%  Tutte le etichette di questo capitolo hanno il prefisso "gd18:"
+%  (gd18:sec:..., gd18:fig:..., gd18:tab:...) e tutti gli stili TikZ
+%  il prefisso "gd18", per non collidere con gli altri capitoli.
+%
+%  Nota sulla fonte: la trascrizione automatica è buona nelle parti
+%  discorsive, ma storpia moltissimi nomi propri e termini inglesi:
+%  "Bartol", "Barto", "Battle", "Bartolomeo" per Bartle; "Chirsey",
+%  "Kirsey", "Kirsten" per Keirsey; "Calwa", "Callo A", "Caloua" per
+%  Caillois; "Lazzar" per Lazzaro; "Civer", "Cibere", "Asciugher",
+%  "Shiver", "Chiver" per achiever; "Mini craio", "Mimicai" per
+%  mimicry; "Inx", "E-Lynx", "Unix" per ilinx; "Unix endpoint" per
+%  unique selling point; "Udema di Koster" per l'atomo di Koster;
+%  "Chianu Yis", "Chiamurides" per Keanu Reeves; "Autoful Boyfriend"
+%  per Hatoful Boyfriend; "Tom Dacity Life" per Tomodachi Life; "Zed
+%  Spire" per Slay the Spire; "Metroid Red" per Metroid Dread; "Alflife"
+%  per Half-Life; "BanduScape" probabilmente per RuneScape; "Airstone"
+%  per Hearthstone; "Gacia" per gacha. Dove il riferimento è
+%  ricostruibile con buona sicurezza lo si riporta nella forma corretta
+%  (segnalandolo in nota quando non è ovvio); dove non lo è, lo si
+%  segnala in nota invece di indovinare. Come nei capitoli 15 e 17,
+%  l'attesa iniziale e le due pause sono state riempite dal
+%  riconoscimento vocale con frasi in loop o captate da una fonte
+%  esterna ("Grazie a tutti per l'attenzione che ci ha spiato",
+%  "Qual è la risposta che ci può essere?", frasi sul "governo di Dalai
+%  Lama" e sulla "migliore dal 2005"): sono artefatti, omessi; lo stesso
+%  vale per un "il cento e il cento..." ripetuto decine di volte durante
+%  una domanda. Le figure sono le slide originali della lezione; le
+%  tabelle ne trascrivono il contenuto testuale.
+% =====================================================================
+
+\chapter[Persona e player type]{Il metodo persona e i player type: da
+Maslow e Bartle al modello prismatico}
+\label{gd18:cap:player-type}
+
+Il capitolo~\ref{gd15:cap:decisioni} si era chiuso sulle decisioni nel gioco e su un
+task singolare: un gioco comico, una ``truffa'' che sovverte le aspettative. Questa
+lezione, tenuta dallo stesso docente del corso di \emph{design methods}, chiude
+quel discorso e ne apre uno nuovo, che il docente presenta senza giri di parole come
+``forse una delle cose più importanti che vedremo e che vedrete quest'anno'': i
+\textbf{player type}. Le slide della lezione si intitolano \emph{Persona \& Types}, e
+il titolo dice già le due anime della lezione: il \textbf{metodo persona}, cioè la
+costruzione di un individuo fittizio che riassume il target audience, e i
+\textbf{tipi di giocatore}, cioè un modo di approssimare e categorizzare persone
+molto diverse a partire da come giocano e da che cosa cercano nel gioco.
+
+Il filo conduttore è sempre lo stesso, ed era già comparso nelle lezioni sulla
+ricerca (capitolo~\ref{cap:ricerca-idee}) e sulla vision
+(capitolo~\ref{gd9:cap:agency-visione}): \textbf{il gioco si fa per qualcun altro}.
+Per farlo bene bisogna capire chi è quel qualcun altro, che cosa cerca e perché; e
+siccome i dati che si raccolgono su persone diverse sono ``potenzialmente molto
+lontani l'uno dall'altro, difficili da correlare'', serve un modo per
+\textbf{approssimarli}. La lezione costruisce questo modo un pezzo alla volta: parte
+dalla tassonomia di \textbf{Richard Bartle}, che va saputa ``a memoria'', e la allarga
+con altri modelli (\textbf{Keirsey}, \textbf{Bateman}, \textbf{Caillois},
+\textbf{Lazzaro} e altri ancora) fino a un \textbf{modello unificato}, che il
+coordinatore del corso chiama \textbf{modello prismatico}: tante facce diverse dello
+stesso prisma, che guardano sempre la stessa cosa. Poi mostra come usarlo nel
+lavoro di tutti i giorni, in tre casi concreti.
+
+La struttura della lezione, e quindi del capitolo, è questa:
+\begin{enumerate}
+  \item l'apertura e la chiusura della lezione sulle decisioni
+        (sezione~\ref{gd18:sec:apertura});
+  \item la \textbf{piramide} che va dall'agency alla mastery, e il gioco fatto per
+        qualcun altro (sezione~\ref{gd18:sec:piramide});
+  \item i tre strumenti per capire l'audience, e il principio \emph{data informed}
+        (sezione~\ref{gd18:sec:strumenti});
+  \item la digressione sulla \textbf{piramide di Maslow}, sui suoi limiti e su cibo,
+        sesso e violenza (sezione~\ref{gd18:sec:maslow});
+  \item le motivazioni di Quantic Foundry e le differenze culturali
+        (sezione~\ref{gd18:sec:quantic});
+  \item il \textbf{metodo persona}, in breve (sezione~\ref{gd18:sec:persona});
+  \item la \textbf{tassonomia di Bartle}, nelle sue tre letture
+        (sezione~\ref{gd18:sec:bartle});
+  \item i \textbf{temperamenti di Keirsey}, le sedici personalità e la coppia
+        Bartle-Keirsey (sezione~\ref{gd18:sec:keirsey});
+  \item il \textbf{modello demografico di Bateman} e i tipi intermedi
+        (sezione~\ref{gd18:sec:bateman});
+  \item il \textbf{modello prismatico}: Caillois, Lazzaro, le colonne da non usare e
+        le altre (sezione~\ref{gd18:sec:prismatico});
+  \item il ``non task'': rifarsi il modello (sezione~\ref{gd18:sec:rifare});
+  \item l'\textbf{analisi per generi} e le \textbf{feature di gameplay} per player
+        type (sezioni~\ref{gd18:sec:generi} e~\ref{gd18:sec:feature});
+  \item i \textbf{segmenti di Quantic Foundry} (sezione~\ref{gd18:sec:segmenti});
+  \item i \textbf{tre usi} del modello: analisi, suggerimenti di design, soluzione
+        di un problema (sezione~\ref{gd18:sec:casi});
+  \item il \textbf{persona finale} (sezione~\ref{gd18:sec:persona-finale});
+  \item la \textbf{vision} rivista e i \emph{design value}
+        (sezione~\ref{gd18:sec:vision});
+  \item la \textbf{profilazione del target audience}, il calendario e la chiusura
+        (sezioni~\ref{gd18:sec:ta} e~\ref{gd18:sec:chiusura}).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{L'apertura: comunicare, e chiudere le decisioni}
+\label{gd18:sec:apertura}
+
+\subsection{Telecamere accese, e niente più intrusioni}
+
+La lezione si tiene in aula, con qualcuno collegato da remoto. Si comincia con la
+prova dell'audio: il docente chiede a Federica di testarlo (``sento tutto forte e
+chiaro''), e gli altri ``eventualmente arriveranno e noi saremo pronti ad
+accoglierli''. Poi ripete una richiesta già fatta: \textbf{telecamere accese}. Uno
+studente avverte che sta finendo di mangiare; nessun problema, ``ho visto
+letteralmente persone mangiare'', e si è liberi di farlo (magari, scherza il docente,
+senza mangiare ``il pezzo di pasta davanti'' alla camera).
+
+Segue un discorso che il docente aveva già fatto prima della lezione e il venerdì
+precedente. Ha parlato con Alessandro, e ci sono stati alcuni cambiamenti, ``primo
+fra tutti il fatto che non ci siano più \textbf{invasioni} durante la vostra ora di
+lezione'': un risultato pensato per il benessere degli studenti, la direzione verso
+cui lui e gli altri docenti si muovono sempre, cioè dare ``l'ecosistema e l'anno
+educativo migliore possibile''. Per questo ripete l'invito: se ci sono dubbi,
+difficoltà o problemi, anche individuali, bisogna parlarne, tra studenti o con
+qualcuno che li riporti; le questioni più delicate si affrontano dopo la lezione.
+Quel giorno il docente si ferma apposta in aula ``fino a quando volete'', ma in
+realtà è disponibile ogni giorno in cui è presente, faccia a faccia. Il motivo è un
+principio che vale ben oltre l'aula:
+\begin{quote}
+Non si possono affrontare dei problemi se non si comunica. È questo poi il mantra
+del game design.
+\end{quote}
+
+\subsection{Il gioco con Keanu Reeves, e un consiglio}
+
+Non ci sono domande sui task (che il docente non ha ancora commentato: ``lo farò al
+più presto''). Resta il ``grandissimo, incredibile'' gioco con \textbf{Keanu Reeves}
+del task precedente (capitolo~\ref{gd15:sec:task}), che il docente spera tutti
+abbiano potuto ``godere''. A chi l'esperienza è piaciuta, ripete il consiglio: un
+gioco più serio dello stesso creatore, \emph{Dr.\ Langeskov, The Tiger, and The
+Terribly Cursed Emerald},\footnote{Nella trascrizione: ``Dr. Langslob, la tigre,
+l'Emerald Impazzito''. È lo stesso titolo già consigliato nel
+capitolo~\ref{gd15:sec:task}.} gratuito e molto più breve di \emph{The Stanley
+Parable} (che è ``blasonato'' e che tutti conoscono). Un modo per ``espandere
+l'esperienza'', anche se ``ahimè, senza Keanu Reeves come protagonista principale''.
+
+Il docente chiede se ci sono dubbi sulle decisioni, sui tipi di decisione, sulle
+\emph{golden rule}; poi, visto che nel frattempo è arrivata Francesca (e anche
+Francesco, salutato con un ``nessun problema''), ripete la domanda. Nessun
+dubbio: si \textbf{saltano le golden rule} e si conclude la lezione sulle decisioni.
+
+% ---------------------------------------------------------------------
+\section{Dall'agency alla mastery, e per chi si fa il gioco}
+\label{gd18:sec:piramide}
+
+\subsection{La piramide}
+
+Le ultime due lezioni hanno parlato di \textbf{agency} e di \textbf{decisioni}, che
+stanno alla base di una piramide che il docente riprende a voce, gradino per
+gradino.\footnote{La piramide non è tra le slide di questa lezione: il docente la
+mostra dalle slide della lezione precedente (DM05, capitolo~\ref{gd15:cap:decisioni}).}
+\begin{description}
+  \item[Agency.] Il gradino più basso: i \textbf{limiti} entro i quali il giocatore
+        decide. ``Non parliamo più di libertà'': come sempre, il docente invita a
+        usare il linguaggio tecnico il più possibile (la libertà non esiste, esiste
+        l'agency, capitolo~\ref{gd9:cap:agency-visione}).
+  \item[Decisioni.] Qualsiasi cosa il giocatore scelga o non scelga deve avere un
+        \textbf{outcome}, e qui il docente rimanda all'atomo di
+        Koster\footnote{Nella trascrizione: ``il famoso Udema di Koster''. Si tratta
+        quasi certamente dell'atomo di gioco di Koster
+        (capitolo~\ref{cap:problema-soluzione}), in cui il feedback chiude il ciclo
+        tra azione del giocatore e modello mentale.} e a tutto ciò che si è detto sui
+        feedback: l'outcome va \textbf{segnalato}, deve essere chiaro, deve essere
+        comunicato.
+  \item[Feedback e conseguenze a breve termine.] Un gradino sopra: ``ho compiuto la
+        scelta, mi viene detto che la scelta è stata fatta''. Il famoso banner del
+        tipo ``si ricorderà della tua scelta''\footnote{Nella trascrizione: ``lei si
+        ricorderà, Madeline, si ricorderà della scelta''. È con ogni probabilità il
+        ``Clementine will remember that'' dei giochi Telltale già discusso nel
+        capitolo~\ref{gd15:cap:decisioni}; il nome è storpiato.}, quel prompt di UI,
+        ricade qui, nelle \emph{short term consequences}. E vale a qualsiasi livello:
+        si spara con un'arma e c'è il \emph{rumble}; si prende danno e il personaggio
+        lampeggia, il cuoricino si rompe.
+  \item[Conseguenze a lungo termine.] L'aumento o la diminuzione di statistiche e le
+        meccaniche che ne derivano stanno più sopra. Come il feedback viene
+        \emph{capito} dal giocatore, del resto, ``sta un gradino sopra''.
+  \item[Mastery.] In cima, l'obiettivo finale: acquisire la \textbf{padronanza dei
+        sistemi}. È un discorso complesso, che verrà ripreso con un altro framework
+        (``di cui non è che sono proprio grande fan, però questo è un buon punto'').
+        Non si parla qui di padronanza di una singola meccanica o di una combo, ma
+        di \textbf{imparare le regole del gioco}.
+\end{description}
+
+\subsection{La mastery forma il giocatore}
+
+Sulla mastery il docente si sofferma. Il designer crea il gioco per un target
+audience specifico, ma è giusto dire anche il contrario: \textbf{attraverso
+l'esperienza che il designer crea, il giocatore evolve}. Alla fine dell'esperienza
+il giocatore diventa, idealmente, ciò che il designer pensa che possa essere.
+
+L'esempio è \emph{Dark Souls}. Quando i boss ``vi massacrano'', quando si incontra
+il Demone Capra o il Demone Toro\footnote{Nella trascrizione: ``il demone di Thor o il
+demone capra''; sono il \emph{Taurus Demon} e il \emph{Capra Demon} del primo
+\emph{Dark Souls}.} o, ``quello più infame'', i \textbf{Gargoyle}, e si muore un
+certo numero di volte, si impara a capire il pattern dei boss, a navigare
+l'ambiente, a gestire le fiaschette di Estus. Questo è già \textbf{spingere il
+modello mentale} del giocatore nella direzione di ciò che il designer ritiene il
+giocatore ideale di \emph{Dark Souls}. Non deve diventare per forza il pro player
+definitivo; ma ``tramite come lo educate'' lo si sta spingendo in una direzione e si
+sta formando la sua mente in quella direzione. La mastery in cima alla piramide
+parla di questo, ad alto livello. Ci sono poi forme di mastery più basse (capire
+quando schivare, come gestire la stamina in un combattimento, riconoscere
+l'\emph{anticipation} di un attacco nemico mentre lo carica per evitarlo), ma
+servono solo a spiegare la piramide. Con quanto visto finora, si è arrivati al
+gradino del feedback a breve termine.
+
+\subsection{Il gioco si fa per qualcun altro}
+
+Come già detto più volte, tutti ``stiamo facendo un gioco per qualcun altro''.
+Potrebbe essere per sé stessi, ma allora c'è il \textbf{rischio d'impresa}: il gioco
+potrebbe non vendere. Chi è assunto in un'azienda, generalmente, non fa il gioco per
+sé, a meno che l'azienda non sia sua e ne sia ``forse l'unico dipendente''. Si fa il
+gioco per un audience di persone, e le persone sono diverse: chi gioca ai party
+game sforzandosi ``incredibilmente per premere il tasto A'' sul telecomando della
+Wii; il ragazzino tedesco che spacca il monitor perché ha perso a
+\emph{Counter-Strike}; il pro player pieno di coppe e medaglie; il divorziato che
+gioca tutto il giorno a \emph{Candy Crush}. Qualsiasi demografica si scelga,
+qualsiasi target audience, bisogna avere chiaro \textbf{verso quale TA si sta
+facendo il gioco}, in quale direzione si stanno spingendo le risorse, e accertarsi
+sempre che quella direzione sia corretta. Un primo passo in questo senso si è già
+fatto con la vision, con i documenti di visione e con la ricerca. Ora si fa il passo
+successivo.
+
+% ---------------------------------------------------------------------
+\section{Come capire l'audience: tre strumenti}
+\label{gd18:sec:strumenti}
+
+\subsection{Statistica, persona, player type}
+
+Come capire l'audience? Una parte la si è già vista: tutto ciò che riguarda la
+\textbf{statistica}, i dati effettivi di ricerca. Oggi se ne vedono altre due:
+\begin{enumerate}
+  \item il \textbf{metodo persona}, importante ``relativamente'': un altro modo di
+        far confluire i dati, concretizzandoli in un'ipotetica persona. Il docente
+        chiede se qualcuno ne ha già sentito parlare; poi spiega che si tratta di
+        creare un individuo \textbf{fittizio}, il cui profilo raccoglie tutti i dati
+        trovati nella fase di ricerca, in modo da avere un individuo ideale verso
+        cui si fa il gioco. Questa scheda si stampa, si appende, ``ce l'abbiamo
+        sempre chiaro esattamente come le vision'': quando c'è un problema, quando
+        si discute, si fa riferimento a questo individuo che non esiste. Di solito
+        se ne fa più di uno, e lo fanno soprattutto le aziende medio-grandi. È un
+        modo per avere sempre chiara la direzione e soprattutto \emph{per chi} si fa
+        il gioco, ``senza poi chiamare in causa la personalità'';
+  \item il \textbf{metodo dei player type}, il vero argomento del giorno: ``una cosa
+        molto fica. Non voglio creare troppo hype, però è molto fico questo metodo'',
+        che aiuta enormemente non solo il processo di design ma molti processi della
+        creazione di un gioco.
+\end{enumerate}
+
+La statistica gli studenti l'hanno già vista: raccogliere dati e come farlo
+diventerà ancora più importante quando dovranno creare un gioco e fare davvero la
+ricerca, trovare i dati e scegliere. Sempre nella direzione della vision, cercando di
+concretizzare i dati in metodi diversi.
+
+\subsection{Data informed, non data driven}
+
+Il docente richiama la parte finale della lezione sui feedback
+(capitolo~\ref{gd10:cap:feedback}): a meno di lavorare per King o per qualche gioco
+mobile specifico, \textbf{nel 90\% dei casi} il lavoro del designer è \textbf{data
+informed}, non \textbf{data driven}. Ciò significa che \textbf{non} si prendono i dati
+per copiare ciò che è già stato fatto, né si copia esattamente ciò che l'utente dice
+di volere per inserirlo nel gioco. Lo fanno pochi studi estremamente grossi, con una
+mole enorme di dati, tanto da poter fare \textbf{clustering} (come visto nella
+lezione sui flowchart e sui grafici, capitolo~\ref{cap:brainstorming-flowchart});
+servono risorse enormi nella ricerca e negli strumenti, che già un team medio-grande
+non ha: ``doppia A? No, no, no''.
+
+Ciò che interessa è fare ricerca su ciò che l'utente vuole e cercare di capire,
+\emph{al di là di ciò che chiede}, da cosa è stimolato e che cosa cerca, per trovare
+la \textbf{soluzione creativa migliore} a un problema individuato: quello che gli
+studenti hanno già cominciato a fare con il task sulla ricerca.
+
+\paragraph{Lo skinning.} A volte, comunque, il design si copia, e non è quello il
+problema. Si fa \textbf{skinning} di un gioco: di solito non per intero (se lo si fa
+per intero è una scelta aziendale, generalmente di risparmio), ma su alcune
+meccaniche specifiche, perché costa di meno o perché lo standard dell'industria è
+quello e lo si adotta. Ma lo \textbf{unique selling point} deve stare altrove: ``se
+copiamo lo unique selling point il nostro gioco crolla'', il prodotto tendenzialmente
+non vende, indipendentemente dalla grandezza dell'azienda. ``Vedete Ubisoft nei tempi
+recenti.''
+
+Chiusa questa parte, il programma del giorno è chiaro: il metodo persona, ``una
+piccola parentesi'', e soprattutto i player type, ``perché sono la cosa più
+importante''.
+
+\slidefig{img/GD/gd18-maslow}{La piramide dei bisogni di Maslow: i videogiochi toccano i tre gradini più alti.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:maslow}
+
+% ---------------------------------------------------------------------
+\section{Una digressione: la piramide di Maslow}
+\label{gd18:sec:maslow}
+
+\subsection{I cinque gradini}
+
+La \textbf{piramide di Maslow} (figura~\ref{gd18:fig:maslow}) è ``un metodo ormai molto
+blasonato'' per comunicare la \textbf{gerarchia dei bisogni umani}: più in alto si
+va, più il bisogno è motivante e trainante per la persona, ma i bisogni dei gradini
+precedenti devono essere già risolti. Il docente la percorre velocemente dal basso:
+\begin{enumerate}
+  \item \textbf{bisogni fisiologici}: respirare, bere, mangiare, avere un tetto sulla
+        testa, dormire (e dormire al sicuro), avere dei vestiti, il sesso e la
+        riproduzione;
+  \item \textbf{sicurezza}: sicurezza personale, avere introiti e quindi soldi da
+        spendere, un impiego, risorse in generale, la salute, la proprietà privata;
+  \item \textbf{amore e appartenenza}: amici, gruppi sociali, famiglia, intimità con
+        un partner, senso di connessione con altre persone;
+  \item \textbf{stima} (\emph{esteem}): essere riconosciuti dagli altri per il proprio
+        status, per ciò che si è e si fa; rispetto, forza, libertà, ``insomma stiamo
+        ampliando lo spettro'';
+  \item \textbf{autorealizzazione} (\emph{self-actualization}): cercare di diventare
+        la versione migliore possibile di sé. Non c'è un parametro: si tratta di
+        andare, nella propria vita, nella direzione che si desidera. ``Sarebbe bello
+        pensare che il fatto che voi siate qui in questo momento è per questa
+        direzione qui'': diventare la migliore versione di sé facendo il gioco dei
+        propri sogni. ``Io ancora non ci sono arrivato, quindi la strada è lunga.
+        Ognuno ha i propri metri di misura.''
+\end{enumerate}
+
+\subsection{Non è l'unico modello, e non spiega tutto}
+
+Prima di arrivare al punto della digressione, il docente premette che la piramide di
+Maslow \textbf{non è l'unico modo} di guardare ai bisogni umani. È consolidata perché
+ha una lunga storia di condivisione ed è probabilmente il primo risultato che si
+trova cercando ``bisogni umani''; ma non spiega tutto.
+
+Per dimostrarlo chiede in aula: quanti non hanno mai dormito una notte? Diverse mani
+si alzano, e il docente chiede il perché. Capita anche di non mangiare: lui stesso
+quel giorno ha pensato di saltare il pranzo per non perdere il treno (``per poco non
+ho perso il treno. Non è che giochi molto a mio favore questa storia, però è andata
+così''). Se in un certo momento si ritiene più importante un bisogno superiore e si
+considerano risolti quelli inferiori, allora il voler restare in contatto con altre
+persone, il voler giocare con altri o il voler giocare \textbf{al day one} a un gioco
+può \textbf{sovrascrivere} il bisogno di dormire o di mangiare. La teoria, per quanto
+condivisa, ha delle falle, ``come molte cose d'altronde''.
+
+Ci sono altri modelli. Il docente ne cita uno: i cosiddetti \textbf{bisogni
+``vitaminici''}, che vedono ciascuno di questi bisogni come una necessità
+vitaminica. Si va a dormire quando non ce la si fa più, o quando si ritiene di aver
+consumato abbastanza energie; non tutti mangiano a pranzo e a cena, c'è chi per
+lavoro o per altre necessità ha orari ``sballati''. Il punto è che \textbf{quando si
+ritiene che uno di questi bisogni si stia riducendo, ci si muove per risolverlo}.
+
+\subsection{Cibo, sesso e violenza}
+
+C'è poi un'altra osservazione, che tornerà. È vero che più in alto si va più i
+bisogni sono motivanti, ma ``rimaniamo delle bestie con i peli'': ci sono tre cose
+che non tanto muovono l'essere umano, quanto ne \textbf{catturano l'attenzione}:
+\textbf{il cibo, il sesso e la violenza}. Sesso e violenza, nota il docente, sono
+alla base di due delle industrie fondanti dell'umanità: la guerra e l'industria del
+sesso.
+
+\paragraph{Dead Space.} Quanti hanno giocato a \emph{Dead Space}? Qual è la cosa più
+memorabile? Gli studenti citano i necromorfi e i doppiaggi (``certamente i doppiaggi
+sono incredibili''); il docente cerca una scena che viene citata sempre, anche da chi
+non sa che viene da \emph{Dead Space}: la \textbf{scena dell'occhio} e
+dell'ago.\footnote{La scena in cui il protagonista deve infilarsi un ago nell'occhio
+è in \emph{Dead Space 2} (2011). Nella trascrizione la discussione è confusa e non si
+capisce se il docente la attribuisca al primo o al secondo capitolo.} È
+particolarmente memorabile perché si attacca a questo senso di \textbf{pericolo e di
+violenza}. È lo stesso motivo per cui esistono \emph{Postal}, \emph{Il Grezzo 2} ``o
+altri giochi che non citerò''; ed è il meccanismo su cui funziona \emph{Arancia
+meccanica}. Il docente mostra la scena avvisando chi è sensibile (``adesso si inizia
+a vedere l'ago'').
+
+\paragraph{Sesso e cibo.} Lo stesso vale per le scene di sesso in \emph{The Witcher}.
+Per il cibo, \emph{Cooking Mama} non è un grande esempio (``non è che sono
+particolarmente invitanti''), ma le grandi cucine di \emph{Final Fantasy} sì; e
+funziona anche nella vita di tutti i giorni: le pubblicità dei fast food con
+l'enorme panino.
+
+\paragraph{Trappole luccicanti, con un limite.} Tutte queste cose catturano
+l'attenzione: sono ``trappole molto luccicanti'', ma sono facili e \textbf{non si
+possono usare sempre}. La violenza non si può usare costantemente, altrimenti si
+riduce il \textbf{tasso di assorbimento}: una volta che attirano l'attenzione e la
+persona se ne rende conto, la loro efficacia si riduce notevolmente. È un tema che
+verrà ripreso al secondo anno.\footnote{Durante questa parte uno studente propone un
+esempio legato all'universo SCP (un metodo di contenimento particolarmente violento,
+forse da \emph{SCP -- Containment Breach}); la trascrizione è troppo frammentaria per
+ricostruirlo, e il docente stesso non conosce il caso.}
+
+\subsection{I tre gradini che i videogiochi toccano}
+
+Il punto della digressione: \textbf{i videogiochi possono toccare i primi tre
+gradini dall'alto} (figura~\ref{gd18:fig:maslow}).
+\begin{itemize}
+  \item \textbf{Autorealizzazione}: c'è chi la trova nei videogiochi tramite
+        l'\textbf{escapismo}, e non solo: c'è chi fa del giocare, in maniera
+        competitiva, la propria carriera.
+  \item \textbf{Amore e appartenenza}: il bisogno di relazionarsi con altri può
+        essere soddisfatto collaborando con persone vere o con NPC. Senza entrare in
+        discorsi complicati, c'è chi trova un sufficiente senso di connessione con un
+        NPC: si pensi alle \emph{romance}, o a \emph{Hatoful Boyfriend}, già visto a
+        lezione, il cui obiettivo è allacciare una relazione con un piccione; per
+        qualcuno può risolvere davvero un bisogno di appartenenza.
+  \item \textbf{Stima}: riconoscimento, status, rispetto.
+\end{itemize}
+Il discorso, precisa il docente, vale \emph{adesso}: nessuno dice che fra qualche
+anno giocando non ci si possa ``riempire la pancia''. È già borderline: praticando
+gli esport ad alti livelli si può avere un impiego; ma lì si esce dal gioco, pur
+restando dentro l'esperienza. Infine, mettersi nei panni di un altro per provare
+emozioni, sentirsi un pilota di Formula 1 o un cavalcatore di draghi, è ciò che si
+è visto come \textbf{esperienza vicaria}. Con la premessa che è un discorso
+circoscritto a questo modello, i videogiochi toccano e risolvono questi tre gradini.
+
+\slidefig{img/GD/gd18-motivazioni}{Le motivazioni di gioco di Quantic Foundry, divise in sei gruppi.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:motivazioni}
+
+% ---------------------------------------------------------------------
+\section{Le motivazioni di Quantic Foundry, riprese}
+\label{gd18:sec:quantic}
+
+Altri modelli categorizzano le necessità e le motivazioni umane in gruppi diversi.
+Uno è quello di \textbf{Quantic Foundry}, già incontrato nel
+capitolo~\ref{cap:ricerca-idee}, di cui il docente consiglia ``caldamente'' il talk
+alla GDC (a dicembre ne consiglierà altri). Le motivazioni sono raccolte in sei
+gruppi (figura~\ref{gd18:fig:motivazioni}): \textbf{action}, \textbf{social},
+\textbf{mastery}, \textbf{achievement}, \textbf{immersion} e \textbf{creativity}.
+Sono cose già viste, che vanno ricordate, ``perché poi questo inizia a diventare
+parte di un calderone molto importante''.
+
+Le slide mostrano anche le differenze di genere (il docente invita a ``lasciar
+perdere'' il genere) e le tre tabelle di \emph{gameplay analysis} già viste, con le
+preferenze agli estremi di ogni motivazione. Il punto su cui il docente insiste è
+un altro: le motivazioni sono uno \textbf{spettro}, e variano molto con la
+\textbf{demografica} e la \textbf{cultura}. Una persona europea, nord-europea, avrà
+tendenzialmente motivazioni più sviluppate di un'altra rispetto a un asiatico o a un
+americano. Il grafico Stati Uniti contro Cina (figura~\ref{gd18:fig:usa-cina})
+mostra per esempio che la Cina ricerca di più la \textbf{challenge}, mentre gli Stati
+Uniti hanno un percentile più alto nel \textbf{completamento}.
+
+\slidefig{img/GD/gd18-usa-cina}{Le motivazioni di gioco a confronto: Stati Uniti e Cina.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:usa-cina}
+
+E qui sta il problema. Persone diverse hanno necessità diverse e sono spinte da
+motivazioni diverse; finora si è visto come fare ricerca e ottenere dati, ma sono
+dati ``potenzialmente molto lontani l'uno dall'altro, difficili da correlare''. Se
+l'obiettivo è raggiungere un individuo ideale verso cui si crea il gioco, serve
+\textbf{un certo tipo di approssimazione}. Ed è questa approssimazione l'argomento
+della lezione.
+
+% ---------------------------------------------------------------------
+\section{Il metodo persona, in breve}
+\label{gd18:sec:persona}
+
+\slidefig{img/GD/gd18-persona}{Il metodo persona: un utente fittizio basato sul target audience.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:persona}
+
+Il \textbf{persona method} funziona molto bene e non si usa solo nell'industria dei
+videogiochi. Il docente lo tratterà meglio alla fine della lezione
+(sezione~\ref{gd18:sec:persona-finale}); per ora ne dà ``solo gli estremi''
+(figura~\ref{gd18:fig:persona}).
+
+\begin{definition}[Persona]
+Un \textbf{persona} è il profilo di un utente \textbf{fittizio}, costruito a partire
+dalla ricerca di pre-produzione sul target audience, verso cui si fa il gioco. Non è
+basato su una persona reale, \textbf{né sul designer}: è un'amalgama di tutto ciò
+che si sa del proprio target audience.
+\end{definition}
+
+Si parte dalla ricerca già fatta, tutta quella di pre-produzione, e si cerca di
+creare un vero e proprio ``pedigree'': il profilo di una persona ipotetica. Per
+farlo bisogna rispondere a ``un macello di domande'', tutte quelle già viste nella
+lezione sulla pre-produzione (i \textbf{nove perché}, capitolo~\ref{cap:ricerca-idee}):
+che età ha, che genere, che livello di cultura, qual è la sua routine, che tipo di
+famiglia, quanto tempo ha a disposizione, quanto gioca e quanto no, che cosa gli
+piace e che cosa no. Le slide insistono:
+\begin{quote}
+\emph{Details are EVERYTHING in the P.\ method}: dire che a lui o a lei piace
+studiare è generico. Che cosa gli piace studiare? Quando? Perché?
+\end{quote}
+
+Tutto questo deve essere basato sul target audience: non è una personalità e non è
+basato su un design, ``sempre per il discorso che voi fate un gioco per qualcun
+altro''. Una volta costruito il persona, \textbf{tutte le decisioni} di gioco
+rispetto alla vision dipendono da lui: da ciò che gli può piacere (\emph{likes}) e
+da ciò che non gli può piacere (\emph{dislikes}). Nel profilo devono esserci tutti i
+suoi \textbf{bisogni} e i suoi \textbf{problemi}, tutto ciò che definisce
+concretamente una persona: leggendone la scheda, lo si deve avere in testa.
+
+% ---------------------------------------------------------------------
+\section{La tassonomia di Bartle}
+\label{gd18:sec:bartle}
+
+\subsection{La favola della buonanotte dei designer}
+
+Ciò che interessa arrivare a vedere il più velocemente possibile è il \textbf{metodo
+dei player type}: approssimare i dati e \textbf{categorizzare archetipi di
+giocatori}. Il docente lo introduce come ``la storia della buonanotte dei
+designer''.
+
+Tanto tempo fa si cominciò a pensare a come approssimare gruppi di persone molto
+diverse in base a \emph{come} giocano e a \emph{che cosa cercano} nel gioco. Il
+``buon avventuriero'' \textbf{Richard Bartle} esaminò i \textbf{multi-user dungeon},
+i cosiddetti \textbf{MUD}: giochi ormai scomparsi, antenati di quelli che oggi
+sarebbero i giochi con enormi quantità di utenti attivi.\footnote{Il docente dice
+``quello che in tempi moderni sarebbero i MOBA''. I MUD sono giochi di ruolo
+testuali multigiocatore in tempo reale; i loro eredi diretti sono più propriamente i
+MMORPG.} A partire da ciò che i giocatori facevano nel gioco, e compilando un
+profilo degli utenti con un \textbf{survey}, una serie di domande, Bartle divise i
+giocatori in \textbf{quattro categorie}. Sono queste le quattro categorie da cui
+parte tutto il resto della lezione, per arrivare a qualcosa di molto più grande: un
+\textbf{modello di approssimazione dell'utenza} che possa guardare gli stessi tipi
+di giocatori da più punti di vista. È ciò che si fa con i framework: unire più modi
+di vedere gli stessi giocatori. Diego\footnote{Diego Ricchiuti, autore delle slide
+del corso di \emph{design methods}.} lo chiama \textbf{modello prismatico};
+precedentemente veniva chiamato \textbf{modello unificato}: diverse facce di un
+prisma, che guardano sempre la stessa cosa.
+
+Il docente mostra il \textbf{paper} di Bartle e lo condivide su Zoom (chiedendo a
+Federica di girarlo agli altri), insieme al \textbf{test} per i più curiosi:
+``chiaramente è molto brutto da vedersi''. La slide, invece, ``è già bella,
+vestita''.\footnote{Il paper è Richard Bartle, \emph{Hearts, Clubs, Diamonds,
+Spades: Players Who Suit MUDs}, 1996. Il test online che ne deriva è il cosiddetto
+\emph{Bartle Test of Gamer Psychology}.}
+
+\slidefig{img/GD/gd18-bartle}{La tassonomia di Bartle: gli assi agire/interagire e giocatori/mondo, e i quattro tipi.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:bartle}
+
+\subsection{Gli assi e i quattro tipi}
+
+Bartle disegna il suo modello su due assi (figura~\ref{gd18:fig:bartle}):
+\begin{itemize}
+  \item un asse va da \textbf{acting} (agire) a \textbf{interacting} (interagire).
+        ``A mio modesto avviso, opinione personalissima'', la cosa importante non è
+        l'\emph{interacting} in sé, ma l'\textbf{interacting with}, e dall'altra
+        parte non l'\emph{acting} ma l'\textbf{acting on}: già la preposizione dice
+        qualcosa del giocatore;
+  \item l'altro asse va dai \textbf{players} (gli altri giocatori) al
+        \textbf{world} (il mondo di gioco).
+\end{itemize}
+Dalle risposte alle domande di Bartle emergono quattro tipi di giocatori:
+\begin{itemize}
+  \item i \textbf{killer}: \emph{acting on players};
+  \item gli \textbf{achiever}: \emph{acting on world};
+  \item gli \textbf{explorer}: \emph{interacting with world};
+  \item i \textbf{socializer}: \emph{interacting with players}.
+\end{itemize}
+
+\paragraph{I colori.} La slide aggiunge un passo successivo ``per far quadrare i
+conti'': un colore per tipo. I \textbf{killer sono rossi}, gli \textbf{achiever
+blu}, gli \textbf{explorer verdi}, i \textbf{socializer gialli}. Bartle non li aveva
+categorizzati così, ma con i \textbf{semi delle carte} (``picche, quadri, fiori e
+l'altro, che non ricordo'');\footnote{I quattro semi del titolo del paper: gli
+achiever sono i quadri ($\diamondsuit$), gli explorer le picche ($\spadesuit$), i
+socializer i cuori ($\heartsuit$) e i killer i fiori ($\clubsuit$). Si veda anche
+Jesse Schell, \emph{The Art of Game Design}, capitolo 9.} siccome è potenzialmente
+confusionario, il docente consiglia di restare legati alla colorazione delle slide e
+di usarla in futuro anche per eventuali \emph{color coding} legati ai player type,
+nella documentazione e non solo.
+
+\paragraph{L'iconografia.} Non è l'unico modo di rappresentarli. Cercando
+``Bartle taxonomy'' si trovano illustrazioni ricorrenti: i killer con le pistole, i
+socializer ``bonaccioni'' che parlano e comunicano, l'explorer come grande
+esploratore con la lente d'ingrandimento, l'achiever con la sacca di soldi o i
+trofei.
+
+\subsection{Chi sono}
+
+\paragraph{Killer: agire sui giocatori.} L'obiettivo dei killer è avere
+\textbf{potere} e usarlo contro gli altri: impattare gli altri, modificare il modo
+in cui agiscono nel gioco, \textbf{interferire} con il funzionamento del mondo di
+gioco o con l'esperienza degli altri giocatori. All'estremo, vogliono ``mettere i
+bastoni tra le ruote'' agli altri. Questo comporta una serie di emozioni e di
+necessità specifiche, ma basta sapere che l'obiettivo ultimo è \textbf{agire sugli
+altri giocatori}. E lo fanno \textbf{a prescindere dalle regole}: a ogni costo,
+anche uscendo dal gioco (non nel senso di ``bruciare la casa alle persone'', ma
+usando \emph{cheat} o metodi paralleli).
+
+\paragraph{Achiever: agire sul mondo.} L'achiever agisce sul mondo
+\textbf{secondo le regole} del mondo di gioco: resta dentro i suoi confini, e quei
+limiti, nella sua testa, lo tutelano. Il suo obiettivo è \textbf{accumulare
+sicurezza} e \textbf{status}: accumulare tutto l'ottenibile nel mondo di gioco. Qui
+ricadono i \textbf{completisti}, il cui obiettivo è ottenere tutti i trofei (``quella
+è la sicurezza''), e chi fa \textbf{grinding}: livellare, ottenere parti di mostro
+rare ripetendo continuamente la stessa missione.
+
+\paragraph{Explorer: interagire con il mondo.} Molto simile, ma con una differenza
+chiave: se il guadagno principale dell'achiever è fisico, dentro il mondo di gioco,
+quello dell'explorer è \textbf{mentale}. L'achiever guadagna oggetti, l'explorer
+guadagna \textbf{informazioni}. Vuole sapere \textbf{come funziona} il mondo di
+gioco: che cosa porta un bioma, che cosa porta il bioma innevato, che cosa si può
+fare combinando oggetti o abilità, se una torcia accesa sotto un acquazzone o sotto
+una cascata si spegne o no.
+
+\paragraph{Socializer: interagire con i giocatori.} L'obiettivo del socializer è
+\textbf{giocare insieme}: il gioco di gruppo, fare party, comunicare con altre
+persone, potenzialmente anche fare \emph{role playing}; in generale conoscere altre
+persone, o conoscere la storia di altri NPC.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{@{}p{0.14\textwidth}p{0.2\textwidth}p{0.08\textwidth}p{0.48\textwidth}@{}}
+\toprule
+\textbf{Tipo} & \textbf{Asse} & \textbf{Colore} & \textbf{Definizione (slide)} \\
+\midrule
+Killer & acting on players & rosso & interferiscono con il funzionamento del mondo
+di gioco o con l'esperienza degli altri giocatori \\
+Achiever & acting on world & blu & accumulano status battendo le sfide del mondo di
+gioco basate sulle regole \\
+Explorer & interacting with world & verde & scoprono i sistemi che fanno
+funzionare il mondo di gioco \\
+Socializer & interacting with players & giallo & stringono relazioni con altri
+giocatori o con NPC \\
+\bottomrule
+\end{tabular}
+\caption{I quattro tipi di Bartle.}
+\label{gd18:tab:bartle}
+\end{table}
+
+\subsection{Una domanda: i cheater sono killer?}
+
+Uno studente chiede se chi usa i cheat in \emph{GTA} ricada nei killer, e perché lo
+faccia chi bara in un gioco dove poi gli altri ``muoiono''.\footnote{La domanda è
+trascritta in modo molto confuso; il senso ricostruibile è questo.} ``Dipende, perché
+questa è una bella domanda'', e porta a un punto fondamentale:
+\begin{quote}
+Nessuno è veramente una sola di queste cose, e spesso noi cambiamo il player type a
+seconda del gioco di riferimento.
+\end{quote}
+La domanda da farsi è \textbf{perché il giocatore usa quel mezzo}. Il motivo per cui
+si è parlato di motivazioni è proprio questo: bisogna capire che cosa cerca il
+giocatore.
+
+\paragraph{L'amico degli achievement.} Il docente ha un amico ossessionato dagli
+achievement e dal battere ogni record (``sono sicuro che è entrambe queste due
+cose''). In \emph{Mirror's Edge} alcuni achievement non sono più ottenibili, perché
+hanno chiuso i server; lui se li è sbloccati con i cheat in dieci minuti. Perché?
+``Per dormire tranquillo la notte.'' L'azione in sé (barare) è più legata al killer;
+ma \textbf{l'azione, la meccanica, ci dice poco dei giocatori}: ciò che ci dice
+qualcosa è \textbf{come la uso e perché}. Se l'obiettivo è ottenere tutti gli
+achievement, si è probabilmente nel regno dell'achiever.
+
+\paragraph{I cheat dell'explorer.} Allo stesso modo, c'è chi usa i cheat (per
+esempio in \emph{Monster Hunter} o in \emph{Dark Souls})\footnote{Nella trascrizione:
+``Mostrante''; la lettura \emph{Monster Hunter} è probabile ma non certa.} per capire
+dove si appiattisce la \textbf{curva delle statistiche}: per fare il
+\textbf{min-maxing} di cui si è parlato la volta scorsa, cioè capire quando diventa
+meno efficiente investire punti in forza, visto che l'aumento di una statistica è
+proporzionalmente sempre meno vantaggioso. Oppure per guardare le animazioni e
+vedere esattamente in quale frame c'è l'invincibilità, o per studiare le interazioni
+dei \emph{Sims}. Usare strumenti alternativi per ottenere informazioni può ricadere
+nel campo dell'explorer. ``Nessuno è solamente socializer, nessuno è solamente
+achiever.''
+
+\slidefig{img/GD/gd18-bartle-intenti}{Le sottocategorie di Bartle: intento esplicito e implicito.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:bartle-intenti}
+
+\subsection{Prima lettura: intento esplicito e implicito}
+
+La tassonomia si può guardare da diversi punti di vista. Il primo è quello
+dell'\textbf{intento esplicito o implicito} (figura~\ref{gd18:fig:bartle-intenti}),
+che dà a ogni tipo due sottotipi con nomi propri.\footnote{È la suddivisione che
+Bartle stesso propone nel suo modello a otto tipi, in \emph{Designing Virtual Worlds}
+(2003).} Di nomi, avverte il docente, se ne vedranno ``davvero tanti''. Nel lavoro
+con il team, di solito, per semplicità si usano i \textbf{nomi classici}: dire
+``killer'' significa usare il nome di Bartle, ma portandosi dietro tutto ciò che si
+dice da qui in avanti (politician e griefer ricadono comunque lì dentro). Se poi
+interessa un frammento specifico (per esempio la grossa reputazione del politician),
+si cita il sottotipo. Quando si categorizza un gioco, si individuano i player type
+principali o si discute tra designer se una meccanica piaccia al target audience, ci
+si appoggia ai nomi classici. ``Tuttavia, non dimenticate tutti gli altri'': è il
+motivo stesso di questa lezione.
+
+\begin{description}
+  \item[Killer.] \textbf{Politician} (esplicito): vuole una grossa
+        \emph{buona} reputazione, a tutti i costi. \textbf{Griefer} (implicito): il
+        suo vago obiettivo è una grossa \emph{cattiva} reputazione. Sono l'uno
+        l'opposto dell'altro, ma con lo stesso risultato: essere riconosciuti, essere
+        visti, avere un impatto sugli altri. Il griefer è ``quello che trolla'': non
+        vuole vincere né ottenere il risultato che il designer vuole; vuole vedere il
+        compagno piangere, la persona soffrire, gli anni di lavoro di un giocatore di
+        \emph{Minecraft} andare in fumo. Vuole quel potere, applicato sugli altri.
+  \item[Achiever.] \textbf{Planner} (esplicito): si pone un obiettivo e punta a
+        raggiungerlo; ``lista di obiettivi e si va''. Una meccanica che si sposa bene
+        con l'achiever è un \textbf{set di goal chiaro}: il completista, quando deve
+        completare un gioco, guarda la lista degli achievement, che cosa c'è da fare e
+        come si fa. \textbf{Opportunist} (implicito): si guarda intorno in cerca di
+        cose da fare, ma non sa quali siano finché non le trova.
+  \item[Explorer.] \textbf{Scientist} (esplicito): è metodico nell'acquisire
+        conoscenza, ha una lista di metodi, ``esattamente come funziona il metodo
+        scientifico'': testa una serie di cose finché le sue ipotesi non sono
+        validate o confutate. \textbf{Hacker} (implicito): ha una comprensione
+        \textbf{intuitiva} del mondo virtuale, senza bisogno di testare le sue idee:
+        in un sandbox prova una soluzione perché ``sicuramente acqua e fuoco non vanno
+        bene insieme'', o perché ``magma e acqua creano un nuovo tipo di materiale e
+        ci posso costruire''.
+  \item[Socializer.] \textbf{Networker} (esplicito): cerca e \emph{valuta} le
+        persone con cui vale la pena stare, i gruppi di amici con cui stare insieme.
+        \textbf{Friend} (implicito): gode semplicemente della compagnia degli altri.
+\end{description}
+
+\slidefig{img/GD/gd18-bartle-sp-mp}{I tipi di Bartle in single player e in multiplayer.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:bartle-sp-mp}
+
+\subsection{Seconda lettura: single player e multiplayer}
+
+Il secondo punto di vista è \textbf{single player} contro \textbf{multiplayer}
+(figura~\ref{gd18:fig:bartle-sp-mp}).
+
+\paragraph{Killer.} In single player l'obiettivo è \textbf{dominare l'intelligenza
+artificiale} e il mondo di gioco. Qui si vede che, a seconda di ciò che si osserva,
+killer e achiever possono avere lo stesso obiettivo: essere \textbf{primi nella
+leaderboard} è ``comune e goloso'' per entrambi. La differenza è \emph{come} lo si
+ottiene: il killer fa qualsiasi cosa, anche barare, anche agire disonestamente;
+l'achiever è agonistico, sviluppa la mastery dei sistemi e diventa il migliore
+perché ``ha sudato, perché si è allenato'', e il numero uno è la conseguenza dei suoi
+sforzi. Il multiplayer è invece ``il sale della vita del killer'': dominare le IA può
+essere semplice, ma la sfida più grande, perché imprevedibile, sono i
+\textbf{giocatori}. Misurare le proprie abilità contro un altro giocatore, il
+\emph{thrill of the hunt}, cacciarli, tracciarli, l'impulso di imporsi. È
+esattamente ciò che offrono \emph{Dead by Daylight}, \emph{Evolve} e in parte
+\emph{Among Us}: il killer vuole essere il \emph{big bad boy}, l'aggressore,
+l'assassino, perché ha più potere. È una situazione impari in cui l'assassino ha più
+strumenti e può letteralmente togliere dalla partita gli altri giocatori.
+
+\paragraph{Achiever.} In single player: ottenere tutto ciò che si può ottenere, il
+\textbf{100\%} del gioco; in generale avere un obiettivo e risolverlo metodicamente,
+per esempio con il grinding. In multiplayer: arrivare primo, e soprattutto
+\textbf{mostrare} i propri ottenimenti. Nella relazione tra achiever e socializer,
+di cui parla lo stesso Bartle, conta tutto ciò che l'achiever ha ottenuto e può
+esibire: il banner, il mantello esclusivo del dicembre 2012, la skin unica del
+carnevale di Rio 2002, ``questa roba una tantum che non può più essere ottenuta''.
+Per l'achiever è importante farla vedere; la slide aggiunge che si rivolge ai
+socializer per riceverne lodi.
+
+\paragraph{Explorer.} In single player: tutto ciò che è \textbf{osservabile,
+tracciabile e narrabile, coerentemente}; il \emph{backstory}, la \emph{lore}. Qui c'è
+un altro punto di contatto, ``molto pericoloso'': come quello tra killer e achiever è
+il diventare numero uno, quello tra explorer e socializer è \textbf{la storia, la
+narrativa}. Si distingue così: se si parla di qualcosa di altamente regolamentato,
+della lore, è explorer. Molti giocatori di \emph{Dark Souls} uniscono i puntini della
+lore come davanti alla classica lavagna investigativa (``questo è capitato prima,
+questo è capitato dopo''): il presupposto è che il mondo sia \textbf{coerente}, e
+l'obiettivo è muoversi entro le sue regole. Il godere della trama, del
+\textbf{dramma}, invece, ricade nel socializer: il dramma sociale, la storia per il
+gusto di vedere qualcosa di narrato. In multiplayer l'explorer cerca nuovi contenuti
+e \textbf{guida gli altri} verso i segreti, condivide le informazioni, usa gli altri
+giocatori come perno (non è detto: potrebbe anche essere a cavallo tra killer ed
+explorer).
+
+\paragraph{Socializer.} Il multiplayer è il suo ambiente naturale: come per il killer
+il multiplayer offre la preda definitiva, un giocatore imprevedibile, per il
+socializer offre \textbf{l'amico definitivo}, una persona che risponde socialmente
+ai suoi stimoli e viceversa, con un potenziale quasi illimitato di nuove relazioni.
+In single player cerca l'esperienza di comunità (forum, wiki) o la
+\textbf{simulazione di relazioni}: non necessariamente il dramma in sé, ma
+spiccatamente il \textbf{dramma sociale}. \emph{The Last of Us} o il nuovo \emph{God
+of War}, in cui si gioca nei panni di una persona in relazione con un altro NPC,
+``figlio adottivo o meno'', sono spiccatamente da socializer. E anche \emph{The Sims}
+o \emph{Tomodachi Life}, in cui si costruiscono relazioni sociali: ``più persone,
+meglio è''.
+
+\subsection{Una domanda: a che cosa serve?}
+
+Uno studente chiede, per avere chiaro dove si sta andando: la tassonomia definisce
+un giocatore rispetto a un determinato gioco, o il modo in cui un giocatore
+approccia i giochi in generale? ``Possono essere entrambe le cose''; l'obiettivo
+finale si può usare in diverse maniere, e lo si vedrà alla fine della lezione. Ma già
+ora, con i dati presi in pre-produzione, si può individuare \textbf{dove è
+posizionato il proprio target audience} (non necessariamente tutti killer: una
+percentuale di killer, una di explorer\dots), e anche dove sono posizionati i
+\textbf{competitor}: quali meccaniche hanno, come vengono usate e a quale player type
+sono dirette. Questo dà già una direzione. Un altro modo d'uso è la soluzione dei
+problemi: davanti a un problema che richiede una soluzione creativa, ci si chiede
+\textbf{a quale di questi tipi piacerebbe}. Se il target è l'achiever, che cerca una
+lista di cose da fare, probabilmente un \textbf{quest log esplicito} gli sarà molto
+utile.
+
+Il docente chiede un minuto per andare a riempire la borraccia, ``giusto per non
+morire''.\footnote{La breve pausa è riempita, nella trascrizione, dalle solite frasi
+in loop; al ritorno qualcosa si blocca nella condivisione (``siamo fregati\dots
+completamente bloccato''), poi la lezione riprende.}
+
+% ---------------------------------------------------------------------
+\section{I temperamenti di Keirsey}
+\label{gd18:sec:keirsey}
+
+\slidefig{img/GD/gd18-keirsey}{I quattro temperamenti di Keirsey.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:keirsey}
+
+\subsection{Gli assi di Bartle, cambiati}
+
+Un altro modo di vedere la questione, e normalmente sarebbero modelli distinti:
+\textbf{David Keirsey} parte dagli assi di Bartle e li cambia, cercando di arrivare
+allo stesso risultato (figura~\ref{gd18:fig:keirsey}).\footnote{David Keirsey,
+\emph{Please Understand Me II: Temperament, Character, Intelligence}, 1998. Nella
+trascrizione il nome è reso come ``Chirsey'', ``Kirsey'' o ``Kirsten''.}
+\begin{itemize}
+  \item invece di \emph{acting on} c'è \textbf{esterno} (\emph{externals});
+  \item invece di \emph{interacting with} c'è \textbf{interno} (\emph{internals});
+  \item invece di \emph{players} c'è \textbf{cambiamento} (\emph{change});
+  \item invece di \emph{world} c'è \textbf{struttura} (\emph{structure}).
+\end{itemize}
+Questo rende i due framework \textbf{complementari}, e soprattutto ha portato
+all'\textbf{espansione}: a cercare quali altre visioni e modelli si potessero
+integrare, appoggiandosi alla tassonomia di Bartle per avere uno spettro più ampio
+di definizione dei target audience.
+
+\subsection{I quattro temperamenti}
+
+\paragraph{Artisan (SP, \emph{sensing + perceiving}).} Corrisponde al killer.
+Cambiamento \textbf{esteriore}: vuole apportare un cambiamento al di fuori di sé.
+Cerca le \textbf{sensazioni}: l'adrenalina, la ricerca ``spasmodica'' del picco
+emotivo, le grandi emozioni, l'\emph{excitement}. L'\emph{action} di Quantic Foundry
+è del killer, ``non unicamente, ma principalmente''. È realistico, \textbf{tattico}
+(a breve termine), manipolativo, focalizzato sull'azione e sulle sensazioni.
+
+\paragraph{Guardian (SJ, \emph{sensing + judging}).} Corrisponde all'achiever.
+Cerca una \textbf{struttura esteriore}, cioè le leggi e i limiti del gioco, e gioca
+entro i limiti imposti. Pratico, logistico, organizzato, attento al dettaglio,
+possessivo, concentrato sui processi; la sua ricerca principale è la
+\textbf{sicurezza}, ottenuta raggiungendo tutti gli obiettivi, ragionando dentro i
+limiti del gioco, accumulando risorse. L'obiettivo finale dell'achiever è
+\textbf{avere}; quello del killer, \textbf{fare}.\footnote{Il docente, a voce,
+contrappone il guardian ``strategico'' all'artisan ``tattico''; nelle slide e nella
+tabella del modello prismatico (tabella~\ref{gd18:tab:prismatico}) il guardian è
+\emph{logistical} e lo \emph{strategic} è il rational.}
+
+\paragraph{Rational (NT, \emph{intuition + thinking}).} Corrisponde all'explorer.
+\textbf{Struttura interna}: vuole avere chiara, mentalmente, la struttura del gioco.
+Innovativo, logico, scientifico, orientato al futuro, focalizzato sui risultati;
+cerca la \textbf{conoscenza} (\emph{knowledge}). Non a caso, una cosa spiccatamente
+apprezzata dagli explorer sono i \textbf{puzzle}, perché un puzzle è generalmente un
+\textbf{problema di percezione}.
+
+\paragraph{Idealist (NF, \emph{intuition + feeling}).} Corrisponde al socializer. Il
+suo obiettivo è \textbf{modificare sé stesso}: attraverso la relazione con gli
+altri scopre qualcosa di sé, cresce, evolve. Immaginativo, \textbf{diplomatico} (se
+l'artisan cerca sempre il conflitto, l'idealist cerca la diplomazia, la pace),
+emotivo, orientato alle relazioni, concentrato sulle persone; cerca
+l'\textbf{identità}, in sé stesso e negli altri: scoprire gli altri è il metodo, e il
+metro, per capire sé stessi.
+
+I temperamenti di Keirsey si sovrappongono uno a uno con i tipi di Bartle, ``anche
+perché Keirsey lì arriva''.
+
+\subsection{Le sedici personalità}
+
+Prima di andare avanti, il docente allinea un altro elemento che fa già parte del
+framework: le \textbf{sedici personalità}.\footnote{Le sedici combinazioni del
+\emph{Myers-Briggs Type Indicator} (MBTI), su cui si basano i temperamenti di
+Keirsey: ogni temperamento ne raccoglie quattro.} Non sono nate per questo, ma
+``fortunatamente'' sono divisibili per quattro, e si possono inserire nella
+tassonomia di Bartle. Gli studenti dovrebbero averle fatte durante il colloquio; il
+docente è \textbf{Advocate}.
+
+\slidefig{img/GD/gd18-bartle-keirsey}{Bartle e Keirsey sovrapposti: gli assi uniti e le quattro combinazioni.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:bartle-keirsey}
+
+\subsection{Bartle-Keirsey}
+
+Sovrapponendo i due modelli (figura~\ref{gd18:fig:bartle-keirsey}), con gli assi di
+Bartle sotto e quelli di Keirsey sopra, emergono i punti in comune:
+\begin{description}
+  \item[Artisan/Killer.] Manipolatori, che vogliono solo dimostrare la propria
+        \textbf{superiorità} sugli altri esseri umani, e in ultimo in generale:
+        arrivare primi, avere il tempo migliore, uccidere tutti, mettere i bastoni tra
+        le ruote, essere l'ultimo vivo.
+  \item[Guardian/Achiever.] Il mondo è un posto molto \textbf{insicuro}, quindi la
+        sicurezza passa per l'\textbf{accumulo materiale}, potenzialmente anche
+        competendo con gli altri per risorse percepite come scarse. E una risorsa può
+        essere la prima posizione, che è una sola; in qualsiasi multiplayer la prima
+        posizione è legata a ottenimenti materiali (il banner della stagione, i soldi,
+        la valuta di gioco). Ma anche gli achievement: completare un gioco, per
+        alcuni, è il 100\% degli achievement.
+  \item[Rational/Explorer.] Cercano l'\textbf{ordine dietro i dati grezzi}: capire
+        che cosa c'è dietro il velo del gioco, conoscere le meccaniche, i sistemi, come
+        si relazionano tra loro, il sistema come un tutto.
+  \item[Idealist/Socializer.] Vogliono giocare con l'altra persona, stare insieme
+        agli altri, capirli e, in ultimo, creare \textbf{relazioni soddisfacenti} e
+        durature.
+\end{description}
+Il docente chiede se è tutto chiaro; manca ancora un pezzo. Finora si è parlato
+degli \textbf{estremi}, mai delle vie di mezzo: chi è a metà tra explorer e
+socializer, o tra socializer e achiever?
+
+% ---------------------------------------------------------------------
+\section{Il modello demografico di Bateman}
+\label{gd18:sec:bateman}
+
+\slidefig{img/GD/gd18-bateman}{Il modello demografico DGD1 di Chris Bateman, con i tipi intermedi.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:bateman}
+
+\subsection{I tipi intermedi}
+
+I player type ``a metà'' sono quelli di \textbf{Chris Bateman}, autore di
+\emph{21st Century Game Design}, il libro che il docente aveva consigliato
+(capitolo~\ref{cap:introduzione-game-design}). Il suo \textbf{Demographic Game
+Design Model} (DGD1, figura~\ref{gd18:fig:bateman}) colloca sul quadrato di
+Bartle-Keirsey i tipi intermedi:
+\begin{description}
+  \item[Conqueror] (strategico-logistico, tra rational/explorer e guardian/achiever):
+        associato alla \textbf{sfida} e alla ricompensa emotiva del \emph{fiero}; è
+        molto paziente con la frustrazione, perché sa che, se insiste, può vincere.
+  \item[Manager] (strategico-tattico): associato alla \textbf{mastery} e ai
+        \textbf{sistemi}. Per chi preferisce questo stile la vittoria sembra il segno
+        di aver acquisito le abilità necessarie, non un fine in sé; è bravo a gestire
+        più fattori in parallelo.
+  \item[Wanderer] (diplomatico-tattico, tra idealist/socializer e
+        artisan/killer):
+        associato all'\textbf{esperienza} e all'\textbf{identità}. La sfida non è
+        particolarmente desiderata: l'obiettivo è godersi esperienze uniche e
+        interessanti.
+  \item[Participant] (diplomatico-logistico): associato alle \textbf{emozioni} e al
+        \textbf{coinvolgimento}. Sembra più felice quando gioca con altre persone, ma
+        apprezza anche giochi radicati nell'emozione.
+\end{description}
+Lo schema aggiunge due tipi lungo i lati: \textbf{Hardcore}
+(diplomatico-strategico, sul lato \emph{internals}) e \textbf{Casual}
+(tattico-logistico, sul lato \emph{externals}), e accanto a ogni tipo le quattro
+sigle delle sedici personalità che vi ricadono.
+
+\subsection{Un disclaimer: il casual di oggi}
+
+Il grande vantaggio di Bateman, e il motivo per cui il docente lo mostra, è
+\textbf{aprire la mente ai tipi intermedi}, che è il dubbio che forse stava già
+emergendo in qualcuno. Ma alcuni tipi sono ``vecchiotti, con tutto rispetto''.
+L'esempio è proprio il \textbf{casual}, a cavallo tra killer e achiever,
+tattico-logistico: non è il casual gamer del 2026; deriva da un mercato e da un tipo
+di giocatore che non c'è più (o meglio, c'è, ma è un altro tipo di giocatore).
+
+Chi sarebbe il casual gamer di oggi? Il docente lo chiede alla classe. ``Mia zia che
+gioca a \emph{Clash of Clans}'', risponde uno studente. ``Certo, ma tua zia che gioca
+a \emph{Clash of Clans} difficilmente la vedo come killer-achiever.'' Bisogna capire
+dove si colloca: forse socializer-achiever, forse explorer-achiever, ``sicuramente
+non killer''. E chi gioca a \emph{FIFA}? È un altro discorso: i giocatori di
+\emph{FIFA} starebbero forse lì, a seconda dell'obiettivo. Il casual di Bateman è
+tattico-logistico perché la stragrande maggioranza del mercato, a quel tempo, era
+fatta di giocatori di \textbf{FPS}, che sono esattamente killer-achiever:
+\emph{Gears of War}, \emph{Call of Duty}, \emph{Halo}, ``siamo esattamente qua''.
+
+Anche gli altri vanno letti con cautela. Il \textbf{Wanderer}, o il \emph{lone wolf}
+secondo un altro framework, è una persona in solitario: si pensi a Gandalf, ``a metà
+tra grigio e bianco'', che fa le sue camminate da solo e ogni tanto fa parte della
+Compagnia, ogni tanto no. E anche l'\textbf{hardcore} non è più ciò che era: forse
+oggi starebbe altrove. L'obiettivo principale, ripete il docente, è avere chiaro in
+testa che si tratta di uno \textbf{spettro}: ci sono persone con più o meno
+predilezione per un archetipo, ma a cavallo tra due, o tra tre.
+
+\paragraph{Approfondimento: hardcore e casual nel DGD1.} Nel libro di Bateman e
+Boon,\footnote{Chris Bateman, Richard Boon, \emph{21st Century Game Design}, 2005,
+capitolo 4.} i quattro tipi del DGD1 nascono incrociando i dati sulle preferenze di
+gioco con le sedici personalità: Conqueror (TJ: ISTJ, INTJ, ESTJ, ENTJ), Manager (TP),
+Wanderer (FP) e Participant (FJ). Gli autori avvertono che vanno letti come un
+\emph{continuum} e non come caselle rigide, e che non si escludono a vicenda. La
+distinzione tra hardcore e casual è definita per comportamenti: l'hardcore compra e
+gioca molti giochi, ama sessioni lunghe, sfida, progressione e mastery, tollera
+controlli complessi e vive il gioco come uno stile di vita; il casual compra meno
+giochi (quelli popolari o consigliati dagli amici hardcore), gioca a sessioni brevi,
+preferisce divertirsi o immergersi in un'atmosfera, vuole controlli semplici e vede
+il gioco come un passatempo, come la TV o i film. È la definizione che, vent'anni
+dopo, il docente invita ad aggiornare.
+
+% ---------------------------------------------------------------------
+\section{Il modello prismatico}
+\label{gd18:sec:prismatico}
+
+\subsection{Allargare Bartle, con giudizio}
+
+Bartle, Keirsey e Bateman (soprattutto gli ultimi due) hanno costruito sulle
+fondamenta di Bartle. Ma il modello di Bartle ha un elemento fondante
+\textbf{indiscutibile}: gli archetipi sono \textbf{quattro}. È il motivo per cui le
+sedici personalità si sposano così bene, perché sono divisibili per quattro; ma non
+vale per tutto. L'intento è nobile (allargare il framework per avere più punti di
+vista sullo stesso player type), ma non sempre è possibile, e a volte è
+\textbf{forzato}.
+
+Qui ``rientra il come volete vederla voi''. Uno strumento in più è probabilmente
+molto utile a un designer, a maggior ragione se si sposa con ciò che vuole fare e
+con ciò che sente; ma deve essere \textbf{attinente} a ciò che fa e a come lo usa. Da
+qui in avanti si vedono altri modi di integrare la tassonomia di Bartle, che portano
+al modello unificato, o prismatico, ``potete chiamarlo come volete'': unire più cose
+per avere una visione più ampia. Ciò \textbf{non} significa sposarle tutte. Molti di
+questi modelli vengono dalla psicologia, addirittura dall'economia o dalla gestione
+aziendale (Gallup, Covey\dots); alcune definizioni, per un singolo archetipo, sono
+molto vantaggiose, altre meno. Dipende da quante cose si vogliono inserire e da
+quanta ampiezza si vuole dare al framework. Un punto, però, non è negoziabile:
+\begin{quote}
+Voi partite da Bartle e dovete saperlo a memoria. [\dots] Quanto espanderlo, cosa
+utilizzare, rimane a voi. Tuttavia, prima, come sempre, cercate di masterare le
+basi.
+\end{quote}
+
+\slidefig{img/GD/gd18-caillois}{Le quattro categorie di gioco di Caillois: agon, alea, mimicry, ilinx.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:caillois}
+
+\subsection{Caillois: agon, alea, mimicry, ilinx}
+
+Nel modello unificato si è andati a prendere anche il ``buon vecchio''
+\textbf{Roger Caillois}, francese del secolo scorso (il docente esita sul nome, poi
+lo trova): a dimostrazione che si possono prendere teorie e scritti anche
+\textbf{precedenti} a Bartle e incastrarli nel framework. Caillois è l'autore de
+\emph{I giochi e gli uomini},\footnote{Roger Caillois, \emph{Les jeux et les
+hommes}, 1958.} che prima distingue il gioco regolato e il gioco sregolato
+(\emph{ludus} e \emph{paidia}, ``non facciamo il discorso generale''), e poi divide
+la ricerca e la motivazione nel gioco in quattro categorie
+(figura~\ref{gd18:fig:caillois}). Al docente Caillois piace particolarmente, e
+``sposa molto la causa'' di integrare queste quattro categorie; ma potrebbe non
+valere per tutti, anche perché Caillois tratta gli \textbf{estremi}.
+
+\begin{description}
+  \item[Agon.] Lo sforzo fisico, tutto ciò che è \textbf{agonistico}: pugilato,
+        calcio, basket. Il senso agonistico del raggiungere il primato con tanta
+        fatica, la mastery dei sistemi, la strategia. L'esempio sono gli
+        \textbf{scacchi}: un gioco che si dice simmetrico (anche se non esattamente,
+        perché uno muove prima dell'altro) perché le risorse sono uguali per
+        entrambi. Non si possono potenziare o personalizzare i pezzi (l'unica
+        eccezione è la promozione); non si può decidere prima della partita di
+        giocare con tre cavalli mentre l'altro gioca con quattro torri; non si
+        draftano i pezzi né si pesca una carta a caso. È un gioco spiccatamente
+        agonistico.
+  \item[Alea.] L'\textbf{aleatorietà}: tutto ciò che è imprevedibile, la fortuna, il
+        pescare, il lancio dei dadi, la lotteria. Caillois ragiona anche sugli
+        estremi e su come la società integra questi elementi: l'alea portata
+        all'estremo, la sua disfunzione, è la \textbf{ludopatia}.
+  \item[Mimicry (o mimesis).] \textbf{Mettere una maschera}: il
+        \emph{make-believe}, l'impersonazione di qualcos'altro, regolata. GDR,
+        teatro, giochi di finzione. La disfunzione è la dissociazione della
+        personalità: non necessariamente personalità multiple, ma il mettere
+        costantemente una maschera, avere maschere sociali molto diverse in contesti
+        diversi.
+  \item[Ilinx.] La \textbf{vertigine}: voler cercare emozioni forti, il rischio per
+        la vita, gli sport estremi, il funambolo. L'estremo è la dipendenza da
+        droghe, cercare l'alterazione del proprio stato, ubriacarsi: la
+        disinibizione da qualsiasi limite (``vabbè, non entriamo nei dettagli'').
+\end{description}
+
+\paragraph{Il D\&D del docente.} Per spiegare la mimicry il docente porta il proprio
+caso. Lui, a differenza di altri colleghi, è spiccatamente \textbf{meccanico}: gli
+piacciono molto le meccaniche dei giochi, mentre la parte narrativa, il
+make-believe, ``non dico che non sia importante, ma è meno importante per me''.
+Gioca a \emph{Dungeons \& Dragons} ragionando su ``colpisce, non colpisce, ho
+abbastanza vita, non ho abbastanza vita'', e i suoi personaggi sono sempre ``il nano
+incazzato che deve menare'', in qualsiasi ambientazione, cyberpunk o fantasy. Ma non
+è così che si gioca davvero: a D\&D si impersona un personaggio diverso da ciò che
+si è fuori dal tavolo, ``l'elfo Gilendal con un determinato passato alle spalle'' che
+agisce in una determinata maniera. Questo è la mimicry.
+
+\subsection{Il quiz: a chi va ciascuna categoria?}
+
+Il docente chiede alla classe di abbinare le quattro categorie ai player type.
+\textbf{Agon} e \textbf{ilinx} sono ``facili'':
+\begin{itemize}
+  \item l'\textbf{agon} è dell'\textbf{achiever}, per quel discorso di sposare le
+        regole: il primato raggiunto con fatica, la mastery dei sistemi, la strategia
+        agonistica. Uno studente obietta con il \textbf{calcio}: è uno sport di
+        squadra, e come altri sport non è indirizzato a un unico player type;
+  \item l'\textbf{ilinx} è del \textbf{killer}. Uno studente propone il
+        \textbf{paracadutismo}: se si riesce a soddisfare il proprio obiettivo, non è
+        da achiever? La differenza, risponde il docente, è che l'achiever
+        \textbf{non si metterebbe mai in pericolo di vita}.
+\end{itemize}
+Ci sono, certo, accezioni comuni e intermedi; per ora si cerca di tenere distinte le
+quattro categorie. Tattica e strategia, per esempio, sono comuni a killer e
+achiever. E c'è una cosa che sta proprio a metà tra i due: la
+\textbf{challenge}. Alcune emozioni (\emph{action}, \emph{excitement},
+\emph{curiosity}, \emph{discovery}\dots, tutto ciò che si è visto con Quantic
+Foundry) sono più apprezzate da alcuni player type che da altri, e a volte da più
+d'uno. La domanda da porsi, come detto a Lorenzo,\footnote{Probabilmente in
+riferimento alla domanda sui cheat (sezione~\ref{gd18:sec:bartle}).} è
+\textbf{perché} il player type vuole qualcosa, qual è il suo obiettivo: sulla base
+di ciò che desidera lo si inquadra meglio. Imporsi su una sfida, diventare il più
+forte, ``distruggere il boss di legnate'', è da killer; superare una grossa sfida,
+battere il boss tramite mastery o perché si è grindato, è da achiever. La sfida in
+sé (boss, sfide a tempo, challenge con restrizioni) sta a cavallo tra i due: va
+capito non quante meccaniche ha un sistema, ma \textbf{come il giocatore le prende in
+mano}.
+
+\paragraph{Mimicry e alea.} Le altre due sono ``più toste''. Uno studente propone la
+mimicry per il socializer, perché ricerca l'attenzione delle persone impersonando
+qualcuno che non è; per l'alea si azzarda l'explorer, per la curiosità verso ciò che
+è imprevedibile (ma un altro obietta che non poter prevedere il risultato metterebbe
+in difficoltà l'explorer). Il docente dà la risposta: vanno \textbf{invertite}.
+\begin{center}
+\textbf{agon} $\rightarrow$ achiever \qquad \textbf{alea} $\rightarrow$ socializer
+\qquad \textbf{mimicry} $\rightarrow$ explorer \qquad \textbf{ilinx} $\rightarrow$
+killer
+\end{center}
+
+\paragraph{Perché la mimicry è dell'explorer.} ``Ci siamo quasi'', dice il docente a
+chi parla di cambiare maschere. Il make-believe \textbf{ha delle regole}: se si
+impersona un alto elfo, certe cose non le si farà, o non sarà corretto farle; non ci
+si vorrà sporcare, non si vorranno armi da mischia, non si diranno certe cose e se
+ne faranno altre. Avere diverse maschere, ma con regole specifiche, ricade in quel
+\textbf{unire i puntini della lore}, capire coerentemente la storia: la parte
+prevedibile, regolata, è dell'explorer. È per questo che a lui Caillois piace tanto:
+offre un altro punto di vista sui player type.
+
+\paragraph{Perché l'alea è del socializer.} Quanti hanno mai giocato a
+\emph{Exploding Kittens}? E perché \emph{Mario Kart} funziona così bene in compagnia
+(``ancora meno gli ultimi \emph{Mario Kart}'')? L'alea non solo crea molta
+\textbf{speranza di ribaltare la situazione}, ma \textbf{ci rende tutti pari}:
+\begin{quote}
+Davanti alla sorte noi siamo uguali. Quindi è indifferente che tu abbia una mastery
+enorme dei sistemi, o che abbia cento milioni di livelli, o che sia il più forte
+giocatore di \emph{Call of Duty} al mondo: se è modalità random, arma random, e io mi
+becco l'RPG e tu il coltello, è chiaro che tu hai uno svantaggio enorme.
+\end{quote}
+Funziona bene anche nei giochi di carte, sia nell'apertura dei pacchetti sia nello
+sfidare un avversario: se si è al livello 1 e dall'altra parte c'è il miglior
+giocatore del mondo al livello 50, l'unica speranza è sopraffarlo con la fortuna. Lo
+stesso vale per il poker, o per un semplice lancio di dadi. Un gioco completamente
+aleatorio, come il gioco dell'oca o \emph{Scale e serpenti}, è chiaramente pensato
+per i bambini e ha un pubblico molto giovane.
+
+Non si può però basare qualsiasi gioco di carte sull'alea: molti sono spiccatamente
+da achiever (\emph{Hearthstone}, \emph{Yu-Gi-Oh!}, il gioco di carte Pokémon). In
+quei giochi si inseriscono altre meccaniche per \textbf{ridurre la magnitudine
+dell'alea}: se si pesca male a \emph{Yu-Gi-Oh!} si perde quella partita, e per questo
+di solito si gioca al meglio delle tre; a \emph{Backgammon} i lanci possono andare
+male, ma il giocatore davvero abile riesce a sopraffare quello meno abile anche con
+un grande scarto di fortuna, perché lì entra la mastery del sistema.
+
+\paragraph{Il poker e il novizio.} Il poker, accenna il docente, è un altro gioco
+interessante: la strategia migliore per un novizio a un tavolo di esperti è
+\textbf{non guardare le proprie carte}. Così non dà nessuna informazione agli altri
+su ciò che ha visto o non ha visto, e sbilancia il tavolo verso quella parità
+dell'alea, ``perché nemmeno tu sai cos'hai'': giocando a caso, probabilmente vince
+molte più mani di quante ne vincerebbe giocando.
+
+\slidefig{img/GD/gd18-lazzaro}{Le quattro chiavi del divertimento di Nicole Lazzaro.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:lazzaro}
+
+\subsection{Lazzaro: le quattro chiavi del divertimento}
+
+Poi c'è \textbf{Nicole Lazzaro}, ``l'unico modo di dire \emph{fun} senza essere
+bacchettati'' (figura~\ref{gd18:fig:lazzaro}). Le sue \textbf{quattro chiavi del
+divertimento} (già incontrate nel capitolo~\ref{cap:ricerca-idee}) sono molto utili,
+anche per un motivo di metodo: molti dati, come quelli di Bartle, \textbf{non sono
+pubblici}; Lazzaro invece ha fatto un survey, ha osservato i giocatori, li ha
+registrati e ha cercato di categorizzarne le risposte emotive, anche facciali. Il
+risultato descrive alcune risposte molto legate ai tipi di giocatore. E c'è un
+dettaglio importante: se il \textbf{fiero} non può essere allineato a nessuno dei
+player type visti finora (almeno non a uno solo), l'\textbf{hard fun} ci va molto
+vicino: è ``la cosa più vicina al fiero che potete dire senza dire fiero''.
+
+\begin{description}
+  \item[Serious fun.] Un \textbf{picco di adrenalina} seguito da un \textbf{rilascio
+        emotivo}: \emph{Alien: Isolation}, tutti i giochi horror, in cui una sezione
+        estremamente adrenalinica è seguita da una di rilascio. È chiaramente del
+        \textbf{killer}: l'adrenalina, il picco emotivo, la vertigine.\footnote{La
+        slide riporta la definizione più recente di Lazzaro, secondo cui il
+        \emph{serious fun} è il gioco con uno scopo, che cambia il modo in cui i
+        giocatori pensano, sentono e si comportano, e che rende vivi compiti
+        altrimenti noiosi (``play as therapy''). La lettura del docente, in termini di
+        eccitazione e rilascio, è più vicina alla versione originale della chiave,
+        chiamata \emph{altered states} (si veda anche il
+        capitolo~\ref{cap:ricerca-idee}).}
+  \item[Hard fun.] Il \textbf{superamento di una sfida} tramite la mastery dei
+        sistemi: una sfida molto ardua, si è perso tante volte, e finalmente arriva
+        il sospiro di sollievo, la gioia della vittoria. C'è un obiettivo, ci sono dei
+        vincoli e c'è una strategia per superarli. È dell'\textbf{achiever}.
+  \item[Easy fun.] La parola che lo descrive meglio è \textbf{curiosità}: autonomia,
+        indagine, esplorazione, roleplay, fantasia. È ciò che si prova al primo
+        approccio con un puzzle: la sperimentazione, l'approccio giocoso a qualcosa
+        che si vede per la prima volta, il curiosarci, esplorarlo. È
+        dell'\textbf{explorer}.
+  \item[People fun.] Comunità, divertimento, la sensazione di tranquillità e di
+        piacere di stare in un gruppo di amici con cui si può stare tranquilli: i
+        party game, la scusa per stare con gli altri o parlarci, il \emph{social
+        bonding}. È del \textbf{socializer}.
+\end{description}
+
+Di modelli ce ne sono molti altri; il docente ha mostrato i più importanti, e
+precisa la gerarchia: ``per quanto mi piaccia Caillois'', è \textbf{meno importante
+di Lazzaro}. La priorità va a Lazzaro.
+
+\slidefig{img/GD/gd18-prismatico}{Il modello prismatico (o unificato): i modelli allineati sui quattro tipi di Bartle.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:prismatico}
+
+\subsection{La tabella del modello prismatico}
+
+Il modello unificato in partenza, poi chiamato prismatico da Diego, si basa su
+questa \textbf{ripartizione a quattro} (figura~\ref{gd18:fig:prismatico} e
+tabella~\ref{gd18:tab:prismatico}) e lo si può ampliare quanto si vuole.\footnote{La
+tabella riprende quella dell'articolo di Bart Stewart, \emph{Personality and Play
+Styles: A Unified Model}, pubblicato su Gamasutra nel 2011, che allinea Keirsey,
+Bartle, Caillois, Lazzaro, GNS+, MDA+, Handy, Gallup e Covey sui quattro stili di
+gioco.}
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llllllllll@{}}
+\toprule
+\textbf{Keirsey} & \textbf{Bartle} & \textbf{Caillois} & \textbf{Lazzaro} &
+\textbf{Handy} & \textbf{Gallup} & \textbf{Covey} & \textbf{Motivazione} &
+\textbf{Problem solving} & \textbf{Obiettivo} \\
+\midrule
+Artisan (tattico) & Killer & ilinx & serious fun & Power & Impacting & Power &
+Power & Performance & Do (fare) \\
+Guardian (logistico) & Achiever & agon & hard fun & Role & Striving & Security &
+Security & Persistence & Have (avere) \\
+Rational (strategico) & Explorer & mimesis & easy fun & Task & Thinking & Wisdom &
+Knowledge & Perception & Know (conoscere) \\
+Idealist (diplomatico) & Socializer & alea & people fun & People & Relating &
+Guidance & Identity & Persuasion & Become (diventare) \\
+\bottomrule
+\end{tabular}}
+\caption{Il modello prismatico, senza le colonne GNS+ e MDA+ (che il docente chiede
+di non usare). Motivazioni per esteso: \emph{power} (sensazione manipolativa),
+\emph{security} (accumulo competitivo), \emph{knowledge} (scoperta logica delle
+regole), \emph{identity} (relazioni emotive).}
+\label{gd18:tab:prismatico}
+\end{table}
+
+\subsection{Due colonne da non usare: GNS+ e MDA+}
+
+Non bisogna sposare tutte le cause, e il docente dice la sua, anche se ``non è che
+si dica spesso'': alcune colonne sono, a suo avviso, \textbf{sbagliate} o comunque
+non applicabili, perché nascono da un processo di \textbf{forzatura}.
+\begin{itemize}
+  \item \textbf{GNS+}. È un framework che forse gli studenti vedranno con Daniele (o
+        forse no, perché le sue lezioni sono poche), legato in qualche modo al
+        \textbf{cerchio magico di Huizinga} (``non mi ricordo se è venuto prima
+        l'uovo o la gallina'') e alla narrazione nel gioco, temi che verranno
+        affrontati nelle lezioni di narrativa. Si fonda su \textbf{gamist},
+        \textbf{simulationist} e \textbf{narrativist}: questo è il pezzo importante.
+        L'\textbf{experientialist} ``non esiste'': è stato aggiunto per far tornare
+        il conto a quattro. Al docente il GNS di base non fa impazzire; per lui può
+        allinearsi, ma ``scegliete quello che vi pare''.
+  \item \textbf{MDA+}. Qui il docente è netto: ``per il vostro benessere psicofisico
+        all'interno del corso, lo togliete da qui''. Per come verrà trattato nel corso
+        e per come lo approcceranno anche gli altri docenti, il punto è sempre lo
+        stesso: le \textbf{kinetics} non esistono nel framework MDA di base, e anche
+        se lo si volesse espandere (il design è un processo iterativo, si va sempre
+        verso il meglio), \textbf{non è l'MDA che va integrato in questo framework,
+        è il contrario}. È l'MDA che si può appoggiare al modello prismatico. Lo si
+        capirà meglio quando si farà l'MDA l'anno prossimo; per ora ``tenetelo nella
+        saccoccia''. Ci si baserà su ciò che dice questo framework (e sulle sue
+        espansioni) per ottenere dall'MDA \textbf{dati quantitativi}.
+\end{itemize}
+
+\subsection{Le altre colonne}
+
+Ci sono poi modelli che non sono legati al design di per sé.
+\begin{description}
+  \item[Handy.] Charles Handy parla di \textbf{cultura aziendale}: \emph{power
+        culture} (risolvere i problemi appena arrivano, distruggendo le gerarchie in
+        funzione di una soluzione veloce: un certo dinamismo aziendale); \emph{role
+        culture} (la gerarchia netta e definita, eventualmente piramidale, e restare
+        nei suoi limiti); \emph{task culture} (avere tante cose da fare e portarle
+        avanti contemporaneamente); \emph{people culture} (seguire leader
+        carismatici, un po' come il lone wolf visto prima, a capo di un gruppo di
+        socializer).
+  \item[Gallup.] \textbf{Impacting} per il killer (che è proprio il suo obiettivo:
+        impattare gli altri giocatori); \textbf{striving} per l'achiever (mirare a
+        qualcosa, sforzarsi di ottenere una spada, una moneta, un achievement);
+        \textbf{thinking} per l'explorer; \textbf{relating} per il socializer.
+  \item[Covey.] Gli obiettivi: \textbf{power} (ottenere potere), \textbf{security},
+        \textbf{wisdom}, e per il socializer \textbf{guidance}, cioè guidare gli altri
+        e sé stesso verso la conoscenza personale, ``mia e dell'altro''.\footnote{A
+        voce il docente assegna \emph{power} all'achiever e \emph{security} a un
+        secondo tipo, correggendosi più volte; la tabella delle slide è quella
+        riportata nella tabella~\ref{gd18:tab:prismatico}.}
+  \item[Motivazione.] Power, security, knowledge, identity: cose già dette in alcune
+        definizioni.
+  \item[Problem solving.] Come risolvono i problemi i singoli tipi: il killer
+        tramite la \textbf{performance}; l'achiever tramite la \textbf{persistenza}
+        (il grinding, per lui, non è solo utile, è anche piacevole); l'explorer
+        tramite la \textbf{percezione}, cambiando punto di vista (ed è così che di
+        solito si risolvono i puzzle); il socializer tramite la
+        \textbf{persuasione}, con la comunicazione.
+  \item[Obiettivo finale.] Il killer vuole \textbf{fare}, l'achiever \textbf{avere},
+        l'explorer \textbf{conoscere}, il socializer \textbf{diventare}.
+\end{description}
+
+% ---------------------------------------------------------------------
+\section{Il ``non task'': rifarsi il modello unificato}
+\label{gd18:sec:rifare}
+
+``Io non vi do un task per la prossima lezione, ve lo dico già, così potete tirare un
+respiro di sollievo.'' Però c'è qualcosa da fare, che ``forse potreste vedere come un
+task'': \textbf{rifarsi questo modello unificato}. Da qui in avanti il docente si
+aspetta che lo si usi non solo nel processo di design, ma integrato in qualsiasi task
+venga dato: deve far parte della quotidianità del designer.
+
+Il consiglio:
+\begin{itemize}
+  \item rifarselo come tabella, o non come tabella; il docente manderà un altro
+        documento che integra un po' di cose e può servire da base;
+  \item fare \textbf{ricerca sui singoli modelli}: non si è trattato tutto di Handy,
+        di Gallup, di Covey e così via;
+  \item lasciar perdere GNS+ (``sconsigliato, fate come vi pare'') e soprattutto MDA+
+        (``proibisco l'MDA''). Anche della \emph{dynamic difficulty adjustment} si
+        parlerà più avanti;
+  \item ricordare soprattutto le componenti di base di \textbf{Bartle, Keirsey e
+        Lazzaro}: ``li dovete sapere a memoria'', e questo è un modo per aiutarsi a
+        farlo.
+\end{itemize}
+Il documento che ne verrà fuori (``un bigino, come volete chiamarlo, un documento di
+ritorno, un benchmark'') servirà anche a capire che cosa piace o non piace: piace
+Lazzaro? Piace come divide Caillois? ``Bartle no, guarda che vi deve piacere per
+forza, perché sono i termini.'' L'unico modo è conoscerli.
+
+\paragraph{Le case di Hogwarts.} Federica interviene: nella sua testa era partito
+come uno scherzo, ma i player type si potrebbero dividere anche nelle quattro
+\textbf{case di Hogwarts}. ``Tecnicamente funziona, certo. Sorprendentemente sì.''
+Nel documento che il docente manderà, una vecchia versione di Diego da cui partire,
+ci sono per esempio anche le \textbf{classi}: il mago, il ladro (``chiaramente il
+ladro è il killer''). Il docente non le usa, così come non usa le
+\textbf{personificazioni} (le mani, gli occhi, lo spirito\dots): sono difficili da
+spiegare e non fanno parte del suo processo di design. Ma potrebbero fare parte di
+quello degli studenti, aiutarli a ragionare meglio o dare nuovi spunti su come
+vedere un player type. L'obiettivo è integrare in un framework tutto ciò che si sa e
+che si vuole usare: ``perché da questo non si sfugge, mi spiace''.
+
+% ---------------------------------------------------------------------
+\section{L'analisi per generi}
+\label{gd18:sec:generi}
+
+Il passo successivo, forse oggetto della lezione seguente: rispetto ai propri giochi
+preferiti, \textbf{identificare i player type principali}, e soprattutto
+\textbf{perché}. La slide propone una tabella per generi
+(tabella~\ref{gd18:tab:generi}), basata su una prima sfumatura del modello.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{@{}p{0.2\textwidth}p{0.42\textwidth}p{0.3\textwidth}@{}}
+\toprule
+\textbf{Genere} & \textbf{Giochi tipici} & \textbf{Stili di gioco principali} \\
+\midrule
+FPS & \emph{Halo}, \emph{Call of Duty}, \emph{Half-Life}, \emph{Crysis} & Killer,
+Achiever \\
+CRPG & \emph{Darklands}, \emph{Fallout 1/2}, \emph{Baldur's Gate} & Achiever,
+Explorer \\
+FPS-CRPG & \emph{Deus Ex}, \emph{BioShock}, \emph{Mass Effect} & Achiever,
+Explorer, Killer \\
+CRPG open world & \emph{The Elder Scrolls}, \emph{Fallout 3}, \emph{Two Worlds} &
+Achiever, Explorer \\
+MMORPG & \emph{World of Warcraft}, \emph{EVE Online}, \emph{Guild Wars} &
+Achiever, Explorer, Socializer \\
+MMOG & \emph{Unreal Tournament}, \emph{Team Fortress}, qualsiasi FPS multiplayer &
+Killer, Achiever \\
+Avventura & \emph{King's Quest}, \emph{Myst}, \emph{The Longest Journey} &
+Socializer, Explorer \\
+Azione & \emph{Tomb Raider}, \emph{Uncharted}, \emph{Angry Birds} & Killer,
+Achiever \\
+Survival horror & \emph{Resident Evil}, \emph{Dead Space}, \emph{Amnesia} & Killer,
+Achiever \\
+Strategia a turni & \emph{Civilization}, \emph{Master of Orion},
+\emph{Galactic Civilizations} & Explorer \\
+\bottomrule
+\end{tabular}
+\caption{Il modello prismatico applicato all'analisi dei giochi per genere (dalle
+slide).}
+\label{gd18:tab:generi}
+\end{table}
+
+\subsection{Il commento alla tabella}
+
+\paragraph{FPS.} \emph{Call of Duty}, \emph{Half-Life}, \emph{Crysis}:
+killer-achiever, ``sono d'accordo'', più o meno su tutti. Una tabella così è utile
+per avere, in pre-produzione, un benchmark con una grande mole di dati da cui
+partire. Ma se il competitor diretto è \emph{Half-Life}, serve sapere in modo più
+chiaro che cosa lo distingue dagli altri: in \emph{Half-Life} c'è una componente
+\textbf{explorer} importante, che \emph{Call of Duty} non ha (o ha molto meno).
+Capire \textbf{quanta percentuale} di ciascun tipo c'è in un gioco, e tradurre questi
+giudizi in \textbf{dati quantitativi}, è un passo che si farà più avanti. Per ora
+basta individuare i \textbf{primi due player type dominanti}.
+
+\paragraph{RPG.} Generalmente achiever-explorer, con l'explorer in testa; ma in un
+gioco come \emph{RuneScape}\footnote{Nella trascrizione: ``BanduScape''; la lettura
+\emph{RuneScape} è probabile.} c'è una componente socializer importante. In
+\emph{Deus Ex}, \emph{BioShock} e \emph{Mass Effect} si trovano achiever, explorer e
+killer; in \emph{BioShock}, poi, la relazione con le Sorelline (salvarle o
+``massacrarle'') ha anche una componente socializer, ma è un elemento dentro un
+gioco intero. Per \emph{The Elder Scrolls} (\emph{Skyrim}, \emph{Morrowind}) e
+\emph{Fallout}, achiever-explorer, ``ma explorer su tutti'', e forse anche una
+spiccata componente socializer.
+
+\paragraph{MMO.} \emph{World of Warcraft}, \emph{EVE Online}, \emph{Guild Wars}:
+achiever, explorer, socializer. \emph{EVE Online} ha un explorer molto spiccato,
+mentre \emph{World of Warcraft} ``lo si gioca per stare con l'altra persona''.
+
+\paragraph{La leggenda della tripla A.} Una leggenda, ``non so chi l'ha messa in
+circolo, però siccome vive \emph{rent-free} nella mia testa, ve la contamino'': il
+numero di A di un gioco non dipenderebbe solo dal costo di produzione, ma anche dal
+\textbf{numero di player type} del suo audience. Un doppia A ne avrebbe due, un
+tripla A tre; ora ci sono anche i quadrupla A, e \emph{GTA 6} li avrebbe tutti e
+quattro. Ma non è vero nemmeno il contrario: anche \emph{The Binding of Isaac} ha
+dentro tutti e quattro i player type, ``io sono sicuro'', solo che la proporzione di
+socializer (e di qualche altro tipo) è estremamente ridotta; sui dubbi come questo
+entra in gioco un'analisi più fine, per cui gli studenti non hanno ancora gli
+strumenti, e anche il docente, per esserne sicuro, dovrebbe compilare un documento.
+Per giochi molto piccoli, come \emph{Pong}, la componente degli altri tipi è così
+ridotta che conviene dire solo il principale: \emph{Pong} ``sicuro non ha
+l'explorer'', forse è achiever, ma se lo si gioca con un amico\dots
+
+\paragraph{I giochi molto grandi.} In altri giochi le componenti sono tante, ma in
+sistemi diversi. È ciò che si faceva in Ubisoft, nei giochi open world come
+\emph{Assassin's Creed}: due player type principali, più una serie di gameplay
+laterali, non obbligatori (missioni secondarie, \emph{side quest}), che
+``stuzzicano'' l'interesse di altri tipi. Alla fine ci sono tutti, ma per i giochi
+molto grandi interessa il \textbf{gameplay principale}: una sezione di pesca in uno
+sparatutto non è da killer, ma è una componente molto contenuta rispetto a un monte
+ore molto elevato. Dipende tutto da che cosa si considera; per semplicità si prendono
+i \textbf{primi due}, individuando il principale e il secondario. Setacciare
+precisamente le percentuali verrà più avanti.
+
+\paragraph{Strategia a turni.} Non c'è solo l'explorer: a seconda dei titoli c'è
+anche l'achiever. \emph{Slay the Spire} è sicuramente achiever; ma ha anche una
+componente aleatoria molto elevata, che è da socializer, e le sfide, le restrizioni,
+i livelli di ascensione più alti, che potrebbero interessare un killer. ``Dipende.''
+
+% ---------------------------------------------------------------------
+\section{Le feature di gameplay per player type}
+\label{gd18:sec:feature}
+
+Lo stesso ragionamento si può fare per \textbf{progettare giochi nuovi}: ci sono
+feature di gameplay spiccatamente pensate per un player type, o spiccatamente vicine
+a esso (tabella~\ref{gd18:tab:feature}). È un discorso che verrà espanso, sempre
+legato alle percentuali.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{@{}p{0.3\textwidth}p{0.62\textwidth}@{}}
+\toprule
+\textbf{Stile di gioco unificato} & \textbf{Feature di gameplay associate} \\
+\midrule
+Artisan/Killer/Experientialist & azione, vertigine, uso di strumenti, uso di
+veicoli, horror, gioco d'azzardo, speedrun, exploit \\
+Guardian/Achiever/Gamist & competizione, collezioni, produzione, high score,
+livelli, obiettivi chiari, appartenenza a una gilda, min-maxing \\
+Rational/Explorer/Simulationist & puzzle, costruzione creativa, lore del mondo,
+analisi dei sistemi, teorizzare, sorpresa \\
+Idealist/Socializer/Narrativist & chat, roleplay, storytelling, cooperazione,
+decorazione, animali domestici, eventi sociali \\
+\bottomrule
+\end{tabular}
+\caption{Il modello prismatico applicato al design di giochi nuovi (dalle slide).}
+\label{gd18:tab:feature}
+\end{table}
+
+\paragraph{Killer.} Usare veicoli, armi, esplosioni; l'horror; il \textbf{gamble}:
+``rischio tutto, punto tutto sul 17'' è da killer, mentre tirare un dado per vedere
+se si riesce a volare è da socializer (e il volare è da explorer). Le
+\textbf{speedrun} sono da killer, come l'azione. Il docente prova anche a
+categorizzare le motivazioni di Quantic Foundry: la distruzione è da killer, la
+community da socializer, la completion da achiever; il \textbf{power} dipende da
+come lo si ottiene: se tramite \emph{hard work}, achiever; se per sbilanciare il
+gioco, killer. Fare l'impostore in \emph{Among Us} è da killer e da socializer.
+L'immersione e la fantasy, se regolate, sono da explorer; la storia da socializer;
+la discovery da explorer.
+
+\paragraph{Self-expression.} Una cosa peculiare: la \textbf{customization}. Che cosa
+potrebbe essere? Il poter esprimere sé stessi: mettere fiori e piante nella propria
+casetta, farla verde, marrone o gialla, avere i capelli del colore o della forma che
+si vuole. È molto vicina al socializer.
+
+\paragraph{Achiever.} Tutto ciò che si \textbf{completa}: se c'è una barra, se c'è una
+lista di cose da fare. I collezionabili; l'high score (che può valere anche per il
+killer); i livelli, livellare, l'XP; gli obiettivi chiari; l'appartenenza a una
+gilda; il \textbf{min-maxing}, che però è a cavallo: dipende se serve fare data
+mining e che cosa si usa per farlo, e allora può essere anche explorer.
+
+\paragraph{Explorer.} I \textbf{puzzle} su tutti; la lore, unire i puntini; la ricerca
+dei dettagli, delle prove in un caso di omicidio; il \textbf{teorizzare}. E la
+\textbf{sorpresa}, che però è ``un refuso'' del vecchio modello unificato da cui si è
+partiti.
+
+\begin{remark}[La sorpresa non è un'emozione]
+La \textbf{sorpresa} è un \textbf{moltiplicatore emotivo}, non un'emozione. Se si è
+sorpresi mentre si scappa dallo xenomorfo, con lo \emph{stalker} alle spalle, si è
+ancora più spaventati: è il motivo per cui i \emph{jumpscare} a volte funzionano e a
+volte no, a seconda che li si anticipi o meno. E se si spera di trovare in un
+\emph{gacha} il personaggio ultra raro, con una probabilità molto bassa, e lo si
+trova, si è estremamente contenti, perché la sorpresa potenzia l'anticipazione che
+si aveva.
+\end{remark}
+
+Rientra nell'explorer anche esplorare non solo l'open world, ma il \textbf{come
+funzionano} gli oggetti, lo sperimentare con le cose. \emph{Minecraft}, non a caso,
+è da explorer: è un sandbox a disposizione, in cui vedere come le cose si combinano
+(il \emph{crafting table}), come funzionano gli oggetti, come si muovono gli
+ecosistemi. Non è l'unico; e \emph{Minecraft} cambia notevolmente player type se lo
+si gioca in single player o in multiplayer, ma il primo player type resta l'explorer.
+
+\paragraph{Socializer.} Tutto ciò che permette di \textbf{parlare} con un'altra
+persona, di interagire in maniera esplicita: meglio se si parla, peggio se c'è solo la
+chat scritta, ancora peggio se ci sono solo i \emph{ping}. Con opzioni limitate, un
+ping finisce per diventare un insulto: il docente mostra l'emote più ``non
+sportiva'' di \emph{Clash Royale} (ormai ne esistono versioni potenziate) e quella di
+\emph{Marvel Snap} con Ms.\ Marvel, ``la cosa più innocente dell'universo'',
+diventata l'insulto del gioco. Avere opzioni limitate crea accezioni specifiche per
+quelle che ci sono; se ne parlerà in una lezione apposta. Poi lo storytelling, la
+cooperazione, la decorazione e tutto ciò che è customizzabile, il \textbf{pet}, l'NPC
+o il cagnolino che segue il giocatore.
+
+Sono sistemi da cui partire: quelli di base, spiccatamente ben percepiti da uno o più
+player type. ``Unite il tutto, create un vostro documento'': ce ne sono, e ce ne
+saranno, molti altri da integrare nel modello.
+
+\slidefig{img/GD/gd18-esprimere}{Esprimere i player type del target audience: elementi attraenti ed estetiche target per tipo.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:esprimere}
+
+Le slide mostrano anche un esempio di come \textbf{esprimere} i player type di un
+target audience in un documento (figura~\ref{gd18:fig:esprimere}): per ogni tipo
+(explorer, killer, achiever, con i colori del modello) gli \emph{appealing elements},
+presi dalle motivazioni di Quantic Foundry e da Lazzaro (per esempio \emph{Fantasy
+Deep Lore}, \emph{Discovery curious}, \emph{Easy Fun} per l'explorer;
+\emph{Excitement fast-paced} per il killer; \emph{Power progression} e
+\emph{Completion task-oriented} per l'achiever), e le \emph{target aesthetics}
+corrispondenti (mondo alternativo, sandbox e open world, esplorazione; scarica di
+adrenalina; partire deboli e salire di livello, stelle, trofei e collezionabili).
+
+% ---------------------------------------------------------------------
+\section{I segmenti di Quantic Foundry}
+\label{gd18:sec:segmenti}
+
+\slidefig{img/GD/gd18-segmenti}{I nove segmenti di giocatori di Quantic Foundry.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:segmenti}
+
+\subsection{Nove, non otto né dodici}
+
+Il modello prismatico non è l'unico. Quantic Foundry, per esempio, ha un suo modello
+di \textbf{nove} player type (figura~\ref{gd18:fig:segmenti}): ``nove, non otto né
+dodici. Peccato''. Non sono ripartibili equamente sui quattro tipi, e questo, ammette
+il docente, è un suo ``problema mentale'': quando deve categorizzare qualcosa, deve
+essere diviso esattamente in parti uguali tra i player type; per lui un modello così
+va integrato con altro, ma per gli studenti potrebbe non valere.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{@{}p{0.14\textwidth}p{0.26\textwidth}p{0.24\textwidth}p{0.27\textwidth}@{}}
+\toprule
+\textbf{Segmento} & \textbf{Motto} & \textbf{Motivazioni principali} &
+\textbf{Giochi popolari} \\
+\midrule
+Acrobat & \emph{Flexing my reflexes} & challenge + discovery & \emph{Spelunky},
+\emph{Celeste}, \emph{Super Metroid}, \emph{Tetris} \\
+Gardener & \emph{Quiet, relaxing task completion} & completion & \emph{Candy
+Crush}, \emph{Solitaire}, \emph{Animal Crossing} \\
+Slayer & \emph{Cinematic mayhem with a purpose} & fantasy + story + destruction &
+\emph{Firewatch}, \emph{Uncharted}, \emph{Tomb Raider} \\
+Skirmisher & \emph{Jumping into the fray of battle} & destruction + competition &
+\emph{Rust}, \emph{Call of Duty}, \emph{Battlefield} \\
+Gladiator & \emph{Dedicated, hardcore gaming} & challenge + completion + community &
+\emph{Mobile Legends}, \emph{Destiny}, \emph{Gears of War} \\
+Ninja & \emph{A duel of speed and skill} & competition + challenge & \emph{Street
+Fighter}, \emph{StarCraft}, \emph{LoL} \\
+Bounty Hunter & \emph{High-octane solo world exploration} & destruction + fantasy &
+\emph{Mass Effect}, \emph{Far Cry}, \emph{Saints Row} \\
+Architect & \emph{My empire begins with this village} & strategy + completion &
+\emph{Europa Universalis}, \emph{Civ VI}, \emph{Banished} \\
+Bard & \emph{Playing a part in a grand story} & design + community + fantasy &
+\emph{The Secret World}, \emph{FFXIV}, \emph{LoTRO} \\
+\bottomrule
+\end{tabular}
+\caption{I segmenti di giocatori di Quantic Foundry (dalle slide).}
+\label{gd18:tab:segmenti}
+\end{table}
+
+\subsection{Leggere i segmenti con Bartle}
+
+\paragraph{Acrobat.} Giocatori solitari che cercano la sfida nel gameplay e si
+esercitano ``\emph{over and over}'': già il \emph{practice over and over}, la sfida,
+il single player dicono achiever. Challenge più discovery: achiever più explorer.
+
+\paragraph{Il dibattito su Celeste.} Ma chi gioca \emph{Celeste}? Il docente chiede
+agli studenti i due player type principali: ``non è facile''. Uno propone la sfida
+del platform; un'altra fa notare che in \emph{Celeste} c'è una narrativa molto
+profonda (``è vero, è vero''); un altro ancora parla di componenti sociali legate
+alla sua mediaticità. Il docente è d'accordo sulla storia, ma ``non morirò su questa
+collina'' (anche se poi, come sempre, bisogna trovare i dati): nel complesso
+\emph{Celeste} è \textbf{achiever-killer}, perché ci sono una serie di sistemi
+spiccatamente pensati per il killer: tutta la parte di \textbf{speedrun} e tutte le
+sfide successive alla trama principale. La trama è explorer-socializer, c'è un
+dramma importante; ma dopo c'è tutto il gameplay per cui \emph{Celeste} è ricordato,
+e le sfide come \emph{Farewell}, il capitolo dopo la morte della nonna, ``tostissimo'':
+quella roba è achiever-killer. ``Sto considerando tutto l'interesse del gioco.'' Se lo
+si dà in mano al docente, finisce la campagna, fa qualche livello extra, ma non ce la
+fa a fare \emph{Farewell}: ``sono quasi due giochi diversi''. Una studentessa racconta
+di averlo platinato (``complimenti''); lui non ha le skill necessarie e non si sente
+nemmeno spinto a coltivarle, perché ci sono tecniche come il \emph{wavedash} che sono
+``toste''.
+
+\paragraph{Metroid Dread.} È invece una cosa che il docente fa volentieri con
+\emph{Metroid Dread}: i controlli sono ``atroci'', eppure l'ha completato e ha fatto
+tutto. Il problema non è la modalità Dread, ma i puzzle dello \emph{shinespark}, che
+richiedono troppe abilità; i comandi sono mappati non male, ma ``per necessità,
+perché sono così tante'', e la mappatura ne risente: certe sfide sono terribili.
+
+\paragraph{Spelunky e il Ninja.} Lo stesso vale per \emph{Spelunky}: qual è
+l'obiettivo? Finire il gioco, battere la Sunken City, finirlo nel minor tempo
+possibile? Dipende dall'obiettivo. Challenge più discovery è achiever-explorer;
+la competizione, invece, è molto vicina al \textbf{Ninja}, che è killer-achiever. Un
+giocatore di \emph{Spelunky} o di \emph{Celeste} il docente lo direbbe
+killer-achiever, ``più Ninja che Acrobat''. Sono framework diversi, entrambi
+ugualmente validi, e uno non esclude l'altro.
+
+\paragraph{Gardener e Tom Nook.} \emph{Complete completion} è chiaramente achiever;
+ma \emph{Animal Crossing}, che pure è nel Gardener, non è solo achiever. ``Quiet,
+relaxing task completion'' è achiever-socializer, e forse ci sta come player type di
+\emph{Animal Crossing}: dipende da che cosa vuole fare la gente nel gioco. Per il
+docente, \emph{Animal Crossing} è all'origine della sua ansia: essere costantemente
+in debito con \textbf{Tom Nook} lo ``disintegra''. Paghi il debito per la casa e ce
+n'è un altro ancora più grande: ``mi manda fuori di testa. Vabbè, comunque sono io
+malato''. Probabilmente, scherza, lo stato economico mondiale è messo meglio di quello
+di \emph{Animal Crossing}.
+
+\paragraph{Bounty Hunter.} Distruzione e fantasy: killer-explorer. \emph{Mass Effect}
+è killer-explorer, con una componente socializer importante. E il gioco con il
+rampino in cui si fa saltare tutto per aria? \emph{Just Cause}, suggeriscono gli
+studenti: chiaramente killer-explorer.
+
+\paragraph{Architect e Clash of Clans.} Strategia più completion: achiever-explorer,
+se costruire un villaggio significa vedere come si relazionano le componenti. Ma
+\emph{Clash of Clans} ha una componente sociale importante. Il primo player type è
+sicuramente l'achiever; il secondo, per il docente, è il socializer: c'è la guerra tra
+clan, ma nel loop di gioco si fanno meno guerre di quanto si interagisca nel clan.
+Senza dubbio, però, anche andare a rubare le risorse agli altri fa parte del loop:
+``anche quello, bisognerebbe vederlo''. Per ora gli strumenti bastano per una visione
+``a volo d'uccello''; poi ne arriveranno altri. Gli altri segmenti il docente li
+lascia agli studenti: ragionarci e cercare di incasellarli nei quattro tipi.
+
+% ---------------------------------------------------------------------
+\section{Come si usa il modello: tre casi}
+\label{gd18:sec:casi}
+
+``Ora, bello tutto. Come lo usiamo?'' Per il docente è ``già una figata'' così, ma gli
+studenti potrebbero chiedersi come usarlo nel lavoro di tutti i giorni. Ci sono tre
+casi principali (potrebbero essercene altri), che corrispondono a tre momenti del
+ciclo iterativo di produzione: la definizione del problema, lo sviluppo e il test.
+
+\slidefig{img/GD/gd18-caso1}{Primo caso: l'analisi dei competitor, all'inizio del ciclo iterativo.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:caso1}
+
+\subsection{Primo caso: l'analisi}
+
+Il primo caso sta a monte della produzione (figura~\ref{gd18:fig:caso1}): capire il
+problema del target audience, se vuole qualcosa e che cosa dargli di conseguenza. Una
+volta fatta la ricerca, usando i player type si può capire che cosa piace a un tipo
+di giocatore e che cosa no (anche al di là di ciò che non dice), che cosa si può
+migliorare, come spende il tempo, quanto hanno venduto i giochi, soprattutto rispetto
+ai \textbf{competitor}. Capire i player type principali di un gioco, o la
+distribuzione dei giochi più venduti del mercato odierno rispetto ai player type, può
+essere estremamente utile.
+
+Si torna al casual di Bateman: allora il mercato era pieno di FPS, tutti
+principalmente killer-achiever; ora è molto più vario, ma anche molto
+\textbf{segmentato}. Capire per esempio che cosa vende e che cosa no nel mondo
+indipendente (che è un gergo estremamente largo), o quali sono i player type
+dominanti dei competitor principali o dei giochi più venduti, o di quelli che hanno
+più notorietà, è utile. Usato come strumento di analisi, il modello aiuta a capire le
+emozioni principali di un gioco, come sono divise e soprattutto come si distribuiscono
+sui player type principali. Come farlo si vedrà più avanti.
+
+\slidefig{img/GD/gd18-rimworld}{Un esempio di analisi: le emozioni e i player type di \emph{RimWorld}.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:rimworld}
+
+Al docente questa cosa piace molto, la usa quasi sempre: è molto dispendiosa, ma
+porta validi risultati. Farla per un gioco completo, come \emph{RimWorld}
+(figura~\ref{gd18:fig:rimworld}), che è estremamente grande, richiede molto tempo.
+L'esempio delle slide mostra il risultato: un'analisi delle estetiche (con la
+\emph{discovery}, la \emph{fantasy} come mondo credibile e la \emph{mimesis} come
+emozioni principali, \emph{challenge} ed \emph{expression} come secondarie) e la
+distribuzione dei player type, con l'\textbf{explorer} al 58\%, l'achiever al 24,5\%,
+il socializer al 14,9\% e il killer al 2,6\%, ciascuno con le ragioni per cui il gioco
+lo attrae. È il primo punto: l'analisi di giochi, di competitor, di meccaniche, di
+sistemi.
+
+\subsection{Secondo caso: i suggerimenti di design}
+
+\slidefig{img/GD/gd18-caso2}{Secondo caso: suggerimenti di design a partire dalle parole chiave del modello.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:caso2}
+
+Il secondo caso è nello sviluppo. Si conoscono i player type della propria audience,
+si ha la ricerca. Ora, tra l'altro, è chiaro a che cosa si riferiva il target
+audience della vision: nella vision alcuni elementi saranno pensati spiccatamente per
+alcuni player type, altri per altri. Mettiamo che si stia facendo un FPS,
+principalmente per achiever: si ha la vision, si conoscono i player type dominanti, e
+si sa che l'audience vuole qualcosa che ha a che fare con le
+\textbf{biciclette}\footnote{``Potrebbe essere qualsiasi cosa'': la bicicletta è solo
+un esempio volutamente arbitrario.}. Come si fa il design? Ed ecco la differenza con
+il \emph{data driven} di cui si parlava all'inizio: come si \textbf{riduce la falce}
+in modo da aumentare la sicurezza che ciò che si inserirà nel gioco piacerà al
+target audience, mantenendo però un \textbf{margine creativo}?
+
+Si va nella propria lista, si prendono le \textbf{parole chiave} e si cerca di
+sviluppare meccaniche o sistemi a partire da ciò che dice la definizione di quel
+player type (figura~\ref{gd18:fig:caso2}). Gli esempi (``sono idee molto terribili,
+però'') sono tre:
+\begin{description}
+  \item[Guardian: \emph{hard working} e \emph{seek security}.] Ogni livello (o
+        mappa) contiene un \textbf{pezzo di bicicletta}; quando il giocatore (o il
+        team) li trova tutti, può usare biciclette speciali che lo rendono immune ai
+        danni. Pezzi da raccogliere con fatica, che una volta uniti danno sicurezza.
+  \item[Lazzaro: \emph{mastery} e \emph{challenge}.] L'abilità speciale del giocatore
+        è \textbf{correre e sparare in bicicletta}. Permette di muoversi
+        velocissimi, ma è difficile muoversi e sparare insieme (magari i comandi sono
+        invertiti rispetto all'implementazione base di qualsiasi veicolo); in cambio,
+        il danno critico è raddoppiato.
+  \item[Achiever e \emph{role culture}: gerarchia e lungo termine.] Le azioni
+        speciali danno punti, che si spendono per \textbf{potenziare la bicicletta}
+        (``l'achiever classico''). La bicicletta è lo status, il \emph{rank}, del
+        giocatore, e il rank permette di portarsi dietro un certo numero di NPC.
+        Questo è legato alla \emph{role culture} di Handy, che però ``non è che
+        dobbiate per forza sposare''.
+\end{description}
+La tabella a fianco, nella slide, raccoglie le parole chiave del guardian/achiever in
+tutti i modelli: logistico, laborioso, leale, responsabile, prudente, fiducioso
+nell'autorità, in cerca di sicurezza (Keirsey); accumulare tesori, raccogliere punti e
+salire di livello, status, gerarchia, competizione (Bartle); competizione, disciplina,
+perseveranza, regole applicate a tutti allo stesso modo (Caillois); mastery, sfida,
+obiettivi, progresso (Lazzaro); e così via fino alla classe del \textbf{guerriero}, il
+cui motto è ``\emph{I have not yet begun to fight!}''.
+
+\subsection{Terzo caso: risolvere un problema di design}
+
+\slidefig{img/GD/gd18-caso3-tabelle}{Terzo caso: le parole chiave di artisan/killer e di idealist/socializer, con quelle evidenziate.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:caso3-tabelle}
+
+L'ultimo caso è nella fase di iterazione, nel test. Si sa che qualcosa non funziona,
+ma non si sa perché. L'esempio viene da uno studente del primo anno: un
+\textbf{gioco di carte per killer e socializer}. I test mostrano che la
+\textbf{fine della partita è noiosa}: non piace ai giocatori, è troppo simile al resto
+del gioco ed è chiaro chi vincerà. Serve una feature per il finale che piaccia
+\textbf{sia ai killer sia ai socializer}, perché sono i tipi di riferimento, e che
+renda il finale \textbf{più incerto}.
+
+Si prende la lista e si leggono le parole chiave (figura~\ref{gd18:fig:caso3-tabelle}).
+Per i killer: \textbf{tattico}, \textbf{imposizione sugli altri} e \textbf{il brivido
+della caccia} (\emph{thrill of the chase}), quindi adrenalina, rischio, azzardo. Per i
+socializer: \textbf{diplomatico}, \textbf{roleplay}, \textbf{interessato alle
+persone} e \textbf{la sorte} (\emph{chance}).\footnote{Il docente aggiunge che, in
+retrospettiva, nelle slide evidenzierebbe altre parole, e lo farà quando le
+aggiornerà.}
+
+\paragraph{Un'interruzione.} A questo punto entra in aula un collega, coordinatore del
+modulo di narrative design, che saluta la classe (``ci siamo già visti con molti di
+voi''), annuncia le lezioni di narrativa che partiranno già il venerdì successivo e
+augura ``buon player type'' prima di uscire.\footnote{La trascrizione di questo
+passaggio è molto frammentaria: i nomi dei docenti di narrativa citati non sono
+ricostruibili con certezza.}
+
+\slidefig{img/GD/gd18-bluff}{Che cosa hanno in comune killer e socializer? Il bluff.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:bluff}
+
+\paragraph{Che cosa hanno in comune?} Si riprende: che cosa hanno in comune queste due
+liste? La slide mostra un tavolo da poker. Gli studenti ci arrivano: puntare le fiches
+può avere le sue ragioni, ma è più una strategia che una meccanica; e la
+\emph{poker face}, perché la si fa? La risposta è il \textbf{bluff}
+(figura~\ref{gd18:fig:bluff}). Nel poker c'è una strategia chiaramente pensata sia per
+i socializer sia per i killer. Ai killer piace perché permette di \textbf{imporsi}, di
+rischiare e di avere un picco di adrenalina; e anche mentire, parlare, comunicare fa
+parte del gioco del socializer, oltre alla componente di sorte. ``Chiaramente, più
+killer.''
+
+\subsection{I tre usi, riassunti}
+
+Si possono quindi usare i player type, a partire dalla propria lista (dal modello
+unificato, da ciò che si vuole), in tre modi:
+\begin{enumerate}
+  \item nell'\textbf{analisi}: prendere una lista di giochi e identificarne i player
+        type dominanti aiuta a capire l'andamento del mercato, che cosa piace ai
+        giocatori o che cosa vende, quali sono i player type dominanti dei
+        competitor principali (come farlo bene si capirà più avanti);
+  \item nel \textbf{fare design}: unire la componente creativa con una componente
+        \textbf{scientifica}, mantenendo aperta la possibilità di soluzioni molto
+        creative (perché si ha un numero ``esagerato'' di definizioni da integrare),
+        ma riducendo la possibilità che vengano percepite male dall'utente o non
+        apprezzate;
+  \item nel \textbf{test}, durante il processo iterativo, per risolvere i problemi.
+\end{enumerate}
+Il docente concede cinque minuti di pausa: poi si conclude il persona, ``che tanto è
+semplice'', e le ultime informazioni sui player type.
+
+% ---------------------------------------------------------------------
+\section{Il persona finale}
+\label{gd18:sec:persona-finale}
+
+\slidefig{img/GD/gd18-persona-finale}{Il persona finale: i dettagli non sono inventati, ma rappresentano i tratti più comuni del target audience.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:persona-finale}
+
+\subsection{Quanto costa un persona}
+
+Al rientro, il docente riprende il \textbf{persona}. Non se ne farà uno in aula, per
+questioni di tempo; ma può essere utile arrivarci con la ricerca, e averne uno nella
+documentazione può dare supporto. Richiede però \textbf{tanto sforzo}: non si può
+pensare di scalfire solo la superficie, con una descrizione degli elementi
+superficiali. E c'è di più: se si crea un persona, poi \textbf{bisogna seguirlo}.
+Non lo si crea per poi dimenticarlo: è come se quell'individuo inesistente
+\textbf{entrasse a far parte del team}, ``non come designer, ma come tester''. Come
+tutte le cose, ha i suoi pro e i suoi contro.
+
+\subsection{Non si inventa niente}
+
+\begin{quote}
+I dettagli del persona non sono inventati: rappresentano i tratti più comuni del
+target audience. Se non trovate questi dati, dovete fare più ricerca. Potete fare
+assunzioni, ma non potete inventare.
+\end{quote}
+Quanti soldi ha? Quanto tempo spende giocando? Qual è la sua routine? Ha figli?
+Statisticamente parlando: se non si hanno questi dati, quella ricerca va fatta. Per
+questo è difficile creare un persona sufficientemente profondo da avere senso nel
+team senza impiegarci davvero tante risorse. Si può chiedere al target audience che
+cosa gli piace e che cosa no (intervistarlo, raccogliere dati, leggere i suoi post sui
+social) e poi fare una \textbf{commistione} di queste cose; ma non si possono
+inventare. ``È una ricerca molto lunga, non sottovalutatela.'' Se la si fa, poi
+obbliga: a monte bisogna dedicarle tanto tempo e tanta ricerca, e a valle bisogna
+seguirla, perché si è prodotto qualcosa e se ne vuole un risultato vantaggioso.
+
+\subsection{Che cosa contiene}
+
+Gli elementi del persona finale (figura~\ref{gd18:fig:persona-finale}) sono:
+\begin{description}
+  \item[Dati demografici.] La \textbf{foto} (oggi la si può generare facilmente, ed è
+        meglio: così si evita di ``incappare in un Mario Rossi che già esiste''; il
+        persona deve essere inventato, non una persona reale), il nome, l'età, il
+        genere, lo stato relazionale, la nazione. Tutte le demografiche che danno con
+        estrema precisione un'idea di chi sia.
+  \item[Profilo da gamer.] Assumendo di fare un videogioco (il metodo si usa anche per
+        i film): i giochi preferiti, la \textbf{combinazione di player type} del
+        modello prismatico (achiever, killer, explorer, socializer), le motivazioni di
+        gioco (per esempio da Quantic Foundry, ``ne vedremo altre''), i giochi e le
+        meccaniche odiate, le abitudini di gioco (compra tutti i giochi o no, è
+        completista o no, fa speedrun o no).
+  \item[Profilo di cultura pop.] Le IP preferite (musica, film, anime), che cosa
+        ascolta, che cosa guarda, che cosa odia. Il docente fa un esempio personale
+        su un anime che non gli piace e su un eventuale seguito.\footnote{Nella
+        trascrizione: ``non mi piace il Jiu Jitsu Kaiser, se dovessero fare un
+        attiacodini 2''; i titoli non sono ricostruibili.}
+  \item[Stato socio-economico.] Lavora o no? Lavorare prende tempo, e il passo
+        successivo è definire la sua routine: quando gioca, dove, come. Ha tanti soldi
+        o pochi? Magari ne ha tanti e spende poco, o pochi e spende tanto, magari
+        compulsivamente; fa acquisti in-game o no, e che cosa compra? Gioca con amici,
+        familiari, figli?
+  \item[Dati personali.] Hobby, peculiarità, caratteristiche uniche.
+  \item[Giornata tipo.] La sua routine va descritta.
+  \item[Desideri e obiettivi.] Che cosa vuole dal prodotto, e che cosa vuole dalla
+        sua vita.
+\end{description}
+Di solito si aggiunge anche un \textbf{motto}: ``non è che siamo NPC'', ma una frase,
+una citazione con cui risuona particolarmente.
+
+Tutto questo va in un documento di solito di \textbf{due pagine}, leggibile,
+stampabile, molto contenuto: proprio perché va stampato e appeso, il team lo guarda,
+``è come se ci fosse, dovrebbe esserci sempre all'interno del team''. È molto simile
+alla vision, e la \textbf{complementa}.
+
+\subsection{Uno o più persona?}
+
+Una studentessa chiede: il persona è quindi la \textbf{media} del target, basata su
+dati di campionamento? ``Sì, una campionatura statistica.'' E se ne fanno anche altri,
+più piccoli? Non è detto che se ne faccia uno solo (il docente lo aveva detto
+all'inizio): a maggior ragione quando si ha una mole enorme di dati, non conviene
+farne uno, ma \textbf{più di uno}. Però \textbf{non più di tre}: ``già tre sono
+tante''. Di solito il risultato è \textbf{uno principale e due secondari}, oppure
+\textbf{due complementari}. Ma è molto lavoro: non va sottovalutato.
+
+% ---------------------------------------------------------------------
+\section{La vision, rivista}
+\label{gd18:sec:vision}
+
+\slidefig{img/GD/gd18-vision}{La vision: chi, quando, dove (ricerca); che cosa e perché (scienza e arte); come (conoscenza).}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:vision}
+
+Il docente torna sulla \textbf{vision} (capitolo~\ref{gd9:cap:agency-visione}) e la
+rilegge alla luce della lezione (figura~\ref{gd18:fig:vision}).
+
+\paragraph{Interamente basato sulla ricerca.}
+\begin{itemize}
+  \item \textbf{Chi}: il target audience. Il gioco è per il target audience,
+        \textbf{non per voi}. Si potrebbe farlo per sé stessi, ma è un rischio, ``un
+        rischio molto grande'', e non è così che si sviluppano prodotti multimediali
+        con grossi team alle spalle.
+  \item \textbf{Quando}: il time frame, le milestone, il tempo di produzione. La
+        ricerca, rispetto ai soldi disponibili, agli investimenti, a ciò che si sa
+        fare e a ciò che si ha a disposizione nel team, determina il time frame; a
+        volte lo impone lo stakeholder (``fai il gioco in tot tempo'').
+  \item \textbf{Dove}: le piattaforme, il team, la comunicazione, gli stakeholder.
+\end{itemize}
+
+\paragraph{50\% scienza + 50\% arte = game design.}
+\begin{itemize}
+  \item \textbf{Che cosa}: il concept, le emozioni, le meccaniche. Si parte dalla
+        ricerca, poi si integrano i player type e qualsiasi framework si voglia usare
+        come designer: questo incrocio dà il gioco.
+  \item \textbf{Perché}: i \emph{design value}, gli obiettivi come sviluppatore. Si
+        potrebbe voler fare tanti soldi; potrebbe anche essere basato completamente
+        sulla ricerca. Un'azienda ha dei valori (non tutte, ma molte): il valore
+        principale è il denaro, e va bene finché si sta a galla, il gioco deve
+        vendere tanto, ed è un valore di per sé; ma per le aziende valide di solito
+        non è l'unico.
+\end{itemize}
+
+\paragraph{Interamente basato sulla conoscenza.} Il \textbf{come}: ciò che si è
+studiato (engine, agency, meccaniche, narrativa\dots), l'esperienza e il gusto. Che, a
+modesto avviso del docente, intacca anche le altre parti: ciò che si sa fare abilita
+alcune cose. Il che non significa che non si possa fare un gioco che non si sa fare:
+il docente lavora costantemente a giochi che richiedono competenze che non ha del
+tutto, o che deve imparare. L'importante è restare aperti di mente; e la difficoltà
+del percorso in accademia aiuta anche in questo, perché superare molti ostacoli
+facilita il domani. Dipende anche da come si è: si può voler essere più sicuri e
+affrontare un titolo più contenuto, più vicino alle proprie competenze, aumentando la
+probabilità che il gioco esca o di raggiungere l'obiettivo; oppure rischiare tanto,
+imbarcarsi in un progetto che non si ha la certezza di saper fare e imparare durante
+il percorso. Comunque vada, si impara. In accademia, soprattutto in analisi, il
+rischio è zero; ``là fuori'' il rischio di consumare tempo e soprattutto soldi del
+team è molto elevato.
+
+\slidefig{img/GD/gd18-valori}{I design value, raggruppati per categoria.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:valori}
+
+\subsection{I design value}
+
+Ci sono poi i \textbf{design value} (figura~\ref{gd18:fig:valori}): il docente non li
+vede tutti, ma alcuni sono generalmente condivisi.
+\begin{itemize}
+  \item \textbf{Centralità del giocatore}: \emph{players' advocacy}, co-creatività e
+        inclusione degli utenti, usabilità e giocabilità.
+  \item \textbf{Game design casual}: accessibilità (facile da giocare e da
+        acquistare), accettabilità, flessibilità, semplicità. Molti giochi mobile
+        seguono questi valori, giustamente, perché ormai il casual gamer gioca
+        principalmente lì.
+  \item \textbf{Game design tradizionale}: immersione, sfida e competizione,
+        comunità, \emph{other-worldliness}.
+  \item \textbf{Espressione artistica, innovazione e sperimentazione}: visual design
+        ed estetica, sperimentazione, \textbf{design divergente}. Quest'ultimo è ciò
+        che si è visto nella lezione sul brainstorming
+        (capitolo~\ref{cap:brainstorming-flowchart}) come limitazione dell'idea:
+        prendere un'idea e stravolgerla completamente, lontano dal mercato attuale.
+  \item \textbf{Valori ludologici}: divertimento e valore del fun, agnosticismo
+        tecnologico, nostalgia ed estetica retrò, valore delle meccaniche di gioco.
+  \item \textbf{Impatto sociale e valori culturali}: \emph{games for good} e giochi
+        d'impatto, diversità e accessibilità, etica e moralità, diversità culturale e
+        tradizione.
+  \item \textbf{Processo di produzione e creazione}: rispetto tra pari e identità
+        professionale, collaborazione e lavoro di squadra, ideologia open source, cura
+        e dettagli, avanzamento tecnologico, lo sviluppo come sfida.
+  \item \textbf{Indipendenza}: autonomia e libertà artistica, anarchia. Il valore
+        dell'indipendenza non è necessariamente l'anarchia: è autonomia, completa
+        libertà imprenditoriale, ``con i rischi del caso''.
+  \item \textbf{Valori commerciali}: successo economico, opportunismo e
+        \emph{disruption}.
+\end{itemize}
+L'obiettivo è averli chiari in testa e \textbf{comunicarli al team}. Durante il
+progetto, legato alla vision, tutti devono condividere lo stesso obiettivo, e bisogna
+\textbf{parlarne prima}: ``non è che lo si scopre poi che io volevo fare un sacco di
+soldi e tu volevi sperimentare e imparare qualcos'altro, non funziona così''. Alcuni
+valori sono conciliabili, altri meno; ma se non se ne parla prima, non ci si arriva.
+
+% ---------------------------------------------------------------------
+\section{La profilazione del target audience}
+\label{gd18:sec:ta}
+
+\slidefig{img/GD/gd18-ta-ricerca}{La profilazione del target audience: si parte dai dati sui competitor e sui giochi simili.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:ta-ricerca}
+
+La prima cosa da fare per un progetto, come già detto parlando di pre-produzione, è
+\textbf{ottenere dati} (figura~\ref{gd18:fig:ta-ricerca}). Poi si guardano i
+competitor, e non solo: siccome il mercato è molto ampio, ci si limita a giochi con
+qualità simili a quelle del gioco che si vuole sviluppare:
+\begin{itemize}
+  \item \textbf{meccaniche} simili;
+  \item \textbf{estetiche} simili;
+  \item \textbf{pilastri} simili;
+  \item \textbf{mercato} simile.
+\end{itemize}
+Si vuole vendere tanto? Si guardano i giochi più venduti. Si vuole vendere a un
+mercato specifico? Si guarda che cosa piace a quel mercato. Si \textbf{riduce la
+falce}, ma si fa tanta ricerca ad alto livello; e si possono considerare anche i
+player type di questi giochi, identificandone il dominante.
+
+\slidefig{img/GD/gd18-ta-fine}{Che cosa si deve avere alla fine della pre-produzione.}{slide \emph{DM06 -- Persona \& Types}}{gd18:fig:ta-fine}
+
+\subsection{Alla fine della pre-produzione}
+
+Alla fine della pre-produzione si deve avere (figura~\ref{gd18:fig:ta-fine}):
+\begin{itemize}
+  \item un \textbf{profilo specifico del target audience}, con le
+        \textbf{motivazioni} e le \textbf{percentuali dei player type}, e le sue
+        eventuali segmentazioni o sottocategorie;
+  \item lo \textbf{stato del proprio segmento di mercato} (a seconda del genere, dei
+        tag e simili): si vuole fare un metroidvania? Come sta il mercato dei
+        metroidvania, c'è spazio o no? Generalmente lo si fa con un
+        \textbf{grafico cartesiano} con gli assi, cercando gli \textbf{oceani blu}:
+        combinazioni che non sono ancora state pensate, ammesso che non ci sia un
+        motivo valido per cui non sono state fatte;
+  \item il mercato di \textbf{distribuzione}: dove verrà venduto il gioco;
+  \item i \textbf{dati} a supporto di tutto ciò che si afferma.
+\end{itemize}
+
+Sono i dati che serviranno nella lezione successiva, quella sul \textbf{pitching}.
+Questa parte conclude le lezioni sulla pre-produzione: ci saranno altre nozioni sparse
+qua e là, ma già ora gli studenti dovrebbero avere tutte le informazioni necessarie
+per partire con la vision di un gioco e cominciare a mettere a terra un'idea a partire
+dalla ricerca. Non tutta: pulita, ridotta, ``un pezzettino, dati chiari''. Questi
+possono essere messi in un \textbf{pitch} per cominciare a vendere, cioè a chiedere o
+a vendere qualcosa partendo dai dati. Alle spalle si ha una mole di dati, ``un drive
+pieno di ricerche'', di documentazione, di grafici; e \textbf{i grafici sono il
+risultato}, la cristallizzazione semplificata e molto visibile di tutto il lavoro che
+sta dietro, fondamentale per proiettarsi verso il futuro.
+
+% ---------------------------------------------------------------------
+\section{Il calendario e la chiusura}
+\label{gd18:sec:chiusura}
+
+È la cosa che il docente aveva chiesto di ricordargli, e la ``smacchia subito''. La
+prossima lezione con lui è molto lontana:
+\begin{itemize}
+  \item il \textbf{4} (glielo ha ricordato Daniele) c'è, da calendario,
+        \textbf{narrativa}; per l'\textbf{11} il docente non ricorda, ``penso
+        Alessandro'';
+  \item il \textbf{14} c'è la lezione di \textbf{pitching} con \textbf{Diego e
+        Jack}. Il docente non ci sarà; è una lezione molto importante, in cui
+        confluiscono molte cose, soprattutto quella detta alla fine;
+  \item durante la lezione del 14 verranno dati dei \textbf{task di pitching a
+        gruppi}. ``So che è poco tempo'': il pitch va prodotto per il \textbf{18},
+        quando si rivedranno con il docente e lo si presenterà in classe, per
+        discuterne insieme. Non è riuscito a spostarlo al 21 (``non me la concede
+        nessuno l'orario del 21''); è molto importante imparare a farlo prima di
+        dicembre.
+\end{itemize}
+Venerdì prossimo, il 4, il docente sarà comunque in sede per la lezione al secondo
+anno: la mattina, chi ha dubbi o domande può trovarlo.
+
+Il ``lavoro'' resta quello detto: cominciare a lavorare sui player type, impararli,
+familiarizzare con loro e con tutti i termini visti, e come cartina tornasole prendere
+un po' di giochi che si conoscono bene e cercare di individuarne i principali player
+type, e \textbf{perché}. Il docente caricherà nel materiale per gli studenti il
+modello unificato, ``quello vecchio. Molto brutto apposta, quindi dovete lavorarci''.
+Nessuna domanda: saluta Federica e ``i posteri che rivedranno questa lezione''.
+``Ci vediamo il 18. Ciao.''
+
+% ---------------------------------------------------------------------
+\section*{Punti chiave del capitolo}
+\addcontentsline{toc}{section}{Punti chiave del capitolo}
+
+\begin{itemize}
+  \item Non ci sono più intrusioni durante la lezione. Non si risolvono problemi se
+        non si comunica: è il mantra del game design.
+  \item La piramide: agency (limiti, non libertà), decisioni con outcome comunicato,
+        feedback e conseguenze a breve termine, conseguenze a lungo termine,
+        \textbf{mastery} dei sistemi. Attraverso l'esperienza il giocatore evolve
+        verso il giocatore ideale del designer (i Gargoyle di \emph{Dark Souls}).
+  \item Il gioco si fa \textbf{per qualcun altro}. Tre strumenti per capire
+        l'audience: statistica, \textbf{metodo persona}, \textbf{player type}. Il
+        design è \emph{data informed}, non \emph{data driven} (nel 90\% dei casi); lo
+        skinning si fa, ma lo unique selling point deve stare altrove.
+  \item Maslow: i videogiochi toccano i tre gradini più alti (autorealizzazione,
+        appartenenza, stima), più l'esperienza vicaria. Il modello non spiega tutto
+        (le notti in bianco, i bisogni ``vitaminici''). Cibo, sesso e violenza
+        catturano l'attenzione, ma l'effetto cala se usati troppo.
+  \item Le motivazioni di Quantic Foundry variano per cultura (la Cina più challenge,
+        gli Stati Uniti più completion): i dati sono lontani tra loro e serve
+        un'approssimazione.
+  \item Il persona è un utente \textbf{fittizio}, basato sul target audience, non su
+        una persona reale né sul designer; i dettagli sono tutto.
+  \item Bartle (da sapere a memoria): \textbf{killer} (rosso, acting on players),
+        \textbf{achiever} (blu, acting on world), \textbf{explorer} (verde,
+        interacting with world), \textbf{socializer} (giallo, interacting with
+        players). Nessuno è un solo tipo; conta \textbf{perché} si usa una meccanica,
+        non la meccanica.
+  \item Intento esplicito e implicito: politician/griefer, planner/opportunist,
+        scientist/hacker, networker/friend. Single player e multiplayer: killer e
+        achiever si incontrano sulla leaderboard (ma con mezzi diversi), explorer e
+        socializer sulla storia (lore regolata contro dramma).
+  \item Keirsey: artisan (sensazioni, tattico), guardian (sicurezza, logistico),
+        rational (conoscenza, strategico), idealist (identità, diplomatico); le
+        sedici personalità si dividono per quattro. Bateman aggiunge i tipi
+        intermedi (conqueror, manager, wanderer, participant, hardcore, casual), ma
+        il suo casual non è quello di oggi.
+  \item Caillois: \textbf{agon} achiever, \textbf{alea} socializer (rende tutti
+        pari), \textbf{mimicry} explorer (la maschera ha regole), \textbf{ilinx}
+        killer. Lazzaro (più importante di Caillois): serious fun killer, hard fun
+        achiever (il più vicino al fiero), easy fun explorer, people fun socializer.
+  \item Il modello prismatico allinea questi e altri modelli (Handy, Gallup, Covey,
+        motivazione, problem solving, obiettivo: fare, avere, conoscere, diventare).
+        Niente MDA+ (è l'MDA che si appoggia al modello, non il contrario) e
+        sconsigliato GNS+.
+  \item Il ``non task'': rifarsi il proprio modello unificato e usarlo in ogni task;
+        identificare i due player type principali dei propri giochi preferiti, e
+        perché.
+  \item Per genere e per feature: la sorpresa è un moltiplicatore emotivo, non
+        un'emozione; nei grandi giochi conta il gameplay principale; i segmenti di
+        Quantic Foundry si leggono anch'essi con Bartle (\emph{Celeste}
+        achiever-killer per le sfide post-game).
+  \item Tre usi del modello: \textbf{analisi} (competitor, mercato; \emph{RimWorld}),
+        \textbf{suggerimenti di design} (le biciclette), \textbf{soluzione di
+        problemi} (il finale del gioco di carte: il bluff).
+  \item Il persona finale: dati non inventati (assunzioni sì, invenzioni no), foto
+        generata, demografia, profilo da gamer, cultura pop, stato socio-economico,
+        giornata tipo, desideri, motto; due pagine stampabili; al massimo tre persona.
+  \item La vision: chi, quando, dove (ricerca); che cosa e perché (50\% scienza,
+        50\% arte); come (conoscenza). I design value vanno condivisi con il team
+        prima di cominciare.
+  \item Alla fine della pre-produzione: profilo del TA con percentuali dei player
+        type, stato del segmento di mercato (oceani blu), distribuzione, dati a
+        supporto. Il 14 pitching con Diego e Jack, il 18 si presenta il pitch in
+        classe.
+\end{itemize}
